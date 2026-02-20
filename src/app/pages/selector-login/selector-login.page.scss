@@ -1,86 +1,196 @@
-.main-container {
-  --background: #f5f7fa;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+/* Fondo general */
+.login-bg {
+  --background: none;
+  background-image: url('/assets/images/maderaa.jpg');
+  background-size: 100%;
+  background-repeat: no-repeat;
+}
+
+/* Overlay blur */
+.overlay {
+
+  background: rgba(0, 0, 0, 0.25);
   height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.header {
+/* Layout principal */
+.login-layout {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+/* Paneles laterales */
+.side-panel {
+  flex: 1;
+  background-size: cover;
+  background-position: center;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.left-panel {
+  background-image: url('/assets/images/mix_mec_login.jpg');
+}
+
+.right-panel {
+  background-image: url('/assets/images/mix_mec_login2.jpg');
+}
+
+.side-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+}
+
+.brand-info {
+  position: relative;
+  color: white;
   text-align: center;
-  margin-bottom: 30px;
-
-  h1 {
-    font-weight: 600;
-    color: #2c3e50;
-  }
-
-  p {
-    color: #7f8c8d;
-  }
+  padding: 20px;
 }
 
-/* INTERRUPTOR GRANDE */
+.brand-info h2 {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+.brand-info p {
+  font-weight: 300;
+}
+
+/* Centro */
+.center-panel {
+  flex: 1.2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Card elegante */
+.login-card {
+  width: 95%;
+  max-width: 420px;
+  background: rgba(255,255,255,0.95);
+  border-radius: 30px;
+  padding: 35px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+  text-align: center;
+  transition: 0.4s ease;
+}
+
+/* Logo */
+.logo-area img {
+  width: 70px;
+  margin-bottom: 10px;
+}
+
+/* Título */
+.system-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #4e342e;
+}
+
+/* Interruptor tipo grano */
 .switch-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px;
-  margin-bottom: 40px;
-  font-size: 18px;
+  gap: 15px;
+  margin-bottom: 25px;
 }
 
 .switch-wrapper span {
-  font-weight: 500;
-  color: #95a5a6;
+  color: #a1887f;
   transition: 0.3s;
+  font-weight: 500;
 }
 
 .switch-wrapper span.active {
-  color: #2c3e50;
+  color: #4e342e;
   font-weight: 700;
 }
 
-/* AUMENTAMOS EL TOGGLE */
-.big-toggle {
-  transform: scale(1.8);
-  --handle-width: 28px;
-  --handle-height: 28px;
-  --background: #dcdde1;
-  --background-checked: #3498db;
+/* Contenedor */
+.coffee-switch {
+  width: 90px;
+  height: 45px;
+  background: #e0d4c8;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  cursor: pointer;
+  transition: 0.4s;
+  box-shadow: inset 4px 4px 8px #cbb8a9,
+              inset -4px -4px 8px #fff;
 }
 
-/* TARJETA LOGIN */
-.login-card {
-  background: white;
-  padding: 25px;
-  border-radius: 20px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-  transition: 0.3s ease;
+/* El grano */
+.bean {
+  width: 35px;
+  height: 35px;
+  background: linear-gradient(145deg, #6f4e37, #5d4037);
+  border-radius: 50% 50% 45% 45%;
+  transition: 0.4s;
+  position: relative;
 }
 
-.login-card h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  color: #e67e22;
+/* Línea central del grano */
+.bean::after {
+  content: "";
+  position: absolute;
+  width: 3px;
+  height: 70%;
+  background: #3e2723;
+  left: 50%;
+  top: 15%;
+  transform: translateX(-50%);
+  border-radius: 10px;
 }
 
-/* Tema MECA dinámico */
-.meca-theme h2 {
-  color: #3498db;
+/* Movimiento */
+.bean.active {
+  transform: translateX(45px);
+  background: linear-gradient(145deg, #37474f, #263238);
 }
 
-ion-item {
+/* Inputs */
+.form-area ion-item {
+  background: #f3ece7;
+  border-radius: 18px;
   margin-bottom: 15px;
-  border-radius: 12px;
+  padding-left: 10px;
 }
 
+/* Botón premium */
 ion-button {
-  margin-top: 20px;
-  --background: #e67e22;
+  margin-top: 15px;
+  --background: linear-gradient(135deg, #ff8a65, #e64a19);
+  --box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  font-weight: 600;
 }
 
-/* Botón cambia si es MECA */
+/* Tema Meca */
+.meca-theme .system-title {
+  color: #263238;
+}
+
 .meca-theme ion-button {
-  --background: #3498db;
+  --background: linear-gradient(135deg, #42a5f5, #1565c0);
+}
+
+/* Responsive Web */
+@media (min-width: 992px) {
+  .side-panel {
+    display: flex;
+  }
 }

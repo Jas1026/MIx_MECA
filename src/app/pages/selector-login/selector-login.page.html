@@ -1,40 +1,82 @@
-<ion-content class="main-container ion-padding">
+<ion-content class="login-bg">
 
-  <div class="header">
-    <h1>Bienvenido</h1>
-    <p>Selecciona tu sistema</p>
-  </div>
+  <div class="overlay">
 
-  <!-- INTERRUPTOR GRANDE -->
-  <div class="switch-wrapper">
-    <span [class.active]="!isMeca">Mixtura</span>
+    <div class="login-layout">
 
-    <ion-toggle
-      class="big-toggle"
-      [(ngModel)]="isMeca">
-    </ion-toggle>
+      <!-- Panel izquierdo (solo web) -->
+      <div class="side-panel left-panel">
+        <div class="brand-info">
+          <h2>Mixtura Café</h2>
+          <p>Experiencia artesanal en cada taza</p>
+        </div>
+      </div>
 
-    <span [class.active]="isMeca">Meca</span>
-  </div>
+      <!-- Centro -->
+      <div class="center-panel">
 
-  <!-- LOGIN DINÁMICO -->
-  <div class="login-card" [ngClass]="{ 'meca-theme': isMeca }">
+        <div class="login-card" [ngClass]="{ 'meca-theme': isMeca }">
 
-    <h2>{{ isMeca ? 'Login Meca' : 'Login Mixtura' }}</h2>
+          <!-- Logo central -->
+          <div class="logo-area">
+            <img src="/assets/images/logo.png" alt="logo">
+          </div>
 
-    <ion-item>
-      <ion-label position="floating">Correo</ion-label>
-      <ion-input type="email" [(ngModel)]="email"></ion-input>
-    </ion-item>
+          <!-- Título dinámico -->
+          <h1 class="system-title">
+            {{ isMeca ? 'Meca System' : 'Mixtura Café' }}
+          </h1>
 
-    <ion-item>
-      <ion-label position="floating">Contraseña</ion-label>
-      <ion-input type="password" [(ngModel)]="password"></ion-input>
-    </ion-item>
+          <!-- Interruptor tipo grano -->
+          <div class="switch-wrapper">
 
-    <ion-button expand="block" shape="round" (click)="login()">
-      Ingresar
-    </ion-button>
+            <span [class.active]="!isMeca">Mixtura</span>
+
+            <div class="coffee-switch" (click)="isMeca = !isMeca">
+              <div class="bean" [class.active]="isMeca"></div>
+            </div>
+
+            <span [class.active]="isMeca">Meca</span>
+
+          </div>
+
+          <!-- Formulario -->
+          <div class="form-area">
+
+            <ion-item lines="none">
+              <ion-input
+                placeholder="Correo electrónico"
+                type="email"
+                [(ngModel)]="email">
+              </ion-input>
+            </ion-item>
+
+            <ion-item lines="none">
+              <ion-input
+                placeholder="Contraseña"
+                type="password"
+                [(ngModel)]="password">
+              </ion-input>
+            </ion-item>
+
+            <ion-button expand="block" shape="round" (click)="login()">
+              Ingresar
+            </ion-button>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Panel derecho (solo web) -->
+      <div class="side-panel right-panel">
+        <div class="brand-info">
+          <h2>Meca</h2>
+          <p>Gestión inteligente y moderna</p>
+        </div>
+      </div>
+
+    </div>
 
   </div>
 

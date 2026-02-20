@@ -7,21 +7,15 @@ import { Component } from '@angular/core';
 })
 export class SelectorLoginPage {
 
-  isMeca: boolean = false;
-
-  email: string = '';
-  password: string = '';
+  isMeca = false;
+  email = '';
+  password = '';
 
   login() {
-
     if (this.isMeca) {
-      console.log("Login MECA");
-      // aquí llamas a endpoint MECA
+      console.log('Login MECA');
     } else {
-      console.log("Login MIXTURA");
-      // aquí llamas a endpoint MIXTURA
+      console.log('Login MIXTURA');
     }
-
   }
-
 }
