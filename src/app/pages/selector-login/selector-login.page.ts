@@ -41,7 +41,7 @@ this.server.LoginWithPassword(
         localStorage.setItem("user_name", res.name);
         localStorage.setItem("system", this.isMeca ? "meca" : "mixtura");
 
-        this.router.navigate(['/home']);
+        this.router.navigate(['/panel']);
 
       } else {
         alert(res.message);

@@ -38,7 +38,12 @@ LoginWithPassword(code: string, password: string, system: string) {
     bodyLogin.append("id_user", localStorage.getItem("id_user") || "");
     return this.http.post(this.urlService + "logout.php", bodyLogin);
   }
+ValidateToken(token: string) {
+  let body = new FormData();
+  body.append("token", token);
 
+  return this.http.post(this.urlService + "validate_token.php", body);
+}
   LoadUsers() {
   return this.http.get(this.urlService + "users.php");
 }
