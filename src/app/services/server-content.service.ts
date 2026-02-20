@@ -11,6 +11,21 @@ export class ServerContentService {
 
   constructor(private http: HttpClient) { }
 //LOGIN------------------------
+setSystem(system: 'mixtura' | 'meca') {
+  if (system === 'mixtura') {
+    this.urlService = "http://localhost/api/";
+  } else {
+    this.urlService = "http://localhost/api/";
+  }
+}
+LoginWithPassword(code: string, password: string, system: string) {
+  let body = new FormData();
+  body.append("code", code);
+  body.append("password", password);
+  body.append("system", system);
+
+  return this.http.post(this.urlService + "login_user.php", body);
+}
   Login (code:string, floor:string) {
     let bodyLogin = new FormData();
     bodyLogin.append("code", code);
@@ -23,6 +38,10 @@ export class ServerContentService {
     bodyLogin.append("id_user", localStorage.getItem("id_user") || "");
     return this.http.post(this.urlService + "logout.php", bodyLogin);
   }
+
+  LoadUsers() {
+  return this.http.get(this.urlService + "users.php");
+}
 //BRIEF------------------------
  LoadBrief () {
   return this.http.get(this.urlService + "brief.php");
