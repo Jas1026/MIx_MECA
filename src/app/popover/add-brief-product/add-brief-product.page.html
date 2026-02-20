@@ -1,0 +1,24 @@
+
+<div class="popover">
+  <div class="popover-header">
+    <div class="popover-title">Nuevo Producto temporal</div>
+    <ion-button (click)="Close()" size="small" fill="clear"><ion-icon name="close-circle-outline"></ion-icon></ion-button>
+  </div>  
+  <h5>NOMBRE</h5>
+  <div class="popover-notes">
+    <ion-input type="text" [(ngModel)]="product" placeholder="NUEVO PRODUCTO..."></ion-input>
+  </div>
+  <h5>PRECIO</h5>
+  <div class="popover-notes">
+    <ion-input type="number" [(ngModel)]="price"></ion-input>
+  </div>
+  <h5>COCINA</h5>
+  <div class="popover-notes">
+    <ion-select (ionChange)="TypeSelected($event)"  placeholder="COCINA">          
+    <ion-select-option *ngFor="let zone of kitchen" [value]="zone.id">{{zone.name}}</ion-select-option>
+  </ion-select>
+  </div>
+  <div class="popover-footer">
+    <ion-button class="btn-yellow" (click)="AddBrief()">Agregar</ion-button>
+  </div>
+</div>

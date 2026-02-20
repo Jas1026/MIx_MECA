@@ -1,0 +1,29 @@
+
+<ion-content>
+  <div class="mesero">
+    <h2>Mesero: {{ user_name }}</h2>
+  </div>
+  <div *ngIf="cash_data.length > 0">
+    <ion-item>
+      <span class="label">Total efectivo: </span>
+      <span class="amount">  Bs. {{ cash_data[0].sum_cash }}</span>
+    </ion-item> 
+    <ion-item>
+      <span class="label">Total tarjeta: </span>
+      <span class="amount">  Bs. {{ cash_data[0].sum_card }}</span>
+    </ion-item>
+    <ion-item>
+      <span class="label">Total QR: </span>
+      <span class="amount">  Bs. {{ cash_data[0].sum_qr }}</span>
+    </ion-item>
+    <ion-item>
+      <span class="label">Total deuda: </span>
+      <span class="amount">  Bs. {{ cash_data[0].sum_debt }}</span>
+    </ion-item>
+    <ion-item>
+      <span class="label">Total caja: </span>
+      <span class="amount">  Bs. {{ cash_data[0].sum_total }}</span>
+    </ion-item>
+    <ion-button (click)="CloseCash()" class="send-enabled">CERRAR CAJA</ion-button>
+  </div>
+</ion-content>

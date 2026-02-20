@@ -1,0 +1,117 @@
+.product {
+    padding: 10px;
+    .product-header{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .product-name {
+            font-size: 21px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+            color: #FFF;
+        }
+        .product-state {
+            border-radius: 5px;
+            padding: 5px 7px;
+            color: #FFF;
+            text-align: center;
+            text-transform: uppercase;
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 700;
+        }
+        .product-ready {
+            background: #3EEE00;
+        }
+        .product-waiting {
+            background: #EE8000;
+        }
+        .product-idle {
+            background: #121619 ;
+        }
+        .product-error {
+            background: #FF3A3A;
+        }
+    }
+    .product-options {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+        width: 80%;
+        margin:0 auto;
+    }
+    .product-quantity {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 10px;
+        .change-quantity {
+            border: 2px solid #FFF;
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center; 
+            margin-right: 10px;  
+            font-size: 26px;
+            font-style: normal;
+            font-weight: 700;       
+            span {                
+                color: #FFF;
+                font-size: 21px;
+                font-style: normal;
+                font-weight: 400;
+            }
+            .minus {
+                color: #8C8C8C;
+            }
+            .plus {
+                color: #FFE500;
+            }
+        }
+    }
+    .product-table-state {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 90%;
+        margin:0 auto;
+        span {
+            color: #FFF;
+            font-family: 'Barlow';
+            font-size: 21px;
+            font-style: normal;
+            font-weight: 400;
+        }
+        .item-check {
+            width: 39px;
+            height: 39px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: #FFF 2px solid;
+            border-radius: 39px;
+            ion-icon {
+                color: #616161;
+                height: 24px;
+                width: 24px;
+            }
+        }
+        .item-check-idle {
+            background: #23272A;
+        }
+        .item-check-ready {
+            background: #02BF15;
+        }
+    }
+    .product-note {
+        ion-textarea {
+            border-radius: 9px;
+            border: 2px solid #FFF;
+            background: #23272A;
+            padding: 5px;
+        }
+        margin-bottom: 5px;
+    }
+}

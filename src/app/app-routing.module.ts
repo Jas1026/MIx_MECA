@@ -11,6 +11,78 @@ const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full'
   },
+  {
+    path: 'tables',
+    loadChildren: () => import('./pages/tables/tables.module').then( m => m.TablesPageModule)
+  },
+  {
+    path: 'table',
+    loadChildren: () => import('./pages/table/table.module').then( m => m.TablePageModule)
+  },
+  {
+    path: 'categories',
+    loadChildren: () => import('./pages/categories/categories.module').then( m => m.CategoriesPageModule)
+  },
+  {
+    path: 'products',
+    loadChildren: () => import('./pages/products/products.module').then( m => m.ProductsPageModule)
+  },
+  {
+    path: 'product-detail',
+    loadChildren: () => import('./popovers/product-detail/product-detail.module').then( m => m.ProductDetailPageModule)
+  },
+  {
+    path: 'ticket-detail',
+    loadChildren: () => import('./popovers/ticket-detail/ticket-detail.module').then( m => m.TicketDetailPageModule)
+  },
+  {
+    path: 'devolution',
+    loadChildren: () => import('./popovers/devolution/devolution.module').then( m => m.DevolutionPageModule)
+  },
+  {
+    path: 'invoice-detail',
+    loadChildren: () => import('./popovers/invoice-detail/invoice-detail.module').then( m => m.InvoiceDetailPageModule)
+  },
+  {
+    path: 'product',
+    loadChildren: () => import('./pages/product/product.module').then( m => m.ProductPageModule)
+  },
+  {
+    path: 'kitchen',
+    loadChildren: () => import('./pages/kitchen/kitchen.module').then( m => m.KitchenPageModule)
+  },
+  {
+    path: 'switch-table',
+    loadChildren: () => import('./popovers/switch-table/switch-table.module').then( m => m.SwitchTablePageModule)
+  },
+  {
+    path: 'close-cash',
+    loadChildren: () => import('./popovers/close-cash/close-cash.module').then( m => m.CloseCashPageModule)
+  },
+  {
+    path: 'brief',
+    loadChildren: () => import('./pages/brief/brief.module').then( m => m.BriefPageModule)
+  },
+  {
+    path: 'add-brief-note',
+    loadChildren: () => import('./popover/add-brief-note/add-brief-note.module').then( m => m.AddBriefNotePageModule)
+  },
+  {
+    path: 'add-brief-product',
+    loadChildren: () => import('./popover/add-brief-product/add-brief-product.module').then( m => m.AddBriefProductPageModule)
+  },
+  {
+    path: 'table-record',
+    loadChildren: () => import('./pages/table-record/table-record.module').then( m => m.TableRecordPageModule)
+  },
+  {
+    path: 'dashboard',
+    loadChildren: () => import('./pages/dashboard/dashboard.module').then( m => m.DashboardPageModule)
+  },
+  {
+    path: 'extra-cost',
+    loadChildren: () => import('./popovers/extra-cost/extra-cost.module').then( m => m.ExtraCostPageModule)
+  },
 ];
 
 @NgModule({

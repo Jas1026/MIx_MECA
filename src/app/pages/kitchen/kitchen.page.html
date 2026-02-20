@@ -1,0 +1,28 @@
+<ion-content [fullscreen]="true">
+  <div id="kitchen-header">
+    <div id="title">
+      <ion-img src="assets/images/logo-32.png"></ion-img>
+      <span>{{kitchenName}}</span>
+    </div>
+    <div id="historial">
+      <ion-button fill="clear">
+        <ion-icon src="assets/images/historial.svg"></ion-icon>
+        Historial</ion-button>
+    </div>
+    <div id="logout">
+      <ion-button (click)="LogOut()" fill="clear">Salir</ion-button>
+    </div>  
+  </div>
+  <div id="kitchen-content">
+    <div class="pedidos">
+      <div *ngIf="npedidos" id="pedidos" class="kitchen-pedidos">
+        <app-kitchen-table [ticket]="pedido" *ngFor="let pedido of npedidos"></app-kitchen-table>
+      </div>
+    </div> 
+  </div>
+  <div id="kitchen-footer">
+    <div class="pedidos">
+      <h2>PEDIDOS</h2>
+    </div> 
+  </div>
+</ion-content>

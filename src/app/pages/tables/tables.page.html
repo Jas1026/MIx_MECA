@@ -1,0 +1,25 @@
+<ion-content [fullscreen]="true">
+  <div id="main-header">
+    <div id="logout">
+      <a (click)="GoNext('dashboard')">REGRESAR</a>
+    </div>      
+    <div id="title">
+      <span>MESAS</span>
+    </div>
+    <div id="icon">
+      <ion-img *ngIf="zoneId < 7" src="assets/images/logo-32.png"></ion-img><div *ngIf="zoneId < 11">{{zoneName}}</div>
+    </div>
+  </div>
+  <div id="main-content">
+    <div class="mesas">
+      <div class="mesas-header">
+        <ion-button *ngIf="zoneId < 11" fill="clear">{{zoneName}}</ion-button>
+        <ion-button *ngIf="zoneId == 66" fill="clear">DELIVERIES</ion-button>
+        <ion-button *ngIf="zoneId == 77" fill="clear">PARA LLEVAR</ion-button>
+      </div>
+      <div *ngIf="tables" id="mesas" class="pedidos-container">
+        <app-ticket [table]="table" *ngFor="let table of tables" (click)="OpenTable(table.id, table.closed)"></app-ticket>
+      </div>
+    </div> 
+  </div>
+</ion-content>

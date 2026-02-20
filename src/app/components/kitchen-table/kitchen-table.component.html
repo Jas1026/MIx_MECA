@@ -1,0 +1,18 @@
+<div class="table">
+  <div class="table-header">
+    <div class="table-name">MESA - {{ticket.tableName}}</div>
+    <div class="table-pending">
+      <div (click)="SeeProducts()" [class]="viewed?'item-check item-check-ready':'item-check item-check-idle'">
+        <ion-icon name="checkmark-outline"></ion-icon>
+      </div>
+    </div>
+  </div>
+  <div class="table-notes">
+    {{ticket.notes}}
+  </div>
+  <div class="table-content">
+    <app-kitchen-table-item [item]="item" *ngFor="let item of ticket.products"></app-kitchen-table-item>
+    <div class="extra-products"></div>
+    <app-kitchen-table-item [item]="item" *ngFor="let item of ticket.extra_products"></app-kitchen-table-item>
+  </div>
+</div>

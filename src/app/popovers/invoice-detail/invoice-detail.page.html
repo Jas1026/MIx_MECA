@@ -1,0 +1,56 @@
+
+<div class="popover">
+  <div class="popover-header">
+    <div class="popover-title">CUENTA</div>
+    <ion-button (click)="Close()" size="small" fill="clear"><ion-icon name="close-circle-outline"></ion-icon></ion-button>
+  </div>
+  <ion-list *ngIf="!payReady">
+    <div *ngFor="let product of products"> 
+    <ion-item *ngIf="product.state != 'pagado'">      
+      <div class="change-quantity">
+        <ion-button (click)="RemoveQuantity(product.id)" class="minus" fill="clear" size="small">-
+        </ion-button>
+        <span>{{quantities[product.id]}}</span>
+        <ion-button (click)="AddQuantity(product.id)" class="plus" fill="clear" size="small">+
+        </ion-button>
+      </div>
+        <ion-checkbox (ionChange)="CalculatePrice($event, product.id)" color="dark">
+            <div class="label-checkbox">{{product.name}}:{{product.accompaniment
+            }} <b>Bs.{{product.price * 1 + product.modify_price * 1}}</b></div>
+        </ion-checkbox>
+    </ion-item>
+  </div>
+</ion-list>
+<ion-list *ngIf="payReady">
+  <p *ngIf="emptyPayment" class="pay-error">Debe llenar al menos un tipo de pago.</p>
+  <p *ngIf="wrongTotal" class="pay-error">La suma es diferente al total.</p>
+  <ion-item >
+    <div class="cash_mode">
+      Efectivo <ion-input (ionInput)="DivideAmount('efectivo')" [(ngModel)]="efectivo" type="number" placeholder="0.00"></ion-input>
+    </div>     
+  </ion-item>
+  <ion-item >  
+    <div class="cash_mode">
+      Tarjeta     
+    <ion-input (ionInput)="DivideAmount('tarjeta')" [(ngModel)]="tarjeta" type="number" placeholder="0.00"></ion-input>
+  </div>
+  </ion-item>
+  <ion-item > 
+    <div class="cash_mode">
+      QR     
+    <ion-input (ionInput)="DivideAmount('qr')" [(ngModel)]="qr" type="number" placeholder="0.00"></ion-input>
+  </div>
+  </ion-item>
+  <ion-item > 
+    <div class="cash_mode">
+      Deuda      
+    <ion-input (ionInput)="DivideAmount('debe')" [(ngModel)]="debe" type="number" placeholder="0.00"></ion-input>
+  </div>
+  </ion-item>
+</ion-list>
+<!-- <h4 *ngIf="payReady">Cambio Bs. {{ vuelto }}</h4> -->
+  <div class="invoice-footer">
+    <h3 class="total">TOTAL Bs. {{ totalPrice }}</h3>
+    <ion-button (click)="Pay()" [disabled]="totalPrice > 0?false:true" class="btn-yellow">Ir a Pagar</ion-button>
+  </div>
+</div>

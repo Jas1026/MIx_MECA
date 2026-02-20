@@ -1,0 +1,31 @@
+
+  <div class="popover">
+    <div class="popover-header">
+      <div class="popover-title">{{product.name}}</div>
+      <ion-button (click)="Close()" size="small" fill="clear"><ion-icon name="close-circle-outline"></ion-icon></ion-button>
+    </div>
+    <div class="popover-price"><ion-toggle (ionChange)="ToggleEspecialPrice($event)" >Precio especial</ion-toggle></div>
+    <div *ngIf="!delivery" class="popover-price">Bs. {{product.price}}</div>
+    <div *ngIf="delivery" class="popover-price">
+      <ion-input (ionInput)="DeliveryPrice($event)"  [(ngModel)]="product.price" type="number" placeholder="0.00"></ion-input> Bs.
+    </div>
+    <ion-list *ngIf="product.accompaniment != ''">
+      <ion-item *ngFor="let item of accompaniments">
+           <ion-checkbox color="dark" [(ngModel)]="item.selected" [checked]="item.selected">{{item.name}}</ion-checkbox>
+      </ion-item>
+  </ion-list>
+    <div class="popover-notes">
+      <h4>Notas para este producto</h4>
+      <ion-textarea [(ngModel)]="notes" placeholder="Notas..."></ion-textarea>
+    </div>
+    <div class="popover-footer">
+      <div class="change-quantity">
+        <ion-button (click)="RemoveQuantity()" class="minus" fill="clear" size="small">-
+        </ion-button>
+        <span>{{quantity}}</span>
+        <ion-button (click)="AddQuantity()" class="plus" fill="clear" size="small">+
+        </ion-button>
+      </div>
+      <ion-button class="btn-yellow" (click)="AddProduct()">Agregar</ion-button>
+    </div>
+  </div>

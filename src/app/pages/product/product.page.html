@@ -1,0 +1,44 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button icon="caret-back"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ name }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="product" [fullscreen]="true">
+  <div *ngFor="let prod of product" class="product">
+    <div class="product-header">
+      <div class="product-name">COCINA: {{ prod.kitchen }}</div>
+      <div [class]="stateStyle">{{ prod.state }}</div>
+    </div>
+    <div class="product-quantity">
+      <div class="change-quantity">
+        <ion-button (click)="RemoveQuantity()" [disabled]="(prod.state == 'sin enviar')?false:true" class="minus" fill="clear" size="small">-
+        </ion-button>
+        <span>{{ quantity }}</span>
+        <ion-button (click)="AddQuantity()" [disabled]="(prod.state == 'sin enviar')?false:true" class="plus" fill="clear" size="small">+
+        </ion-button>
+      </div>
+      <span>Bs. {{(prod.price*1 + prod.modify_price*1)}} | total: Bs. {{(quantity * (prod.price*1 + prod.modify_price*1))}}</span>
+    </div>   
+    <div class="product-options">
+      <ion-button class="btn-yellow" disabled="true" (click)="SaveProduct()">DEVOLVER</ion-button>
+      <ion-button *ngIf="prod.state != 'entregado' || prod.state != 'pagado'" class="btn-yellow" (click)="DeleteProduct()">ELIMINAR</ion-button>
+    </div>
+    <div class="product-table-state">
+      <span>ENTREGADO A MESA</span>     
+      <div (click)="Delivered(prod.id, prod.state)" [class]="checkStyle">
+        <ion-icon name="checkmark-outline"></ion-icon>
+      </div>
+    </div>
+    <div class="product-note">
+      <h4>Notas para este producto</h4>
+      <ion-textarea [(ngModel)]="notes" placeholder="Notas..."></ion-textarea>
+    </div>    
+    <div class="product-footer">
+      <ion-button class="btn-yellow" (click)="SaveProduct()">Guardar</ion-button>
+    </div>
+  </div>
+</ion-content>

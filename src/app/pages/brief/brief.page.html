@@ -1,0 +1,33 @@
+<ion-content [fullscreen]="true">
+  <div class="content">
+    <div id="brief-header">
+      <div style="color: #fff;">
+        Bienvenido {{name}}
+      </div> 
+      <div id="title">
+        <ion-img src="assets/images/logo-32.png"></ion-img>
+      </div>
+    </div>
+    <div id="brief">
+      <h3>BRIEF</h3>
+      <ion-list>
+        <ion-item lines="none" *ngFor="let brief of briefs">
+          <ion-button (click)="DeleteBrief(brief.id, brief.brief)" fill="clear">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+          <ion-label style="color: #fff;">{{brief.message}}</ion-label>
+        </ion-item>
+      </ion-list>
+    </div>
+    <div id="brief-options">
+      <div class="options">
+        <ion-button *ngIf="role == 'admin' || role == 'jefe_mesero' || role == 'cocina'" fill="clear" (click)="AddBriefNote()" class="btn-yellow">AGREGAR PUNTO</ion-button>
+        <ion-button *ngIf="role == 'admin' || role == 'jefe_mesero' || role == 'cocina'" fill="clear" (click)="AddBriefProduct()"  class="btn-yellow">AGREGAR PRODUCTO</ion-button>
+
+      </div>
+      <div class="continue">
+        <ion-button (click)="GoNext()" fill="clear" class="btn-yellow">LISTO</ion-button>
+      </div>
+    </div>
+  </div>
+</ion-content>

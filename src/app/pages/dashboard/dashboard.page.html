@@ -1,0 +1,37 @@
+<ion-content [fullscreen]="true">
+  <div id="main-header">
+    <div id="logout">
+      <a (click)="LogOut()">CERRAR SESIÓN</a>
+    </div>  
+    <div id="title">
+      <ion-img src="assets/images/logo-32.png"></ion-img>{{zoneName}}
+    </div>
+  </div>
+  <div id="main-content">
+    <div class="dashboard-options">
+      <ion-button (click)="GoNext('tables')" fill="clear" class="btn-yellow">
+        <ion-icon slot="start" src="./assets/icon/table.svg"></ion-icon>
+        MESAS</ion-button>
+      <ion-button (click)="GoBrief()" fill="clear" class="btn-yellow">
+        <ion-icon slot="start" src="./assets/icon/brief.svg"></ion-icon>
+        BRIEF</ion-button>
+      <ion-button (click)="GoPedidos()" fill="clear" class="btn-yellow">
+        <ion-icon slot="start" src="./assets/icon/pedidosya.svg"></ion-icon>
+        DELIVERIES</ion-button>
+      <ion-button (click)="GoLlevar()" fill="clear" class="btn-yellow">
+        <ion-icon slot="start" src="./assets/icon/bag.svg"></ion-icon>
+        LLEVAR</ion-button>
+      <ion-button (click)="CloseCash()" class="btn-yellow" >        
+        <ion-icon slot="start" name="cash-outline"></ion-icon>
+        Cerrar Caja</ion-button>      
+    </div>
+    <div class="mesas">
+      <div class="mesas-header">
+        <p class="mesas-title">MESAS EN ATENCIÓN</p>
+      </div>
+      <div *ngIf="tables" id="mesas" class="pedidos-container">
+        <app-dashboard-ticket [table]="table" *ngFor="let table of tables" (click)="OpenTable(table.id)"></app-dashboard-ticket>
+      </div>
+    </div> 
+  </div>
+</ion-content>

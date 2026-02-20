@@ -1,0 +1,29 @@
+<ion-content [fullscreen]="true">
+  <div id="main-header">
+    <div id="logout">
+      <a (click)="GoNext('dashboard')">REGRESAR</a>
+    </div>   
+    <div id="title-table">
+      HISTORIAL MESA <div class="table-name">{{tableid }}</div>
+    </div>    
+    <div id="icon">
+      <ion-img src="assets/images/logo-32.png"></ion-img>
+    </div>
+  </div>
+  <div id="records">
+    <ion-grid>
+      <ion-row>
+        <ion-col class="header" size="3">Hora</ion-col>
+        <ion-col class="header" size="3">Producto</ion-col>
+        <ion-col class="header" size="3">Estado</ion-col>
+        <ion-col class="header" size="3">Responsable</ion-col>
+      </ion-row>
+      <ion-row *ngFor="let record of records">
+        <ion-col size="3">{{record.created_at}}</ion-col>
+        <ion-col size="3">{{record.quantity}}x {{record.product}}</ion-col>
+        <ion-col size="3">{{record.state}}</ion-col>
+        <ion-col size="3">{{record.user_name}}</ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>

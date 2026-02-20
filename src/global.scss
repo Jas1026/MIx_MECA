@@ -24,3 +24,277 @@
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
+
+@font-face {
+    font-family: 'Barlow';
+    font-style: normal;
+    font-weight: 400;
+    src: url('./assets/fonts/Barlow-Regular.ttf');
+  }
+  
+  @font-face {
+    font-family: 'Barlow';
+    font-style: normal;
+    font-weight: 700;
+    src: url('./assets/fonts/Barlow-Bold.ttf');
+  }
+
+ion-content {
+    --background: #23272A;
+    font-family: 'Barlow', sans-serif;
+}
+#main-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    background-color: #12161A;
+    #title, #icon {
+        display: flex;
+        align-items: center;
+        font-weight: 600;
+        ion-img {
+            width: 32px;
+            height: 32px;
+            margin-right: 5px;
+        }
+        span {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #fff;
+        }
+    }
+    #title-table {
+        font-size: 1.2rem;
+        font-weight: 600;
+        display: flex;
+        .table-name {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 24px !important;
+            height: 24px !important;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 50%;
+            background: #FFC90C;
+            color: #000000;
+        }
+    }
+    #historial {
+        ion-button {
+            font-size: 16px;
+            color: #fff;
+            font-weight: 700;
+            ion-icon {
+                margin-right: 5px;
+                height: 24px;
+                width: 24px;
+            }
+        }
+    }
+    #logout{
+        ion-button, a {
+            font-size: 16px;
+            color: #FFC90C;
+            font-weight: 700;
+        }
+    }
+}
+#main-content {
+    padding: 4px;
+    .pedidos {
+        text-align: center;
+        border-bottom: #FFC90C 1px solid;
+        h2 {
+            padding: 0px;
+            margin: 0px;
+        }
+        min-height: 250px;
+    }
+    .mesas {
+        text-align: center;
+        ion-button {
+            font-size: 21px;
+            color: #FFF;
+            font-weight: 700;
+            text-transform: initial;
+            border-bottom: #FFC90C 1px solid;
+        }
+        ion-button.btn-yellow {
+            border-radius: 8px;
+            background: #FFC90C;
+            --background: #FFC90C;
+            color: #0C3A39;
+            --color: #0C3A39;
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 700;
+            font-family: 'Barlow';
+        }
+    }
+    .pedidos-container {        
+        display: flex;
+        flex-wrap: wrap;
+        app-ticket, app-dashboard-ticket {
+            width: 30%;
+            margin: 1.4%;
+            margin-top: 10px;
+        }
+    }
+}
+.popover {
+    background: #121619 !important;
+    padding: 15px;
+    font-family: 'Barlow';
+    .popover-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        text-align: left;
+        color: #FFF;
+        font-size: 21px;
+        font-style: normal;
+        font-weight: 400;        
+        ion-icon { 
+            color: #FFC90C;
+            height: 32px;
+            width: 32px;            
+        }
+    }
+    .popover-price{
+        text-align: left;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: normal;
+        display: flex;
+        align-items: center;
+        
+    }
+    .popover-notes {
+        ion-textarea {
+            border-radius: 9px;
+            border: 2px solid #FFF;
+            background: #23272A;
+            padding: 5px;
+        }
+        ion-input {
+            border-radius: 9px;
+            border: 2px solid #FFF;
+            background: #23272A;
+            padding: 5px;
+            --padding-start: 15px;
+        }
+        ion-select {
+            border-radius: 9px;
+            border: 2px solid #FFF;
+            background: #23272A;
+            padding: 5px;
+            --padding-start: 15px;
+        }
+        margin-bottom: 15px;
+    }
+    .popover-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .change-quantity {
+            border: 2px solid #FFF;
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center; 
+            margin-left: 10px;  
+            font-size: 26px;
+            font-style: normal;
+            font-weight: 700;       
+            span {                
+                color: #FFF;
+                font-size: 21px;
+                font-style: normal;
+                font-weight: 400;
+            }
+            .minus {
+                color: #8C8C8C;
+            }
+            .plus {
+                color: #FFE500;
+            }
+        }
+    }
+}
+
+ion-button.btn-yellow {
+    border-radius: 8px;
+    background: #FFC90C;
+    --background: #FFC90C;
+    color: #0C3A39;
+    --color: #0C3A39;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    font-family: 'Barlow';
+}
+.meca-alert .btn-red {
+    border-radius: 8px;
+    background: #FF3A3A;
+    --background: #FF3A3A;
+    color: #FFF;
+    --color: #FFF;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    font-family: 'Barlow';
+}
+.meca-alert .btn-yellow {
+    border-radius: 8px;
+    background: #FFC90C;
+    --background: #FFC90C;
+    color: #0C3A39;
+    --color: #0C3A39;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    font-family: 'Barlow';
+}
+.meca-alert .btn-white {
+    border-radius: 8px;
+    background: #FFF;
+    --background: #FFF;
+    color: #0C3A39;
+    --color: #0C3A39;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    font-family: 'Barlow';
+}
+ion-button.clear-yellow {
+    border-radius: 8px;
+    color: #FFF;    
+    --color: #FFF;
+    font-size: 21px;
+    font-style: normal;
+    font-weight: 400;
+    font-family: 'Barlow';
+    text-align: left;
+    text-transform: initial;
+    ion-icon { 
+        color:#FFC90C;
+    }
+}
+ion-popover {
+    --background: #2C2F33;
+    --backdrop-opacity: 0.4;
+    --width: 90%;
+    margin: 0 auto;
+}
+ion-radio-group {
+    width: 100% !important;
+    display: block;
+    padding: 10px;
+    ion-radio {
+        width: 100% !important;
+        display: block;
+    }
+}

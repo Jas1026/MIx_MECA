@@ -1,0 +1,55 @@
+.table {
+    .table-header {
+        background: #427296;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 5px;
+        .table-name {
+            color: #FFF;
+            font-family: 'Barlow';
+            font-size: 21px;
+            font-style: normal;
+            font-weight: 400;
+        }
+        .table-pending {
+            color: #FFF;
+            font-family: 'Barlow';
+            font-size: 21px;
+            font-style: normal;
+            font-weight: 400;
+        }
+    }
+    .table-notes{
+        background: #2C2F33;
+        color: #FFF;
+        font-family: 'Barlow';
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 400;
+        padding: 5px;
+    }
+}
+.extra-products {
+    border-top: 2px solid #427296;
+}
+.item-check {
+    width: 39px;
+    height: 39px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: #FFF 2px solid;
+    border-radius: 39px;
+    ion-icon {
+        color: #616161;
+        height: 24px;
+        width: 24px;
+    }
+}
+.item-check-idle {
+    background: #23272A;
+}
+.item-check-ready {
+    background: #02BF15;
+}

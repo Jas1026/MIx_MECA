@@ -1,0 +1,99 @@
+ion-content{    
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+#kitchen-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #12161A;    
+    padding: 5px;
+    height: 10%;
+    #title {
+        display: flex;
+        align-items: center;
+        ion-img {
+            width: 32px;
+            height: 32px;
+            margin-right: 5px;
+        }
+        span {
+            font-size: 21px;
+            font-weight: 400;
+            color: #fff;
+        }
+    }
+    #historial {
+        ion-button {
+            font-size: 16px;
+            color: #fff;
+            font-weight: 700;
+            ion-icon {
+                margin-right: 5px;
+                height: 24px;
+                width: 24px;
+            }
+        }
+    }
+    #logout{
+        ion-button {
+            font-size: 16px;
+            color: #FFC90C;
+            font-weight: 700;
+        }
+    }
+}
+#kitchen-content {
+    min-height: 80%;
+    .kitchen-pedidos {        
+        display: flex;
+        overflow-x: auto;
+        app-kitchen-table {
+            width: 240px;
+            margin: 10px;
+        }
+    }
+}
+#kitchen-footer {
+    background: #12161A;
+    justify-self: end;
+    height: 10%;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    padding-left: 10px;
+}
+.pedidos {
+    width: 100%;    
+    color: #fff;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: thin; /* Ancho del scrollbar */
+    scrollbar-color: #888 #F0F; /* Color del scrollbar */
+    .kitchen-pedidos {
+        display: flex;
+        flex-direction: row;        
+        app-kitchen-table {
+            min-width: 240px;
+        }
+    }
+}
+/* Estilos de la barra de desplazamiento */
+::-webkit-scrollbar {
+    height: 26px; /* Altura del scrollbar */
+  }
+  
+  /* Estilos del riel del scrollbar */
+  ::-webkit-scrollbar-track {
+    background: #121619; /* Color del riel del scrollbar */
+    border-radius: 6px;
+    height: 10px;
+  }
+  
+  /* Estilos del thumb (la parte deslizante del scrollbar) */
+  ::-webkit-scrollbar-thumb {
+    background-color: #606060; /* Color del thumb */
+    border-radius: 11px; /* Bordes redondeados del thumb */
+    height: 26px;
+  }

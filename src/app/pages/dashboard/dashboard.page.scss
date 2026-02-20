@@ -1,0 +1,15 @@
+.mesas-header {
+    display: flex;
+    justify-content: space-between;
+}
+.dashboard-options {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+.mesas-title {
+    font-size: 1.3rem;
+    font-weight: 300;
+    color: #fff;
+    width: 100%;
+}

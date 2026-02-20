@@ -1,0 +1,13 @@
+
+<div class="popover">
+  <div class="popover-header">
+    <div class="popover-title">Nuevo punto</div>
+    <ion-button (click)="Close()" size="small" fill="clear"><ion-icon name="close-circle-outline"></ion-icon></ion-button>
+  </div>  
+  <div class="popover-notes">
+    <ion-textarea [(ngModel)]="notes" placeholder="Nuevo punto..."></ion-textarea>
+  </div>
+  <div class="popover-footer">
+    <ion-button class="btn-yellow" (click)="AddBrief()">Agregar</ion-button>
+  </div>
+</div>

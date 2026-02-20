@@ -1,0 +1,17 @@
+
+<div class="popover">
+  <div class="popover-header">
+    <div class="popover-title">COSTO EXTRA</div>
+    <ion-button (click)="Close()" size="small" fill="clear"><ion-icon name="close-circle-outline"></ion-icon></ion-button>
+  </div>
+  <div class="popover-price">
+    <ion-input (ionInput)="Cost($event)"  [(ngModel)]="cost" type="number" placeholder="0.00"></ion-input> Bs.
+  </div>
+  <div class="popover-notes">
+    <h4>Detalle del costo</h4>
+    <ion-textarea [(ngModel)]="notes" placeholder="Detalle..."></ion-textarea>
+  </div>
+  <div class="popover-footer">
+    <ion-button class="btn-yellow" (click)="AddCost()">Agregar</ion-button>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+
+ion-item, ion-list{
+    --background: #121619;
+    background: #121619;
+}
+ion-content{
+    --background: #121619;
+    background: #121619;
+    padding: 20px;
+    text-align: center;
+}
+.label {
+    width: 50%;
+}
+.amount {
+    width: 50%;
+    text-align: right;
+    font-weight: 700;
+}
+.send-enabled {
+    background: #FFC90C;
+    --background: #FFC90C;
+    --color: #0C3A39;
+    text-align: center;
+    font-family: 'Barlow';
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    border-radius: 8px;
+    margin: 30px;
+    }

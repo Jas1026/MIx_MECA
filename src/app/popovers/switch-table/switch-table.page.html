@@ -1,0 +1,20 @@
+
+<ion-content>
+  <div class="actual-table">
+    <h2>Mesa actual: {{ table[0].name }}</h2>
+  </div>
+  <div class="tables">
+    <h3>Nueva Mesa</h3>
+    <ion-item>
+      <ion-select (ionChange)="ZoneSelected($event)" label="Zona" placeholder="Elige la zona">
+        <ion-select-option *ngFor="let zone of zones" [value]="zone.id">{{ zone.name }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-select (ionChange)="TableSelected($event)" label="Mesa" placeholder="Elige la mesa">
+        <ion-select-option *ngFor="let table of tables" [value]="table.id">{{ table.name }}</ion-select-option>
+      </ion-select>
+    </ion-item>    
+    <ion-button (click)="SwitchTable()" class="send-enabled">CAMBIAR MESA</ion-button>
+  </div>
+</ion-content>

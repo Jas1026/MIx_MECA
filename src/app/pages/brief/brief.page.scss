@@ -1,0 +1,57 @@
+.content {
+    height: 100%;
+    width: 100%;
+}
+#brief-header {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    position: relative;
+    border-bottom: 1px solid #FFC90C;
+    #title {
+        display: flex;
+        align-items: center;
+        ion-img {
+            width: 32px;
+            height: 32px;
+            margin-right: 5px;
+        }
+        span {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+        }
+    }
+}
+#brief {
+    padding: 10px;
+    color: #fff;
+    
+}
+ion-list, ion-item {
+    --background: transparent;
+    background: transparent;
+}
+#brief-options {
+    width: 100%;
+    background-color: #12161A;
+    padding: 10px;
+    display: block;
+    position: fixed;
+    bottom: 0;
+    .options {
+        padding-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: #FFC90C 1px solid;
+    }
+    .continue {
+        padding-top: 10px;
+        display: flex;
+        justify-content: end;
+        align-items: center;
+    }
+}

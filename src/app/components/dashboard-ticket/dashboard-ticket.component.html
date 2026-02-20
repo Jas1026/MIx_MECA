@@ -1,0 +1,17 @@
+<div [class]="ticketStyle">
+  <div class="ticket-header">
+      <div [class]="(table.listo > 0)?'ticket-number ticket-waiting':'ticket-number ticket-idle'">{{table.name}}</div>
+      <div [class]="dotStyle">{{tableStatus}}</div>
+   </div>
+  <div class="ticket-content">
+    <div *ngIf="!aviable" class="ticket-timer">
+      <ion-img src="assets/images/timer.svg"></ion-img>
+      <span>{{ TicketTimer() }}</span>
+    </div>
+  </div>
+  <div class="ticket-footer">
+    <div *ngIf="hasProductsReady">LISTOS<br>{{table.listo}}</div>
+    <div>ENTREGADOS<br>{{table.entregado}} de {{table.espera}}</div>
+  </div>
+    
+</div>
