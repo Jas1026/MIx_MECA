@@ -83,6 +83,33 @@ const routes: Routes = [
     path: 'extra-cost',
     loadChildren: () => import('./popovers/extra-cost/extra-cost.module').then( m => m.ExtraCostPageModule)
   },
+  {
+    path: 'selector-login',
+    loadChildren: () => import('./pages/selector-login/selector-login.module').then( m => m.SelectorLoginPageModule)
+  },
+  {
+  path: 'selector-login',
+  loadChildren: () => import('./pages/selector-login/selector-login.module')
+    .then(m => m.SelectorLoginPageModule)
+  },
+  {
+  path: 'login-mixtura',
+  loadChildren: () => import('./pages/login-mixtura/login-mixtura.module')
+    .then(m => m.LoginMixturaPageModule)
+},
+{
+  path: 'login-meca',
+  loadChildren: () => import('./pages/login-meca/login-meca.module')
+    .then(m => m.LoginMecaPageModule)
+},
+  {
+    path: 'login-mixtura',
+    loadChildren: () => import('./pages/login-mixtura/login-mixtura.module').then( m => m.LoginMixturaPageModule)
+  },
+  {
+    path: 'login-meca',
+    loadChildren: () => import('./pages/login-meca/login-meca.module').then( m => m.LoginMecaPageModule)
+  }
 ];
 
 @NgModule({

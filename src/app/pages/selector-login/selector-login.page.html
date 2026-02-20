@@ -1,0 +1,41 @@
+<ion-content class="main-container ion-padding">
+
+  <div class="header">
+    <h1>Bienvenido</h1>
+    <p>Selecciona tu sistema</p>
+  </div>
+
+  <!-- INTERRUPTOR GRANDE -->
+  <div class="switch-wrapper">
+    <span [class.active]="!isMeca">Mixtura</span>
+
+    <ion-toggle
+      class="big-toggle"
+      [(ngModel)]="isMeca">
+    </ion-toggle>
+
+    <span [class.active]="isMeca">Meca</span>
+  </div>
+
+  <!-- LOGIN DINÁMICO -->
+  <div class="login-card" [ngClass]="{ 'meca-theme': isMeca }">
+
+    <h2>{{ isMeca ? 'Login Meca' : 'Login Mixtura' }}</h2>
+
+    <ion-item>
+      <ion-label position="floating">Correo</ion-label>
+      <ion-input type="email" [(ngModel)]="email"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Contraseña</ion-label>
+      <ion-input type="password" [(ngModel)]="password"></ion-input>
+    </ion-item>
+
+    <ion-button expand="block" shape="round" (click)="login()">
+      Ingresar
+    </ion-button>
+
+  </div>
+
+</ion-content>
