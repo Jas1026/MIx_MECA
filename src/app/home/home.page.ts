@@ -24,6 +24,7 @@ export class HomePage {
       this.zones = data;
     });
   }
+  
   async Login() {
     if (this.nombre == "" || this.tipo == "") {
       this.showError = true;

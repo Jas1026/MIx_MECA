@@ -16,38 +16,34 @@ constructor(
   email = '';
   password = '';
 
-
+ngOnInit() {
+  localStorage.clear();
+}
 login() {
 
-  // 1️⃣ Definir sistema
-  if (this.isMeca) {
-    this.server.setSystem('meca');
-  } else {
-    this.server.setSystem('mixtura');
-  }
+  localStorage.clear(); // limpiar sesión anterior
 
-  // 2️⃣ Llamar API real
-this.server.LoginWithPassword(
-  this.email,
-  this.password,
-  this.isMeca ? 'meca' : 'mixtura'
-)
-    .subscribe((res: any) => {
+const system = this.isMeca ? 'mecapos' : 'mixtura';
 
-      if (res.error === 0) {
+  this.server.LoginWithPassword(
+    this.email,
+    this.password,
+    system
+  ).subscribe((res: any) => {
 
-        localStorage.setItem("token", res.token);
-        localStorage.setItem("user_id", res.id);
-        localStorage.setItem("user_name", res.name);
-        localStorage.setItem("system", this.isMeca ? "meca" : "mixtura");
+    if (res.error === 0) {
 
-        this.router.navigate(['/panel']);
+      localStorage.setItem("user_id", res.id);
+      localStorage.setItem("user_name", res.name);
+      localStorage.setItem("system", system);
 
-      } else {
-        alert(res.message);
-      }
+      this.router.navigate(['/panel']);
 
-    });
+    } else {
+      alert(res.message);
+    }
+
+  });
 }
   }
   

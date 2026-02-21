@@ -11,16 +11,8 @@ export class LoginMixturaPage implements OnInit {
   constructor(private server: ServerContentService) {}
 
   ngOnInit() {
-    this.loadUsers();
+   
   }
 
-  loadUsers() {
-    this.server.LoadUsers().subscribe((res: any) => {
-      if (res.error === 0) {
-        this.users = res.data;
-      } else {
-        alert(res.message);
-      }
-    });
-  }
+
 }

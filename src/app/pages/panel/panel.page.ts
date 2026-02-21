@@ -17,21 +17,20 @@ export class PanelPage implements OnInit {
   ngOnInit() {
     this.checkSession();
   }
+checkSession() {
 
-  checkSession() {
+  const userId = localStorage.getItem("user_id");
+  const system = localStorage.getItem("system");
 
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      alert("No hay sesión activa");
-      this.router.navigate(['/selector-login']);
-      return;
-    }
-  }
-
-  logout() {
-    localStorage.clear();
+  if (!userId || !system) {
+    alert("No hay sesión activa");
     this.router.navigate(['/selector-login']);
+    return;
   }
 
+}
+logout() {
+  localStorage.clear();
+  this.router.navigate(['/selector-login']);
+}
 }
