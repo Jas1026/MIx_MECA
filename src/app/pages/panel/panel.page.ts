@@ -18,9 +18,11 @@ export class PanelPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.checkSession();
-  }
 
+  }
+ionViewWillEnter() {
+  this.checkSession();
+}
   checkSession() {
 
     const userId = localStorage.getItem("user_id");
@@ -44,25 +46,29 @@ export class PanelPage implements OnInit {
 
   loadFlats() {
 
-    const system = localStorage.getItem("system") || '';
+  const system = localStorage.getItem("system") || '';
 
-    this.server.getFlats(system).subscribe((res: any) => {
+  this.server.getFlats(system).subscribe((res: any) => {
 
-      if (res.error === 0) {
-        this.flats = res.data;
-      } else {
-        alert(res.message);
-      }
+    console.log("Flats completos:", res);
 
-    });
+    if (res.error === 0) {
+      this.flats = res.data;
+      console.log("Primer flat:", this.flats[0]);
+    } else {
+      alert(res.message);
+    }
 
-  }
+  });
+
+}
 
   logout() {
     localStorage.clear();
     this.router.navigate(['/selector-login']);
   }
-goToFlat(flat: any) {
-  this.router.navigate(['/flat-detail', flat.id]);
+goToFlat(id: any) {
+  console.log("ID que envío:", id);
+  this.router.navigate(['panel/mesas', id]);
 }
 }

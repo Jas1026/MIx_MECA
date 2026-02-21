@@ -112,7 +112,11 @@ const routes: Routes = [
   {
     path: 'login-meca',
     loadChildren: () => import('./pages/login-meca/login-meca.module').then( m => m.LoginMecaPageModule)
+  },  {
+    path: 'mesas',
+    loadChildren: () => import('./pages/mesas/mesas.module').then( m => m.MesasPageModule)
   }
+
 ];
 
 @NgModule({

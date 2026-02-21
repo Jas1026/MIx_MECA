@@ -1,0 +1,31 @@
+<div class="tables-container">
+
+  <div 
+    class="table-card"
+    *ngFor="let table of tables"
+    [ngClass]="{
+      'active': table.estado === 'Activo',
+      'inactive': table.estado !== 'Activo'
+    }"
+  >
+
+    <div class="status-indicator"></div>
+
+    <div class="table-center">
+      <h2>{{ table.nombre }}</h2>
+      <div class="capacity">
+        👥 {{ table.capacidad }}
+      </div>
+    </div>
+
+    <div class="table-footer">
+      {{ table.estado }}
+    </div>
+
+  </div>
+
+</div>
+
+<div *ngIf="tables.length === 0" class="no-tables">
+  No hay mesas disponibles
+</div>

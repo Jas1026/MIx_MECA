@@ -1,0 +1,74 @@
+.tables-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.table-card {
+  background: white;
+  border-radius: 18px;
+  padding: 20px;
+  position: relative;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.table-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.status-indicator {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
+
+.active .status-indicator {
+  background: #2ecc71;
+}
+
+.inactive .status-indicator {
+  background: #e74c3c;
+}
+
+.table-center h2 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.capacity {
+  font-size: 24px;
+  font-weight: bold;
+  color: #444;
+}
+
+.table-footer {
+  margin-top: 15px;
+  font-weight: 600;
+  padding: 6px;
+  border-radius: 8px;
+}
+
+.active .table-footer {
+  background: #eafaf1;
+  color: #2ecc71;
+}
+
+.inactive .table-footer {
+  background: #fdecea;
+  color: #e74c3c;
+}
+
+.no-tables {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 18px;
+  opacity: 0.6;
+}

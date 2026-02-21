@@ -1,12 +1,23 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-
+import { RouterModule, Routes } from '@angular/router';
 import { PanelPage } from './panel.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: PanelPage
+    component: PanelPage,
+    children: [
+      {
+        path: 'mesas/:id',
+        loadChildren: () =>
+          import('../../pages/mesas/mesas.module').then(m => m.MesasPageModule)
+      },
+      {
+       path: '',
+  redirectTo: '',
+  pathMatch: 'full'
+      }
+    ]
   }
 ];
 

@@ -10,37 +10,22 @@
     </ion-header>
 
     <ion-content class="menu-content">
-
       <ion-list>
 
-        <ion-item 
-          *ngFor="let flat of flats"
-          (click)="goToFlat(flat)"
-          lines="none">
-
+        <ion-item *ngFor="let flat of flats"
+                  (click)="goToFlat(flat.id_flat || flat.Id_flats || flat.id)">
           <ion-icon name="cafe-outline" slot="start"></ion-icon>
-
           <ion-label>
             {{ flat.name }}
-           
           </ion-label>
-
         </ion-item>
 
-        <ion-item >
-          Gestion de usuarios
-        </ion-item>
-        <ion-item >
-         Inventario
-        </ion-item>
-        <ion-item >
-          Compras
-        </ion-item>
-        <ion-item >
-          Informes y reportes
-        </ion-item>   
+        <ion-item>Gestion de usuarios</ion-item>
+        <ion-item>Inventario</ion-item>
+        <ion-item>Compras</ion-item>
+        <ion-item>Informes y reportes</ion-item>
+
       </ion-list>
-
     </ion-content>
 
   </ion-menu>
@@ -51,14 +36,11 @@
     <ion-header>
       <ion-toolbar class="toolbar-cafe">
 
-        <!-- Botón hamburguesa -->
         <ion-buttons slot="start">
           <ion-menu-button></ion-menu-button>
         </ion-buttons>
 
-        <ion-title>
-          {{ systemName }}
-        </ion-title>
+        <ion-title>{{ systemName }}</ion-title>
 
         <ion-buttons slot="end">
           <ion-button fill="clear" (click)="logout()">
@@ -73,16 +55,11 @@
           ☕ Bienvenido
         </div>
       </ion-toolbar>
-
     </ion-header>
 
+    <!-- 👇 SOLO UN ION-CONTENT EN EL PADRE -->
     <ion-content class="dashboard-bg">
-
-      <!-- Área futura -->
-      <div class="content-area">
-        <router-outlet></router-outlet>
-      </div>
-
+      <router-outlet></router-outlet>
     </ion-content>
 
   </div>

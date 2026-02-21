@@ -45,6 +45,15 @@ getFlats(system: string) {
 
   return this.http.post(this.urlService + "get_flats.php", body);
 }
+
+getTables(system: string, id_flat: string) {
+
+  let body = new FormData();
+  body.append("system", system);
+  body.append("id_flat", id_flat);
+
+  return this.http.post(this.urlService + "get_tables.php", body);
+}
 //BRIEF------------------------
  LoadBrief () {
   return this.http.get(this.urlService + "brief.php");
