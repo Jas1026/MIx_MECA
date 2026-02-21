@@ -38,7 +38,13 @@ LoginWithPassword(code: string, password: string, system: string) {
     bodyLogin.append("id_user", localStorage.getItem("id_user") || "");
     return this.http.post(this.urlService + "logout.php", bodyLogin);
   }
+getFlats(system: string) {
 
+  let body = new FormData();
+  body.append("system", system);
+
+  return this.http.post(this.urlService + "get_flats.php", body);
+}
 //BRIEF------------------------
  LoadBrief () {
   return this.http.get(this.urlService + "brief.php");

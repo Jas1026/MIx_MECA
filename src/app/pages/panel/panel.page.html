@@ -1,13 +1,90 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>panel</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-app>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">panel</ion-title>
-    </ion-toolbar>
-  </ion-header>
-</ion-content>
+  <!-- MENU LATERAL -->
+  <ion-menu contentId="main-content" side="start" menuId="flatsMenu">
+
+    <ion-header>
+      <ion-toolbar color="light">
+        <ion-title>☕ Pisos</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="menu-content">
+
+      <ion-list>
+
+        <ion-item 
+          *ngFor="let flat of flats"
+          (click)="goToFlat(flat)"
+          lines="none">
+
+          <ion-icon name="cafe-outline" slot="start"></ion-icon>
+
+          <ion-label>
+            {{ flat.name }}
+           
+          </ion-label>
+
+        </ion-item>
+
+        <ion-item >
+          Gestion de usuarios
+        </ion-item>
+        <ion-item >
+         Inventario
+        </ion-item>
+        <ion-item >
+          Compras
+        </ion-item>
+        <ion-item >
+          Informes y reportes
+        </ion-item>   
+      </ion-list>
+
+    </ion-content>
+
+  </ion-menu>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="ion-page" id="main-content">
+
+    <ion-header>
+      <ion-toolbar class="toolbar-cafe">
+
+        <!-- Botón hamburguesa -->
+        <ion-buttons slot="start">
+          <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+
+        <ion-title>
+          {{ systemName }}
+        </ion-title>
+
+        <ion-buttons slot="end">
+          <ion-button fill="clear" (click)="logout()">
+            <ion-icon name="log-out-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+
+      </ion-toolbar>
+
+      <ion-toolbar class="sub-toolbar">
+        <div class="welcome-box">
+          ☕ Bienvenido
+        </div>
+      </ion-toolbar>
+
+    </ion-header>
+
+    <ion-content class="dashboard-bg">
+
+      <!-- Área futura -->
+      <div class="content-area">
+        <router-outlet></router-outlet>
+      </div>
+
+    </ion-content>
+
+  </div>
+
+</ion-app>

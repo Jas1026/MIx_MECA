@@ -21,8 +21,9 @@ ngOnInit() {
 }
 login() {
 
-  localStorage.clear(); // limpiar sesión anterior
 
+localStorage.clear();
+sessionStorage.clear();
 const system = this.isMeca ? 'mecapos' : 'mixtura';
 
   this.server.LoginWithPassword(

@@ -1,0 +1,51 @@
+/* Toolbar principal */
+.toolbar-cafe {
+  --background: linear-gradient(90deg, #6f4e37, #8b5e3c);
+  --color: white;
+}
+
+/* Subtoolbar bienvenida */
+.sub-toolbar {
+  --background: #f5e6d3;
+}
+
+.welcome-box {
+  padding: 10px 20px;
+  font-size: 15px;
+  color: #5c4033;
+}
+
+/* Fondo general */
+.dashboard-bg {
+  --background: #fff8f0;
+}
+
+/* Menu lateral */
+.menu-content {
+  --background: #fdf3e7;
+}
+
+ion-item {
+  --background: transparent;
+  border-radius: 12px;
+  margin: 6px 10px;
+}
+
+ion-item:hover {
+  background: #f3e1d1;
+}
+
+/* Estado */
+.active {
+  color: #2e8b57;
+  font-size: 12px;
+}
+
+.inactive {
+  color: #b22222;
+  font-size: 12px;
+}
+
+.content-area {
+  padding: 20px;
+}
