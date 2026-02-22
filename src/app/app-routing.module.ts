@@ -82,6 +82,16 @@ const routes: Routes = [
     path: 'panel',
     loadChildren: () => import('./pages/panel/panel.module').then( m => m.PanelPageModule)
   },
+{
+  path: 'panel/cocina/:id',
+  loadChildren: () => import('./pages/cocina/cocina.module').then(m => m.CocinaPageModule)
+},
+
+{
+  path: 'facturacion/:id',
+  loadChildren: () => import('./pages/facturacion/facturacion.module')
+    .then(m => m.FacturacionPageModule)
+},
   {
     path: 'extra-cost',
     loadChildren: () => import('./popovers/extra-cost/extra-cost.module').then( m => m.ExtraCostPageModule)
@@ -112,10 +122,20 @@ const routes: Routes = [
   {
     path: 'login-meca',
     loadChildren: () => import('./pages/login-meca/login-meca.module').then( m => m.LoginMecaPageModule)
-  },  {
+  },
+  {
     path: 'mesas',
     loadChildren: () => import('./pages/mesas/mesas.module').then( m => m.MesasPageModule)
+  },
+  {
+    path: 'cocina',
+    loadChildren: () => import('./pages/cocina/cocina.module').then( m => m.CocinaPageModule)
+  },
+  {
+    path: 'facturacion',
+    loadChildren: () => import('./pages/facturacion/facturacion.module').then( m => m.FacturacionPageModule)
   }
+
 
 ];
 

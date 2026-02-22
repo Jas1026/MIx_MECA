@@ -54,6 +54,100 @@ getTables(system: string, id_flat: string) {
 
   return this.http.post(this.urlService + "get_tables.php", body);
 }
+
+getCategories() {
+  return this.http.get(this.urlService + "get_categories.php");
+}
+
+getProductsByCategory(id_category: string) {
+  let body = new FormData();
+  body.append("id_category", id_category);
+  return this.http.post(this.urlService + "get_products_by_category.php", body);
+}
+
+createOrder(id_table: string, id_user: string, products: any[]) {
+  let body = new FormData();
+  body.append("id_table", id_table);
+  body.append("id_user", id_user);
+  body.append("products", JSON.stringify(products));
+
+  return this.http.post(this.urlService + "create_order.php", body);
+}
+
+updateOrderStatus(id_order: string, status: string) {
+  let body = new FormData();
+  body.append("id_order", id_order);
+  body.append("status", status);
+
+  return this.http.post(this.urlService + "update_order_status.php", body);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+getKitchens() {
+  return this.http.get(this.urlService + "get_kitchens.php");
+}
+
+getKitchenOrders(kitchenId: any) {
+  return this.http.get(
+    this.urlService + "get_kitchen_orders.php?kitchen_id=" + kitchenId
+  );
+}
+updateDetailStatus(detailId: number) {
+  return this.http.post(
+    'http://localhost/api/update_detail_status.php',
+    {
+      detail_id: detailId,
+      status: 'ready'
+    }
+  );
+}
+
+deliverOrder(orderId: number) {
+  return this.http.post(
+    'http://localhost/api/deliver_order.php',
+    { order_id: orderId }
+  );
+}
+
+getOrderDetails(orderId: number) {
+  return this.http.get(
+    `http://localhost/api/get_order_details.php?order_id=${orderId}`
+  );
+}
+closeOrder(orderId: number){
+    return this.http.get(
+    `http://localhost/api/close_ordercobrar.php?order_id=${orderId}`
+  );
+}
+
+
+
+payOrder(orderId: any, method: string) {
+  const formData = new FormData();
+  formData.append("order_id", orderId);
+  formData.append("payment_method", method);
+  return this.http.post(
+    this.urlService + "pay_order.php",
+    formData
+  );
+}
+
+
+
+
+
+
+
 //BRIEF------------------------
  LoadBrief () {
   return this.http.get(this.urlService + "brief.php");

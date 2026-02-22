@@ -12,6 +12,11 @@ const routes: Routes = [
         loadChildren: () =>
           import('../../pages/mesas/mesas.module').then(m => m.MesasPageModule)
       },
+       {
+      path: 'cocina/:id',
+      loadChildren: () =>
+          import('../../pages/cocina/cocina.module').then(m => m.CocinaPageModule)
+    },
       {
        path: '',
   redirectTo: '',

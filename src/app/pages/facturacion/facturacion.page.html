@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Facturación</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-card *ngFor="let d of details">
+    <ion-card-content>
+      {{ d.nombre_producto }} x{{ d.quantity }}
+      <br>
+      S/ {{ d.total_price }}
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      TOTAL: S/ {{ total }}
+    </ion-card-header>
+  </ion-card>
+<ion-button expand="block" color="success" (click)="closeOrder()">
+  COBRAR
+</ion-button>
+
+</ion-content>

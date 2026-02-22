@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ServerContentService } from '../../services/server-content.service';
 import { Router } from '@angular/router';
-
+import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-panel',
   templateUrl: './panel.page.html',
@@ -11,11 +11,12 @@ export class PanelPage implements OnInit {
 
   systemName: string = '';
   flats: any[] = [];
-
-  constructor(
-    private server: ServerContentService,
-    private router: Router
-  ) {}
+  kitchens: any[] = [];
+constructor(
+  private server: ServerContentService,
+  private router: Router,
+  private route: ActivatedRoute
+) {}
 
   ngOnInit() {
 
@@ -41,7 +42,8 @@ ionViewWillEnter() {
       this.systemName = 'MECAPOS';
     }
 
-    this.loadFlats();
+   this.loadFlats();
+   this.loadKitchens();
   }
 
   loadFlats() {
@@ -70,5 +72,20 @@ ionViewWillEnter() {
 goToFlat(id: any) {
   console.log("ID que envío:", id);
   this.router.navigate(['panel/mesas', id]);
+}
+
+loadKitchens() {
+  this.server.getKitchens().subscribe((res: any) => {
+    console.log("Kitchens:", res);
+
+    if (res.error === 0) {
+      this.kitchens = res.data;
+      console.log("Primera cocina:", this.kitchens[0]);
+    }
+  });
+}
+goToKitchen(id: any) {
+  console.log("Navegando a cocina:", id);
+  this.router.navigate(['cocina', id], { relativeTo: this.route });
 }
 }

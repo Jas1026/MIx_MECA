@@ -1,13 +1,10 @@
 <div class="tables-container">
 
-  <div 
-    class="table-card"
-    *ngFor="let table of tables"
-    [ngClass]="{
-      'active': table.estado === 'Activo',
-      'inactive': table.estado !== 'Activo'
-    }"
-  >
+<div 
+  class="table-card"
+  *ngFor="let table of tables"
+  (click)="openOrderModal(table)"
+>
 
     <div class="status-indicator"></div>
 
@@ -22,6 +19,28 @@
       {{ table.estado }}
     </div>
 
+<ion-card *ngFor="let mesa of tables">
+
+  <ion-card-header>
+    Mesa {{ mesa.numero }}
+  </ion-card-header>
+
+  <ion-card-content>
+
+    Estado: {{ mesa.estado }}
+
+    <!-- 🔥 BOTÓN FACTURAR SOLO SI ESTÁ READY -->
+    <ion-button 
+      *ngIf="mesa.status === 'ready'"
+      color="success"
+      expand="block"
+      (click)="irFacturacion(mesa.id_order)">
+      FACTURAR
+    </ion-button>
+
+  </ion-card-content>
+
+</ion-card>
   </div>
 
 </div>

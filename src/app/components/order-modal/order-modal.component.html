@@ -1,0 +1,115 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <ion-title>
+      Pedido - Mesa {{ table?.nombre }}
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <div class="modal-container">
+
+    <!-- COLUMNA IZQUIERDA -->
+    <div class="left-panel">
+
+      <!-- CATEGORIAS -->
+      <ng-container *ngIf="viewMode === 'categories'">
+
+        <ion-list>
+          <ion-item 
+            button 
+            *ngFor="let cat of categories"
+            (click)="selectCategory(cat)">
+
+            <ion-label>
+              {{ cat.name }}
+            </ion-label>
+
+            <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+
+          </ion-item>
+        </ion-list>
+
+      </ng-container>
+
+      <!-- PRODUCTOS -->
+      <ng-container *ngIf="viewMode === 'products'">
+
+        <ion-item lines="none">
+          <ion-button fill="clear" (click)="goBack()">
+            <ion-icon name="chevron-back-outline"></ion-icon>
+            Volver
+          </ion-button>
+        </ion-item>
+
+        <h2 class="category-title">
+          {{ currentCategoryName }}
+        </h2>
+
+        <ion-list>
+          <ion-item 
+            button
+            *ngFor="let product of products"
+            (click)="addProduct(product)">
+
+            <ion-label>
+              {{ product.name }}
+            </ion-label>
+
+            <ion-note slot="end">
+              S/ {{ product.price }}
+            </ion-note>
+
+          </ion-item>
+        </ion-list>
+
+      </ng-container>
+
+    </div>
+
+
+    <!-- COLUMNA DERECHA (CARRITO) -->
+    <div class="right-panel">
+
+      <h2>🛒 Pedido</h2>
+
+      <ion-list *ngIf="cart.length > 0">
+
+        <ion-item *ngFor="let item of cart">
+
+          <ion-label>
+            {{ item.name }} x{{ item.quantity }}
+          </ion-label>
+
+          <ion-note slot="end">
+            S/ {{ item.price * item.quantity }}
+          </ion-note>
+
+        </ion-item>
+
+      </ion-list>
+
+      <div *ngIf="cart.length === 0" class="empty-cart">
+        Sin productos
+      </div>
+
+      <div class="total-section">
+        Total: <strong>S/ {{ getTotal() }}</strong>
+      </div>
+
+      <ion-button 
+        expand="block" 
+        color="success"
+        (click)="confirmOrder()">
+        Confirmar Pedido
+      </ion-button>
+
+    </div>
+
+  </div>
+
+</ion-content>

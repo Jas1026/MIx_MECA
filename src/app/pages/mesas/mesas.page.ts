@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ServerContentService } from '../../services/server-content.service';
-
+import { ModalController } from '@ionic/angular';
+import { OrderModalComponent } from '../../components/order-modal/order-modal.component';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-mesas',
   templateUrl: './mesas.page.html',
@@ -12,10 +14,12 @@ export class MesasPage implements OnInit {
   tables: any[] = [];
   flatId: string = '';
 
-  constructor(
-    private route: ActivatedRoute,
-    private server: ServerContentService
-  ) {}
+constructor(
+  private route: ActivatedRoute,
+  private server: ServerContentService,
+  private modalCtrl: ModalController,
+  private router: Router,
+) {}
 
 ngOnInit() {
 
@@ -44,5 +48,19 @@ loadTables() {
 
     });
 
+}
+async openOrderModal(table: any) {
+
+  const modal = await this.modalCtrl.create({
+    component: OrderModalComponent,
+    componentProps: {
+      table: table
+    }
+  });
+
+  await modal.present();
+}
+irFacturacion(orderId: number) {
+  this.router.navigate(['/facturacion', orderId]);
 }
 }
