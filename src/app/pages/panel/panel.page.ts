@@ -50,7 +50,7 @@ ionViewWillEnter() {
 
   const system = localStorage.getItem("system") || '';
 
-  this.server.getFlats(system).subscribe((res: any) => {
+this.server.getFlats().subscribe((res: any) => {
 
     console.log("Flats completos:", res);
 

@@ -39,7 +39,7 @@ loadTables() {
 
   const system = localStorage.getItem("system") || '';
 
-  this.server.getTables(system, this.flatId)
+this.server.getTables(this.flatId)
     .subscribe((res: any) => {
 
       console.log("Respuesta mesas:", res);

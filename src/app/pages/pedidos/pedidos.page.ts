@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ServerContentService } from 'src/app/services/server-content.service';
 import { ModalController } from '@ionic/angular';
 import { IonDatetime } from '@ionic/angular';
+import { OrderModalComponent } from 'src/app/components/order-modal/order-modal.component';
 @Component({
   selector: 'app-pedidos',
   templateUrl: './pedidos.page.html',
@@ -84,5 +85,24 @@ fechaSeleccionada(event: any, modal: any) {
 
   }
 
+}
+
+async editarPedido(p: any) {
+
+  const modal = await this.modalCtrl.create({
+    component: OrderModalComponent,
+    componentProps: {
+      order_id: p.order_id,
+      editMode: true
+    }
+  });
+
+  modal.onDidDismiss().then(res => {
+    if (res.data) {
+      this.cargarPedidos();
+    }
+  });
+
+  await modal.present();
 }
 }

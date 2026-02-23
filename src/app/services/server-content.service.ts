@@ -7,149 +7,188 @@ import { Injectable } from '@angular/core';
 export class ServerContentService {
 
   private urlService = "http://localhost/api/";
-//private urlService = "http://192.168.88.204/api/mixtura/posAdmin/index.php/";
 
   constructor(private http: HttpClient) { }
-//LOGIN------------------------
-setSystem(system: 'mixtura' | 'meca') {
-  if (system === 'mixtura') {
-    this.urlService = "http://localhost/api/";
-  } else {
-    this.urlService = "http://localhost/api/";
+
+  // 🔥 Obtener sistema actual
+  private getSystem(): string {
+    return localStorage.getItem('system') || 'mecapos';
   }
-}
-LoginWithPassword(code: string, password: string, system: string) {
-  let body = new FormData();
-  body.append("code", code);
-  body.append("password", password);
-  body.append("system", system);
 
-  return this.http.post(this.urlService + "login_user.php", body);
-}
-  Login (code:string, floor:string) {
-    let bodyLogin = new FormData();
-    bodyLogin.append("code", code);
-    bodyLogin.append("user_type", floor);
-    return this.http.post(this.urlService + "login.php", bodyLogin);
+  // ---------------- LOGIN ----------------
+
+  LoginWithPassword(code: string, password: string, system: string) {
+    let body = new FormData();
+    body.append("code", code);
+    body.append("password", password);
+    body.append("system", system);
+
+    return this.http.post(this.urlService + "login_user.php", body);
   }
-  Logout () {
-    let bodyLogin = new FormData();
-    bodyLogin.append("user_cash", localStorage.getItem("cash_id") || "");
-    bodyLogin.append("id_user", localStorage.getItem("id_user") || "");
-    return this.http.post(this.urlService + "logout.php", bodyLogin);
+
+  Login(code: string, floor: string) {
+    let body = new FormData();
+    body.append("code", code);
+    body.append("user_type", floor);
+    body.append("system", this.getSystem());
+
+    return this.http.post(this.urlService + "login.php", body);
   }
-getFlats(system: string) {
 
-  let body = new FormData();
-  body.append("system", system);
+  Logout() {
+    let body = new FormData();
+    body.append("user_cash", localStorage.getItem("cash_id") || "");
+    body.append("id_user", localStorage.getItem("id_user") || "");
+    body.append("system", this.getSystem());
 
-  return this.http.post(this.urlService + "get_flats.php", body);
-}
+    return this.http.post(this.urlService + "logout.php", body);
+  }
 
-getTables(system: string, id_flat: string) {
+  // ---------------- PISOS Y MESAS ----------------
 
-  let body = new FormData();
-  body.append("system", system);
-  body.append("id_flat", id_flat);
+  getFlats() {
+    let body = new FormData();
+    body.append("system", this.getSystem());
 
-  return this.http.post(this.urlService + "get_tables.php", body);
-}
+    return this.http.post(this.urlService + "get_flats.php", body);
+  }
 
-getCategories() {
-  return this.http.get(this.urlService + "get_categories.php");
-}
+  getTables(id_flat: string) {
+    let body = new FormData();
+    body.append("id_flat", id_flat);
+    body.append("system", this.getSystem());
 
-getProductsByCategory(id_category: string) {
-  let body = new FormData();
-  body.append("id_category", id_category);
-  return this.http.post(this.urlService + "get_products_by_category.php", body);
-}
+    return this.http.post(this.urlService + "get_tables.php", body);
+  }
 
-createOrder(id_table: string, id_user: string, products: any[]) {
-  let body = new FormData();
-  body.append("id_table", id_table);
-  body.append("id_user", id_user);
-  body.append("products", JSON.stringify(products));
+  // ---------------- PRODUCTOS ----------------
 
-  return this.http.post(this.urlService + "create_order.php", body);
-}
+  getCategories() {
+    let body = new FormData();
+    body.append("system", this.getSystem());
 
-updateOrderStatus(id_order: string, status: string) {
-  let body = new FormData();
-  body.append("id_order", id_order);
-  body.append("status", status);
+    return this.http.post(this.urlService + "get_categories.php", body);
+  }
 
-  return this.http.post(this.urlService + "update_order_status.php", body);
-}
+  getProductsByCategory(id_category: string) {
+    let body = new FormData();
+    body.append("id_category", id_category);
+    body.append("system", this.getSystem());
+
+    return this.http.post(this.urlService + "get_products_by_category.php", body);
+  }
+
+  // ---------------- ÓRDENES ----------------
+
+  createOrder(id_table: string, id_user: string, products: any[]) {
+    let body = new FormData();
+    body.append("id_table", id_table);
+    body.append("id_user", id_user);
+    body.append("products", JSON.stringify(products));
+    body.append("system", this.getSystem());
+
+    return this.http.post(this.urlService + "create_order.php", body);
+  }
+
+  updateOrderStatus(id_order: string, status: string) {
+    let body = new FormData();
+    body.append("id_order", id_order);
+    body.append("status", status);
+    body.append("system", this.getSystem());
+
+    return this.http.post(this.urlService + "update_order_status.php", body);
+  }
+
+  updateOrder(order_id: any, cart: any[]) {
+    const formData = new FormData();
+    formData.append('order_id', order_id);
+    formData.append('products', JSON.stringify(cart));
+    formData.append("system", this.getSystem());
+
+    return this.http.post(`${this.urlService}update_order.php`, formData);
+  }
+
+  // ---------------- COCINA ----------------
+
+  getKitchens() {
+    let body = new FormData();
+    body.append("system", this.getSystem());
+
+    return this.http.post(this.urlService + "get_kitchens.php", body);
+  }
+
+  getKitchenOrders(kitchenId: any) {
+    let body = new FormData();
+    body.append("kitchen_id", kitchenId);
+    body.append("system", this.getSystem());
+
+    return this.http.post(this.urlService + "get_kitchen_orders.php", body);
+  }
+
+  updateDetailStatus(detailId: number) {
+    let body = new FormData();
+    body.append("detail_id", detailId.toString());
+    body.append("status", "ready");
+    body.append("system", this.getSystem());
+
+    return this.http.post(this.urlService + "update_detail_status.php", body);
+  }
+
+  deliverOrder(orderId: number) {
+    let body = new FormData();
+    body.append("order_id", orderId.toString());
+    body.append("system", this.getSystem());
+
+    return this.http.post(this.urlService + "deliver_order.php", body);
+  }
+
+  getOrderDetails(order_id: number) {
+    let body = new FormData();
+    body.append("order_id", order_id.toString());
+    body.append("system", this.getSystem());
+
+    return this.http.post(this.urlService + "get_order_details.php", body);
+  }
+
+  closeOrder(orderId: number) {
+    let body = new FormData();
+    body.append("order_id", orderId.toString());
+    body.append("system", this.getSystem());
+
+    return this.http.post(this.urlService + "close_order.php", body);
+  }
+
+  saveInvoiceData(orderId: number, nombre: string, nit: string) {
+    let body = new FormData();
+    body.append("order_id", orderId.toString());
+    body.append("client_name", nombre);
+    body.append("client_nit", nit);
+    body.append("system", this.getSystem());
+
+    return this.http.post(this.urlService + "save_invoice_data.php", body);
+  }
+
+  // ---------------- REPORTES ----------------
+
+  getAllOrders() {
+    let body = new FormData();
+    body.append("system", this.getSystem());
+
+    return this.http.post(this.urlService + "get_all_orders.php", body);
+  }
+
+  getWaiters() {
+    let body = new FormData();
+    body.append("system", this.getSystem());
+
+    return this.http.post(this.urlService + "get_waiters.php", body);
+  }
 
 
 
 
 
 
-
-
-
-
-
-
-getKitchens() {
-  return this.http.get(this.urlService + "get_kitchens.php");
-}
-
-getKitchenOrders(kitchenId: any) {
-  return this.http.get(
-    this.urlService + "get_kitchen_orders.php?kitchen_id=" + kitchenId
-  );
-}
-updateDetailStatus(detailId: number) {
-  return this.http.post(
-    'http://localhost/api/update_detail_status.php',
-    {
-      detail_id: detailId,
-      status: 'ready'   // <-- siempre 'ready'
-    }
-  );
-}
-
-deliverOrder(orderId: number) {
-  return this.http.post(
-    'http://localhost/api/deliver_order.php',
-    { order_id: orderId }
-  );
-}
-
-getOrderDetails(orderId: number) {
-  return this.http.get(
-    `http://localhost/api/get_order_details.php?order_id=${orderId}`
-  );
-}
-closeOrder(orderId: number){
-  return this.http.post(
-    this.urlService + 'close_order.php',
-    { order_id: orderId }
-  );
-}
-
-saveInvoiceData(orderId: number, nombre: string, nit: string) {
-  return this.http.post(
-    this.urlService + 'save_invoice_data.php',
-    {
-      order_id: orderId,
-      client_name: nombre,
-      client_nit: nit
-    }
-  );
-}
-
-getAllOrders() {
-  return this.http.get(
-    this.urlService + 'get_all_orders.php'
-  );
-}
-getWaiters() {
-  return this.http.get(this.urlService + 'get_waiters.php');
-}
 
 
 
@@ -165,12 +204,6 @@ payOrder(orderId: any, method: string) {
     formData
   );
 }
-
-
-
-
-
-
 
 //BRIEF------------------------
  LoadBrief () {

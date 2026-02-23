@@ -17,7 +17,8 @@ import { ModalController } from '@ionic/angular';
   ]
 })
 export class OrderModalComponent implements OnInit {
-
+@Input() order_id: any;
+@Input() editMode: boolean = false;
   @Input() table: any;
 
   categories: any[] = [];
@@ -33,8 +34,31 @@ currentCategoryName: string = '';
   ) {}
 
   ngOnInit() {
-    this.loadCategories();
+  this.loadCategories();
+
+  if (this.editMode && this.order_id) {
+    this.loadOrderDetails();
   }
+  }
+  loadOrderDetails() {
+
+  this.server.getOrderDetails(this.order_id)
+    .subscribe((res: any) => {
+
+      if (res.error === 0) {
+
+        this.cart = res.data.map((item: any) => ({
+          id_product: item.product_id,
+          name: item.nombre_producto,
+          price: item.unit_price,
+          quantity: item.quantity
+        }));
+
+      }
+
+    });
+
+}
   loadCategories() {
   this.server.getCategories().subscribe((res: any) => {
     this.categories = res.data || res;
@@ -93,13 +117,28 @@ goBack() {
     return this.cart.reduce((sum, item) =>
       sum + (item.price * item.quantity), 0);
   }
+confirmOrder() {
 
-  confirmOrder() {
+  if (this.cart.length === 0) {
+    alert("Agrega productos primero");
+    return;
+  }
 
-    if (this.cart.length === 0) {
-      alert("Agrega productos primero");
-      return;
-    }
+  if (this.editMode) {
+
+    this.server.updateOrder(this.order_id, this.cart)
+      .subscribe((res: any) => {
+
+        if (res.error === 0) {
+          alert("Pedido actualizado");
+          this.modalCtrl.dismiss(true);
+        } else {
+          alert("Error actualizando pedido");
+        }
+
+      });
+
+  } else {
 
     const id_user = localStorage.getItem("user_id") || '';
 
@@ -109,13 +148,13 @@ goBack() {
         if (res.error === 0) {
           alert("Pedido creado");
           this.modalCtrl.dismiss(true);
-        } else {
-          alert("Error creando pedido");
         }
 
       });
+
   }
 
+}
   close() {
     this.modalCtrl.dismiss();
   }
