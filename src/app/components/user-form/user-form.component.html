@@ -1,0 +1,119 @@
+<ion-header>
+  <ion-toolbar class="toolbar-cafe">
+    <ion-title>
+      {{ isEdit ? 'Editar Usuario' : 'Nuevo Usuario' }}
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="dismiss()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="dashboard-bg">
+
+  <div class="form-card">
+
+    <form [formGroup]="form">
+
+      <!-- Nombre -->
+      <div class="field-group">
+        <label class="field-label">Nombre completo</label>
+        <ion-input
+          placeholder="Ej: Juan Pérez"
+          formControlName="name"
+          class="custom-input">
+        </ion-input>
+        <small class="field-help">
+          Nombre visible dentro del sistema
+        </small>
+      </div>
+
+      <!-- Código -->
+      <div class="field-group">
+        <label class="field-label">Código de usuario</label>
+        <ion-input
+          placeholder="Ej: EMP001"
+          formControlName="code"
+          class="custom-input">
+        </ion-input>
+        <small class="field-help">
+          Código único para iniciar sesión
+        </small>
+      </div>
+
+      <!-- Rol -->
+      <div class="field-group">
+        <label class="field-label">Rol del usuario</label>
+        <ion-select
+          interface="popover"
+          placeholder="Seleccione un rol"
+          formControlName="role_id"
+          class="custom-input">
+
+          <ion-select-option value="1">
+            Administrador
+          </ion-select-option>
+
+          <ion-select-option value="2">
+            Jefe de cocina
+          </ion-select-option>
+
+          <ion-select-option value="3">
+            Mesero
+          </ion-select-option>
+
+        </ion-select>
+
+        <small class="field-help">
+          Define los permisos dentro del sistema
+        </small>
+      </div>
+
+      <!-- Contraseña -->
+      <div class="field-group" >
+        <label class="field-label">Contraseña</label>
+        <ion-input
+          type="password"
+          placeholder="Mínimo 6 caracteres"
+          formControlName="password"
+          class="custom-input">
+        </ion-input>
+      </div>
+
+      <!-- Estado -->
+      <div class="field-group">
+        <label class="field-label">Estado</label>
+        <ion-select
+          interface="popover"
+          formControlName="state"
+          class="custom-input">
+
+          <ion-select-option value="activo">
+            Activo
+          </ion-select-option>
+
+          <ion-select-option value="inactivo">
+            Inactivo
+          </ion-select-option>
+
+        </ion-select>
+      </div>
+
+      <!-- Botón -->
+      <ion-button
+        expand="block"
+        class="btn-save"
+        (click)="save()">
+
+        {{ isEdit ? 'Actualizar Usuario' : 'Crear Usuario' }}
+
+      </ion-button>
+
+    </form>
+
+  </div>
+
+</ion-content>

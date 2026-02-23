@@ -28,6 +28,11 @@ const routes: Routes = [
           .then(m => m.InventarioPageModule)
       },
       {
+        path: 'users',
+        loadChildren: () => import('../users/users.module')
+          .then(m => m.UsersPageModule)
+      },  
+      {
         path: '',
         redirectTo: '',
         pathMatch: 'full'

@@ -135,16 +135,20 @@ const routes: Routes = [
   path: 'facturacion/:id',
   loadChildren: () => import('./pages/facturacion/facturacion.module')
     .then(m => m.FacturacionPageModule)
-},  {
+},
+  {
     path: 'pedidos',
     loadChildren: () => import('./pages/pedidos/pedidos.module').then( m => m.PedidosPageModule)
   },
   {
     path: 'inventario',
     loadChildren: () => import('./pages/inventario/inventario.module').then( m => m.InventarioPageModule)
-  }
+  },
+{
+path: 'users',
+loadChildren: () => import('./pages/users/users.module').then( m => m.UsersPageModule)
 
-
+}
 
 ];
 

@@ -1,0 +1,17 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ title }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <p>{{ message }}</p>
+
+  <ion-button expand="block" color="danger" (click)="confirm()">
+    Confirmar
+  </ion-button>
+
+  <ion-button expand="block" fill="outline" (click)="cancel()">
+    Cancelar
+  </ion-button>
+</ion-content>

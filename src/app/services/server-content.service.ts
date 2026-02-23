@@ -15,6 +15,40 @@ export class ServerContentService {
     return localStorage.getItem('system') || 'mecapos';
   }
 
+
+
+    
+  //USUARIOS------------------------
+LoadUsers() {
+  return this.http.get('http://localhost/api/loadUsers.php');
+}
+createUser(data: any) {
+  return this.http.post('http://localhost/api/create_user.php', data);
+}
+updateUser(data: any) {
+  return this.http.post(
+    'http://localhost/api/update_user.php',
+    data
+  );
+}
+
+inactivateUser(id: number) {
+
+  this.http.post('http://localhost/api/inactivar_usuario.php', {
+    id: id
+  }).subscribe({
+    next: (resp: any) => {
+      console.log(resp);
+       // si tienes función para recargar
+    },
+    error: (err) => {
+      console.error(err);
+    }
+  });
+
+}
+
+
   // ---------------- LOGIN ----------------
 
   LoginWithPassword(code: string, password: string, system: string) {

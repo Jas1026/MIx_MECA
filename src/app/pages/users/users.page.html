@@ -1,0 +1,115 @@
+<ion-header>
+  <ion-toolbar class="toolbar-cafe">
+    <ion-title>Gestión de Usuarios</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="addUser()">
+        <ion-icon name="person-add-outline" slot="start"></ion-icon>
+        Añadir
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="dashboard-bg">
+
+  <ion-card class="table-card">
+
+    <!-- 🔎 FILTROS -->
+    <ion-grid>
+      <ion-row class="filters-row ion-align-items-center">
+
+        <ion-col size="4">
+          <ion-input
+            placeholder="Buscar por nombre..."
+            fill="outline">
+          </ion-input>
+        </ion-col>
+
+        <ion-col size="3">
+          <ion-select placeholder="Filtrar por rol" fill="outline">
+            <ion-select-option value="admin">Admin</ion-select-option>
+            <ion-select-option value="conductor">Conductor</ion-select-option>
+          </ion-select>
+        </ion-col>
+
+        <ion-col size="3">
+          <ion-select placeholder="Estado" fill="outline">
+            <ion-select-option value="1">Activo</ion-select-option>
+            <ion-select-option value="0">Inactivo</ion-select-option>
+          </ion-select>
+        </ion-col>
+
+        <ion-col size="2">
+          <ion-button expand="block" color="medium">
+            Limpiar
+          </ion-button>
+        </ion-col>
+
+      </ion-row>
+    </ion-grid>
+
+    <!-- 📋 TABLA -->
+    <ion-grid>
+
+      <!-- Header -->
+      <ion-row class="header-row ion-align-items-center">
+        <ion-col size="3">Nombre</ion-col>
+        <ion-col size="2">Código</ion-col>
+        <ion-col size="2">Rol</ion-col>
+        <ion-col size="2">Estado</ion-col>
+        <ion-col size="3" class="text-center">Acciones</ion-col>
+      </ion-row>
+
+      <!-- Filas -->
+      <ion-row 
+        *ngFor="let user of users" 
+        class="data-row ion-align-items-center"
+      >
+
+        <ion-col size="3">{{ user.name }}</ion-col>
+        <ion-col size="2">{{ user.code }}</ion-col>
+        <ion-col size="2">{{ user.role }}</ion-col>
+
+        <!-- Estado corregido -->
+        <ion-col size="2">
+          <ion-badge 
+            [color]="user.state == 1 ? 'success' : 'danger'">
+            {{ user.state == 1 ? 'Activo' : 'Inactivo' }}
+          </ion-badge>
+        </ion-col>
+
+        <!-- Acciones -->
+        <ion-col size="3" class="text-center">
+<ion-button 
+  size="small"
+  fill="solid"
+  color="primary"
+  shape="round"
+  (click)="editUser(user)">
+  <ion-icon name="create-outline"></ion-icon>
+</ion-button>
+
+          <ion-button 
+            size="small"
+            fill="solid"
+            color="danger"
+            shape="round" >
+            <ion-icon name="trash-outline"  color="warning" (click)="openConfirmModal(user)"></ion-icon>
+          </ion-button>
+
+        </ion-col>
+
+      </ion-row>
+
+    </ion-grid>
+
+    <!-- Estado vacío -->
+    <div *ngIf="users.length === 0" class="empty-state">
+      <ion-icon name="people-outline"></ion-icon>
+      <p>No hay usuarios registrados</p>
+    </div>
+
+  </ion-card>
+
+</ion-content>
