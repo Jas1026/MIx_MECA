@@ -1,26 +1,77 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Facturación</ion-title>
+    <ion-title>Factura #{{ orderId }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-padding">
 
-  <ion-card *ngFor="let d of details">
+  <!-- 🔥 FORMULARIO CLIENTE -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Datos del Cliente</ion-card-title>
+    </ion-card-header>
+
     <ion-card-content>
-      {{ d.nombre_producto }} x{{ d.quantity }}
-      <br>
-      S/ {{ d.total_price }}
+
+      <ion-item>
+        <ion-label position="stacked">Nombre / Razón Social</ion-label>
+        <ion-input [(ngModel)]="cliente.nombre"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">NIT / CI</ion-label>
+        <ion-input [(ngModel)]="cliente.nit"></ion-input>
+      </ion-item>
+
     </ion-card-content>
   </ion-card>
 
-  <ion-card>
-    <ion-card-header>
-      TOTAL: S/ {{ total }}
-    </ion-card-header>
-  </ion-card>
-<ion-button expand="block" color="success" (click)="closeOrder()">
-  COBRAR
-</ion-button>
+  <!-- 🔥 FACTURA IMPRIMIBLE -->
+  <div id="factura">
+
+    <h2 style="text-align:center;">MIXURA - MECA</h2>
+    <p style="text-align:center;">
+      Fecha: {{ today | date:'dd/MM/yyyy HH:mm' }}
+    </p>
+
+    <hr>
+
+    <p><strong>Cliente:</strong> {{ cliente.nombre }}</p>
+    <p><strong>NIT:</strong> {{ cliente.nit }}</p>
+
+    <hr>
+
+    <ion-list>
+      <ion-item *ngFor="let item of detalles">
+        <ion-label>
+          {{ item.nombre_producto }}
+          <p>{{ item.quantity }} x {{ item.unit_price }}</p>
+        </ion-label>
+        <ion-note slot="end">
+          {{ item.total_price }}
+        </ion-note>
+      </ion-item>
+    </ion-list>
+
+    <hr>
+
+    <h2 style="text-align:right;">
+      TOTAL Bs: {{ total | number:'1.2-2' }}
+    </h2>
+
+    <p style="text-align:center; font-size:12px;">
+      Gracias por su preferencia
+    </p>
+
+  </div>
+
+  <ion-button expand="full" color="success" (click)="imprimir()">
+    🖨 Imprimir Factura
+  </ion-button>
+
+  <ion-button expand="full" color="medium" (click)="volverMesas()">
+    Volver
+  </ion-button>
 
 </ion-content>

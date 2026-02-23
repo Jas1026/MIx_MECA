@@ -1,50 +1,31 @@
 <div class="tables-container">
 
-<div 
-  class="table-card"
-  *ngFor="let table of tables"
-  (click)="openOrderModal(table)"
->
+  <div 
+    class="table-card"
+    *ngFor="let mesa of tables"
+  >
 
-    <div class="status-indicator"></div>
+    <h2>{{ mesa.nombre }}</h2>
+    <p>Estado: {{ mesa.estado }}</p>
 
-    <div class="table-center">
-      <h2>{{ table.nombre }}</h2>
-      <div class="capacity">
-        👥 {{ table.capacidad }}
-      </div>
-    </div>
-
-    <div class="table-footer">
-      {{ table.estado }}
-    </div>
-
-<ion-card *ngFor="let mesa of tables">
-
-  <ion-card-header>
-    Mesa {{ mesa.numero }}
-  </ion-card-header>
-
-  <ion-card-content>
-
-    Estado: {{ mesa.estado }}
-
-    <!-- 🔥 BOTÓN FACTURAR SOLO SI ESTÁ READY -->
+    <!-- ABRIR PEDIDO -->
     <ion-button 
-      *ngIf="mesa.status === 'ready'"
-      color="success"
-      expand="block"
-      (click)="irFacturacion(mesa.id_order)">
-      FACTURAR
+      *ngIf="mesa.estado === 'Libre'"
+      (click)="openOrderModal(mesa)">
+      Tomar Pedido
     </ion-button>
 
-  </ion-card-content>
+    <!-- ENTREGAR PEDIDO -->
+    <ion-button 
+      *ngIf="mesa.estado === 'Ready'"
+      color="warning"
+      (click)="abrirResumen(mesa.order_id)">
+      ENTREGAR PEDIDO
+    </ion-button>
 
-</ion-card>
   </div>
 
 </div>
-
 <div *ngIf="tables.length === 0" class="no-tables">
   No hay mesas disponibles
 </div>

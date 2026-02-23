@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ServerContentService } from 'src/app/services/server-content.service';
 
 @Component({
@@ -9,42 +9,67 @@ import { ServerContentService } from 'src/app/services/server-content.service';
 })
 export class FacturacionPage implements OnInit {
 
-  orderId: any;
-  details: any[] = [];
+  orderId: string = '';
+  detalles: any[] = [];
+  subtotal: number = 0;
   total: number = 0;
+  today: Date = new Date();
+
+  // 🔥 DATOS CLIENTE
+  cliente = {
+    nombre: '',
+    nit: ''
+  };
 
   constructor(
     private route: ActivatedRoute,
-    private server: ServerContentService
+    private server: ServerContentService,
+    private router: Router
   ) {}
 
   ngOnInit() {
-    this.orderId = this.route.snapshot.paramMap.get('id');
-    this.loadOrder();
-  }
 
-  loadOrder() {
-    this.server.getOrderDetails(this.orderId)
+    this.orderId = this.route.snapshot.paramMap.get('id') || '';
+
+    this.server.getOrderDetails(Number(this.orderId))
       .subscribe((res: any) => {
 
         if (res.error === 0) {
-          this.details = res.data;
-          this.calculateTotal();
+
+          this.detalles = res.data;
+
+          this.subtotal = this.detalles.reduce(
+            (sum, item) => sum + Number(item.total_price), 0
+          );
+
+          this.total = this.subtotal;
+
         }
 
       });
+
+  }
+  imprimir() {
+
+  if (!this.cliente.nombre || !this.cliente.nit) {
+    alert("Debe completar Nombre y NIT");
+    return;
   }
 
-  calculateTotal() {
-    this.total = 0;
-    this.details.forEach(d => {
-      this.total += Number(d.total_price);
-    });
-  }
-  closeOrder() {
-  this.server.closeOrder(this.orderId)
-    .subscribe(() => {
-      alert("Pago realizado");
-    });
+  this.server.saveInvoiceData(
+    Number(this.orderId),
+    this.cliente.nombre,
+    this.cliente.nit
+  ).subscribe(() => {
+
+    window.print();
+
+  });
+
 }
+
+  volverMesas() {
+    this.router.navigate(['/panel']);
+  }
+
 }

@@ -44,12 +44,16 @@ loadOrders() {
 
     });
 }
-  markReady(detailId: any) {
-    this.server.updateDetailStatus(detailId)
-      .subscribe(() => {
-        this.loadOrders();
-      });
-  }
+  markReady(detailId: number) {
+  this.server.updateDetailStatus(detailId)  // <-- solo 1 argumento
+    .subscribe((res: any) => {
+      this.loadOrders();
+
+      if (res.order_ready) {
+        console.log("Todos los productos listos. Orden lista para entrega!");
+      }
+    });
+}
   deliver(orderId: number) {
   this.server.deliverOrder(orderId)
     .subscribe((res: any) => {

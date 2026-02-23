@@ -107,7 +107,7 @@ updateDetailStatus(detailId: number) {
     'http://localhost/api/update_detail_status.php',
     {
       detail_id: detailId,
-      status: 'ready'
+      status: 'ready'   // <-- siempre 'ready'
     }
   );
 }
@@ -125,10 +125,34 @@ getOrderDetails(orderId: number) {
   );
 }
 closeOrder(orderId: number){
-    return this.http.get(
-    `http://localhost/api/close_ordercobrar.php?order_id=${orderId}`
+  return this.http.post(
+    this.urlService + 'close_order.php',
+    { order_id: orderId }
   );
 }
+
+saveInvoiceData(orderId: number, nombre: string, nit: string) {
+  return this.http.post(
+    this.urlService + 'save_invoice_data.php',
+    {
+      order_id: orderId,
+      client_name: nombre,
+      client_nit: nit
+    }
+  );
+}
+
+getAllOrders() {
+  return this.http.get(
+    this.urlService + 'get_all_orders.php'
+  );
+}
+getWaiters() {
+  return this.http.get(this.urlService + 'get_waiters.php');
+}
+
+
+
 
 
 

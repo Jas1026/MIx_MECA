@@ -1,0 +1,12 @@
+@media print {
+
+  ion-button,
+  ion-card {
+    display: none;
+  }
+
+  ion-header {
+    display: none;
+  }
+
+}

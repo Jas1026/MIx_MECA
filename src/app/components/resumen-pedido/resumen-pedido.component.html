@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Resumen Pedido</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-card *ngFor="let d of detalles">
+    {{ d.nombre_producto }} x{{ d.quantity }}
+    <br>
+    Bs/ {{ d.total_price }}
+  </ion-card>
+
+  <ion-card>
+    <b>Total: Bs/ {{ total }}</b>
+  </ion-card>
+
+  <ion-button expand="block" color="success" (click)="generarFactura()">
+    GENERAR FACTURA
+  </ion-button>
+
+  <ion-button expand="block" color="medium" (click)="cerrar()">
+    Cerrar
+  </ion-button>
+
+</ion-content>

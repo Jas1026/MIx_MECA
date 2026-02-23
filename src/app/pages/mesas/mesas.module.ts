@@ -7,13 +7,16 @@ import { IonicModule } from '@ionic/angular';
 import { MesasPageRoutingModule } from './mesas-routing.module';
 
 import { MesasPage } from './mesas.page';
+import { ResumenPedidoModule } from 
+'../../components/resumen-pedido/resumen-pedido.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    MesasPageRoutingModule
+    MesasPageRoutingModule,
+    ResumenPedidoModule   
   ],
   declarations: [MesasPage]
 })

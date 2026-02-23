@@ -17,6 +17,11 @@ const routes: Routes = [
       loadChildren: () =>
           import('../../pages/cocina/cocina.module').then(m => m.CocinaPageModule)
     },
+    {
+  path: 'pedidos',
+  loadChildren: () => import('../pedidos/pedidos.module')
+    .then(m => m.PedidosPageModule)
+},
       {
        path: '',
   redirectTo: '',

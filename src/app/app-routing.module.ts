@@ -131,10 +131,15 @@ const routes: Routes = [
     path: 'cocina',
     loadChildren: () => import('./pages/cocina/cocina.module').then( m => m.CocinaPageModule)
   },
-  {
-    path: 'facturacion',
-    loadChildren: () => import('./pages/facturacion/facturacion.module').then( m => m.FacturacionPageModule)
+{
+  path: 'facturacion/:id',
+  loadChildren: () => import('./pages/facturacion/facturacion.module')
+    .then(m => m.FacturacionPageModule)
+},  {
+    path: 'pedidos',
+    loadChildren: () => import('./pages/pedidos/pedidos.module').then( m => m.PedidosPageModule)
   }
+
 
 
 ];
