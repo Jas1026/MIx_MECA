@@ -22,10 +22,13 @@ export class ResumenPedidoComponent implements OnInit {
   ngOnInit() {
     this.server.getOrderDetails(this.orderId)
       .subscribe((res: any) => {
-        this.detalles = res.data;
-        this.total = this.detalles.reduce(
-          (sum, d) => sum + Number(d.total_price), 0
-        );
+this.detalles = res.data || [];
+
+this.total = this.detalles.length > 0
+  ? this.detalles.reduce(
+      (sum, d) => sum + Number(d.total_price), 0
+    )
+  : 0;
       });
   }
 generarFactura() {
