@@ -8,10 +8,10 @@ import { IonDatetime } from '@ionic/angular';
   styleUrls: ['./pedidos.page.scss'],
 })
 export class PedidosPage implements OnInit {
+  fechaMostrada: string = '';
 meseros: any[] = [];
 meseroSeleccionado: string = '';
 estadoSeleccionado: string = '';
-fechaSeleccionada: string = '';
   pedidos: any[] = [];
   filtroMesero: string = '';
 fechaFiltro: string = '';
@@ -34,8 +34,7 @@ fechaFiltro: string = '';
         }
       });
   }
-
-  get pedidosFiltrados() {
+get pedidosFiltrados() {
 
   return this.pedidos.filter(p => {
 
@@ -51,18 +50,11 @@ fechaFiltro: string = '';
 
     if (this.fechaFiltro) {
 
-      if (!p.order_date) return false;
-
-      // Convertimos ambas fechas a YYYY-MM-DD
       const fechaPedido = new Date(p.order_date)
         .toISOString()
         .split('T')[0];
 
-      const fechaSeleccionada = new Date(this.fechaFiltro)
-        .toISOString()
-        .split('T')[0];
-
-      if (fechaPedido !== fechaSeleccionada) {
+      if (fechaPedido !== this.fechaFiltro) {
         return false;
       }
     }
@@ -71,25 +63,26 @@ fechaFiltro: string = '';
   });
 
 }
+limpiarFecha() {
+  this.fechaFiltro = '';
+  this.fechaMostrada = '';
+}
+fechaSeleccionada(event: any, modal: any) {
 
+  const fecha = event.detail.value;
 
-async abrirCalendario() {
+  if (fecha) {
 
-  const modal = await this.modalCtrl.create({
-    component: IonDatetime,
-    componentProps: {
-      presentation: 'date'
-    }
-  });
+    const fechaFormateada = new Date(fecha)
+      .toISOString()
+      .split('T')[0];
 
-  await modal.present();
+    this.fechaFiltro = fechaFormateada;
+    this.fechaMostrada = fechaFormateada;
 
-  const { data } = await modal.onWillDismiss();
+    modal.dismiss(); // 👈 AQUÍ LO CERRAMOS
 
-  if (data?.value) {
-    this.fechaSeleccionada = data.value.split('T')[0];
   }
 
 }
-
 }

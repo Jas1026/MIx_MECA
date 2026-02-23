@@ -10,6 +10,7 @@
   <ion-grid>
     <ion-row>
 
+      <!-- MESERO -->
       <ion-col size="12" size-md="3">
         <ion-item>
           <ion-label>Mesero</ion-label>
@@ -24,6 +25,7 @@
         </ion-item>
       </ion-col>
 
+      <!-- ESTADO -->
       <ion-col size="12" size-md="3">
         <ion-item>
           <ion-label>Estado</ion-label>
@@ -35,20 +37,45 @@
         </ion-item>
       </ion-col>
 
-<ion-col size="12" size-md="3">
+      <!-- BOTÓN FECHA -->
+      <ion-col size="12" size-md="3">
+        <ion-button
+          id="open-date"
+          expand="block"
+          fill="outline"
+          [color]="fechaFiltro ? 'primary' : 'medium'">
+          {{ fechaMostrada ? fechaMostrada : 'Seleccionar fecha' }}
+        </ion-button>
+      </ion-col>
 
-  <ion-button expand="block" fill="outline" (click)="abrirCalendario()">
-    {{ fechaSeleccionada ? fechaSeleccionada : 'Seleccionar fecha' }}
-  </ion-button>
-
-</ion-col>
+      <!-- BOTÓN LIMPIAR -->
+      <ion-col size="12" size-md="3">
+        <ion-button
+          expand="block"
+          fill="clear"
+          color="medium"
+          (click)="limpiarFecha()">
+          Limpiar fecha
+        </ion-button>
+      </ion-col>
 
     </ion-row>
   </ion-grid>
 
-  <!-- TABLA SOLO EN WEB -->
-  <div class="tabla-web">
+  <!-- MODAL FECHA -->
+  <ion-modal #modalFecha trigger="open-date">
+    <ng-template>
+      <ion-content>
+        <ion-datetime
+          presentation="date"
+          (ionChange)="fechaSeleccionada($event, modalFecha)">
+        </ion-datetime>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 
+  <!-- TABLA SOLO WEB -->
+  <div class="tabla-web">
     <table>
       <thead>
         <tr>
@@ -67,25 +94,20 @@
           <td>{{ p.order_date }}</td>
           <td>{{ p.status }}</td>
           <td>
-
-            <ion-button size="small" color="warning"
-             >
+            <ion-button size="small" color="warning">
               Editar
             </ion-button>
 
-            <ion-button 
+            <ion-button
               *ngIf="p.status !== 'closed'"
-              size="small" 
-              color="danger"
-              >
+              size="small"
+              color="danger">
               Archivar
             </ion-button>
-
           </td>
         </tr>
       </tbody>
     </table>
-
   </div>
 
   <!-- LISTA MOBILE -->
