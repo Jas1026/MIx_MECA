@@ -1,0 +1,125 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Inventario</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <!-- SEGMENT -->
+  <ion-segment [(ngModel)]="segment" (ionChange)="segmentChanged()">
+    <ion-segment-button value="ingredients">
+      <ion-label>Ingredientes</ion-label>
+    </ion-segment-button>
+
+    <ion-segment-button value="products">
+      <ion-label>Productos</ion-label>
+    </ion-segment-button>
+
+    <ion-segment-button value="assets">
+      <ion-label>Activos</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <!-- ================= INGREDIENTES ================= -->
+  <div *ngIf="segment === 'ingredients'" class="table-container">
+
+    <ion-grid>
+      <ion-row class="table-header">
+        <ion-col>Nombre</ion-col>
+        <ion-col>Stock</ion-col>
+        <ion-col>Unidad</ion-col>
+        <ion-col>Acción</ion-col>
+      </ion-row>
+
+      <ion-row *ngFor="let ing of ingredients">
+        <ion-col>{{ ing.nombre }}</ion-col>
+
+        <ion-col>
+          <ion-input type="number" [(ngModel)]="ing.stock_act"></ion-input>
+        </ion-col>
+
+        <ion-col>{{ ing.unidad_med }}</ion-col>
+
+        <ion-col>
+          <ion-button size="small" (click)="updateStock(ing)">
+            Guardar
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+  </div>
+
+  <!-- ================= PRODUCTS ================= -->
+ <div *ngIf="segment === 'products'" class="table-container">
+
+  <ion-grid>
+    <ion-row class="table-header">
+      <ion-col>Nombre</ion-col>
+      <ion-col>Precio</ion-col>
+      <ion-col>Prep (min)</ion-col>
+      <ion-col>Estado</ion-col>
+      <ion-col>Categoría</ion-col>
+    </ion-row>
+
+    <ion-row *ngFor="let p of products">
+      <ion-col>{{ p.nombre_producto }}</ion-col>
+      <ion-col>{{ p.price }} Bs</ion-col>
+      <ion-col>{{ p.time_prep }}</ion-col>
+      <ion-col>{{ p.state }}</ion-col>
+      <ion-col>{{ p.id_category }}</ion-col>
+    </ion-row>
+  </ion-grid>
+
+</div>
+
+  <!-- ================= ASSETS ================= -->
+  <div *ngIf="segment === 'assets'" class="table-container">
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Nuevo Activo</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+
+        <ion-input placeholder="Nombre"
+                   [(ngModel)]="nuevoAsset.nombre">
+        </ion-input>
+
+        <ion-input placeholder="Categoría"
+                   [(ngModel)]="nuevoAsset.categoria">
+        </ion-input>
+
+        <ion-input type="number"
+                   placeholder="Stock"
+                   [(ngModel)]="nuevoAsset.stock">
+        </ion-input>
+
+        <ion-button expand="block" (click)="crearAsset()">
+          Guardar
+        </ion-button>
+
+      </ion-card-content>
+    </ion-card>
+
+    <ion-grid>
+      <ion-row class="table-header">
+        <ion-col>Nombre</ion-col>
+        <ion-col>Categoría</ion-col>
+        <ion-col>Stock</ion-col>
+        <ion-col>Estado</ion-col>
+      </ion-row>
+
+      <ion-row *ngFor="let a of assets">
+        <ion-col>{{ a.nombre }}</ion-col>
+        <ion-col>{{ a.categoria }}</ion-col>
+        <ion-col>{{ a.stock }}</ion-col>
+        <ion-col>{{ a.estado }}</ion-col>
+      </ion-row>
+    </ion-grid>
+
+  </div>
+
+</ion-content>

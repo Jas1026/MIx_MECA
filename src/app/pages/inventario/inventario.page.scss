@@ -1,0 +1,49 @@
+.table-container {
+  padding: 16px;
+  background: #F6F1EB; /* crema suave */
+  border-radius: 12px;
+}
+
+/* Header tipo POS elegante */
+.table-header {
+  font-weight: 600;
+  background: #EADFD2; /* beige claro */
+  color: #5A4636; /* marrón suave */
+  padding: 12px 0;
+  border-radius: 10px;
+}
+
+/* Filas */
+ion-row {
+  border-bottom: 1px solid #E6DDD2; /* borde café muy claro */
+  padding: 12px 0;
+  transition: background 0.2s ease;
+}
+
+/* Hover suave (queda muy pro en web) */
+ion-row:hover {
+  background: #F0E7DD;
+}
+
+/* Inputs estilo limpio cafetería */
+ion-input {
+  --background: #FFFFFF;
+  border: 1px solid #D8C3A5;
+  border-radius: 10px;
+  padding: 6px;
+  font-size: 14px;
+}
+
+/* Grid spacing */
+ion-col {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #4B3A2F;
+}
+
+/* Botones más suaves */
+ion-button {
+  --border-radius: 10px;
+  font-weight: 500;
+}

@@ -12,20 +12,25 @@ const routes: Routes = [
         loadChildren: () =>
           import('../../pages/mesas/mesas.module').then(m => m.MesasPageModule)
       },
-       {
-      path: 'cocina/:id',
-      loadChildren: () =>
-          import('../../pages/cocina/cocina.module').then(m => m.CocinaPageModule)
-    },
-    {
-  path: 'pedidos',
-  loadChildren: () => import('../pedidos/pedidos.module')
-    .then(m => m.PedidosPageModule)
-},
       {
-       path: '',
-  redirectTo: '',
-  pathMatch: 'full'
+        path: 'cocina/:id',
+        loadChildren: () =>
+          import('../../pages/cocina/cocina.module').then(m => m.CocinaPageModule)
+      },
+      {
+        path: 'pedidos',
+        loadChildren: () => import('../pedidos/pedidos.module')
+          .then(m => m.PedidosPageModule)
+      },
+      {
+        path: 'inventario',
+        loadChildren: () => import('../inventario/inventario.module')
+          .then(m => m.InventarioPageModule)
+      },
+      {
+        path: '',
+        redirectTo: '',
+        pathMatch: 'full'
       }
     ]
   }
@@ -35,4 +40,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class PanelPageRoutingModule {}
+export class PanelPageRoutingModule { }

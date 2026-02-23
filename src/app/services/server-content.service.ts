@@ -183,11 +183,37 @@ export class ServerContentService {
 
     return this.http.post(this.urlService + "get_waiters.php", body);
   }
+getIngredients() {
+  let body = new FormData();
+  body.append("system", this.getSystem());
 
+  return this.http.post(this.urlService + "get_ingredients.php", body);
+}
 
+updateStock(data: any) {
+  return this.http.post(this.urlService + 'update_stock.php', data);
+}
+getAssets() {
+  let body = new FormData();
+  body.append("system", this.getSystem());
 
+  return this.http.post(this.urlService + "get_assets.php", body);
+}
+addAsset(data: any) {
+  let body = new FormData();
+  body.append("nombre", data.nombre);
+  body.append("categoria", data.categoria);
+  body.append("stock", data.stock);
+  body.append("system", this.getSystem());
 
+  return this.http.post(this.urlService + "add_asset.php", body);
+}
+getProducts() {
+  let body = new FormData();
+  body.append("system", this.getSystem());
 
+  return this.http.post(this.urlService + "get_products.php", body);
+}
 
 
 
