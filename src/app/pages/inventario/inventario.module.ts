@@ -7,13 +7,14 @@ import { IonicModule } from '@ionic/angular';
 import { InventarioPageRoutingModule } from './inventario-routing.module';
 
 import { InventarioPage } from './inventario.page';
-
+import { CreateIngredientModule } from '../../modals/create-ingredient/create-ingredient.module';
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    InventarioPageRoutingModule
+    InventarioPageRoutingModule,
+    CreateIngredientModule   
   ],
   declarations: [InventarioPage]
 })

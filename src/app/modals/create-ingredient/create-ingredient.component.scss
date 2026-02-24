@@ -1,0 +1,17 @@
+.bottle {
+  width: 80px;
+  height: 200px;
+  border: 3px solid #444;
+  border-radius: 20px;
+  position: relative;
+  margin: 20px auto;
+  overflow: hidden;
+}
+
+.liquid {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: linear-gradient(to top, #4caf50, #81c784);
+  transition: 0.4s;
+}

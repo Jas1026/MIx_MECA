@@ -47,3 +47,16 @@ ion-button {
   --border-radius: 10px;
   font-weight: 500;
 }
+ion-segment {
+  --background: #EADFD2;
+  border-radius: 12px;
+  margin: 12px;
+}
+
+ion-segment-button {
+  --color: #6B4F3A; /* texto normal */
+  --color-checked: #000000; /* texto activo */
+  --indicator-color: #A47551; /* fondo activo */
+  font-weight: 500;
+  border-radius: 10px;
+}

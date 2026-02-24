@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { ServerContentService } from 'src/app/services/server-content.service';
+import { ModalController } from '@ionic/angular';
+import { CreateIngredientComponent } from 'src/app/modals/create-ingredient/create-ingredient.component';
 
 @Component({
   selector: 'app-inventario',
@@ -20,7 +22,7 @@ export class InventarioPage {
     stock: 0
   };
 
-  constructor(private server: ServerContentService) {}
+  constructor(private server: ServerContentService,   private modalCtrl: ModalController) {}
 
   ionViewWillEnter() {
     this.loadIngredients();
@@ -82,4 +84,28 @@ export class InventarioPage {
     });
   }
 
+async showIngredientModal(ingredient: any = null) {
+
+  const modal = await this.modalCtrl.create({
+    component: CreateIngredientComponent,
+    componentProps: {
+      ingredient: ingredient
+    }
+  });
+
+  modal.onDidDismiss().then(res => {
+    if (res.data) {
+      this.loadIngredients();
+    }
+  });
+
+  await modal.present();
+}
+async openCreateModal() {
+
+  if (this.segment === 'ingredients') {
+    this.showIngredientModal();
+  }
+
+}
 }

@@ -215,7 +215,21 @@ getProducts() {
   return this.http.post(this.urlService + "get_products.php", body);
 }
 
+addIngredient(data: any) {
+    let body = new FormData();
+  body.append("system", this.getSystem());
+  return this.http.post('http://localhost/api/add_ingredient.php', data, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
 
+updateIngredient(data: any) {
+    let body = new FormData();
+  body.append("system", this.getSystem());
+  return this.http.post('http://localhost/api/update_ingredient.php', data, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
 
 
 
