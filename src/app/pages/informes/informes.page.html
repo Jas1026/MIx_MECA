@@ -1,0 +1,99 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="light">
+    <ion-title>Panel de Informes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-button expand="block" color="dark" (click)="dibujarGrafico()" id="open-modal-grafico" class="ion-margin-bottom">
+    <ion-icon name="analytics-outline" slot="start"></ion-icon>
+    Ver Análisis Visual
+  </ion-button>
+
+  <ion-row>
+    <ion-col size="6">
+      <ion-card class="stat-card total-ventas">
+        <ion-card-content>
+          <ion-icon name="cash-outline"></ion-icon>
+          <h3>Bs. {{ resumen.total_dinero }}</h3>
+          <p>Ventas Totales</p>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+    <ion-col size="6">
+      <ion-card class="stat-card total-activos">
+        <ion-card-content>
+          <ion-icon name="briefcase-outline"></ion-icon>
+          <h3>{{ resumen.activos_conteo }}</h3>
+          <p>Activos Operando</p>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+
+  <ion-card class="ion-no-margin ion-margin-top list-card">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="star" color="warning"></ion-icon>
+        Más Vendidos
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list lines="full">
+        <ion-item *ngFor="let prod of resumen.top_productos">
+          <ion-label>
+            <h2>{{ prod.nombre_producto }}</h2>
+            <p>{{ prod.cantidad }} unidades vendidas</p>
+          </ion-label>
+          <ion-badge color="primary" slot="end">{{ prod.cantidad }}</ion-badge>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card class="ion-no-margin ion-margin-top list-card">
+    <ion-card-header>
+      <ion-card-title color="danger">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        Reponer Stock
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list lines="full">
+        <ion-item *ngFor="let ing of resumen.alertas_inventario">
+          <ion-label>
+            <h2>{{ ing.nombre }}</h2>
+            <p>Quedan: {{ ing.stock_act }} {{ ing.unidad_med }}</p>
+          </ion-label>
+          <ion-icon name="warning" color="warning" slot="end"></ion-icon>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-modal trigger="open-modal-grafico" (willPresent)="dibujarGrafico()">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar color="light">
+          <ion-title>Estadísticas</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrarModal()">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        
+        <div id="donutchart" style="width: 100%; height: 350px;"></div>
+        
+        <div class="ion-text-center ion-padding">
+          <p style="color: #666; font-size: 0.9rem;">
+            Este gráfico muestra la proporción de los 5 productos más vendidos actualmente.
+          </p>
+        </div>
+
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+</ion-content>

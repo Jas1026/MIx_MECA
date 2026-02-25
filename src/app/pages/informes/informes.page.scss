@@ -1,0 +1,92 @@
+.stat-card {
+  margin: 0;
+  border-radius: 15px;
+  text-align: center;
+  ion-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+  }
+  h3 {
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin: 5px 0;
+  }
+  p {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    opacity: 0.8;
+  }
+}
+
+.total-ventas {
+  background: #f0fdf4; // Verde suave
+  color: #166534;
+}
+
+.total-activos {
+  background: #fef2f2; // Rojo/Crema suave
+  color: #991b1b;
+}
+
+ion-card-title {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  ion-icon {
+    margin-right: 10px;
+  }
+}
+.stat-card {
+  margin: 0;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  border: 1px solid #f0f0f0;
+
+  ion-card-content {
+    padding: 15px 10px;
+    ion-icon {
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+    }
+    h3 {
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin: 0;
+      color: #333;
+    }
+    p {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 5px;
+      opacity: 0.7;
+    }
+  }
+}
+
+.total-ventas { background: #f0fdf4; ion-icon { color: #2dd36f; } }
+.total-activos { background: #fdf2f2; ion-icon { color: #eb445a; } }
+
+.list-card {
+  box-shadow: none;
+  border: 1px solid #eee;
+  border-radius: 15px;
+  
+  ion-card-title {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: bold;
+    ion-icon { margin-right: 10px; }
+  }
+}
+
+ion-modal {
+  --height: 80%;
+  --border-radius: 20px 20px 0 0;
+}
+
+#donutchart {
+  margin-top: 20px;
+}

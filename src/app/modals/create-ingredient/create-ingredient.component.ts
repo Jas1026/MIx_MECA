@@ -80,4 +80,35 @@ form: {
   cerrar() {
     this.modalCtrl.dismiss();
   }
+  // Dentro de la clase del componente
+getLiquidHeight() {
+  if (!this.ingredient.capacidad_total || !this.ingredient.peso_actual) return '0%';
+  
+  // Cálculo: (actual / total) * 100
+  let percentage = (this.ingredient.peso_actual / this.ingredient.capacidad_total) * 100;
+  
+  // Limitar entre 0 y 100
+  percentage = Math.min(Math.max(percentage, 0), 100);
+  return percentage + '%';
+}
+// Dentro de export class CreateIngredientComponent {
+
+calcularPorcentaje(): string {
+  // 1. Validamos que existan los valores y no sean cero para evitar errores matemáticos
+  const actual = parseFloat(this.ingredient?.peso_actual);
+  const total = parseFloat(this.ingredient?.capacidad_total);
+
+  if (!actual || !total || total <= 0) {
+    return '0%';
+  }
+
+  // 2. Calculamos el porcentaje
+  let porcentaje = (actual / total) * 100;
+
+  // 3. Limites: No menos de 0% ni más de 100%
+  if (porcentaje > 100) porcentaje = 100;
+  if (porcentaje < 0) porcentaje = 0;
+
+  return `${porcentaje.toFixed(0)}%`;
+}
 }

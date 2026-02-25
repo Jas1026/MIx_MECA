@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ServerContentService } from '../../services/server-content.service';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
+
 @Component({
   selector: 'app-panel',
   templateUrl: './panel.page.html',
@@ -12,6 +13,8 @@ export class PanelPage implements OnInit {
   systemName: string = '';
   flats: any[] = [];
   kitchens: any[] = [];
+  //para definir el rol
+  userRole: string = '';
 constructor(
   private server: ServerContentService,
   private router: Router,
@@ -19,11 +22,17 @@ constructor(
 ) {}
 
   ngOnInit() {
-
+this.userRole = (localStorage.getItem('role') || '').toLowerCase();
   }
 ionViewWillEnter() {
   this.checkSession();
+  this.cargarRol();
 }
+cargarRol() {
+    const role = localStorage.getItem('role');
+    console.log("Rol detectado en el Panel:", role); // Para que verifiques en consola
+    this.userRole = role ? role.toLowerCase() : '';
+  }
   checkSession() {
 
     const userId = localStorage.getItem("user_id");
@@ -88,4 +97,8 @@ goToKitchen(id: any) {
   console.log("Navegando a cocina:", id);
   this.router.navigate(['cocina', id], { relativeTo: this.route });
 }
+hasRole(roleName: string): boolean {
+    // Comparamos sin importar mayúsculas/minúsculas
+    return this.userRole === roleName.toLowerCase();
+  }
 }

@@ -1,17 +1,107 @@
+/* Paleta de colores clara y orgánica */
+$marron-cafe: #4a3f35;
+$verde-liquido: linear-gradient(180deg, #a5d6a7 0%, #81c784 100%);
+$vidrio-borde: #f1f1f1;
+
+.bottle-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: clamp(15px, 5vw, 30px);
+  background: #ffffff;
+}
+
 .bottle {
-  width: 80px;
-  height: 200px;
-  border: 3px solid #444;
-  border-radius: 20px;
+  width: min(90px, 22vw); 
+  height: 220px;
+  background: rgba(245, 245, 245, 0.7);
+  border: 4px solid $vidrio-borde;
+  border-radius: 20px 20px 12px 12px;
   position: relative;
-  margin: 20px auto;
+  margin: 10px auto;
   overflow: hidden;
+  box-shadow: 
+    inset 6px 0 12px rgba(0,0,0,0.03),
+    0 8px 20px rgba(0,0,0,0.06);
+  backdrop-filter: blur(5px);
+
+  /* Reflejo de cristal vertical */
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 12%;
+    width: 12%;
+    height: 100%;
+    background: rgba(255,255,255,0.5);
+    z-index: 2;
+  }
 }
 
 .liquid {
   position: absolute;
   bottom: 0;
   width: 100%;
-  background: linear-gradient(to top, #4caf50, #81c784);
-  transition: 0.4s;
+  background: $verde-liquido;
+  /* Animación suave al cambiar el nivel */
+  transition: height 1s cubic-bezier(0.23, 1, 0.32, 1);
+  z-index: 1;
+
+  /* Efecto de burbujas en la superficie */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+  }
+}
+
+.percentage-text {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: $marron-cafe;
+  margin-top: 15px;
+  letter-spacing: -0.5px;
+}
+
+/* Estilo para los inputs dentro del modal */
+ion-item {
+  --background: #fdfcfb;
+  --border-radius: 12px;
+  margin-bottom: 8px;
+  border: 1px solid #efeae4;
+}
+.bottle {
+  width: 80px;
+  height: 200px;
+  background: rgba(255, 255, 255, 0.4); // Fondo de la botella vacío
+  border: 3px solid #e0d7ce; // Borde color café clarito
+  border-radius: 15px 15px 8px 8px;
+  position: relative;
+  margin: 0 auto;
+  overflow: hidden; // Importante para que el líquido no se salga de las esquinas
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+}
+
+.liquid {
+  position: absolute;
+  bottom: 0; // Se llena desde abajo
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to top, #8da290, #a8bcab); // Verde salvia suave
+  transition: height 0.6s ease-in-out; // Animación suave al cambiar
+  
+  // Efecto de brillo sobre el líquido
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255,255,255,0.2);
+  }
 }
