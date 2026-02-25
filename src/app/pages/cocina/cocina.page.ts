@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 export class CocinaPage implements OnInit {
 
   kitchenId: any;
+  kitchenName: string = '';
   orders: any[] = [];
   intervalId: any;
 
@@ -33,16 +34,22 @@ ngOnDestroy() {
     clearInterval(this.intervalId);
   }
 }
+
 loadOrders() {
-
-  this.server.getKitchenOrders(this.kitchenId)
-    .subscribe((res: any) => {
-
-      if (res.error === 0) {
-        this.orders = res.data;
+  this.server.getKitchenOrders(this.kitchenId).subscribe((res: any) => {
+    if (res.error === 0) {
+      this.orders = res.data;
+      
+      // Si el API te devuelve el nombre de la cocina en la respuesta (ej: res.kitchen_name)
+      // lo asignas aquí. Si no, podemos sacarlo del primer item de la lista si existe:
+      if (this.orders.length > 0 && this.orders[0].kitchen_name) {
+        this.kitchenName = this.orders[0].kitchen_name;
+      } else {
+        // Un nombre por defecto mientras carga o si no hay pedidos
+        this.kitchenName = 'Estación ' + this.kitchenId; 
       }
-
-    });
+    }
+  });
 }
   markReady(detailId: number) {
   this.server.updateDetailStatus(detailId)  // <-- solo 1 argumento

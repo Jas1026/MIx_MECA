@@ -1,3 +1,7 @@
+/* ============================================================
+   ESTILOS ORIGINALES MANTENIDOS
+   ============================================================ */
+
 /* Toolbar principal */
 .toolbar-cafe {
   --background: linear-gradient(90deg, #6f4e37, #8b5e3c);
@@ -13,11 +17,6 @@
   padding: 10px 20px;
   font-size: 15px;
   color: #5c4033;
-}
-
-/* Fondo general */
-.dashboard-bg {
-  --background: #fff8f0;
 }
 
 /* Menu lateral */
@@ -48,4 +47,29 @@ ion-item:hover {
 
 .content-area {
   padding: 20px;
+}
+
+/* ============================================================
+   SECCIÓN DE FONDO (IMÁGENES + COLOR #725050)
+   ============================================================ */
+
+.dashboard-bg {
+  /* 1. Forzamos a que la capa interna de Ionic sea totalmente transparente */
+  --background: transparent !important;
+  
+  display: flex;
+  flex-direction: column;
+
+  /* 2. Fondo para ESCRITORIO: 
+     Primero el color base, luego la imagen, centrada y sin repetir */
+  background: #725050 url('../../../assets/images/mixweb.png') no-repeat center;
+  
+  /* Usamos contain para que la imagen se vea completa */
+  background-size: contain;
+
+  /* 3. Fondo para MÓVIL */
+  @media (max-width: 767px) {
+    background: #725050 url('../../../assets/images/mixwebmovil.jpg') no-repeat center;
+    background-size: contain;
+  }
 }

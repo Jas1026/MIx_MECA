@@ -146,6 +146,18 @@ const routes: Routes = [
   {
     path: 'informes',
     loadChildren: () => import('./pages/informes/informes.module').then( m => m.InformesPageModule)
+  },
+  {
+    path: 'flats',
+    loadChildren: () => import('./pages/flats/flats.module').then( m => m.FlatsPageModule)
+  },
+  {
+    path: 'cafe-tables',
+    loadChildren: () => import('./pages/cafe-tables/cafe-tables.module').then( m => m.CafeTablesPageModule)
+  },
+  {
+    path: 'user',
+    loadChildren: () => import('./pages/user/user.module').then( m => m.UserPageModule)
   }
 
 

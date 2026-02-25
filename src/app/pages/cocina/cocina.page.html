@@ -1,28 +1,47 @@
-<ion-header>
-  <ion-toolbar color="danger">
-    <ion-title>Panel Cocina</ion-title>
+<ion-header class="ion-no-border">
+  <ion-toolbar class="toolbar-cocina">
+    <ion-title>Panel de Cocina - {{ kitchenName }}</ion-title>
+    
+    <ion-buttons slot="end">
+      <ion-badge color="dark">{{ orders.length }} Pendientes</ion-badge>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="cocina-bg">
 
-  <ion-card *ngFor="let item of orders">
+  <div class="orders-grid">
+    <div class="order-ticket" *ngFor="let item of orders">
+      
+      <div class="ticket-header">
+        <span class="table-number">Mesa {{ item.table_id }}</span>
+        <ion-icon name="time-outline" class="clock-icon"></ion-icon>
+      </div>
 
-    <ion-card-header>
-      Mesa {{ item.table_id }}
-    </ion-card-header>
+      <div class="ticket-body">
+        <h2 class="product-name">
+          <span class="quantity">{{ item.quantity }}x</span> 
+          {{ item.name }}
+        </h2>
+        <p class="order-note" *ngIf="item.notes">* Sin cebolla / Término medio</p>
+      </div>
 
-    <ion-card-content>
-      {{ item.name }} x{{ item.quantity }}
+      <div class="ticket-footer">
+        <ion-button 
+          expand="block" 
+          class="btn-ready"
+          (click)="markReady(item.detail_id)">
+          <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+          TERMINADO
+        </ion-button>
+      </div>
 
-      <ion-button 
-        expand="block"
-        color="success"
-        (click)="markReady(item.detail_id)">
-        Marcar Listo
-      </ion-button>
-    </ion-card-content>
+    </div>
+  </div>
 
-  </ion-card>
+  <div *ngIf="orders.length === 0" class="empty-kitchen">
+    <ion-icon name="restaurant-outline"></ion-icon>
+    <p>¡Cocina al día! No hay pedidos pendientes.</p>
+  </div>
 
 </ion-content>

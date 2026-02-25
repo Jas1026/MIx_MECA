@@ -41,6 +41,24 @@ const routes: Routes = [
         data: { expectedRoles: ['admin'] } 
       },
       {
+        path: 'flats',
+        loadChildren: () => import('../flats/flats.module').then(m => m.FlatsPageModule),
+        canActivate: [RoleGuard],
+        data: { expectedRoles: ['admin'] } 
+      },
+            {
+        path: 'tables',
+        loadChildren: () => import('../cafe-tables/cafe-tables-routing.module').then(m => m.CafeTablesPageRoutingModule),
+        canActivate: [RoleGuard],
+        data: { expectedRoles: ['admin'] } 
+      },
+                  {
+        path: 'user',
+        loadChildren: () => import('../user/user-routing.module').then(m => m.UserPageRoutingModule),
+        canActivate: [RoleGuard],
+        data: { expectedRoles: ['admin'] } 
+      },
+      {
         path: '',
         redirectTo: '',
         pathMatch: 'full'

@@ -1,0 +1,55 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="light">
+    <ion-title>Gestión de Pisos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="dashboard-bg" style="--background: #fcfaf8;">
+  <div class="table-container">
+    
+    <div class="header-actions">
+      <ion-searchbar placeholder="Buscar piso..." [(ngModel)]="filterNombre" class="custom-searchbar"></ion-searchbar>
+      <ion-button (click)="openCreateModal()" fill="solid" color="dark">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        Añadir Nuevo
+      </ion-button>
+    </div>
+
+    <ion-grid>
+      <ion-row class="table-header">
+        <ion-col size="4">Nombre</ion-col>
+        <ion-col size="3">Descripción</ion-col>
+        <ion-col size="3">Estado</ion-col>
+        <ion-col size="2">Acciones</ion-col>
+      </ion-row>
+
+      <ion-row *ngFor="let flat of filteredFlats" class="align-center" 
+               [style.opacity]="flat.state == 0 ? '0.6' : '1'">
+        
+        <ion-col size="4">
+          <strong class="ing-name">{{ flat.Name }}</strong>
+        </ion-col>
+
+        <ion-col size="3">
+          <span style="font-size: 0.85rem; color: #666;">{{ flat.Description || '-' }}</span>
+        </ion-col>
+
+        <ion-col size="3">
+          <ion-button fill="clear" 
+                      [color]="flat.state == 1 ? 'success' : 'danger'"
+                      (click)="toggleFlatState(flat)"
+                      class="btn-state">
+            <ion-icon style="width: 50px;" slot="start" [name]="flat.state == 1 ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+            <small>{{ flat.state == 1 ? 'Activo' : 'Inactivo' }}</small>
+          </ion-button>
+        </ion-col>
+
+        <ion-col size="2" class="actions-cell">
+          <ion-button fill="clear" color="primary" (click)="openCreateModal(flat)">
+            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>

@@ -1,0 +1,121 @@
+.cocina-bg {
+  /* Fondo oscuro tipo pizarra para que no canse la vista */
+  --background: #1e1e24 !important;
+}
+
+.toolbar-cocina {
+  --background: #d32f2f; /* Rojo vibrante para cocina */
+  --color: white;
+  font-weight: bold;
+}
+
+.orders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 15px;
+  padding: 15px;
+}
+
+.order-ticket {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  border-left: 8px solid #fbc02d; /* Amarillo para pedidos en proceso */
+  transition: transform 0.2s;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.ticket-header {
+  background: #f8f9fa;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px dashed #ccc;
+
+  .table-number {
+    font-size: 18px;
+    font-weight: 800;
+    color: #333;
+  }
+
+  .clock-icon {
+    font-size: 20px;
+    color: #999;
+  }
+}
+
+.ticket-body {
+  padding: 20px 15px;
+  flex-grow: 1;
+
+  .product-name {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1.2;
+
+    .quantity {
+      color: #d32f2f;
+      background: #ffebee;
+      padding: 2px 8px;
+      border-radius: 6px;
+      margin-right: 5px;
+    }
+  }
+
+  .order-note {
+    margin-top: 10px;
+    color: #7f8c8d;
+    font-size: 14px;
+    font-style: italic;
+  }
+}
+
+.ticket-footer {
+  padding: 10px;
+  
+  .btn-ready {
+    --background: #2e7d32; /* Verde bosque */
+    --border-radius: 8px;
+    height: 50px;
+    font-weight: 800;
+    font-size: 16px;
+    margin: 0;
+  }
+}
+
+/* Vista vacía */
+.empty-kitchen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80%;
+  color: #555;
+
+  ion-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+    opacity: 0.3;
+  }
+
+  p {
+    font-size: 18px;
+    font-weight: 500;
+  }
+}
+
+/* Responsive para tablets (más columnas) */
+@media (min-width: 992px) {
+  .orders-grid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+}

@@ -1,0 +1,31 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="dark">
+    <ion-title>{{ flat ? 'Editar' : 'Nuevo' }} Piso</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card class="ion-no-margin" style="box-shadow: none; border: 1px solid #e8e1d9;">
+    <ion-list lines="full">
+      <ion-item>
+        <ion-label position="stacked" style="color: #4a3f35; font-weight: bold;">Nombre del Piso / Área</ion-label>
+        <ion-input [(ngModel)]="newFlat.name" type="text" placeholder="Ej: Terraza Planta Alta"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked" style="color: #4a3f35; font-weight: bold;">Descripción (Opcional)</ion-label>
+        <ion-textarea [(ngModel)]="newFlat.description" placeholder="Ej: Mesas de la 1 a la 10..." rows="3"></ion-textarea>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+
+  <ion-button (click)="saveFlat()" expand="block" color="dark" class="ion-margin-top" style="--border-radius: 12px; height: 45px;">
+    <ion-icon name="save-outline" slot="start"></ion-icon>
+    Guardar Configuración de Piso
+  </ion-button>
+</ion-content>

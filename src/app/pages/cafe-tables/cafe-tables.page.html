@@ -1,0 +1,91 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="light">
+    <ion-title>Gestión de Mesas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="dashboard-bg" style="--background: #fcfaf8;">
+  <div class="table-container">
+    
+    <div class="header-actions">
+      <ion-searchbar 
+        placeholder="Buscar mesa..." 
+        [(ngModel)]="filterNombre" 
+        class="custom-searchbar" 
+        mode="ios">
+      </ion-searchbar>
+      
+      <div class="filter-wrapper">
+        <ion-select [(ngModel)]="selectedFlat" interface="popover" placeholder="Todos los Pisos">
+          <ion-select-option value="all">Todos los Pisos</ion-select-option>
+          <ion-select-option *ngFor="let flat of flats" [value]="flat.Id_flats">
+            {{ flat.Name }}
+          </ion-select-option>
+        </ion-select>
+      </div>
+
+      <ion-button (click)="openCreateModal()" fill="solid" color="dark" shape="round">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        NUEVA MESA
+      </ion-button>
+    </div>
+
+    <ion-grid>
+      <ion-row class="table-header">
+        <ion-col size="3">Mesa</ion-col>
+        <ion-col size="3">Piso / Área</ion-col>
+        <ion-col size="2">Capacidad</ion-col>
+        <ion-col size="2">Estado Administrativo</ion-col>
+        <ion-col size="2" class="ion-text-center">Acciones</ion-col>
+      </ion-row>
+
+      <ion-row *ngFor="let table of filteredTables" class="align-center table-row" 
+               [style.opacity]="table.estado === 'Inactiva' ? '0.6' : '1'">
+        
+        <ion-col size="3">
+          <strong class="ing-name">
+            <ion-icon name="restaurant-outline" style="margin-right: 8px; color: #8d7a6b;"></ion-icon>
+            {{ table.nombre }}
+          </strong>
+        </ion-col>
+
+        <ion-col size="3">
+          <span class="sub-text">{{ table.flat_name || 'Sin asignar' }}</span>
+        </ion-col>
+
+        <ion-col size="2">
+          <span class="sub-text">
+            {{ table.capacidad }} <ion-icon name="people-outline" class="icon-small"></ion-icon>
+          </span>
+        </ion-col>
+
+        <ion-col size="2">
+          <div class="status-column-wrapper">
+            <ion-button fill="clear" 
+                        [color]="getStatusColor(table.estado)"
+                        (click)="toggleTableState(table)"
+                        class="btn-state">
+              <ion-icon slot="start" 
+                        [name]="table.estado === 'Inactiva' ? 'close-circle' : 'checkmark-circle'">
+              </ion-icon>
+              <strong style="font-size: 0.85rem; text-transform: uppercase;">
+                {{ table.estado }}
+              </strong>
+            </ion-button>
+          </div>
+        </ion-col>
+
+        <ion-col size="2" class="actions-cell ion-text-center">
+          <ion-button fill="clear" color="primary" (click)="openCreateModal(table)">
+            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <div *ngIf="filteredTables.length === 0" class="ion-text-center ion-padding" style="color: #a4968a;">
+      <ion-icon name="search-outline" style="font-size: 32px;"></ion-icon>
+      <p><small>No se encontraron mesas configuradas.</small></p>
+    </div>
+  </div>
+</ion-content>

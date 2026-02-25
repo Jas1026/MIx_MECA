@@ -36,19 +36,23 @@
           <ion-label>Pedidos</ion-label>
         </ion-item>
 
-        <ion-item *ngIf="hasRole('admin')">
+        <ion-item *ngIf="hasRole('admin')"routerLink="/panel/user">
           <ion-icon name="people-outline" slot="start"></ion-icon>
           <ion-label>Gestión de usuarios</ion-label>
         </ion-item>
 
+        <ion-item *ngIf="hasRole('admin')"routerLink="/panel/flats">
+          <ion-icon name="people-outline" slot="start"></ion-icon>
+          <ion-label>Gestión de pisos</ion-label>
+        </ion-item>
+        
+        <ion-item *ngIf="hasRole('admin')"routerLink="/panel/tables">
+          <ion-icon name="people-outline" slot="start"></ion-icon>
+          <ion-label>Gestión de mesas</ion-label>
+        </ion-item>
         <ion-item *ngIf="hasRole('admin') || hasRole('jefe_mesero') || hasRole('cocina')" routerLink="/panel/inventario">
           <ion-icon name="cube-outline" slot="start"></ion-icon>
           <ion-label>Inventario</ion-label>
-        </ion-item>
-
-        <ion-item *ngIf="hasRole('admin') || hasRole('jefe_mesero')">
-          <ion-icon name="cart-outline" slot="start"></ion-icon>
-          <ion-label>Compras</ion-label>
         </ion-item>
 
         <ion-item *ngIf="hasRole('admin')" routerLink="/panel/informes">

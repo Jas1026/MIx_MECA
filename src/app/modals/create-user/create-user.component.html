@@ -1,0 +1,44 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="dark">
+    <ion-title>{{ user ? 'Editar' : 'Nuevo' }} Usuario</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()"><ion-icon name="close"></ion-icon></ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card class="ion-no-margin" style="box-shadow: none; border: 1px solid #e8e1d9;">
+    <ion-list lines="full">
+      <ion-item>
+        <ion-label position="stacked">Nombre Completo</ion-label>
+        <ion-input [(ngModel)]="newUser.name" type="text" placeholder="Ej: Juan Pérez"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Rol de Sistema</ion-label>
+        <ion-select [(ngModel)]="newUser.role" placeholder="Seleccionar Rol">
+          <ion-select-option value="admin">Administrador</ion-select-option>
+          <ion-select-option value="cocina">Cocinero</ion-select-option>
+          <ion-select-option value="mesero">Mesero</ion-select-option>
+          <ion-select-option value="jefe_mesero">Jefe de meseros</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Código / Login</ion-label>
+        <ion-input [(ngModel)]="newUser.code" type="text" placeholder="Ej: jperez01"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Contraseña {{ user ? '(Dejar vacío para no cambiar)' : '' }}</ion-label>
+        <ion-input [(ngModel)]="newUser.password" type="password" placeholder="****"></ion-input>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+
+  <ion-button (click)="saveUser()" expand="block" color="dark" class="ion-margin-top" style="--border-radius: 12px; height: 48px;">
+    <ion-icon name="save-outline" slot="start"></ion-icon>
+    Guardar Usuario
+  </ion-button>
+</ion-content>

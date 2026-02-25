@@ -1,0 +1,35 @@
+.form-container {
+  padding: 10px;
+  
+  .instruction {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 25px;
+  }
+}
+
+.input-group {
+  margin-bottom: 20px;
+  ion-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #2b241e;
+    font-size: 0.95rem;
+  }
+}
+
+.custom-input {
+  --background: #f5f5f5;
+  --border-radius: 12px;
+  --padding-start: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+}
+
+.btn-save {
+  margin-top: 30px;
+  height: 50px;
+  font-weight: bold;
+  --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}

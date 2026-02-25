@@ -1,0 +1,75 @@
+/* Paleta Mixtura */
+$crema-fondo: #fcfaf8;
+$beige-header: #f3ede4;
+$marron-texto: #4a3f35;
+$borde-suave: #e8e1d9;
+
+.table-container {
+  padding: 15px;
+  background: white; /* Forzamos fondo blanco/claro */
+  border-radius: 16px;
+  margin: 10px;
+  border: 1px solid $borde-suave;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+}
+
+.table-header {
+  background: $beige-header;
+  color: $marron-texto;
+  font-weight: 700;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  ion-col { padding: 12px 8px; font-size: 0.8rem; }
+}
+
+.align-center {
+  background: white;
+  border-bottom: 1px solid $borde-suave;
+  color: $marron-texto; /* Texto oscuro para que se lea bien en fondo claro */
+  
+  &:hover {
+    background: #fdfbf9;
+  }
+}
+
+.ing-name {
+  font-weight: 600;
+  color: #2b241e;
+}
+$crema-fondo: #fcfaf8;
+$beige-header: #f3ede4;
+$marron-texto: #4a3f35;
+$borde-suave: #e8e1d9;
+
+.table-container {
+  padding: 15px;
+  background: #ffffff; // Fondo blanco para la tabla
+  border-radius: 16px;
+  margin: 10px;
+  border: 1px solid $borde-suave;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+
+.table-header {
+  background: $beige-header;
+  color: $marron-texto;
+  font-weight: 700;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  ion-col { font-size: 0.8rem; padding: 12px 8px; }
+}
+
+.align-center {
+  background: transparent;
+  color: $marron-texto;
+  border-bottom: 1px solid $borde-suave;
+  
+  .ing-name { color: #2b241e; font-size: 0.95rem; }
+}
+
+.btn-state { 
+
+  --padding-start: 0;
+  font-weight: 600;
+  ion-icon { font-size: 1.2rem; }
+}

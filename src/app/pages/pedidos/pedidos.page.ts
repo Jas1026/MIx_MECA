@@ -24,7 +24,11 @@ fechaFiltro: string = '';
   this.meseros = res.data;
 });
   this.cargarPedidos();
-  
+  this.server.getWaiters().subscribe((res: any) => {
+    console.log("Respuesta de meseros:", res); // 👈 Revisa esto en la consola del navegador (F12)
+    this.meseros = res.data;
+  });
+  this.cargarPedidos();
   }
 
   cargarPedidos() {

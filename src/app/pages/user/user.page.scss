@@ -1,0 +1,116 @@
+/* Paleta Mixtura - Coherencia total con Mesas y Pisos */
+$crema-fondo: #fcfaf8;
+$beige-header: #f3ede4;
+$marron-texto: #4a3f35;
+$borde-suave: #e8e1d9;
+
+.table-container {
+  padding: 15px;
+  background: #ffffff; 
+  border-radius: 16px;
+  margin: 10px;
+  border: 1px solid $borde-suave;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+
+  .custom-searchbar {
+    flex: 2;
+    padding: 0;
+    --box-shadow: none;
+    --background: #f8f5f2;
+  }
+
+  .filter-wrapper {
+    flex: 1;
+    min-width: 150px;
+    background: #f8f5f2;
+    border-radius: 8px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    border: 1px solid transparent;
+
+    ion-select {
+      width: 100%;
+      font-size: 0.85rem;
+      color: $marron-texto;
+      --placeholder-color: #999;
+      --placeholder-opacity: 1;
+    }
+  }
+}
+
+.table-header {
+  background: $beige-header;
+  color: $marron-texto;
+  font-weight: 700;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  ion-col { font-size: 0.8rem; padding: 12px 8px; }
+}
+
+.align-center {
+  background: transparent;
+  color: $marron-texto;
+  border-bottom: 1px solid $borde-suave;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    background: #fdfbf9;
+  }
+
+  .ing-name { 
+    color: #2b241e; 
+    font-size: 0.95rem; 
+  }
+
+  .role-badge {
+    text-transform: capitalize; 
+    font-weight: 500; 
+    color: $marron-texto; 
+    border: 1px solid $borde-suave;
+    --padding-start: 8px;
+    --padding-end: 8px;
+  }
+
+  .user-code {
+    font-family: monospace; 
+    color: #666; 
+    font-size: 0.9rem;
+  }
+  
+  ion-col {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.btn-state { 
+  --padding-start: 0;
+  font-weight: 600;
+  ion-icon { font-size: 1.2rem; }
+}
+
+.actions-cell {
+  justify-content: flex-end;
+}
+
+.empty-state {
+  text-align: center; 
+  padding: 30px; 
+  color: #a4968a;
+  
+  ion-icon {
+    font-size: 3rem; 
+    opacity: 0.3;
+  }
+}

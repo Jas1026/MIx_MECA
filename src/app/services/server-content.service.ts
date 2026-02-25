@@ -272,11 +272,46 @@ updateAssetState(payload: any) {
 getInformes(system: string) {
   return this.http.get(`${this.urlService}get_informes_resumen.php?system=${system}`);
 }
+// ---------------- GESTIÓN DE PISOS ----------------
 
+getFlatsCom(system: string) {
+  return this.http.get(`${this.urlService}get_flats_complete.php?system=${system}`);
+}
 
+createFlat(body: FormData) {
+  return this.http.post(`${this.urlService}create_flat.php`, body);
+}
+updateFlatState(body: FormData) {
+  return this.http.post(`${this.urlService}toggle_flat_state.php`, body);
+}
+// ---------------- GESTIÓN DE MESAS ----------------
 
+getTables_complete(system: string) {
+  return this.http.get(`${this.urlService}get_tables_comp.php?system=${system}`);
+}
 
+createTable(body: FormData) {
+  return this.http.post(`${this.urlService}create_table.php`, body);
+}
 
+updateTableState(body: FormData) {
+  return this.http.post(`${this.urlService}toggle_table_state.php`, body);
+}
+
+// ---------------- GESTIÓN DE USUARIOS ----------------
+
+getUsers(system: string) {
+  return this.http.get(`${this.urlService}get_users.php?system=${system}`);
+}
+
+createUser(body: FormData) {
+  return this.http.post(`${this.urlService}create_user.php`, body);
+}
+
+updateUserState(body: FormData) {
+  // Asegúrate de que la ruta apunte al archivo toggle_user_state.php
+  return this.http.post(`${this.urlService}toggle_user_state.php`, body);
+}
 
 
 

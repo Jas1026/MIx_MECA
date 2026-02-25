@@ -1,0 +1,83 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="light">
+    <ion-title>Gestión de Usuarios</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="dashboard-bg" style="--background: #fcfaf8;">
+  <div class="table-container">
+    
+    <div class="header-actions">
+      <ion-searchbar 
+        placeholder="Buscar usuario..." 
+        [(ngModel)]="filterName" 
+        class="custom-searchbar">
+      </ion-searchbar>
+      
+      <div class="filter-wrapper">
+        <ion-select [(ngModel)]="selectedRole" interface="popover" placeholder="Filtrar Rol">
+          <ion-select-option value="all">Todos los Roles</ion-select-option>
+          <ion-select-option value="admin">Administrador</ion-select-option>
+          <ion-select-option value="mesero">Mesero</ion-select-option>
+          <ion-select-option value="cajero">Cajero</ion-select-option>
+        </ion-select>
+      </div>
+
+      <ion-button (click)="openCreateModal()" fill="solid" color="dark">
+        <ion-icon name="person-add-outline" slot="start"></ion-icon>
+        Nuevo Usuario
+      </ion-button>
+    </div>
+
+    <ion-grid class="ion-no-padding">
+      <ion-row class="table-header">
+        <ion-col size="3">Nombre</ion-col>
+        <ion-col size="2">Rol</ion-col>
+        <ion-col size="2">Código/Login</ion-col>
+        <ion-col size="3">Estado</ion-col>
+        <ion-col size="2">Acciones</ion-col>
+      </ion-row>
+
+      <ion-row *ngFor="let user of filteredUsers" class="align-center" 
+               [style.opacity]="(user.state == 0 || user.state == '0') ? '0.6' : '1'">
+        
+        <ion-col size="3">
+          <strong class="ing-name">{{ user.name }}</strong>
+        </ion-col>
+
+        <ion-col size="2">
+          <ion-badge color="light" mode="ios" class="role-badge">
+            {{ user.role }}
+          </ion-badge>
+        </ion-col>
+
+        <ion-col size="2">
+          <span class="user-code">{{ user.code }}</span>
+        </ion-col>
+
+        <ion-col size="3">
+          <ion-button fill="clear" 
+                      [color]="(user.state == 1 || user.state == '1') ? 'success' : 'danger'"
+                      (click)="toggleUserState(user)"
+                      class="btn-state">
+            <ion-icon style="width: 50px;" slot="start" 
+                      [name]="(user.state == 1 || user.state == '1') ? 'checkmark-circle' : 'close-circle'">
+            </ion-icon>
+            <small>{{ (user.state == 1 || user.state == '1') ? 'Activo' : 'Inactivo' }}</small>
+          </ion-button>
+        </ion-col>
+
+        <ion-col size="2" class="actions-cell">
+          <ion-button fill="clear" color="primary" (click)="openCreateModal(user)">
+            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <div *ngIf="filteredUsers.length === 0" class="empty-state">
+      <ion-icon name="people-outline"></ion-icon>
+      <p><small>No se encontraron usuarios configurados.</small></p>
+    </div>
+  </div>
+</ion-content>

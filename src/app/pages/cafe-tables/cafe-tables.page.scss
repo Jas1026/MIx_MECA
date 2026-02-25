@@ -1,0 +1,225 @@
+/* Paleta Mixtura - Mismo estilo que Pisos */
+$crema-fondo: #fcfaf8;
+$beige-header: #f3ede4;
+$marron-texto: #4a3f35;
+$borde-suave: #e8e1d9;
+
+.table-container {
+  padding: 15px;
+  background: #ffffff; 
+  border-radius: 16px;
+  margin: 10px;
+  border: 1px solid $borde-suave;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+
+  .custom-searchbar {
+    flex: 2;
+    padding: 0;
+  }
+
+  .filter-wrapper {
+    flex: 1;
+    min-width: 150px;
+    background: #f8f5f2; // Un tono más suave que el searchbar
+    border-radius: 8px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    border: 1px solid transparent;
+
+    ion-select {
+      width: 100%;
+      font-size: 0.85rem;
+      color: $marron-texto;
+      --placeholder-color: #999;
+      --placeholder-opacity: 1;
+    }
+  }
+}
+
+.table-header {
+  background: $beige-header;
+  color: $marron-texto;
+  font-weight: 700;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  ion-col { font-size: 0.8rem; padding: 12px 8px; }
+}
+
+.align-center {
+  background: transparent;
+  color: $marron-texto;
+  border-bottom: 1px solid $borde-suave;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    background: #fdfbf9;
+  }
+
+  .ing-name { color: #2b241e; font-size: 0.95rem; }
+  
+  ion-col {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.btn-state { 
+  --padding-start: 0;
+  font-weight: 600;
+  ion-icon { font-size: 1.2rem; }
+}
+
+.actions-cell {
+  justify-content: flex-end;
+}
+/* Contenedor principal con aire más limpio */
+.table-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Alineación de la barra superior (Buscador + Filtro + Botón) */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap; // Para que en móvil no se rompa
+
+  .custom-searchbar {
+    flex: 2; // El buscador toma más espacio
+    --border-radius: 12px;
+    --box-shadow: none;
+    --background: #f1f1f1;
+    padding: 0;
+  }
+
+  .filter-wrapper {
+    flex: 1;
+    background: #f1f1f1;
+    border-radius: 12px;
+    padding: 4px 12px;
+    ion-select {
+      width: 100%;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+  }
+
+  ion-button {
+    height: 44px;
+    --border-radius: 12px;
+    font-weight: 700;
+    margin: 0;
+  }
+}
+
+/* Estilo de la Grilla (Tabla) */
+.mixtura-grid {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+
+  .table-header {
+    background: #f8f5f2; // Color crema muy suave
+    padding: 15px 10px;
+    border-bottom: 2px solid #eee;
+    ion-col {
+      color: #8d7a6b;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+    }
+  }
+
+  .table-row {
+    padding: 10px;
+    border-bottom: 1px solid #f9f9f9;
+    transition: background 0.2s ease;
+    align-items: center; // Centra verticalmente el contenido
+
+    &:hover {
+      background: #fffcf9;
+    }
+
+    &.row-inactive {
+      opacity: 0.5;
+      filter: grayscale(0.5);
+    }
+  }
+}
+
+/* Celdas específicas */
+.name-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  ion-icon {
+    font-size: 20px;
+  }
+  .ing-name {
+    font-size: 1rem;
+    color: #333;
+  }
+}
+
+.sub-text {
+  font-size: 0.9rem;
+  color: #666;
+  .icon-small {
+    font-size: 14px;
+    vertical-align: middle;
+    margin-left: 4px;
+  }
+}
+
+/* Botón de Estado (Activa/Inactiva) */
+.btn-state {
+  --padding-start: 0;
+  font-weight: 800;
+  height: 32px;
+  
+  ion-icon {
+    font-size: 18px;
+  }
+  
+  .state-label {
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+  }
+}
+
+/* Badge de estado real (Libre/Ocupada) */
+.mini-status {
+  margin-top: 4px;
+  small {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.65rem;
+    background: #f0f0f0;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+}
+
+/* empty state */
+.empty-state {
+  padding: 40px;
+  text-align: center;
+  color: #ccc;
+  ion-icon { font-size: 48px; }
+}
