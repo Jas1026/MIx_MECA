@@ -31,25 +31,28 @@ export class UsersPage implements OnInit {
 
   applyFilters() {
 
-    this.filteredUsers = this.users.filter(user => {
+  this.filteredUsers = this.users.filter(user => {
 
-      const name = user.name ? user.name.toLowerCase() : '';
+    const name = user.name?.toLowerCase() || '';
 
-      const matchName =
-        name.includes(this.searchName.toLowerCase());
+    const matchName =
+      name.includes(this.searchName.toLowerCase());
 
-      const matchRole =
-        this.selectedRole === '' ||
-        String(user.role_id) === String(this.selectedRole);
+    // 🔥 AHORA COMPARA CON role (NO role_id)
+    const matchRole =
+      !this.selectedRole ||
+      user.role == this.selectedRole;
 
-      const matchState =
-        this.selectedState === '' ||
-        String(user.state) === String(this.selectedState);
+    
+   // 🔥 FILTRO DE ESTADO CORRECTO
+    const matchState =
+      this.selectedState === '' ||
+      String(user.state) == String(this.selectedState);
 
-      return matchName && matchRole && matchState;
-    });
+    return matchName && matchRole && matchState;
+  });
 
-  }
+}
 
   clearFilters() {
 
@@ -68,6 +71,7 @@ export class UsersPage implements OnInit {
         if (res.error === 0) {
           this.users = res.data;
           this.filteredUsers = res.data;
+          
         }
       },
       error: (err) => {
@@ -119,20 +123,31 @@ export class UsersPage implements OnInit {
     }
   }
 
-  inactivateUser(id: number) {
+inactivateUser(id: number) {
 
-    this.http.post('http://localhost/api/inactivar_usuario.php', {
-      id: id
-    }).subscribe({
-      next: (res: any) => {
-        console.log('Usuario inactivado:', res);
-        this.loadUsers();
-      },
-      error: (err) => {
-        console.error('Error al inactivar:', err);
-      }
-    });
+  this.http.post('http://localhost/api/inactivar_usuario.php', {
+    id: id
+  }).subscribe({
+    next: (res: any) => {
 
-  }
+      console.log('Usuario inactivado:', res);
+
+      // 🔥 RECARGAR Y REAPLICAR FILTROS
+      this.server.LoadUsers().subscribe({
+        next: (response: any) => {
+          if (response.error === 0) {
+            this.users = response.data;
+            this.applyFilters(); // 👈 IMPORTANTE
+          }
+        }
+      });
+
+    },
+    error: (err) => {
+      console.error('Error al inactivar:', err);
+    }
+  });
+
+}
 
 }

@@ -1,0 +1,63 @@
+<ion-card>
+
+  <ion-card-header>
+    <ion-card-title>
+      {{ mesa.id_table ? 'Editar Mesa' : 'Registrar Mesa' }}
+    </ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+
+    <!-- Nombre -->
+    <ion-item>
+      <ion-label position="floating">Nombre</ion-label>
+      <ion-input [(ngModel)]="mesa.nombre"></ion-input>
+    </ion-item>
+
+    <!-- Capacidad -->
+    <ion-item>
+      <ion-label position="floating">Capacidad</ion-label>
+      <ion-input type="number" [(ngModel)]="mesa.capacidad"></ion-input>
+    </ion-item>
+
+    <!-- Estado -->
+    <ion-item>
+      <ion-label>Estado</ion-label>
+      <ion-select [(ngModel)]="mesa.estado">
+        <ion-select-option value="Libre">Libre</ion-select-option>
+        <ion-select-option value="Ocupado">Ocupado</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- Piso -->
+    <ion-item>
+      <ion-label>Piso</ion-label>
+      <ion-select [(ngModel)]="mesa.id_flats">
+        <ion-select-option
+          *ngFor="let flat of flats"
+          [value]="flat.Id_flats">
+          {{ flat.Name }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- Botón dinámico -->
+    <ion-button
+      expand="block"
+      color="success"
+      (click)="saveMesa()">
+
+      {{ mesa.id_table ? 'Actualizar' : 'Guardar' }}
+
+    </ion-button>
+
+    <ion-button
+      expand="block"
+      color="medium"
+      (click)="closeForm()">
+      Cancelar
+    </ion-button>
+
+  </ion-card-content>
+
+</ion-card>

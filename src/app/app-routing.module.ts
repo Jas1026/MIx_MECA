@@ -148,7 +148,19 @@ const routes: Routes = [
 path: 'users',
 loadChildren: () => import('./pages/users/users.module').then( m => m.UsersPageModule)
 
-}
+},  {
+    path: 'registrar-mesa',
+    loadChildren: () => import('./pages/registrar-mesa/registrar-mesa.module').then( m => m.RegistrarMesaPageModule)
+  },
+  {
+    path: 'flats',
+    loadChildren: () => import('./pages/flats/flats.module').then( m => m.FlatsPageModule)
+  },
+  {
+    path: 'registrar-flats',
+    loadChildren: () => import('./pages/registrar-flats/registrar-flats.module').then( m => m.RegistrarFlatsPageModule)
+  }
+
 
 ];
 

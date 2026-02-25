@@ -1,0 +1,18 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>flats</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-button (click)="openForm()">Nuevo Piso</ion-button>
+
+<ion-list>
+  <ion-item *ngFor="let flat of flats">
+    <ion-label>
+      <h2>{{ flat.Name }}</h2>
+      <p>{{ flat.Description }}</p>
+      <p>{{ flat.state }}</p>
+    </ion-label>
+    <ion-button slot="end" (click)="openForm(flat)">Editar</ion-button>
+  </ion-item>
+</ion-list>

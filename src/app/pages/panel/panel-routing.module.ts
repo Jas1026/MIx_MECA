@@ -32,6 +32,11 @@ const routes: Routes = [
         loadChildren: () => import('../users/users.module')
           .then(m => m.UsersPageModule)
       },  
+{
+  path: 'registrar-mesa',
+  loadChildren: () => import('../registrar-mesa/registrar-mesa.module')
+    .then(m => m.RegistrarMesaPageModule)
+},
       {
         path: '',
         redirectTo: '',

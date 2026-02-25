@@ -1,0 +1,120 @@
+<ion-header>
+  <ion-toolbar class="toolbar-cafe">
+    <ion-title>Gestión de Mesas</ion-title>
+
+    <ion-button expand="block" (click)="openMesaForm()">
+      Añadir Mesa
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<!-- 🔥 FORMULARIO (SOLO UNA VEZ) -->
+<app-mesa-form
+  *ngIf="isModalOpen"
+  [mesa]="selectedMesa"
+  (close)="closeModal()"
+  (save)="loadMesas()">
+</app-mesa-form>
+
+<ion-content class="dashboard-bg">
+
+  <ion-card class="table-card">
+
+    <!-- FILTROS -->
+    <ion-grid>
+      <ion-row class="filters-row ion-align-items-center">
+
+        <ion-col size="4">
+          <ion-input
+            placeholder="Buscar por nombre..."
+            fill="outline"
+            [(ngModel)]="searchName"
+            (ionInput)="applyFilters()">
+          </ion-input>
+        </ion-col>
+
+        <ion-col size="3">
+          <ion-select
+            placeholder="Filtrar por estado"
+            fill="outline"
+            [(ngModel)]="selectedState"
+            (ionChange)="applyFilters()">
+
+            <ion-select-option value="">Todos</ion-select-option>
+            <ion-select-option value="Libre">Libre</ion-select-option>
+            <ion-select-option value="Ocupado">Ocupado</ion-select-option>
+
+          </ion-select>
+        </ion-col>
+
+        <ion-col size="3">
+          <ion-button
+            expand="block"
+            color="medium"
+            (click)="clearFilters()">
+            Limpiar
+          </ion-button>
+        </ion-col>
+
+      </ion-row>
+    </ion-grid>
+
+    <!-- TABLA -->
+    <ion-grid>
+
+      <ion-row class="header-row ion-align-items-center">
+        <ion-col size="3">Nombre</ion-col>
+        <ion-col size="2">Capacidad</ion-col>
+        <ion-col size="2">Piso</ion-col>
+        <ion-col size="2">Estado</ion-col>
+        <ion-col size="3" class="text-center">Acciones</ion-col>
+      </ion-row>
+
+      <ion-row
+        *ngFor="let mesa of filteredMesas"
+        class="data-row ion-align-items-center">
+
+        <ion-col size="3">
+          <strong>{{ mesa.nombre }}</strong>
+        </ion-col>
+
+        <ion-col size="2">
+          {{ mesa.capacidad }} personas
+        </ion-col>
+
+        <ion-col size="2">
+          {{ mesa.id_flats }}
+        </ion-col>
+
+        <ion-col size="2">
+          <ion-badge
+            [color]="mesa.estado === 'Libre' ? 'success' : 'danger'">
+            {{ mesa.estado }}
+          </ion-badge>
+        </ion-col>
+
+        <ion-col size="3" class="text-center">
+
+          <ion-button
+            size="small"
+            fill="solid"
+            color="primary"
+            shape="round"
+            (click)="openMesaForm(mesa)">
+            <ion-icon name="create-outline"></ion-icon>
+          </ion-button>
+
+        </ion-col>
+
+      </ion-row>
+
+    </ion-grid>
+
+    <div *ngIf="filteredMesas.length === 0" class="empty-state">
+      <ion-icon name="restaurant-outline"></ion-icon>
+      <p>No hay mesas registradas</p>
+    </div>
+
+  </ion-card>
+
+</ion-content>

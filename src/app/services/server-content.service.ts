@@ -16,39 +16,100 @@ export class ServerContentService {
   }
 
 
+updateUser(data: any) {
+  let body = new FormData();
+  body.append("system", this.getSystem());
 
+  body.append("id", data.id);
+  body.append("name", data.name);
+  body.append("code", data.code);
+  body.append("role", data.role);
+  body.append("state", data.state);
+
+  return this.http.post(
+    this.urlService + "update_user.php",
+    body
+  );
+}
     
   //USUARIOS------------------------
 LoadUsers() {
-  return this.http.get('http://localhost/api/loadUsers.php');
-}
-createUser(data: any) {
-  return this.http.post('http://localhost/api/create_user.php', data);
-}
-updateUser(data: any) {
+  let body = new FormData();
+  body.append("system", this.getSystem());
+
   return this.http.post(
-    'http://localhost/api/update_user.php',
-    data
+    this.urlService + "loadUsers.php",
+    body
   );
 }
 
-inactivateUser(id: number) {
+createUser(data: any) {
+  let body = new FormData();
+  body.append("system", this.getSystem());
+  body.append("name", data.name);
+  body.append("code", data.code);
+  body.append("role_id", data.role_id); // Cambié 'role' por 'role_id' para que coincida
+  body.append("password", data.password); // Agregué el password
 
-  this.http.post('http://localhost/api/inactivar_usuario.php', {
-    id: id
-  }).subscribe({
-    next: (resp: any) => {
-      console.log(resp);
-       // si tienes función para recargar
-    },
-    error: (err) => {
-      console.error(err);
-    }
-  });
-
+  return this.http.post(
+    this.urlService + "create_user.php",
+    body
+  );
 }
 
+//------------------------pisos------------------------
+loadFlats() {
+  let body = new FormData();
+  body.append("system", this.getSystem());
 
+  return this.http.post(
+    this.urlService + "load_flats.php",
+    body
+  );
+}
+
+ //------------------------ MESAS------------------------
+
+ 
+createMesa(data: any) {
+  let body = new FormData();
+  body.append("system", this.getSystem());
+  body.append("nombre", data.nombre);
+  body.append("capacidad", data.capacidad.toString()); // Convertir a string
+  body.append("estado", data.estado);
+  body.append("id_flats", data.id_flats ? data.id_flats.toString() : ''); // Evitar el null
+
+  return this.http.post(
+    this.urlService + "create_mesa.php",
+    body
+  );
+}
+
+loadMesas() {
+  let body = new FormData();
+  body.append("system", this.getSystem());
+
+  return this.http.post(
+    this.urlService + "load_mesas.php",
+    body
+  );
+}
+
+updateMesa(data: any) {
+  let body = new FormData();
+  body.append("system", this.getSystem());
+
+  body.append("id_table", data.id_table);
+  body.append("nombre", data.nombre);
+  body.append("capacidad", data.capacidad);
+  body.append("estado", data.estado);
+  body.append("id_flats", data.id_flats);
+
+  return this.http.post(
+    this.urlService + "update_mesa.php",
+    body
+  );
+}
   // ---------------- LOGIN ----------------
 
   LoginWithPassword(code: string, password: string, system: string) {
