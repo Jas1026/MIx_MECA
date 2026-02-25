@@ -11,7 +11,7 @@ export class ServerContentService {
   constructor(private http: HttpClient) { }
 
   // 🔥 Obtener sistema actual
-  private getSystem(): string {
+  public getSystem(): string {
     return localStorage.getItem('system') || 'mecapos';
   }
 
@@ -57,6 +57,29 @@ createUser(data: any) {
   );
 }
 
+updateUserState(id: number, state: number) {
+  let body = new FormData();
+  body.append("system", this.getSystem());
+  body.append("id", id.toString());
+  body.append("state", state.toString());
+
+  return this.http.post(
+    this.urlService + "update_user_state.php",
+    body
+  );
+}
+
+updateMesaEstado(id: number, estado: string) {
+  let body = new FormData();
+  body.append("system", this.getSystem());
+  body.append("id", id.toString());
+  body.append("estado", estado);
+
+  return this.http.post(
+    this.urlService + "update_mesa_estado.php",
+    body
+  );
+}
 //------------------------pisos------------------------
 loadFlats() {
   let body = new FormData();
@@ -67,7 +90,32 @@ loadFlats() {
     body
   );
 }
+createFlat(data: any) {
 
+  let body = new FormData();
+  body.append("system", this.getSystem());
+  body.append("Name", data.Name);
+  body.append("Description", data.Description || '');
+
+  return this.http.post(
+    this.urlService + "create_flat.php",
+    body
+  );
+}
+
+updateFlat(data: any) {
+
+  let body = new FormData();
+  body.append("system", this.getSystem());
+  body.append("Id_flats", data.Id_flats);
+  body.append("Name", data.Name);
+  body.append("Description", data.Description || '');
+
+  return this.http.post(
+    this.urlService + "update_flat.php",
+    body
+  );
+}
  //------------------------ MESAS------------------------
 
  
@@ -286,22 +334,22 @@ getIngredients() {
 }
 
 updateStock(data: any) {
-  return this.http.post(this.urlService + 'update_stock.php', data);
+  // Combinamos el ID y el STOCK con el SYSTEM actual
+  const payload = {
+    ...data,
+    system: this.getSystem()
+  };
+
+  return this.http.post(this.urlService + 'update_stock.php', payload);
 }
+addAsset(asset: any) {
+  // Combinamos el asset con el nombre del sistema
+  const payload = { ...asset, system: this.getSystem() }; 
+  return this.http.post(`${this.urlService}add_asset.php`, payload);
+}
+
 getAssets() {
-  let body = new FormData();
-  body.append("system", this.getSystem());
-
-  return this.http.post(this.urlService + "get_assets.php", body);
-}
-addAsset(data: any) {
-  let body = new FormData();
-  body.append("nombre", data.nombre);
-  body.append("categoria", data.categoria);
-  body.append("stock", data.stock);
-  body.append("system", this.getSystem());
-
-  return this.http.post(this.urlService + "add_asset.php", body);
+  return this.http.get(`${this.urlService}get_assets.php?system=${this.getSystem()}`);
 }
 getProducts() {
   let body = new FormData();
@@ -309,6 +357,74 @@ getProducts() {
 
   return this.http.post(this.urlService + "get_products.php", body);
 }
+
+addIngredient(data: any) {
+  // Creamos un nuevo objeto que combina los datos del formulario + el sistema
+  const payload = {
+    ...data,
+    system: this.getSystem()
+  };
+
+  // Enviamos 'payload' en lugar de 'data'
+  return this.http.post('http://localhost/api/add_ingredient.php', payload, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+
+updateIngredient(data: any) {
+  // Combinamos los datos actuales con el nombre del sistema
+  const payload = {
+    ...data,
+    system: this.getSystem()
+  };
+
+  return this.http.post('http://localhost/api/update_ingredient.php', payload, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+
+getProductRecipe(id_product: number) {
+  // Ajusta la ruta a tu archivo PHP (el que hace el JOIN de product_ingredient e ingredients)
+  return this.http.get(`${this.urlService}/get_product_recipe.php?id_product=${id_product}`);
+}
+
+// 2. Guardar producto y receta (Todo junto)
+saveFullProduct(payload: any) {
+  // Este apunta al nuevo archivo PHP que te pasé anteriormente
+  return this.http.post(`${this.urlService}/save_product.php`, payload);
+}
+getProductKitchens(id_product: number) {
+  return this.http.get(`${this.urlService}get_product_kitchens.php?id_product=${id_product}`);
+}
+updateProductState(id: number, state: string) {
+  const payload = {
+    id_product: id,
+    state: state,
+    system: this.getSystem()
+  };
+  return this.http.post(`${this.urlService}update_product_state.php`, payload);
+}
+updateAssetFull(payload: any) {
+  return this.http.post(`${this.urlService}update_asset_full.php`, payload);
+}
+updateAssetState(payload: any) {
+  // payload ya contiene: { id_asset, estado, system }
+  return this.http.post(`${this.urlService}update_asset_state.php`, payload);
+}
+
+getInformes(system: string) {
+  return this.http.get(`${this.urlService}get_informes_resumen.php?system=${system}`);
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

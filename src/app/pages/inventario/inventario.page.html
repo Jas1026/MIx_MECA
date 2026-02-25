@@ -1,13 +1,12 @@
-<ion-header>
-  <ion-toolbar>
+<ion-header class="ion-no-border">
+  <ion-toolbar color="light">
     <ion-title>Inventario</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
 
-  <!-- SEGMENT -->
-  <ion-segment [(ngModel)]="segment" (ionChange)="segmentChanged()">
+  <ion-segment [(ngModel)]="segment" (ionChange)="segmentChanged()" mode="md">
     <ion-segment-button value="ingredients">
       <ion-label>Ingredientes</ion-label>
     </ion-segment-button>
@@ -21,105 +20,181 @@
     </ion-segment-button>
   </ion-segment>
 
-  <!-- ================= INGREDIENTES ================= -->
   <div *ngIf="segment === 'ingredients'" class="table-container">
+
+    <div class="header-actions">
+      <ion-searchbar placeholder="Buscar nombre..." [(ngModel)]="filterNombre" class="custom-searchbar">
+      </ion-searchbar>
+
+      <ion-select interface="popover" placeholder="Unidad" [(ngModel)]="filterUnidad" class="custom-select">
+        <ion-select-option value="">Todas</ion-select-option>
+        <ion-select-option *ngFor="let uni of unidadesDisponibles" [value]="uni">
+          {{ uni }}
+        </ion-select-option>
+      </ion-select>
+
+      <ion-button (click)="openCreateModal()" fill="solid" color="dark">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        Añadir Nuevo
+      </ion-button>
+    </div>
 
     <ion-grid>
       <ion-row class="table-header">
-        <ion-col>Nombre</ion-col>
-        <ion-col>Stock</ion-col>
-        <ion-col>Unidad</ion-col>
-        <ion-col>Acción</ion-col>
+        <ion-col size="3">Nombre</ion-col>
+        <ion-col size="5">Stock / Guardar</ion-col>
+        <ion-col size="2">Unidad</ion-col>
+        <ion-col size="2">Acciones</ion-col>
       </ion-row>
 
-      <ion-row *ngFor="let ing of ingredients">
-        <ion-col>{{ ing.nombre }}</ion-col>
-
-        <ion-col>
-          <ion-input type="number" [(ngModel)]="ing.stock_act"></ion-input>
+      <ion-row *ngFor="let ing of filteredIngredients" class="align-center">
+        <ion-col size="3">
+          <span class="ing-name">{{ ing.nombre }}</span>
         </ion-col>
 
-        <ion-col>{{ ing.unidad_med }}</ion-col>
+        <ion-col size="5" class="stock-cell">
+          <ion-input type="number" [(ngModel)]="ing.stock_act" class="stock-input"></ion-input>
+          <ion-button size="small" (click)="updateStock(ing)" color="success" fill="solid" class="btn-save">
+            <ion-icon name="checkmark-outline"></ion-icon>
+          </ion-button>
+        </ion-col>
 
-        <ion-col>
-          <ion-button size="small" (click)="updateStock(ing)">
-            Guardar
+        <ion-col size="2">
+          <ion-badge color="light" mode="ios">{{ ing.unidad_med }}</ion-badge>
+        </ion-col>
+
+        <ion-col size="2" class="actions-cell">
+          <ion-button fill="clear" color="primary" (click)="showIngredientModal(ing)">
+            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" color="medium" (click)="verDetalles(ing)">
+            <ion-icon slot="icon-only" name="eye-outline"></ion-icon>
           </ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
-
   </div>
 
-  <!-- ================= PRODUCTS ================= -->
- <div *ngIf="segment === 'products'" class="table-container">
+  <div *ngIf="segment === 'products'" class="table-container">
 
-  <ion-grid>
-    <ion-row class="table-header">
-      <ion-col>Nombre</ion-col>
-      <ion-col>Precio</ion-col>
-      <ion-col>Prep (min)</ion-col>
-      <ion-col>Estado</ion-col>
-      <ion-col>Categoría</ion-col>
-    </ion-row>
+    <div class="header-actions">
+      <ion-searchbar placeholder="Buscar producto..." [(ngModel)]="filterProducto"
+        class="custom-searchbar"></ion-searchbar>
 
-    <ion-row *ngFor="let p of products">
-      <ion-col>{{ p.nombre_producto }}</ion-col>
-      <ion-col>{{ p.price }} Bs</ion-col>
-      <ion-col>{{ p.time_prep }}</ion-col>
-      <ion-col>{{ p.state }}</ion-col>
-      <ion-col>{{ p.id_category }}</ion-col>
-    </ion-row>
-  </ion-grid>
+      <ion-select [(ngModel)]="filterState" interface="popover" class="custom-select">
+        <ion-select-option value="todos">Todos los Estados</ion-select-option>
+        <ion-select-option value="active">Solo Activos</ion-select-option>
+        <ion-select-option value="inactive">Solo Inactivos</ion-select-option>
+      </ion-select>
 
-</div>
+      <ion-button (click)="openCreateProductModal()" fill="solid" color="dark">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        Nuevo Producto
+      </ion-button>
+    </div>
 
-  <!-- ================= ASSETS ================= -->
-  <div *ngIf="segment === 'assets'" class="table-container">
+    <ion-grid>
+      <ion-row class="table-header">
+        <ion-col size="3">Nombre</ion-col>
+        <ion-col size="2">Precio</ion-col>
+        <ion-col size="3">Categoría</ion-col>
+        <ion-col size="2">Estado</ion-col> <ion-col size="2">Acciones</ion-col>
+      </ion-row>
 
-    <ion-card>
+      <ion-row *ngFor="let p of filteredProducts" class="align-center"
+        [style.opacity]="p.state === 'inactive' ? '0.5' : '1'">
+        <ion-col size="3"><strong class="ing-name">{{ p.nombre_producto }}</strong></ion-col>
+        <ion-col size="2">{{ p.price }} Bs</ion-col>
+        <ion-col size="3">{{ getCategoryName(p.id_category) }}</ion-col>
+
+        <ion-col size="2">
+          <ion-button fill="clear" [color]="p.state === 'active' ? 'success' : 'danger'"
+            (click)="toggleProductState(p)">
+            <ion-icon slot="start" [name]="p.state === 'active' ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+            <small>{{ p.state === 'active' ? 'Activo' : 'Inactivo' }}</small>
+          </ion-button>
+        </ion-col>
+
+        <ion-col size="2" class="actions-cell">
+          <ion-button fill="clear" color="primary" (click)="openCreateProductModal(p)">
+            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" color="medium" (click)="verDetalle(p)">
+            <ion-icon slot="icon-only" name="eye-outline"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+<div *ngIf="segment === 'assets'" class="table-container">
+    <div class="header-actions">
+      <ion-searchbar placeholder="Buscar activo..." [(ngModel)]="filterAssetNombre" class="custom-searchbar"></ion-searchbar>
+      <ion-select interface="popover" placeholder="Categoría" [(ngModel)]="filterAssetCategoria" class="custom-select">
+        <ion-select-option value="">Todas</ion-select-option>
+        <ion-select-option *ngFor="let cat of assetCategories" [value]="cat">{{ cat }}</ion-select-option>
+      </ion-select>
+    </div>
+
+    <ion-card class="ion-no-margin ion-margin-bottom" style="box-shadow: none; border: 1px solid #e8e1d9;">
       <ion-card-header>
-        <ion-card-title>Nuevo Activo</ion-card-title>
+        <ion-card-title style="font-size: 1rem; color: #4a3f35;">
+          {{ editingAssetId ? 'Editando: ' + nuevoAsset.nombre : 'Nuevo Activo' }}
+        </ion-card-title>
       </ion-card-header>
-
       <ion-card-content>
-
-        <ion-input placeholder="Nombre"
-                   [(ngModel)]="nuevoAsset.nombre">
-        </ion-input>
-
-        <ion-input placeholder="Categoría"
-                   [(ngModel)]="nuevoAsset.categoria">
-        </ion-input>
-
-        <ion-input type="number"
-                   placeholder="Stock"
-                   [(ngModel)]="nuevoAsset.stock">
-        </ion-input>
-
-        <ion-button expand="block" (click)="crearAsset()">
-          Guardar
-        </ion-button>
-
+        <ion-row>
+          <ion-col size="4"><ion-input placeholder="Nombre" [(ngModel)]="nuevoAsset.nombre" class="stock-input" style="max-width: 100%"></ion-input></ion-col>
+          <ion-col size="3">
+            <ion-select placeholder="Elegir..." [(ngModel)]="nuevoAsset.categoria" class="stock-input" style="max-width: 100%; --padding-start: 8px;">
+              <ion-select-option *ngFor="let cat of assetCategories" [value]="cat">{{ cat }}</ion-select-option>
+            </ion-select>
+          </ion-col>
+          <ion-col size="2"><ion-input type="number" placeholder="Stock" [(ngModel)]="nuevoAsset.stock" class="stock-input" style="max-width: 100%"></ion-input></ion-col>
+          <ion-col size="3">
+            <ion-button expand="block" (click)="guardarAsset()" [color]="editingAssetId ? 'warning' : 'dark'" style="margin: 0;">
+              {{ editingAssetId ? 'Actualizar' : 'Guardar' }}
+            </ion-button>
+            <ion-button *ngIf="editingAssetId" expand="block" fill="clear" color="medium" (click)="finalizarGuardado()" style="font-size: 0.8rem;">
+              Cancelar
+            </ion-button>
+          </ion-col>
+        </ion-row>
       </ion-card-content>
     </ion-card>
 
     <ion-grid>
       <ion-row class="table-header">
-        <ion-col>Nombre</ion-col>
-        <ion-col>Categoría</ion-col>
-        <ion-col>Stock</ion-col>
-        <ion-col>Estado</ion-col>
+        <ion-col size="3">Nombre</ion-col>
+        <ion-col size="3">Categoría</ion-col>
+        <ion-col size="2">Stock</ion-col>
+        <ion-col size="2">Estado</ion-col>
+        <ion-col size="2">Acciones</ion-col>
       </ion-row>
-
-      <ion-row *ngFor="let a of assets">
-        <ion-col>{{ a.nombre }}</ion-col>
-        <ion-col>{{ a.categoria }}</ion-col>
-        <ion-col>{{ a.stock }}</ion-col>
-        <ion-col>{{ a.estado }}</ion-col>
-      </ion-row>
+      <ion-row *ngFor="let a of filteredAssets" class="align-center" [style.opacity]="a.estado === 'Inactivo' ? '0.5' : '1'">
+  <ion-col size="3">{{ a.nombre }}</ion-col>
+  <ion-col size="3"><ion-badge color="light">{{ a.categoria }}</ion-badge></ion-col>
+  <ion-col size="2">{{ a.stock }}</ion-col>
+  <ion-col size="2">
+  <ion-button 
+    fill="clear" 
+    [color]="a.estado === 'Activo' ? 'success' : 'danger'" 
+    (click)="toggleAssetState(a)">
+    
+    <ion-icon 
+      slot="start" 
+      [name]="a.estado === 'Activo' ? 'checkmark-circle' : 'close-circle'">
+    </ion-icon>
+    
+    <small>{{ a.estado }}</small>
+  </ion-button>
+  </ion-col>
+  <ion-col size="2" class="actions-cell">
+    <ion-button fill="clear" color="primary" (click)="prepararEditarAsset(a)">
+      <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+    </ion-button>
+  </ion-col>
+</ion-row>
     </ion-grid>
-
   </div>
 
 </ion-content>

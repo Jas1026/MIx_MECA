@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ServerContentService } from '../../services/server-content.service';
 import { ModalController } from '@ionic/angular';
-import { UserFormComponent } from 'src/app/components/user-form/user-form.component';
+import { UserFormComponent } from 'src/app/modals/user-form/user-form.component';
 import { ConfirmModalComponent } from 'src/app/shared/confirm-modal/confirm-modal.component';
 import { HttpClient } from '@angular/common/http';
 
@@ -150,4 +150,30 @@ inactivateUser(id: number) {
 
 }
 
+
+toggleState(user: any) {
+
+  const nuevoEstado = user.state == 1 ? 0 : 1;
+
+  this.server.updateUserState(user.id, nuevoEstado).subscribe({
+    next: (res: any) => {
+
+      if (res.error === 0) {
+
+        // Cambiar visualmente
+        user.state = nuevoEstado;
+
+        console.log("Estado actualizado correctamente");
+
+      } else {
+        console.error("Error al actualizar estado");
+      }
+
+    },
+    error: (err) => {
+      console.error("Error:", err);
+    }
+  });
+
+}
 }

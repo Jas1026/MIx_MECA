@@ -103,4 +103,24 @@ clearFilters() {
   this.selectedState = '';
   this.filteredMesas = this.mesas;
 }
+
+toggleEstado(mesa: any) {
+
+  const nuevoEstado = mesa.estado === 'Libre' ? 'Ocupado' : 'Libre';
+
+  this.server.updateMesaEstado(mesa.id, nuevoEstado).subscribe({
+    next: (res: any) => {
+
+      if (res.error === 0) {
+        mesa.estado = nuevoEstado;
+        console.log("Estado actualizado");
+      }
+
+    },
+    error: (err) => {
+      console.error("Error:", err);
+    }
+  });
+
+}
 }

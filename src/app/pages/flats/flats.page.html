@@ -1,18 +1,77 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>flats</ion-title>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Gestión de Pisos</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button fill="solid" color="light" (click)="openFlatForm()">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        Añadir
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-button (click)="openForm()">Nuevo Piso</ion-button>
+<app-flat-form
+  *ngIf="isModalOpen"
+  [flat]="selectedFlat"
+  (close)="closeModal()"
+  (save)="loadFlats()">
+</app-flat-form>
 
-<ion-list>
-  <ion-item *ngFor="let flat of flats">
-    <ion-label>
-      <h2>{{ flat.Name }}</h2>
-      <p>{{ flat.Description }}</p>
-      <p>{{ flat.state }}</p>
-    </ion-label>
-    <ion-button slot="end" (click)="openForm(flat)">Editar</ion-button>
+<ion-content class="ion-padding">
+
+  <!-- FILTRO -->
+  <ion-item>
+    <ion-label position="stacked">Buscar Piso</ion-label>
+    <ion-input
+      placeholder="Buscar por nombre..."
+      [(ngModel)]="searchName"
+      (ionInput)="applyFilters()">
+    </ion-input>
   </ion-item>
-</ion-list>
+
+  <!-- TABLA WEB -->
+  <div class="tabla-web">
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let flat of filteredFlats">
+          <td><strong>{{ flat.Name }}</strong></td>
+          <td>{{ flat.Description }}</td>
+          <td>
+            <ion-button size="small" color="warning" (click)="openFlatForm(flat)">
+              Editar
+            </ion-button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- MOBILE -->
+  <ion-list class="lista-mobile">
+    <ion-item *ngFor="let flat of filteredFlats">
+      <ion-label>
+        <h2>{{ flat.Name }}</h2>
+        <p>{{ flat.Description }}</p>
+      </ion-label>
+
+      <ion-button size="small" color="warning" (click)="openFlatForm(flat)">
+        Editar
+      </ion-button>
+    </ion-item>
+  </ion-list>
+
+  <div *ngIf="filteredFlats.length === 0" class="empty-state">
+    <ion-icon name="layers-outline"></ion-icon>
+    <p>No hay pisos registrados</p>
+  </div>
+
+</ion-content>

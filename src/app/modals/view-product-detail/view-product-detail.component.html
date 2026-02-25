@@ -1,0 +1,68 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="dark">
+    <ion-title>Detalles del Producto</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close-circle"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="product-header">
+    <div class="icon-box">
+      <ion-icon name="fast-food-outline"></ion-icon>
+    </div>
+    <div class="title-box">
+      <h2>{{ product.nombre_producto }}</h2>
+      <p class="category-tag">Categoría: {{ product.categoria_nombre || 'General' }}</p>
+      <h1 class="price-text">{{ product.price | number:'1.2-2' }} Bs.</h1>
+    </div>
+  </div>
+
+  <ion-divider class="ion-margin-vertical"></ion-divider>
+
+  <div class="section-title">
+    <ion-icon name="restaurant-outline"></ion-icon>
+    <ion-label>Cocinas de Impresión</ion-label>
+  </div>
+  
+  <div class="kitchen-container">
+    <ion-chip *ngFor="let k of kitchens" color="primary" outline="true">
+      <ion-icon name="print-outline"></ion-icon>
+      <ion-label>{{ k.nombre_cocina || 'Cocina ' + k.kitchen_id }}</ion-label>
+    </ion-chip>
+    <p *ngIf="kitchens.length === 0" class="empty-text">No tiene cocinas asignadas.</p>
+  </div>
+
+  <div class="section-title ion-margin-top">
+    <ion-icon name="list-outline"></ion-icon>
+    <ion-label>Receta e Insumos</ion-label>
+  </div>
+
+  <ion-list lines="none" class="recipe-list">
+    <ion-item *ngFor="let ing of ingredients" class="ingredient-card">
+      <ion-icon name="leaf-outline" slot="start" color="success"></ion-icon>
+      <ion-label>
+        <h3>{{ ing.nombre || 'Insumo' }}</h3>
+        <p>Unidad: {{ ing.unidad_med || 'u' }}</p>
+      </ion-label>
+      <ion-badge slot="end" color="light" class="qty-badge">
+        {{ ing.cant_us }}
+      </ion-badge>
+    </ion-item>
+
+    <div *ngIf="ingredients.length === 0" class="empty-state">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      <p>Este producto no tiene insumos registrados.</p>
+    </div>
+  </ion-list>
+
+</ion-content>
+
+<ion-footer class="ion-no-border ion-padding">
+  <ion-button expand="block" color="dark" (click)="dismiss()" shape="round">
+    Entendido
+  </ion-button>
+</ion-footer>

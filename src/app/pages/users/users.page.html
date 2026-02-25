@@ -1,9 +1,9 @@
 <ion-header>
-  <ion-toolbar class="toolbar-cafe">
+  <ion-toolbar color="primary">
     <ion-title>Gestión de Usuarios</ion-title>
 
     <ion-buttons slot="end">
-      <ion-button fill="clear" (click)="addUser()">
+      <ion-button fill="solid" color="light" (click)="addUser()">
         <ion-icon name="person-add-outline" slot="start"></ion-icon>
         Añadir
       </ion-button>
@@ -11,119 +11,122 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="dashboard-bg">
+<ion-content class="ion-padding">
 
-  <ion-card class="table-card">
+  <!-- ================= FILTROS ================= -->
+  <ion-grid>
+    <ion-row>
 
-    <!-- 🔎 FILTROS -->
-    <ion-grid>
-      <ion-row class="filters-row ion-align-items-center">
+      <!-- BUSCAR -->
+      <ion-col size="12" size-md="3">
+        <ion-item>
+          <ion-label position="stacked">Buscar</ion-label>
+          <ion-input
+            placeholder="Nombre..."
+            [(ngModel)]="searchName"
+            (ionInput)="applyFilters()">
+          </ion-input>
+        </ion-item>
+      </ion-col>
 
-      <ion-input
-  placeholder="Buscar por nombre..."
-  fill="outline"
-  [(ngModel)]="searchName"
-  (ionInput)="applyFilters()">
-</ion-input>
+      <!-- ROL -->
+      <ion-col size="12" size-md="3">
+        <ion-item>
+          <ion-label>Rol</ion-label>
+          <ion-select [(ngModel)]="selectedRole" (ionChange)="applyFilters()">
+            <ion-select-option value="">Todos</ion-select-option>
+            <ion-select-option value="mesero">Mesero</ion-select-option>
+            <ion-select-option value="cocina">Cocina</ion-select-option>
+            <ion-select-option value="admin">Admin</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
 
+      <!-- ESTADO -->
+      <ion-col size="12" size-md="3">
+        <ion-item>
+          <ion-label>Estado</ion-label>
+          <ion-select [(ngModel)]="selectedState" (ionChange)="applyFilters()">
+            <ion-select-option value="">Todos</ion-select-option>
+            <ion-select-option value="1">Activo</ion-select-option>
+            <ion-select-option value="0">Inactivo</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
 
- <ion-select
-  placeholder="Filtrar por rol"
-  fill="outline"
-  [(ngModel)]="selectedRole"
-  (ionChange)="applyFilters()">
-  <ion-select-option value="">Todos</ion-select-option>
-<ion-select-option value="mesero">mesero</ion-select-option>
-<ion-select-option value="cocina">Cocina</ion-select-option>
-</ion-select>
+      <!-- LIMPIAR -->
+      <ion-col size="12" size-md="3">
+        <ion-button expand="block" fill="clear" color="medium" (click)="clearFilters()">
+          Limpiar filtros
+        </ion-button>
+      </ion-col>
 
+    </ion-row>
+  </ion-grid>
 
+  <!-- ================= TABLA WEB ================= -->
+  <div class="tabla-web">
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Código</th>
+          <th>Rol</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
 
-<ion-select
-  placeholder="Estado"
-  fill="outline"
-  [(ngModel)]="selectedState"
-  (ionChange)="applyFilters()">
+      <tbody>
+        <tr *ngFor="let user of filteredUsers">
+          <td>{{ user.name }}</td>
+          <td>{{ user.code }}</td>
+          <td>{{ user.role }}</td>
 
-  <ion-select-option value="">Todos</ion-select-option>
-  <ion-select-option value="1">Activo</ion-select-option>
-  <ion-select-option value="0">Inactivo</ion-select-option>
+          <!-- ESTADO COMO BOTÓN -->
+          <td>
+            <ion-button
+              size="small"
+              [color]="user.state == 1 ? 'success' : 'danger'"
+              (click)="toggleState(user)">
+              {{ user.state == 1 ? 'Activo' : 'Inactivo' }}
+            </ion-button>
+          </td>
 
-</ion-select>
+          <!-- ACCIONES -->
+          <td>
+            <ion-button size="small" color="warning" (click)="editUser(user)">
+              Editar
+            </ion-button>
 
+            <ion-button size="small" color="danger" (click)="openConfirmModal(user)">
+              Eliminar
+            </ion-button>
+          </td>
 
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-     <ion-button expand="block" color="medium" (click)="clearFilters()">
-  Limpiar
-</ion-button>
+  <!-- ================= MOBILE ================= -->
+  <ion-list class="lista-mobile">
+    <ion-item *ngFor="let user of filteredUsers">
+      <ion-label>
+        <h2>{{ user.name }}</h2>
+        <p>Código: {{ user.code }}</p>
+        <p>Rol: {{ user.role }}</p>
 
-
-
-      </ion-row>
-    </ion-grid>
-
-    <!-- 📋 TABLA -->
-    <ion-grid>
-
-      <!-- Header -->
-      <ion-row class="header-row ion-align-items-center">
-        <ion-col size="3">Nombre</ion-col>
-        <ion-col size="2">Código</ion-col>
-        <ion-col size="2">Rol</ion-col>
-        <ion-col size="2">Estado</ion-col>
-        <ion-col size="3" class="text-center">Acciones</ion-col>
-      </ion-row>
-
-      <!-- Filas -->
-      <ion-row 
-        *ngFor="let user of filteredUsers" 
-        class="data-row ion-align-items-center"
-      >
-
-        <ion-col size="3">{{ user.name }}</ion-col>
-        <ion-col size="2">{{ user.code }}</ion-col>
-        <ion-col size="2">{{ user.role }}</ion-col>
-
-        <!-- Estado corregido -->
-        <ion-col size="2">
-          <ion-badge 
-            [color]="user.state == 1 ? 'success' : 'danger'">
-            {{ user.state == 1 ? 'Activo' : 'Inactivo' }}
-          </ion-badge>
-        </ion-col>
-
-        <!-- Acciones -->
-        <ion-col size="3" class="text-center">
-<ion-button 
-  size="small"
-  fill="solid"
-  color="primary"
-  shape="round"
-  (click)="editUser(user)">
-  <ion-icon name="create-outline"></ion-icon>
-</ion-button>
-
-<ion-button 
-  size="small"
-  fill="solid"
-  color="danger"
-  shape="round"
-  (click)="openConfirmModal(user)">
-  <ion-icon name="trash-outline"></ion-icon>
-</ion-button>
-
-        </ion-col>
-
-      </ion-row>
-
-    </ion-grid>
-
-    <!-- Estado vacío -->
-    <div *ngIf="users.length === 0" class="empty-state">
-      <ion-icon name="people-outline"></ion-icon>
-      <p>No hay usuarios registrados</p>
-    </div>
-
-  </ion-card>
+<td>
+  <ion-button
+    size="small"
+    [color]="user.state == 1 ? 'success' : 'danger'"
+    (click)="toggleState(user)">
+    {{ user.state == 1 ? 'Activo' : 'Inactivo' }}
+  </ion-button>
+</td>
+      </ion-label>
+    </ion-item>
+  </ion-list>
 
 </ion-content>

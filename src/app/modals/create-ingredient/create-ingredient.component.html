@@ -1,0 +1,81 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      {{ form.id_ingredients ? 'Editar Ingrediente' : 'Nuevo Ingrediente' }}
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrar()">X</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-item>
+    <ion-label position="stacked">Nombre</ion-label>
+    <ion-input [(ngModel)]="form.nombre"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">Tipo</ion-label>
+    <ion-select [(ngModel)]="form.tipo">
+      <ion-select-option value="normal">Normal</ion-select-option>
+      <ion-select-option value="botella">Botella</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <!-- NORMAL -->
+  <div *ngIf="form.tipo === 'normal'">
+
+    <ion-item>
+      <ion-label position="stacked">Stock</ion-label>
+      <ion-input type="number" [(ngModel)]="form.stock_act"></ion-input>
+    </ion-item>
+
+  </div>
+
+  <!-- BOTELLA -->
+  <div *ngIf="form.tipo === 'botella'">
+
+    <ion-item>
+      <ion-label position="stacked">Peso envase vacío (g)</ion-label>
+      <ion-input type="number" [(ngModel)]="form.peso_envase"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Capacidad total (ml)</ion-label>
+      <ion-input type="number" [(ngModel)]="form.capacidad_total"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Peso actual en balanza (g)</ion-label>
+      <ion-input type="number" [(ngModel)]="form.peso_actual" (ionChange)="calcularContenido()"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Contenido actual: {{ form.stock_act }} ml</ion-label>
+    </ion-item>
+
+    <!-- BOTELLA VISUAL -->
+    <div class="bottle">
+      <div class="liquid" [style.height.%]="porcentaje"></div>
+    </div>
+<br>
+  </div>
+
+<ion-item>
+  <ion-label>Unidad</ion-label>
+  <ion-select [(ngModel)]="form.unidad_med">
+    <ion-select-option value="kg">Kilogramos</ion-select-option>
+    <ion-select-option value="g">Gramos</ion-select-option>
+    <ion-select-option value="l">Litros</ion-select-option>
+    <ion-select-option value="ml">Mililitros</ion-select-option>
+    <ion-select-option value="unidad">Unidad</ion-select-option>
+  </ion-select>
+</ion-item>
+
+  <ion-button expand="block" (click)="guardar()">
+    Guardar
+  </ion-button>
+
+</ion-content>

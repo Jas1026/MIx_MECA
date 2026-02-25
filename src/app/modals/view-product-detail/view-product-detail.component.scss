@@ -1,0 +1,59 @@
+.product-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 0;
+
+  .icon-box {
+    background: var(--ion-color-step-100);
+    padding: 15px;
+    border-radius: 15px;
+    ion-icon { font-size: 2.5em; color: var(--ion-color-dark); }
+  }
+
+  .title-box {
+    h2 { margin: 0; font-weight: 800; font-size: 1.4em; }
+    .category-tag { margin: 2px 0; color: gray; font-size: 0.9em; }
+    .price-text { margin: 5px 0 0; color: var(--ion-color-success); font-weight: 700; }
+  }
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  ion-icon { font-size: 1.2em; color: var(--ion-color-primary); }
+  ion-label { font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em; }
+}
+
+.kitchen-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 20px;
+}
+
+.ingredient-card {
+  --background: #f9f9f9;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  
+  h3 { font-weight: 600; }
+  .qty-badge {
+    font-size: 1em;
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: var(--ion-color-dark);
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 30px;
+  color: #999;
+  ion-icon { font-size: 3em; }
+}
+
+.empty-text { font-size: 0.9em; color: #999; margin-left: 5px; }

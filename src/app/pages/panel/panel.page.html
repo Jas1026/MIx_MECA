@@ -1,58 +1,92 @@
 <ion-app>
 
-  <!-- MENU LATERAL -->
-  <ion-menu contentId="main-content" side="start" menuId="flatsMenu">
+  <!-- ================= MENU LATERAL ================= -->
+  <ion-menu contentId="main-content" side="start" menuId="mainMenu">
 
     <ion-header>
       <ion-toolbar color="light">
-        <ion-title>☕ Pisos</ion-title>
+        <ion-title>☕ Menú</ion-title>
       </ion-toolbar>
     </ion-header>
 
     <ion-content class="menu-content">
       <ion-list>
 
-        <ion-item *ngFor="let flat of flats"
-                  (click)="goToFlat(flat.id_flat || flat.Id_flats || flat.id)">
-          <ion-icon name="cafe-outline" slot="start"></ion-icon>
-          <ion-label>
-            {{ flat.name }}
-          </ion-label>
-        </ion-item>
-<ion-item-divider>Cocinas</ion-item-divider>
+        <!-- ================= PISOS ================= -->
+        <ng-container *ngIf="hasRole('admin') || hasRole('jefe_mesero') || hasRole('mesero')">
+          <ion-item-divider color="light">Pisos</ion-item-divider>
 
-<ion-item *ngFor="let kitchen of kitchens"
-          (click)="goToKitchen(kitchen.id)">
-  <ion-icon name="restaurant-outline" slot="start"></ion-icon>
-  <ion-label>
-    {{ kitchen.name }}
-  </ion-label>
-  
-</ion-item>
-<ion-item routerLink="/panel/pedidos">
-  Pedidos
-</ion-item>
-<ion-item routerLink="/panel/users">
-  Gestión de usuarios
-</ion-item>       
-<ion-item routerLink="/panel/registrar-mesa">
-  Gestión de mesas
-</ion-item>    
- <ion-item routerLink="/panel/inventario">Inventario</ion-item>
-        <ion-item>Compras</ion-item>
-        <ion-item>Informes y reportes</ion-item>
+          <ion-item *ngFor="let flat of flats"
+                    (click)="goToFlat(flat.id_flat || flat.Id_flats || flat.id)">
+            <ion-icon name="cafe-outline" slot="start"></ion-icon>
+            <ion-label>{{ flat.name }}</ion-label>
+          </ion-item>
+        </ng-container>
+
+
+        <!-- ================= COCINAS ================= -->
+        <ng-container *ngIf="hasRole('admin') || hasRole('cocina')">
+          <ion-item-divider color="light">Cocinas</ion-item-divider>
+
+          <ion-item *ngFor="let kitchen of kitchens"
+                    (click)="goToKitchen(kitchen.id)">
+            <ion-icon name="restaurant-outline" slot="start"></ion-icon>
+            <ion-label>{{ kitchen.name }}</ion-label>
+          </ion-item>
+        </ng-container>
+
+
+        <!-- ================= OPERACIONES ================= -->
+        <ion-item-divider color="light">Operaciones</ion-item-divider>
+
+        <!-- Pedidos -->
+        <ion-item *ngIf="!hasRole('cocina')" routerLink="/panel/pedidos">
+          <ion-icon name="list-circle-outline" slot="start"></ion-icon>
+          <ion-label>Pedidos</ion-label>
+        </ion-item>
+
+        <!-- Gestión de Usuarios -->
+        <ion-item *ngIf="hasRole('admin')" routerLink="/panel/users">
+          <ion-icon name="people-outline" slot="start"></ion-icon>
+          <ion-label>Gestión de usuarios</ion-label>
+        </ion-item>
+
+        <!-- Gestión de Mesas -->
+        <ion-item *ngIf="hasRole('admin') || hasRole('jefe_mesero')" routerLink="/panel/registrar-mesa">
+          <ion-icon name="grid-outline" slot="start"></ion-icon>
+          <ion-label>Gestión de mesas</ion-label>
+        </ion-item>
+
+        <!-- Inventario -->
+        <ion-item *ngIf="hasRole('admin') || hasRole('jefe_mesero') || hasRole('cocina')" routerLink="/panel/inventario">
+          <ion-icon name="cube-outline" slot="start"></ion-icon>
+          <ion-label>Inventario</ion-label>
+        </ion-item>
+
+        <!-- Compras -->
+        <ion-item *ngIf="hasRole('admin') || hasRole('jefe_mesero')" routerLink="/panel/compras">
+          <ion-icon name="cart-outline" slot="start"></ion-icon>
+          <ion-label>Compras</ion-label>
+        </ion-item>
+
+        <!-- Informes -->
+        <ion-item *ngIf="hasRole('admin')" routerLink="/panel/informes">
+          <ion-icon name="bar-chart-outline" slot="start"></ion-icon>
+          <ion-label>Informes y reportes</ion-label>
+        </ion-item>
 
       </ion-list>
     </ion-content>
 
   </ion-menu>
 
-  <!-- CONTENIDO PRINCIPAL -->
+
+  <!-- ================= CONTENIDO PRINCIPAL ================= -->
   <div class="ion-page" id="main-content">
 
     <ion-header>
-      <ion-toolbar class="toolbar-cafe">
 
+      <ion-toolbar class="toolbar-cafe">
         <ion-buttons slot="start">
           <ion-menu-button></ion-menu-button>
         </ion-buttons>
@@ -64,7 +98,6 @@
             <ion-icon name="log-out-outline"></ion-icon>
           </ion-button>
         </ion-buttons>
-
       </ion-toolbar>
 
       <ion-toolbar class="sub-toolbar">
@@ -72,9 +105,9 @@
           ☕ Bienvenido
         </div>
       </ion-toolbar>
+
     </ion-header>
 
-    <!-- 👇 SOLO UN ION-CONTENT EN EL PADRE -->
     <ion-content class="dashboard-bg">
       <router-outlet></router-outlet>
     </ion-content>

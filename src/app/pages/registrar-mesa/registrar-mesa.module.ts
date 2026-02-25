@@ -5,7 +5,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { RegistrarMesaPageRoutingModule } from './registrar-mesa-routing.module';
 import { RegistrarMesaPage } from './registrar-mesa.page';
-import { MesaFormComponent } from 'src/app/components/mesa-form/mesa-form.component';
+import { MesaFormComponent } from 'src/app/modals/mesa-form/mesa-form.component';
 
 @NgModule({
   imports: [

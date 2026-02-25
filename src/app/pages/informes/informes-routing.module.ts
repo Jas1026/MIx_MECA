@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { FlatsPage } from './flats.page';
-import { FlatFormComponent } from '../../modals/flats-form/flats-form.component';
+import { InformesPage } from './informes.page';
+
 const routes: Routes = [
   {
     path: '',
-    component: FlatsPage
+    component: InformesPage
   }
 ];
 
@@ -14,4 +14,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class FlatsPageRoutingModule {}
+export class InformesPageRoutingModule {}

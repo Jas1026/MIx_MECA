@@ -1,0 +1,83 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>
+      {{ mesa.id_table ? 'Editar Mesa' : 'Nueva Mesa' }}
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button fill="clear" color="light" (click)="closeForm()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- NOMBRE -->
+  <ion-item>
+    <ion-label position="stacked">Nombre de Mesa</ion-label>
+    <ion-input
+      [(ngModel)]="mesa.nombre"
+      placeholder="Ej: Mesa 1">
+    </ion-input>
+  </ion-item>
+
+  <!-- CAPACIDAD -->
+  <ion-item>
+    <ion-label position="stacked">Capacidad</ion-label>
+    <ion-input
+      type="number"
+      [(ngModel)]="mesa.capacidad"
+      placeholder="Número de personas">
+    </ion-input>
+  </ion-item>
+
+  <!-- PISO -->
+  <ion-item>
+    <ion-label position="stacked">Piso</ion-label>
+    <ion-select [(ngModel)]="mesa.id_flats" interface="popover">
+      <ion-select-option
+        *ngFor="let flat of flats"
+        [value]="flat.Id_flats">
+        {{ flat.Name }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <!-- ESTADO VISUAL (NO EDITABLE) -->
+  <ion-item *ngIf="!mesa.id_table">
+    <ion-label>
+      Estado inicial:
+      <ion-badge color="success">
+        Libre
+      </ion-badge>
+    </ion-label>
+  </ion-item>
+
+  <!-- BOTÓN PRINCIPAL -->
+  <ion-button
+    expand="block"
+    color="success"
+    class="ion-margin-top"
+    (click)="saveMesa()">
+
+    <ion-icon
+      [name]="mesa.id_table ? 'create-outline' : 'save-outline'"
+      slot="start">
+    </ion-icon>
+
+    {{ mesa.id_table ? 'Actualizar Mesa' : 'Registrar Mesa' }}
+
+  </ion-button>
+
+  <!-- CANCELAR -->
+  <ion-button
+    expand="block"
+    fill="clear"
+    color="medium"
+    (click)="closeForm()">
+    Cancelar
+  </ion-button>
+
+</ion-content>

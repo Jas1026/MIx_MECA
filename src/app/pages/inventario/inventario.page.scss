@@ -1,49 +1,115 @@
+/* Variables de paleta */
+$crema-fondo: #fcfaf8;
+$beige-header: #f3ede4;
+$marron-texto: #4a3f35;
+$borde-suave: #e8e1d9;
+$verde-accent: #8da290; // Un verde salvia elegante
+
 .table-container {
-  padding: 16px;
-  background: #F6F1EB; /* crema suave */
-  border-radius: 12px;
+  padding: clamp(8px, 2vw, 20px); // Padding adaptativo
+  background: $crema-fondo;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  margin: 10px;
+  overflow-x: auto; // Seguridad para móviles
 }
 
-/* Header tipo POS elegante */
-.table-header {
-  font-weight: 600;
-  background: #EADFD2; /* beige claro */
-  color: #5A4636; /* marrón suave */
-  padding: 12px 0;
-  border-radius: 10px;
-}
-
-/* Filas */
-ion-row {
-  border-bottom: 1px solid #E6DDD2; /* borde café muy claro */
-  padding: 12px 0;
-  transition: background 0.2s ease;
-}
-
-/* Hover suave (queda muy pro en web) */
-ion-row:hover {
-  background: #F0E7DD;
-}
-
-/* Inputs estilo limpio cafetería */
-ion-input {
-  --background: #FFFFFF;
-  border: 1px solid #D8C3A5;
-  border-radius: 10px;
-  padding: 6px;
-  font-size: 14px;
-}
-
-/* Grid spacing */
-ion-col {
+.header-actions {
   display: flex;
-  align-items: center;
-  font-size: 14px;
-  color: #4B3A2F;
+  justify-content: flex-end;
+  margin-bottom: 15px;
+  
+  ion-button {
+    --box-shadow: none;
+    --background: #5d4d3f;
+    font-size: 0.9rem;
+  }
 }
 
-/* Botones más suaves */
-ion-button {
-  --border-radius: 10px;
-  font-weight: 500;
+.table-header {
+  background: $beige-header;
+  color: $marron-texto;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  
+  ion-col {
+    font-size: 0.75rem;
+    padding: 12px 8px;
+  }
+}
+
+ion-row {
+  border-bottom: 1px solid $borde-suave;
+  align-items: center;
+  margin-bottom: 4px;
+  transition: all 0.2s ease-in-out;
+  border-radius: 8px;
+
+  &:hover {
+    background: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  }
+}
+
+/* Responsividad del Stock y Botones */
+.stock-cell {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: nowrap; // Evita que el botón baje en pantallas chicas
+
+  .stock-input {
+    --background: #ffffff;
+    --padding-start: 10px;
+    border: 1.5px solid $borde-suave;
+    border-radius: 12px;
+    font-weight: 600;
+    max-width: 70px;
+    height: 38px;
+    
+    &:focus-within {
+      border-color: $verde-accent;
+    }
+  }
+
+  .btn-save {
+    --background: #{$verde-accent};
+    --color: white;
+    margin: 0;
+    height: 38px;
+    width: 38px;
+    --padding-start: 0;
+    --padding-end: 0;
+  }
+}
+
+.actions-cell {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+
+  ion-button {
+    --padding-start: 8px;
+    --padding-end: 8px;
+    font-size: 1.1rem;
+    height: 38px;
+    
+    &[color="primary"] { --color: #8da290; } // Editar
+    &[color="medium"] { --color: #bcaaa4; }  // Detalles
+  }
+}
+
+/* Responsive Breakpoint para móviles muy pequeños */
+@media (max-width: 576px) {
+  ion-col {
+    font-size: 13px !important;
+    padding: 8px 4px !important;
+  }
+  .stock-cell .stock-input {
+    max-width: 60px;
+  }
 }

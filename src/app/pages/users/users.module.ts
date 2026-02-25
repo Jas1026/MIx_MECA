@@ -5,7 +5,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { UsersPageRoutingModule } from './users-routing.module';
 import { UsersPage } from './users.page';
-import { UserFormComponent } from '../../components/user-form/user-form.component';
+import { UserFormComponent } from '../../modals/user-form/user-form.component';
 import { ConfirmModalComponent } from 'src/app/shared/confirm-modal/confirm-modal.component';
 @NgModule({
   imports: [

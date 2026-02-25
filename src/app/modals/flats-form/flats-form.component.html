@@ -1,0 +1,60 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>
+      {{ flat.Id_flats ? 'Editar Piso' : 'Nuevo Piso' }}
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button fill="clear" color="light" (click)="closeForm()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- NOMBRE -->
+  <ion-item>
+    <ion-label position="stacked">Nombre del Piso</ion-label>
+    <ion-input
+      [(ngModel)]="flat.Name"
+      placeholder="Ej: Primer Piso">
+    </ion-input>
+  </ion-item>
+
+  <!-- DESCRIPCIÓN -->
+  <ion-item>
+    <ion-label position="stacked">Descripción</ion-label>
+    <ion-textarea
+      [(ngModel)]="flat.Description"
+      placeholder="Opcional">
+    </ion-textarea>
+  </ion-item>
+
+  <!-- BOTÓN GUARDAR -->
+  <ion-button
+    expand="block"
+    color="success"
+    class="ion-margin-top"
+    (click)="saveFlat()">
+
+    <ion-icon
+      [name]="flat.Id_flats ? 'create-outline' : 'save-outline'"
+      slot="start">
+    </ion-icon>
+
+    {{ flat.Id_flats ? 'Actualizar Piso' : 'Registrar Piso' }}
+
+  </ion-button>
+
+  <!-- CANCELAR -->
+  <ion-button
+    expand="block"
+    fill="clear"
+    color="medium"
+    (click)="closeForm()">
+    Cancelar
+  </ion-button>
+
+</ion-content>
