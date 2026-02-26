@@ -1,115 +1,117 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar color="dark">
     <ion-title>
-      Pedido - Mesa {{ table?.nombre }}
+      Mesa {{ table?.nombre }}
     </ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="close()">Cerrar</ion-button>
+      <ion-button (click)="close()" fill="clear">
+        <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
   <div class="modal-container">
 
-    <!-- COLUMNA IZQUIERDA -->
     <div class="left-panel">
-
-      <!-- CATEGORIAS -->
+      
       <ng-container *ngIf="viewMode === 'categories'">
-
-        <ion-list>
+        <ion-list-header>
+          <ion-label>Seleccione Categoría</ion-label>
+        </ion-list-header>
+        <ion-list class="custom-list">
           <ion-item 
             button 
+            detail="true"
             *ngFor="let cat of categories"
-            (click)="selectCategory(cat)">
-
+            (click)="selectCategory(cat)"
+            class="category-item">
+            <ion-icon name="folder-open-outline" slot="start" color="primary"></ion-icon>
             <ion-label>
-              {{ cat.name }}
+              <h2>{{ cat.name }}</h2>
             </ion-label>
-
-            <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
-
           </ion-item>
         </ion-list>
-
       </ng-container>
 
-      <!-- PRODUCTOS -->
       <ng-container *ngIf="viewMode === 'products'">
-
-        <ion-item lines="none">
-          <ion-button fill="clear" (click)="goBack()">
-            <ion-icon name="chevron-back-outline"></ion-icon>
+        <div class="product-header">
+          <ion-button fill="clear" (click)="goBack()" size="small">
+            <ion-icon name="chevron-back-outline" slot="start"></ion-icon>
             Volver
           </ion-button>
-        </ion-item>
+          <h2 class="category-title">{{ currentCategoryName }}</h2>
+        </div>
 
-        <h2 class="category-title">
-          {{ currentCategoryName }}
-        </h2>
-
-        <ion-list>
+        <ion-list class="custom-list">
           <ion-item 
             button
             *ngFor="let product of products"
             (click)="addProduct(product)">
-
             <ion-label>
-              {{ product.name }}
+              <h3>{{ product.name }}</h3>
+              <p>Precio unitario</p>
             </ion-label>
-
-            <ion-note slot="end">
+            <ion-badge slot="end" color="light">
               Bs/ {{ product.price }}
-            </ion-note>
-
+            </ion-badge>
+            <ion-icon name="add-circle" slot="end" color="success"></ion-icon>
           </ion-item>
         </ion-list>
-
       </ng-container>
-
     </div>
 
-
-    <!-- COLUMNA DERECHA (CARRITO) -->
     <div class="right-panel">
-
-      <h2>🛒 Pedido</h2>
-
-      <ion-list *ngIf="cart.length > 0">
-
-        <ion-item *ngFor="let item of cart">
-
-          <ion-label>
-            {{ item.name }} x{{ item.quantity }}
-          </ion-label>
-
-          <ion-note slot="end">
-            Bs/ {{ item.price * item.quantity }}
-          </ion-note>
-
-        </ion-item>
-
-      </ion-list>
-
-      <div *ngIf="cart.length === 0" class="empty-cart">
-        Sin productos
+      <div class="cart-header">
+        <ion-icon name="cart-outline"></ion-icon>
+        <span>Resumen del Pedido</span>
       </div>
 
-      <div class="total-section">
-        Total: <strong>Bs/ {{ getTotal() }}</strong>
+      <div class="cart-items-container">
+        <ion-list *ngIf="cart.length > 0" lines="full">
+          <ion-item-sliding *ngFor="let item of cart; let i = index">
+            <ion-item>
+              <ion-label>
+                <h2 class="item-name">{{ item.name }}</h2>
+                <p>Cantidad: <strong>{{ item.quantity }}</strong></p>
+              </ion-label>
+              <ion-note slot="end" color="dark">
+                Bs/ {{ item.price * item.quantity }}
+              </ion-note>
+            </ion-item>
+            
+            <ion-item-options side="end">
+              <ion-item-option color="danger" (click)="removeProduct(i)">
+                <ion-icon name="trash" slot="icon-only"></ion-icon>
+              </ion-item-option>
+            </ion-item-options>
+          </ion-item-sliding>
+        </ion-list>
+
+        <div *ngIf="cart.length === 0" class="empty-cart">
+          <ion-icon name="basket-outline"></ion-icon>
+          <p>Aún no has añadido productos</p>
+        </div>
       </div>
 
-      <ion-button 
-        expand="block" 
-        color="success"
-        (click)="confirmOrder()">
-        Confirmar Pedido
-      </ion-button>
+      <div class="cart-footer">
+        <div class="total-row">
+          <span>Total a pagar</span>
+          <span class="total-amount">Bs/ {{ getTotal() }}</span>
+        </div>
 
+        <ion-button 
+          expand="block" 
+          color="success"
+          shape="round"
+          [disabled]="cart.length === 0"
+          (click)="confirmOrder()"
+          class="confirm-btn">
+          Confirmar Pedido
+        </ion-button>
+      </div>
     </div>
 
   </div>
-
 </ion-content>

@@ -223,3 +223,80 @@ $borde-suave: #e8e1d9;
   color: #ccc;
   ion-icon { font-size: 48px; }
 }
+/* --- RESPONSIVE DESIGN --- */
+
+@media (max-width: 768px) {
+  .header-actions {
+    flex-direction: column;
+    align-items: stretch;
+
+    .custom-searchbar, .filter-wrapper, ion-button {
+      flex: none;
+      width: 100%;
+    }
+  }
+
+  // Ocultamos el encabezado de la tabla en móvil
+  .table-header {
+    display: none;
+  }
+
+  .table-container {
+    padding: 10px;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  // Transformamos cada fila en una "tarjeta"
+  .align-center {
+    flex-direction: column;
+    align-items: flex-start;
+    background: #ffffff;
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid $borde-suave;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    position: relative;
+
+    ion-col {
+      width: 100% !important;
+      max-width: 100% !important;
+      padding: 4px 0;
+      justify-content: flex-start;
+    }
+
+    // Estilizamos campos específicos para que parezcan etiquetas
+    .ing-name {
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    // Movemos las acciones a la esquina superior derecha
+    .actions-cell {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: auto !important;
+    }
+
+    // Ajustamos el botón de estado para que no ocupe toda la línea
+    .btn-state {
+      margin-top: 10px;
+      height: 32px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 0 10px;
+    }
+    
+    // Añadimos indicadores visuales para saber qué es cada dato
+    ion-col[size="2"]:not(.actions-cell):before {
+      content: "Login: ";
+      font-size: 0.8rem;
+      color: #999;
+      margin-right: 5px;
+    }
+  }
+}

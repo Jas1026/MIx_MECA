@@ -101,11 +101,6 @@ const routes: Routes = [
     loadChildren: () => import('./pages/selector-login/selector-login.module').then( m => m.SelectorLoginPageModule)
   },
   {
-  path: 'selector-login',
-  loadChildren: () => import('./pages/selector-login/selector-login.module')
-    .then(m => m.SelectorLoginPageModule)
-  },
-  {
   path: 'login-mixtura',
   loadChildren: () => import('./pages/login-mixtura/login-mixtura.module')
     .then(m => m.LoginMixturaPageModule)
@@ -135,7 +130,8 @@ const routes: Routes = [
   path: 'facturacion/:id',
   loadChildren: () => import('./pages/facturacion/facturacion.module')
     .then(m => m.FacturacionPageModule)
-},  {
+},
+  {
     path: 'pedidos',
     loadChildren: () => import('./pages/pedidos/pedidos.module').then( m => m.PedidosPageModule)
   },

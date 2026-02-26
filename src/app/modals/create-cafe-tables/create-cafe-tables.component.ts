@@ -13,7 +13,8 @@ export class CreateCafeTablesComponent implements OnInit {
   newTable = {
     nombre: '',
     capacidad: 4,
-    id_flats: ''
+    id_flats: '',
+    estado: 'Libre' // Aseguramos un estado inicial por defecto
   };
 
   constructor(
@@ -29,14 +30,18 @@ export class CreateCafeTablesComponent implements OnInit {
       this.newTable.nombre = this.table.nombre;
       this.newTable.capacidad = this.table.capacidad;
       this.newTable.id_flats = this.table.id_flats;
+      this.newTable.estado = this.table.estado || 'Libre';
     }
   }
 
   cargarPisos() {
     const system = this.server.getSystem();
-    // Reutilizamos el servicio de pisos que ya tienes
     this.server.getFlatsCom(system).subscribe((res: any) => {
-      this.flats = res;
+      if (Array.isArray(res)) {
+        this.flats = res;
+      } else if (res && res.data) {
+        this.flats = res.data;
+      }
     });
   }
 
@@ -51,26 +56,35 @@ export class CreateCafeTablesComponent implements OnInit {
 
     const system = this.server.getSystem();
     const body = new FormData();
+    
+    // Agregamos los campos asegurándonos de que no sean nulos
     body.append('nombre', this.newTable.nombre);
     body.append('capacidad', this.newTable.capacidad.toString());
-    body.append('id_flats', this.newTable.id_flats);
+    body.append('id_flats', this.newTable.id_flats.toString());
     body.append('system', system);
     
-    if (this.table) {
-      body.append('id_table', this.table.id_table);
+    // Si es nueva mesa, enviamos el estado 'Libre' explícitamente para el PHP
+    body.append('estado', this.newTable.estado);
+
+    if (this.table && this.table.id_table) {
+      body.append('id_table', this.table.id_table.toString());
     }
 
     this.server.createTable(body).subscribe({
       next: (res: any) => {
         loading.dismiss();
-        if (res.error === 0) {
+        if (res && res.error === 0) {
           this.presentToast('Mesa guardada correctamente', 'success');
           this.modalCtrl.dismiss(true);
+        } else {
+          // Si el PHP devuelve error, mostramos el mensaje que viene del servidor
+          this.presentToast(res.message || 'Error al guardar', 'danger');
         }
       },
-      error: () => {
+      error: (err) => {
         loading.dismiss();
-        this.presentToast('Error de servidor', 'danger');
+        console.error("Error en servidor:", err);
+        this.presentToast('Error de conexión con el servidor', 'danger');
       }
     });
   }
@@ -80,7 +94,12 @@ export class CreateCafeTablesComponent implements OnInit {
   }
 
   async presentToast(m: string, c: string) {
-    const t = await this.toastCtrl.create({ message: m, color: c, duration: 2000 });
+    const t = await this.toastCtrl.create({ 
+      message: m, 
+      color: c, 
+      duration: 2000,
+      position: 'bottom' 
+    });
     t.present();
   }
 }

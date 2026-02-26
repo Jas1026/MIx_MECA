@@ -1,36 +1,112 @@
 .modal-container {
   display: flex;
+  flex-direction: column; // Móvil: uno abajo del otro
   height: 100%;
+  background: #ffffff;
+
+  @media (min-width: 768px) {
+    flex-direction: row; // Desktop: lado a lado
+  }
 }
 
+// PANEL DE SELECCIÓN (IZQUIERDO / ARRIBA)
 .left-panel {
-  width: 60%;
-  border-right: 1px solid #ddd;
+  flex: 1.2; // Toma un poco más de espacio
   overflow-y: auto;
   padding: 10px;
+  background: #ffffff;
+
+  .product-header {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 10px;
+
+    .category-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #333;
+      margin: 0;
+    }
+  }
+
+  .custom-list {
+    background: transparent;
+    ion-item {
+      --padding-start: 8px;
+      --border-radius: 10px;
+      margin-bottom: 5px;
+      --background: #fdfdfd;
+      border: 1px solid #f0f0f0;
+    }
+  }
 }
 
+// PANEL DEL CARRITO (DERECHO / ABAJO)
 .right-panel {
-  width: 40%;
-  padding: 15px;
-  background: #f8f8f8;
+  flex: 0.8; 
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-}
+  background: #f9f9f9;
+  border-top: 2px solid #ddd; // Separador visual en móvil
 
-.category-title {
-  margin-left: 15px;
-  font-weight: bold;
-}
+  @media (min-width: 768px) {
+    border-top: none;
+    border-left: 2px solid #eee;
+    height: 100%;
+  }
 
-.total-section {
-  font-size: 18px;
-  margin: 15px 0;
-}
+  .cart-header {
+    padding: 15px;
+    background: #f1f1f1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    color: #444;
+    ion-icon { font-size: 1.2rem; }
+  }
 
-.empty-cart {
-  text-align: center;
-  color: gray;
-  margin-top: 40px;
+  .cart-items-container {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 180px; // Altura mínima para que se vea en móvil
+
+    .item-name {
+      font-weight: 600;
+      color: #222;
+    }
+
+    .empty-cart {
+      text-align: center;
+      padding: 40px 20px;
+      color: #999;
+      ion-icon { font-size: 3rem; margin-bottom: 10px; }
+    }
+  }
+
+  .cart-footer {
+    padding: 20px;
+    background: white;
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      span { color: #666; font-size: 0.9rem; }
+      .total-amount {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: var(--ion-color-success);
+      }
+    }
+
+    .confirm-btn {
+      --height: 50px;
+      font-weight: 700;
+      margin: 0;
+    }
+  }
 }

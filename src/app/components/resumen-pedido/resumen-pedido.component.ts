@@ -46,4 +46,5 @@ generarFactura() {
   cerrar() {
     this.modalCtrl.dismiss();
   }
+  
 }

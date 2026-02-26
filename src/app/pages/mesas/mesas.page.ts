@@ -52,15 +52,24 @@ this.server.getTables(this.flatId)
 
 }
 async openOrderModal(table: any) {
+  // 1. Obtenemos el usuario del localStorage (ajusta la llave según tu app)
+  const userData = JSON.parse(localStorage.getItem('user_data') || '{}');
+  const userId = userData.id_user || userData.id; // Asegúrate de qué nombre usas
 
   const modal = await this.modalCtrl.create({
     component: OrderModalComponent,
     componentProps: {
-      table: table
+      table: table,
+      userId: userId // 2. Pasamos el ID del usuario al modal
     }
   });
 
   await modal.present();
+
+  const { data } = await modal.onDidDismiss();
+  if (data) {
+    this.loadTables(); 
+  }
 }
 irFacturacion(orderId: number) {
   this.router.navigate(['/facturacion', orderId]);

@@ -72,24 +72,33 @@ export class CafeTablesPage implements OnInit {
 
     return await modal.present();
   }
-async toggleTableState(table: any) {
-  // Lógica: Si está 'Inactiva', la pasamos a 'Libre'. Si no, la desactivamos.
-  const nuevoEstado = (table.estado === 'Inactiva') ? 'Libre' : 'Inactiva';
+  async toggleTableState(table: any) {
+  // Solo permitimos dos estados: Libre y Ocupada
+  const nuevoEstado = (table.estado === 'Libre') ? 'Ocupada' : 'Libre';
   const system = this.server.getSystem();
   
   let body = new FormData();
   body.append("id_table", table.id_table);
-  body.append("estado", nuevoEstado); // Enviamos el texto
+  body.append("estado", nuevoEstado); 
   body.append("system", system);
 
   this.server.updateTableState(body).subscribe((res: any) => {
     if (res.error === 0) {
-      table.estado = nuevoEstado; // Ahora el estado en memoria será 'Libre' o 'Inactiva'
-      this.presentToast(`Mesa actualizada a ${nuevoEstado}`, "success");
+      table.estado = nuevoEstado; 
+      this.presentToast(`Mesa ahora está ${nuevoEstado}`, "success");
     } else {
       this.presentToast("Error al cambiar estado", "danger");
     }
   });
+}
+
+// Actualizamos los colores para que coincidan con tu flujo
+getStatusColor(estado: string): string {
+  if (!estado) return 'medium';
+  const s = estado.toLowerCase();
+  if (s === 'libre') return 'success';   // Verde para Libre
+  if (s === 'ocupada') return 'danger';  // Rojo para Ocupada (No disponible)
+  return 'medium';
 }
   async presentToast(msg: string, color: string) {
     const toast = await this.toastCtrl.create({
@@ -100,12 +109,4 @@ async toggleTableState(table: any) {
     });
     toast.present();
   }
-  getStatusColor(estado: string): string {
-  if (!estado) return 'medium';
-  const s = estado.toLowerCase();
-  if (s === 'libre') return 'success';   // Verde
-  if (s === 'ocupada' || s === 'ready') return 'warning'; // Amarillo/Naranja
-  if (s === 'inactiva') return 'danger';  // Rojo
-  return 'medium';
-}
 }

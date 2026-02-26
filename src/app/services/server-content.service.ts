@@ -312,6 +312,48 @@ updateUserState(body: FormData) {
   // Asegúrate de que la ruta apunte al archivo toggle_user_state.php
   return this.http.post(`${this.urlService}toggle_user_state.php`, body);
 }
+// En tu server-content.service.ts
+emitirFacturaReal(orderId: number, cliente: any, detalles: any[]) {
+  const data = {
+    order_id: orderId,
+    razonSocial: cliente.nombre,
+    nit: cliente.nit,
+    items: detalles // Asegúrate de que los campos coincidan con lo que pide la API
+  };
+  return this.http.post(`${this.urlService}/emitir_factura_cucu.php`, data);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
