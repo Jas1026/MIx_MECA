@@ -170,7 +170,7 @@ get filteredProducts() {
 
 async openCreateProductModal(product: any = null) {
   const modal = await this.modalCtrl.create({
-    component: CreateProductComponent, // Debes crear este componente
+    component: CreateProductComponent, 
     componentProps: { product: product }
   });
   modal.onDidDismiss().then(() => this.loadProducts());
