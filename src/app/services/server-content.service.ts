@@ -322,7 +322,13 @@ emitirFacturaReal(orderId: number, cliente: any, detalles: any[]) {
   };
   return this.http.post(`${this.urlService}/emitir_factura_cucu.php`, data);
 }
+getOrdersByUser(userId: string) {
+  let body = new FormData();
+  body.append("user_id", userId);
+  body.append("system", this.getSystem());
 
+  return this.http.post(this.urlService + "getOrdersByUser.php", body);
+}
 
 
 

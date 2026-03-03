@@ -31,11 +31,14 @@
 
         <ion-item-divider color="light">Operaciones</ion-item-divider>
 
-        <ion-item *ngIf="!hasRole('cocina')" routerLink="/panel/pedidos">
+        <ion-item *ngIf="hasRole('admin') || hasRole('cocina')" routerLink="/panel/pedidos">
           <ion-icon name="list-circle-outline" slot="start"></ion-icon>
-          <ion-label>Pedidos</ion-label>
+          <ion-label>Gestión de pedidos</ion-label>
         </ion-item>
-
+        <ion-item routerLink="/panel/pedidos_unit">
+          <ion-icon name="list-circle-outline" slot="start"></ion-icon>
+          <ion-label>Mis pedidos</ion-label>
+        </ion-item>
         <ion-item *ngIf="hasRole('admin')"routerLink="/panel/user">
           <ion-icon name="people-outline" slot="start"></ion-icon>
           <ion-label>Gestión de usuarios</ion-label>

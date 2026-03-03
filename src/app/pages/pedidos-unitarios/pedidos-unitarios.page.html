@@ -1,0 +1,115 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="toolbar-cafe">
+    <ion-title>Mis pedidos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding dashboard-bg">
+
+  <div class="filter-card">
+    <ion-grid>
+      <ion-row class="ion-align-items-center">
+        <ion-col size="12" size-md="3">
+          <div class="filter-item">
+            <ion-label>Mesero</ion-label>
+            <ion-select [(ngModel)]="meseroSeleccionado" interface="popover" placeholder="Todos">
+              <ion-select-option value="">Todos</ion-select-option>
+              <ion-select-option *ngFor="let m of meseros" [value]="m.code">
+                {{ m.code }}
+              </ion-select-option>
+            </ion-select>
+          </div>
+        </ion-col>
+
+        <ion-col size="12" size-md="3">
+          <div class="filter-item">
+            <ion-label>Estado</ion-label>
+            <ion-select [(ngModel)]="estadoSeleccionado" interface="popover" placeholder="Todos">
+              <ion-select-option value="">Todos</ion-select-option>
+              <ion-select-option value="open">Abierto (Open)</ion-select-option>
+              <ion-select-option value="closed">Cerrado (Closed)</ion-select-option>
+            </ion-select>
+          </div>
+        </ion-col>
+
+        <ion-col size="12" size-md="3">
+          <ion-button id="open-date" expand="block" fill="outline" class="btn-filter-date">
+            <ion-icon name="calendar-outline" slot="start"></ion-icon>
+            {{ fechaMostrada ? fechaMostrada : 'Seleccionar fecha' }}
+          </ion-button>
+        </ion-col>
+
+        <ion-col size="12" size-md="3">
+          <ion-button expand="block" fill="clear" color="danger" (click)="limpiarFecha()" class="btn-clear">
+            <ion-icon name="trash-outline" slot="start"></ion-icon>
+            Limpiar Filtros
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <ion-modal #modalFecha trigger="open-date" class="modal-calendario">
+    <ng-template>
+      <div class="datetime-wrapper">
+        <ion-datetime presentation="date" locale="es-ES" [showDefaultButtons]="true" doneText="Confirmar"
+          cancelText="Cancelar" (ionChange)="fechaSeleccionada($event, modalFecha)">
+        </ion-datetime>
+      </div>
+    </ng-template>
+  </ion-modal>
+
+  <div class="tabla-web-container">
+    <table class="mixtura-table">
+      <thead>
+        <tr>
+          <th>N° Pedido</th>
+          <th>Mesero</th>
+          <th>Fecha y Hora</th>
+          <th>Tiempo Estimado (min)</th>
+          <th>Estado</th>
+          <th class="ion-text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of pedidosFiltrados; let i = index" [style.opacity]="p.status === 'closed' ? '0.7' : '1'">
+          <td class="order-id">PED-{{ i + 1 | number:'4.0' }}</td>
+          <td>
+            <div class="user-cell">
+              <ion-icon name="person-circle-outline"></ion-icon>
+              {{ p.mesero }}
+            </div>
+          </td>
+          <td class="date-cell">{{ p.order_date }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="p.status">
+              {{ p.status }}
+            </span>
+          </td>
+          <td class="ion-text-center">
+            <div style="display: flex; justify-content: center; gap: 8px;">
+            </div>
+          </td>
+          <td>
+  {{ p.estimated_total_time }} min
+</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <ion-list class="lista-mobile" lines="none">
+    <ion-item-sliding *ngFor="let p of pedidosFiltrados">
+      <ion-item class="mobile-order-item">
+        <ion-label>
+          <div class="mobile-header">
+            <h3>PEDIDO #{{ p.order_id }}</h3>
+            <span class="status-badge" [ngClass]="p.status">{{ p.status }}</span>
+          </div>
+          <p><ion-icon name="person-outline"></ion-icon> {{ p.mesero }}</p>
+          <p><ion-icon name="time-outline"></ion-icon> {{ p.order_date }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-item-sliding>
+  </ion-list>
+
+</ion-content>

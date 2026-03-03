@@ -141,3 +141,70 @@
     margin-bottom: 10px;
   }
 }
+.timer-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #666;
+  margin-top: 5px;
+
+  ion-icon {
+    font-size: 1rem;
+  }
+}
+
+/* Opcional: Si el pedido lleva más de 20 min, ponerlo en rojo */
+.timer-warning {
+    color: #eb445a;
+    animation: pulse 2s infinite;
+}
+.timer-text {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.9rem;
+  padding: 4px 8px;
+  border-radius: 5px;
+  
+  &.normal {
+    color: #2dd36f; // Verde
+    background: rgba(45, 211, 111, 0.1);
+  }
+
+  &.delayed {
+    color: #eb445a; // Rojo
+    background: rgba(235, 68, 90, 0.1);
+    font-weight: bold;
+    animation: pulse 1.5s infinite;
+  }
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+.timer-text {
+  display: inline-flex !important; /* Forzar visibilidad */
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 0.85rem;
+  margin: 10px auto;
+  padding: 4px 10px;
+  border-radius: 12px;
+  width: fit-content;
+
+  &.normal {
+    color: #2ecc71;
+    background: rgba(46, 204, 113, 0.1);
+  }
+
+  &.delayed {
+    color: #eb445a;
+    background: rgba(235, 68, 90, 0.1);
+    animation: pulse 1.5s infinite;
+  }
+}

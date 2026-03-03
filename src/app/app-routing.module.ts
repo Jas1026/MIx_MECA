@@ -154,7 +154,11 @@ const routes: Routes = [
   {
     path: 'user',
     loadChildren: () => import('./pages/user/user.module').then( m => m.UserPageModule)
+  },  {
+    path: 'pedidos-unitarios',
+    loadChildren: () => import('./pages/pedidos-unitarios/pedidos-unitarios.module').then( m => m.PedidosUnitariosPageModule)
   }
+
 
 
 
