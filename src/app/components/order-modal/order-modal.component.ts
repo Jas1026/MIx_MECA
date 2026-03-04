@@ -40,25 +40,7 @@ currentCategoryName: string = '';
     this.loadOrderDetails();
   }
   }
-  loadOrderDetails() {
 
-  this.server.getOrderDetails(this.order_id)
-    .subscribe((res: any) => {
-
-      if (res.error === 0) {
-
-        this.cart = res.data.map((item: any) => ({
-          id_product: item.product_id,
-          name: item.nombre_producto,
-          price: item.unit_price,
-          quantity: item.quantity
-        }));
-
-      }
-
-    });
-
-}
   loadCategories() {
   this.server.getCategories().subscribe((res: any) => {
     this.categories = res.data || res;
@@ -85,22 +67,41 @@ goBack() {
   this.viewMode = 'categories';
   this.products = [];
 }
-  addProduct(product: any) {
+// 1. Al añadir un producto nuevo
+addProduct(product: any) {
+  const found = this.cart.find(p => p.id_product === product.id_product);
 
-    const found = this.cart.find(p => p.id_product === product.id_product);
-
-    if (found) {
-      found.quantity++;
-    } else {
-      this.cart.push({
-        id_product: product.id_product,
-        name: product.name,
-        price: product.price,
-        quantity: 1
-      });
-    }
+  if (found) {
+    found.quantity++;
+  } else {
+    this.cart.push({
+      id_product: product.id_product,
+      name: product.name,
+      price: product.price,
+      quantity: 1,
+      notes: '',
+      sides: '',
+      isPriceEditable: false // 👈 NUEVO: Estado del candado del precio
+    });
   }
+}
 
+// 2. Al cargar detalles de un pedido existente
+loadOrderDetails() {
+  this.server.getOrderDetails(this.order_id).subscribe((res: any) => {
+    if (res.error === 0) {
+      this.cart = res.data.map((item: any) => ({
+        id_product: item.product_id,
+        name: item.nombre_producto,
+        price: item.unit_price,
+        quantity: item.quantity,
+        notes: item.notes || '',
+        sides: item.sides || '',
+        isPriceEditable: false // 👈 NUEVO: Cargar bloqueado por defecto
+      }));
+    }
+  });
+}
   removeProduct(product: any) {
     const index = this.cart.findIndex(p => p.id_product === product.id_product);
 
@@ -154,6 +155,17 @@ confirmOrder() {
 
   }
 
+}
+// En OrderModalComponent
+
+// Eliminar el producto completamente del carrito, sin importar la cantidad
+deleteFromCart(product: any) {
+  this.cart = this.cart.filter(p => p.id_product !== product.id_product);
+}
+
+// Opcional: Limpiar todo el carrito
+clearCart() {
+  this.cart = [];
 }
   close() {
     this.modalCtrl.dismiss();

@@ -65,35 +65,58 @@
         <tr>
           <th>N° Pedido</th>
           <th>Mesero</th>
+          <th>Ubicación</th>
           <th>Fecha y Hora</th>
-          <th>Tiempo Estimado (min)</th>
           <th>Estado</th>
+          <th>Tiempo Estimado (min)</th>
+
           <th class="ion-text-center">Acciones</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let p of pedidosFiltrados; let i = index" [style.opacity]="p.status === 'closed' ? '0.7' : '1'">
-          <td class="order-id">PED-{{ i + 1 | number:'4.0' }}</td>
+          <td class="order-id">PED-{{ p.order_id }}</td>
           <td>
             <div class="user-cell">
               <ion-icon name="person-circle-outline"></ion-icon>
               {{ p.mesero }}
             </div>
           </td>
+          <td>
+      <div class="location-cell">
+        <ion-badge color="secondary" mode="ios">{{ p.nombre_mesa }}</ion-badge>
+        <small style="display: block; color: gray;">{{ p.nombre_piso }}</small>
+      </div>
+    </td>
           <td class="date-cell">{{ p.order_date }}</td>
+
           <td>
             <span class="status-badge" [ngClass]="p.status">
               {{ p.status }}
             </span>
           </td>
+
           <td class="ion-text-center">
-            <div style="display: flex; justify-content: center; gap: 8px;">
+            <div [ngClass]="getTimerClassPedido(p)">
+              <ion-icon name="time-outline" *ngIf="p.status !== 'closed'"></ion-icon>
+              <ion-icon name="checkmark-done-outline" *ngIf="p.status === 'closed'"></ion-icon>
+              <strong>{{ p.timeDisplay }}</strong>
+              <small> / {{ p.estimated_total_time }} min</small>
+            </div>
+
+            <div *ngIf="p.status === 'ready'" class="ready-message">
+              ¡Listo para entrega!
             </div>
           </td>
-          <td>
-  {{ p.estimated_total_time }} min
-</td>
+           <td class="ion-text-center">
+            <div style="display: flex; justify-content: center; gap: 8px;">
+              <ion-button size="small" color="warning" shape="round" (click)="View_Order(p)">
+                <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            </div>
+          </td>
         </tr>
+        
       </tbody>
     </table>
   </div>

@@ -153,3 +153,106 @@ $border-color: #e2e8f0;
   .tabla-web-container { display: block; }
   .lista-mobile { display: none; }
 }
+.normal {
+  color: #2dd36f;
+  font-weight: bold;
+}
+
+.delayed {
+  color: #eb445a;
+  font-weight: bold;
+}
+
+.ready {
+  color: #ffc409;
+  font-weight: bold;
+  animation: pulse 1s infinite;
+}
+
+.ready-message {
+  font-size: 12px;
+  color: #ffc409;
+  margin-top: 4px;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+/* TABLA WEB PREMIUM */
+.tabla-web-container {
+  display: none; 
+  background: white;
+  border-radius: 16px;
+  /* Eliminamos el overflow: hidden o auto que causa la doble barra */
+  overflow: visible; 
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  margin-bottom: 30px; /* Espacio extra al final */
+}
+
+.mixtura-table {
+  width: 100%;
+  border-collapse: collapse;
+  /* Asegura que la tabla no se corte si es muy ancha en pantallas medianas */
+  min-width: 800px; 
+}
+
+
+
+
+
+/* ELIMINAR SCROLL DOBLE */
+ion-content {
+  --offset-bottom: 0px !important;
+  --offset-top: 0px !important;
+  
+  /* Esto quita barras fantasmales en Chrome/Safari */
+  &::part(scroll) {
+    scrollbar-width: thin;
+    scrollbar-color: #{$primary-cafe} transparent;
+  }
+}
+
+/* Si la tabla es muy ancha, permitimos scroll HORIZONTAL únicamente 
+   en el contenedor de la tabla, pero nunca vertical */
+@media (min-width: 768px) {
+  .tabla-web-container {
+    display: block;
+    overflow-x: auto; /* Scroll horizontal si es necesario */
+    overflow-y: hidden; /* Prohibido scroll vertical aquí */
+  }
+}/* ELIMINAR SCROLL DOBLE */
+ion-content {
+  --offset-bottom: 0px !important;
+  --offset-top: 0px !important;
+  
+  /* Esto quita barras fantasmales en Chrome/Safari */
+  &::part(scroll) {
+    scrollbar-width: thin;
+    scrollbar-color: #{$primary-cafe} transparent;
+  }
+}
+
+/* Si la tabla es muy ancha, permitimos scroll HORIZONTAL únicamente 
+   en el contenedor de la tabla, pero nunca vertical */
+@media (min-width: 768px) {
+  .tabla-web-container {
+    display: block;
+    overflow-x: auto; /* Scroll horizontal si es necesario */
+    overflow-y: hidden; /* Prohibido scroll vertical aquí */
+  }
+}/* COLORES DE CRONÓMETRO */
+.timer-text {
+  font-family: 'Courier New', Courier, monospace; /* Estilo digital */
+  font-size: 1.1rem;
+  
+  &.normal { color: #2dd36f; } // Verde - A tiempo
+  &.delayed { color: #eb445a; } // Rojo - Retrasado
+  
+  &.normal-closed { color: #94a3b8; } // Gris - Cerrado a tiempo
+  &.delayed-closed { 
+    color: #f97316; // Naranja - Cerrado con retraso
+    text-decoration: underline; 
+  }
+}

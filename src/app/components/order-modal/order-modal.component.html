@@ -15,17 +15,13 @@
   <div class="modal-container">
 
     <div class="left-panel">
-      
+
       <ng-container *ngIf="viewMode === 'categories'">
         <ion-list-header>
           <ion-label>Seleccione Categoría</ion-label>
         </ion-list-header>
         <ion-list class="custom-list">
-          <ion-item 
-            button 
-            detail="true"
-            *ngFor="let cat of categories"
-            (click)="selectCategory(cat)"
+          <ion-item button detail="true" *ngFor="let cat of categories" (click)="selectCategory(cat)"
             class="category-item">
             <ion-icon name="folder-open-outline" slot="start" color="primary"></ion-icon>
             <ion-label>
@@ -45,10 +41,7 @@
         </div>
 
         <ion-list class="custom-list">
-          <ion-item 
-            button
-            *ngFor="let product of products"
-            (click)="addProduct(product)">
+          <ion-item button *ngFor="let product of products" (click)="addProduct(product)">
             <ion-label>
               <h3>{{ product.name }}</h3>
               <p>Precio unitario</p>
@@ -74,15 +67,62 @@
             <ion-item>
               <ion-label>
                 <h2 class="item-name">{{ item.name }}</h2>
-                <p>Cantidad: <strong>{{ item.quantity }}</strong></p>
+
+                <div style="margin-top: 5px;">
+                  <ion-item lines="none"
+                    style="--min-height: 30px; font-size: 0.8em; --background: #f9f9f9; border-radius: 5px; margin-bottom: 3px;">
+                    <ion-icon name="create-outline" slot="start" style="font-size: 14px;"></ion-icon>
+                    <ion-input [(ngModel)]="item.notes" placeholder="Notas (ej: Sin cebolla)"></ion-input>
+                  </ion-item>
+                  <ion-item lines="none"
+                    style="--min-height: 30px; font-size: 0.8em; --background: #f9f9f9; border-radius: 5px;">
+                    <ion-icon name="restaurant-outline" slot="start" style="font-size: 14px;"></ion-icon>
+                    <ion-input [(ngModel)]="item.sides" placeholder="Acompañamiento (ej: Papas)"></ion-input>
+                  </ion-item>
+                </div>
+
+                <p style="margin-top: 8px;">Cantidad: <strong>{{ item.quantity }}</strong></p>
               </ion-label>
-              <ion-note slot="end" color="dark">
-                Bs/ {{ item.price * item.quantity }}
-              </ion-note>
+
+
+
+
+
             </ion-item>
-            
+
+            <!-- PRECIO + TOGGLE -->
+            <div slot="end" style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+
+              <!-- Precio editable -->
+              <div style="display:flex; align-items:center; gap:4px;">
+                <span style="font-size:0.8rem; color:#666;">Bs/</span>
+
+                <ion-input type="number" [(ngModel)]="item.price" [readonly]="!item.isPriceEditable"
+                  style="width:80px; text-align:right; font-weight:bold;">
+                </ion-input>
+              </div>
+
+              <!-- Toggle pequeño -->
+              <div style="display:flex; align-items:center; gap:4px;">
+                <ion-icon name="cash-outline" size="small" [color]="item.isPriceEditable ? 'warning' : 'medium'">
+                </ion-icon>
+
+                <ion-toggle [(ngModel)]="item.isPriceEditable" color="warning" style="transform: scale(0.6);">
+                </ion-toggle>
+              </div>
+
+            </div>
+            <ion-buttons slot="end">
+              <ion-button color="danger" (click)="removeProduct(item)">
+                <ion-icon name="remove-circle-outline"></ion-icon>
+              </ion-button>
+              <ion-badge color="light">{{ item.quantity }}</ion-badge>
+              <ion-button color="success" (click)="addProduct(item)">
+                <ion-icon name="add-circle-outline"></ion-icon>
+              </ion-button>
+            </ion-buttons>
             <ion-item-options side="end">
-              <ion-item-option color="danger" (click)="removeProduct(i)">
+              <ion-item-option color="danger" (click)="deleteFromCart(item)">
                 <ion-icon name="trash" slot="icon-only"></ion-icon>
               </ion-item-option>
             </ion-item-options>
@@ -101,12 +141,7 @@
           <span class="total-amount">Bs/ {{ getTotal() }}</span>
         </div>
 
-        <ion-button 
-          expand="block" 
-          color="success"
-          shape="round"
-          [disabled]="cart.length === 0"
-          (click)="confirmOrder()"
+        <ion-button expand="block" color="success" shape="round" [disabled]="cart.length === 0" (click)="confirmOrder()"
           class="confirm-btn">
           Confirmar Pedido
         </ion-button>

@@ -18,6 +18,8 @@ export class PedidosPage implements OnInit {
   filtroMesero: string = '';
   fechaFiltro: string = '';
 
+  soloAtrasados: boolean = false;
+private clockInterval: any;
   constructor(
     private server: ServerContentService, 
     private modalCtrl: ModalController,
@@ -35,6 +37,7 @@ export class PedidosPage implements OnInit {
       this.meseros = res.data;
     });
     this.cargarPedidos();
+    this.startClock();
   }
 
   cargarPedidos() {
@@ -45,24 +48,55 @@ export class PedidosPage implements OnInit {
         }
       });
   }
-
   get pedidosFiltrados() {
-    return this.pedidos.filter(p => {
-      if (this.meseroSeleccionado && p.mesero !== this.meseroSeleccionado) {
+  return this.pedidos.filter(p => {
+
+    // ===============================
+    // 1️⃣ FILTRO POR MESERO
+    // ===============================
+    if (this.meseroSeleccionado && p.mesero !== this.meseroSeleccionado) {
+      return false;
+    }
+
+    // ===============================
+    // 2️⃣ FILTRO POR ESTADO
+    // ===============================
+    if (this.estadoSeleccionado && p.status !== this.estadoSeleccionado) {
+      return false;
+    }
+
+    // ===============================
+    // 3️⃣ FILTRO POR DÍA OPERATIVO (5AM - 4:59AM)
+    // ===============================
+    if (this.fechaFiltro) {
+
+      // Separar manualmente año, mes y día
+      const [year, month, day] = this.fechaFiltro.split('-').map(Number);
+
+      // Inicio del día operativo (5:00 AM hora local)
+      const inicio = new Date(year, month - 1, day, 5, 0, 0, 0);
+
+      // Fin del día operativo (4:59:59 del día siguiente)
+      const fin = new Date(year, month - 1, day + 1, 4, 59, 59, 999);
+
+      // Convertir fecha del pedido correctamente
+      const fechaPedido = new Date(p.order_date.replace(' ', 'T'));
+
+      if (fechaPedido < inicio || fechaPedido > fin) {
         return false;
       }
-      if (this.estadoSeleccionado && p.status !== this.estadoSeleccionado) {
-        return false;
-      }
-      if (this.fechaFiltro) {
-        const fechaPedido = new Date(p.order_date).toISOString().split('T')[0];
-        if (fechaPedido !== this.fechaFiltro) {
-          return false;
-        }
-      }
-      return true;
-    });
-  }
+    }
+
+    // ===============================
+    // 4️⃣ FILTRO SOLO ATRASADOS
+    // ===============================
+    if (this.soloAtrasados && !p.isDelayed) {
+      return false;
+    }
+
+    return true;
+  });
+}
 
   limpiarFecha() {
     this.fechaFiltro = '';
@@ -136,5 +170,88 @@ export class PedidosPage implements OnInit {
     });
     toast.present();
   }
+ngOnDestroy() {
+  if (this.clockInterval) {
+    clearInterval(this.clockInterval);
+  }
+}
+startClock() {
+  if (this.clockInterval) {
+    clearInterval(this.clockInterval);
+  }
 
+  this.clockInterval = setInterval(() => {
+    this.updateAllClocks();
+  }, 1000);
+}
+private updateAllClocks() {
+
+  const now = new Date().getTime();
+
+  this.pedidos = this.pedidos.map(pedido => {
+
+    const estimado = parseFloat(pedido.estimated_time || '0');
+
+    // ===============================
+    // 1️⃣ SI ESTÁ CERRADO
+    // ===============================
+    if (pedido.status === 'closed') {
+
+      const actual = parseFloat(pedido.actual_time || '0'); // minutos decimales
+
+      const minutos = Math.floor(actual);
+      const segundos = Math.floor((actual - minutos) * 60);
+
+      let delay = 0;
+
+      if (estimado > 0 && actual > estimado) {
+        delay = actual - estimado;
+      }
+
+      const delayMin = Math.floor(delay);
+      const delaySec = Math.floor((delay - delayMin) * 60);
+
+      return {
+        ...pedido,
+        timeDisplay: `${minutos}:${segundos.toString().padStart(2, '0')}`,
+        delayTime: delay > 0
+          ? `${delayMin}:${delaySec.toString().padStart(2, '0')}`
+          : '0:00',
+        isDelayed: delay > 0
+      };
+    }
+
+    // ===============================
+    // 2️⃣ SI ESTÁ ABIERTO
+    // ===============================
+    if (pedido.order_date) {
+
+      const dateStr = pedido.order_date.replace(' ', 'T');
+      const startTime = new Date(dateStr).getTime();
+      const diffMs = now - startTime;
+
+      if (diffMs > 0) {
+
+        const totalSeconds = Math.floor(diffMs / 1000);
+        const mins = Math.floor(totalSeconds / 60);
+        const secs = totalSeconds % 60;
+
+        let delay = 0;
+
+        if (estimado > 0 && mins > estimado) {
+          delay = mins - estimado;
+        }
+
+        return {
+          ...pedido,
+          timeDisplay: `${mins}:${secs.toString().padStart(2, '0')}`,
+          delayTime: delay > 0 ? `${delay}:00` : '0:00',
+          isDelayed: delay > 0
+        };
+      }
+    }
+
+    return pedido;
+  });
+}
 }

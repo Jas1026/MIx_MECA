@@ -153,3 +153,44 @@
   50% { opacity: 0.5; }
   100% { opacity: 1; }
 }
+.blink-alert {
+  border: 4px solid #eb445a !important;
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% { opacity: 0.5; background-color: #ffc4c4; }
+}
+.blink-alert {
+  border: 4px solid var(--ion-color-danger) !important;
+  background-color: #fff5f5 !important;
+  animation: parpadeo-rojo 1s infinite;
+}
+
+@keyframes parpadeo-rojo {
+  0% { box-shadow: 0 0 0px var(--ion-color-danger); }
+  50% { box-shadow: 0 0 20px var(--ion-color-danger); background-color: #ffe0e0; }
+  100% { box-shadow: 0 0 0px var(--ion-color-danger); }
+}
+
+.time-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-weight: bold;
+  &.on-time { background: #e6ffed; color: #22863a; }
+  &.late { background: #ffeef0; color: #cb2431; }
+}
+/* En cocina.page.scss */
+.blink-alert {
+  border: 5px solid #eb445a !important;
+  background-color: #fff0f0 !important;
+  animation: alarm-blink 0.8s infinite alternate;
+}
+
+@keyframes alarm-blink {
+  from { box-shadow: 0 0 5px #eb445a; filter: brightness(1); }
+  to { box-shadow: 0 0 25px #eb445a; filter: brightness(1.2); }
+}

@@ -7,13 +7,14 @@ import { IonicModule } from '@ionic/angular';
 import { PedidosUnitariosPageRoutingModule } from './pedidos-unitarios-routing.module';
 
 import { PedidosUnitariosPage } from './pedidos-unitarios.page';
-
+import { ViewOrderProductsModule } from '../../modals/view-order-products/view-order-products.module';
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    PedidosUnitariosPageRoutingModule
+    PedidosUnitariosPageRoutingModule,
+    ViewOrderProductsModule
   ],
   declarations: [PedidosUnitariosPage]
 })

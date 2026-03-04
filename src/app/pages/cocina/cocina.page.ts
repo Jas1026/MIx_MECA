@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, NgZone, ChangeDetectorRef, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ServerContentService } from 'src/app/services/server-content.service';
 
@@ -13,6 +13,9 @@ export class CocinaPage implements OnInit, OnDestroy {
   orders: any[] = [];
   private dataInterval: any;
   private clockInterval: any;
+  
+  // Sonido de alerta
+  private audioAlarma = new Audio('assets/sounds/sonidodeprueba.mp3');
 
   constructor(
     private router: Router,
@@ -20,45 +23,85 @@ export class CocinaPage implements OnInit, OnDestroy {
     private server: ServerContentService,
     private ngZone: NgZone,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) {
+    this.audioAlarma.loop = true;
+  }
+ngOnInit() {
+  this.kitchenId = this.route.snapshot.paramMap.get('id');
 
-  ngOnInit() {
-    this.kitchenId = this.route.snapshot.paramMap.get('id');
+  // 🔓 Desbloquear audio
+  document.body.addEventListener('click', () => {
+    this.audioAlarma.play().then(() => {
+      this.audioAlarma.pause();
+      this.audioAlarma.currentTime = 0;
+    }).catch(() => {});
+  }, { once: true });
+
+  this.loadOrders(); // 🔥 cargar inmediato
+
+  // 🔥 POLLING REAL
+  this.dataInterval = setInterval(() => {
     this.loadOrders();
-    this.startClock();
-  }
+  }, 1000);
 
-  ionViewWillEnter() {
-    // Recargar datos del servidor cada 10 segundos
-    this.dataInterval = setInterval(() => {
-      this.loadOrders();
-    }, 10000);
-  }
+  this.startClock();
+}
 
-  ngOnDestroy() {
-    this.stopIntervals();
-  }
+ngOnDestroy() {
+  if (this.dataInterval) clearInterval(this.dataInterval);
+  if (this.clockInterval) clearInterval(this.clockInterval);
+  this.stopAlarma();
+}
 
   private stopIntervals() {
     if (this.dataInterval) clearInterval(this.dataInterval);
     if (this.clockInterval) clearInterval(this.clockInterval);
   }
+loadOrders() {
+  this.server.getKitchenOrders(this.kitchenId).subscribe((res: any) => {
+    if (res.error === 0) {
+      this.orders = res.data.map((item: any) => ({
+        ...item,
+        
+        alert_status: parseInt(item.alert_status)
+      }));
 
-  loadOrders() {
-    this.server.getKitchenOrders(this.kitchenId).subscribe((res: any) => {
-      if (res.error === 0) {
-        // Inicializamos el campo 'timeLeft' para cada producto
-        this.orders = res.data.map((item: any) => ({
-          ...item,
-          timeLeft: '--:--'
-        }));
+      this.checkAlerts();
+      this.updateCountdowns();
+    }
+  });
+}
+checkAlerts() {
+  const hayAlertaActiva = this.orders.some(o => o.alert_status == 1);
 
-        if (this.orders.length > 0) {
-          this.kitchenName = this.orders[0].kitchen_name || 'Estación ' + this.kitchenId;
-        }
-        this.updateCountdowns();
-      }
+  if (hayAlertaActiva) {
+
+    if (this.audioAlarma.paused) {
+
+      this.audioAlarma.currentTime = 0;
+
+      this.audioAlarma.play().then(() => {
+        console.log("🔔 Alarma sonando");
+      }).catch(err => {
+        console.warn("Autoplay bloqueado, esperando interacción...");
+      });
+
+    }
+
+  } else {
+    this.stopAlarma();
+  }
+}
+
+  playAlarma() {
+    this.audioAlarma.play().catch(err => {
+      console.warn("El navegador bloqueó el sonido hasta que hagas clic en la pantalla.");
     });
+  }
+
+  stopAlarma() {
+    this.audioAlarma.pause();
+    this.audioAlarma.currentTime = 0;
   }
 
   startClock() {
@@ -69,32 +112,24 @@ export class CocinaPage implements OnInit, OnDestroy {
       });
     }, 1000);
   }
-private updateCountdowns() {
-  const now = new Date().getTime();
 
-  this.orders.forEach(item => {
-    if (!item.order_date) return;
+  private updateCountdowns() {
+    const now = new Date().getTime();
+    this.orders.forEach(item => {
+      if (!item.order_date) return;
+      const start = new Date(item.order_date.replace(' ', 'T')).getTime();
+      const limitMinutes = parseInt(item.time_prep) || 0;
+      const targetTime = start + (limitMinutes * 60 * 1000);
+      const diffMs = targetTime - now;
+      const isLate = diffMs < 0;
+      const absMs = Math.abs(diffMs);
+      const mins = Math.floor(absMs / 60000);
+      const secs = Math.floor((absMs % 60000) / 1000);
+      item.timeLeft = `${isLate ? '-' : ''}${mins}:${secs.toString().padStart(2, '0')}`;
+      item.isLate = isLate;
+    });
+  }
 
-    const start = new Date(item.order_date.replace(' ', 'T')).getTime();
-    const limitMinutes = parseInt(item.time_prep) || 0;
-
-    const targetTime = start + (limitMinutes * 60 * 1000);
-    const diffMs = targetTime - now;
-
-    const isLate = diffMs < 0;
-    const absMs = Math.abs(diffMs);
-
-    const mins = Math.floor(absMs / 60000);
-    const secs = Math.floor((absMs % 60000) / 1000);
-
-    const sign = isLate ? '-' : '';
-
-    item.timeLeft = `${sign}${mins}:${secs.toString().padStart(2, '0')}`;
-    item.isLate = isLate;
-  });
-}
-
-  // Clase CSS dinámica según si el plato va tarde
   getTimerClass(item: any) {
     return item.isLate ? 'time-badge late' : 'time-badge on-time';
   }
@@ -104,4 +139,23 @@ private updateCountdowns() {
       this.loadOrders();
     });
   }
+
+  silenciarAlerta(detailId: number) {
+    // Llamamos al servicio para poner alert_status = 2
+    this.server.silenceAlert(detailId).subscribe((res: any) => {
+      this.loadOrders();
+    });
+  }
+  // En cocina.page.ts, añade este método
+@HostListener('click')
+resumeAudioContext() {
+  // Al hacer el primer clic en la pantalla de cocina, 
+  // el navegador permitirá que suene la alarma.
+  if (this.audioAlarma) {
+    this.audioAlarma.play().then(() => {
+      this.audioAlarma.pause(); // Lo activamos y pausamos de inmediato
+      this.audioAlarma.currentTime = 0;
+    }).catch(() => {});
+  }
+}
 }

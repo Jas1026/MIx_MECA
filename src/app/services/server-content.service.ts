@@ -329,12 +329,27 @@ getOrdersByUser(userId: string) {
 
   return this.http.post(this.urlService + "getOrdersByUser.php", body);
 }
+getOrderProducts(orderId: any) {
+  // Cambiamos a FormData para que sea igual a tus otras funciones de Órdenes
+  let body = new FormData();
+  body.append("order_id", orderId.toString());
+  body.append("system", this.getSystem());
 
-
-
-
-
-
+  // Usamos POST para enviar el FormData completo
+  return this.http.post(`${this.urlService}get_order_products.php`, body);
+}
+triggerAlert(detailId: any) {
+  let body = new FormData();
+  body.append("detail_id", detailId.toString()); // Asegúrate que sea 'detail_id'
+  body.append("system", this.getSystem());
+  return this.http.post(this.urlService + "trigger_alert.php", body);
+}
+silenceAlert(detailId: number) {
+  let body = new FormData();
+  body.append("detail_id", detailId.toString());
+  body.append("system", this.getSystem());
+  return this.http.post(this.urlService + "silence_alert.php", body);
+}
 
 
 

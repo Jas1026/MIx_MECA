@@ -153,3 +153,19 @@ $border-color: #e2e8f0;
   .tabla-web-container { display: block; }
   .lista-mobile { display: none; }
 }
+.delayed {
+  color: #e53935;
+  font-weight: bold;
+}
+
+.normal {
+  color: #2e7d32;
+}
+
+.delay-badge {
+  background: #ffebee;
+  color: #c62828;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: bold;
+}

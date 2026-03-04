@@ -1,0 +1,42 @@
+.product-card {
+  margin: 10px 0;
+  border-left: 4px solid #6f4e37;
+  border-radius: 12px;
+  
+  h2 {
+    font-weight: bold;
+    color: #333;
+  }
+  
+  p {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'monospace';
+    font-size: 1.1em;
+    &.running { color: #2dd36f; }
+  }
+
+  ion-badge {
+    font-size: 1em;
+    padding: 8px;
+  }
+}
+.product-ready {
+  border-left: 4px solid #2dd36f !important; // Verde si está listo
+  background: #f0fff4;
+  opacity: 0.9;
+  
+  h2 { color: #2b7a78; }
+  
+  p.finished {
+    color: #2dd36f;
+    font-weight: bold;
+  }
+}
+
+/* Animación para los que siguen corriendo */
+p.running {
+  color: #eb445a;
+  animation: none;
+}
