@@ -3,6 +3,7 @@ import { ServerContentService } from 'src/app/services/server-content.service';
 import { ModalController, AlertController, ToastController } from '@ionic/angular'; // 👈 Inyectamos Alert y Toast
 import { IonDatetime } from '@ionic/angular';
 import { OrderModalComponent } from 'src/app/components/order-modal/order-modal.component';
+import { ViewOrderProductsComponent } from 'src/app/modals/view-order-products/view-order-products.component';
 
 @Component({
   selector: 'app-pedidos',
@@ -254,4 +255,23 @@ private updateAllClocks() {
     return pedido;
   });
 }
+
+    async View_Order(p: any) {
+      const modal = await this.modalCtrl.create({
+        component: ViewOrderProductsComponent,
+        componentProps: {
+          order_id: p.order_id,
+          editMode: true
+        }
+      });
+  
+      modal.onDidDismiss().then(res => {
+        if (res.data) {
+          this.cargarPedidos();
+        }
+      });
+  
+      await modal.present();
+    }
+  
 }

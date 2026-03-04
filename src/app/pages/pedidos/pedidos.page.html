@@ -69,7 +69,6 @@
     <table class="mixtura-table">
       <thead>
         <tr>
-          <th>N° Pedido</th>
           <th>Mesero</th>
           <th>Fecha y Hora</th>
           <th>Estado</th>
@@ -80,7 +79,6 @@
       </thead>
       <tbody>
         <tr *ngFor="let p of pedidosFiltrados; let i = index" [style.opacity]="p.status === 'closed' ? '0.7' : '1'">
-          <td class="order-id">PED-{{ i + 1 | number:'4.0' }}</td>
           <td>
             <div class="user-cell">
               <ion-icon name="person-circle-outline"></ion-icon>
@@ -94,30 +92,41 @@
             </span>
           </td>
           <td class="ion-text-center">
-  <div [ngClass]="p.isDelayed ? 'delayed' : 'normal'">
-    <ion-icon name="time-outline"></ion-icon>
-    {{ p.timeDisplay }} / {{ p.estimated_time }} min
-  </div>
-</td>
+            <div [ngClass]="p.isDelayed ? 'delayed' : 'normal'">
+              <ion-icon name="time-outline"></ion-icon>
+              {{ p.timeDisplay }} / {{ p.estimated_time }} min
+            </div>
+          </td>
 
-<td class="ion-text-center">
-  <span *ngIf="p.isDelayed" class="delay-badge">
-    +{{ p.delayTime }}
-  </span>
-  <span *ngIf="!p.isDelayed">
-    —
-  </span>
-</td>
+          <td class="ion-text-center">
+            <span *ngIf="p.isDelayed" class="delay-badge">
+              +{{ p.delayTime }}
+            </span>
+            <span *ngIf="!p.isDelayed">
+              —
+            </span>
+          </td>
           <td class="ion-text-center">
             <div style="display: flex; justify-content: center; gap: 8px;">
-              <ion-button size="small" color="warning" shape="round" (click)="editarPedido(p)">
+
+              <!-- 👁 BOTÓN VER (SIEMPRE VISIBLE) -->
+              <!-- 👁 BOTÓN VER (SIEMPRE VISIBLE) -->
+              <ion-button size="small" color="medium" shape="round" (click)="View_Order(p)">
+                <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+
+              <!-- ✏️ BOTÓN EDITAR (SOLO SI ESTÁ OPEN) -->
+              <ion-button *ngIf="p.status === 'open'" size="small" color="warning" shape="round"
+                (click)="editarPedido(p)">
                 <ion-icon name="create-outline" slot="icon-only"></ion-icon>
               </ion-button>
 
+              <!-- 🗑 BOTÓN CERRAR (YA LO TENÍAS) -->
               <ion-button *ngIf="p.status === 'open'" size="small" color="danger" shape="round"
                 (click)="finalizarPedido(p)">
                 <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
               </ion-button>
+
             </div>
           </td>
         </tr>
@@ -136,15 +145,23 @@
           <p><ion-icon name="person-outline"></ion-icon> {{ p.mesero }}</p>
           <p><ion-icon name="time-outline"></ion-icon> {{ p.order_date }}</p>
         </ion-label>
-
         <div slot="end" style="display: flex; gap: 5px;">
-          <ion-button fill="clear" color="warning" (click)="editarPedido(p)">
+
+          <!-- 👁 VER (SIEMPRE) -->
+          <ion-button fill="clear" color="medium" (click)="View_Order(p)">
+            <ion-icon name="eye-outline"></ion-icon>
+          </ion-button>
+
+          <!-- ✏️ EDITAR (SOLO OPEN) -->
+          <ion-button *ngIf="p.status === 'open'" fill="clear" color="warning" (click)="editarPedido(p)">
             <ion-icon name="create-outline"></ion-icon>
           </ion-button>
 
+          <!-- 🗑 CERRAR (SOLO OPEN) -->
           <ion-button *ngIf="p.status === 'open'" fill="clear" color="danger" (click)="finalizarPedido(p)">
             <ion-icon name="trash-outline"></ion-icon>
           </ion-button>
+
         </div>
       </ion-item>
     </ion-item-sliding>
