@@ -122,7 +122,7 @@
               </ion-button>
 
               <!-- 🗑 BOTÓN CERRAR (YA LO TENÍAS) -->
-              <ion-button *ngIf="p.status === 'open'" size="small" color="danger" shape="round"
+              <ion-button *ngIf="p.status === 'open' || p.status === 'ready'" size="small" color="danger" shape="round"
                 (click)="finalizarPedido(p)">
                 <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
               </ion-button>
