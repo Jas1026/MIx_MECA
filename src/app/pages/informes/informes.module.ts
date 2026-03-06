@@ -4,16 +4,18 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { InformesPageRoutingModule } from './informes-routing.module';
+import { InformesPageRoutingModule } from '../../pages/informes/informes-routing.module';
 
 import { InformesPage } from './informes.page';
+import { AreaDetalleModalPageModule } from '../../modals/area-detalle-modal/area-detalle-modal.module';
 
-@NgModule({
+ @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    InformesPageRoutingModule
+    InformesPageRoutingModule,AreaDetalleModalPageModule
+    
   ],
   declarations: [InformesPage]
 })

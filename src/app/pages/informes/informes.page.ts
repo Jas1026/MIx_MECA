@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ServerContentService } from '../../services/server-content.service';
 import { ModalController } from '@ionic/angular';
 
-// Declaramos google para que TypeScript no marque error
+import { AreaDetalleModalPage } from 'src/app/modals/area-detalle-modal/area-detalle-modal.page';
+
 declare var google: any;
 
 @Component({
@@ -12,23 +13,34 @@ declare var google: any;
 })
 export class InformesPage implements OnInit {
 
+  @ViewChild('modalGraficos') modalGraficos: any;
+  tipoFiltro: string = 'dia';
+  fechaInicio: string = '';
+  fechaFin: string = '';
+
   resumen: any = {
     total_dinero: 0,
-    activos_conteo: 0,
+    ganancia_total: 0,
     top_productos: [],
+    areas_top: [],
+    horas_pico: [],
+    ventas_alcohol: {},
+    categoria_top: null,
+    meseros_retraso: [],
+    pedido_mayor_retraso: null,
     alertas_inventario: []
   };
 
   constructor(
     private server: ServerContentService,
-    private modalCtrl: ModalController
-  ) { }
+    private modalCtrl: ModalController,
+   ) {}
 
   ngOnInit() {
     this.cargarResumen();
-    // Cargamos el paquete de gráficos de Google
+
     if (typeof google !== 'undefined') {
-      google.charts.load('current', { 'packages': ['corechart'] });
+      google.charts.load('current', { packages: ['corechart'] });
     }
   }
 
@@ -36,44 +48,156 @@ export class InformesPage implements OnInit {
     this.cargarResumen();
   }
 
-  cargarResumen() {
-    const system = this.server.getSystem();
-    this.server.getInformes(system).subscribe((res: any) => {
-      if (res.error === 0) {
-        this.resumen = res.resumen;
-      }
+  /* ==============================
+     CARGAR DATOS DESDE BACKEND
+  ==============================*/
+  
+cargarResumen() {
+
+  const system = this.server.getSystem();
+
+  this.server.getInformes(
+    system,
+    this.tipoFiltro,
+    this.fechaInicio,
+    this.fechaFin
+  ).subscribe((res: any) => {
+
+    if (res.error === 0) {
+      this.resumen = res.resumen;
+      this.dibujarGraficos();
+    }
+
+  });
+
+}
+  /* ==============================
+     DIBUJAR TODOS LOS GRÁFICOS
+  ==============================*/
+  dibujarGraficos() {
+
+    if (typeof google === 'undefined') return;
+
+    google.charts.setOnLoadCallback(() => {
+
+      setTimeout(() => {
+
+        /* 🔹 TOP PRODUCTOS */
+        if (this.resumen.top_productos?.length) {
+          const cont = document.getElementById('chartAlcohol');
+          if (cont) {
+            const data = new google.visualization.DataTable();
+            data.addColumn('string', 'Producto');
+            data.addColumn('number', 'Cantidad');
+
+            this.resumen.top_productos.forEach((p: any) => {
+              data.addRow([p.nombre_producto, Number(p.cantidad)]);
+            });
+
+            new google.visualization.PieChart(cont).draw(data, {
+              title: 'Top Productos',
+              pieHole: 0.4
+            });
+          }
+        }
+
+        /* 🔹 ÁREAS */
+        if (this.resumen.areas_top?.length) {
+          const cont = document.getElementById('chartAreas');
+          if (cont) {
+            const data = new google.visualization.DataTable();
+            data.addColumn('string', 'Área');
+            data.addColumn('number', 'Ventas');
+
+            this.resumen.areas_top.forEach((a: any) => {
+              data.addRow([a.area, Number(a.total_area)]);
+            });
+
+            new google.visualization.ColumnChart(cont).draw(data, {
+              title: 'Áreas que más generan',
+              legend: { position: 'none' }
+            });
+          }
+        }
+
+        /* 🔹 HORAS PICO */
+        if (this.resumen.horas_pico?.length) {
+          const cont = document.getElementById('chartHoras');
+          if (cont) {
+            const data = new google.visualization.DataTable();
+            data.addColumn('string', 'Hora');
+            data.addColumn('number', 'Pedidos');
+
+            this.resumen.horas_pico.forEach((h: any) => {
+              data.addRow([h.hora + ':00', Number(h.total_pedidos)]);
+            });
+
+            new google.visualization.LineChart(cont).draw(data, {
+              title: 'Horas Pico'
+            });
+          }
+        }
+
+        /* 🔹 ALCOHOL VS SIN ALCOHOL */
+        if (this.resumen.ventas_alcohol) {
+          const cont = document.getElementById('chartAlcoholVs');
+          if (cont) {
+            const data = new google.visualization.DataTable();
+            data.addColumn('string', 'Tipo');
+            data.addColumn('number', 'Ventas');
+
+            data.addRow(['Con Alcohol', Number(this.resumen.ventas_alcohol.con)]);
+            data.addRow(['Sin Alcohol', Number(this.resumen.ventas_alcohol.sin)]);
+
+            new google.visualization.PieChart(cont).draw(data, {
+              title: 'Alcohol vs No Alcohol',
+              pieHole: 0.4
+            });
+          }
+        }
+
+        /* 🔹 CATEGORÍA MÁS RENTABLE */
+        if (this.resumen.categoria_top) {
+          const cont = document.getElementById('chartGananciasArea');
+          if (cont) {
+            const data = new google.visualization.DataTable();
+            data.addColumn('string', 'Categoría');
+            data.addColumn('number', 'Ganancia');
+
+            data.addRow([
+              this.resumen.categoria_top.name,
+              Number(this.resumen.categoria_top.total_ganancia)
+            ]);
+
+            new google.visualization.ColumnChart(cont).draw(data, {
+              title: 'Categoría Más Rentable',
+              legend: { position: 'none' }
+            });
+          }
+        }
+
+      }, 400);
+
     });
   }
 
-  // Función que se dispara al abrir el modal
-  dibujarGrafico() {
-    if (typeof google === 'undefined' || !google.charts) return;
+  /* ==============================
+     VER DETALLE ÁREA
+  ==============================*/
+  async verDetalleArea(area: any) {
+    const modal = await this.modalCtrl.create({
+      component: AreaDetalleModalPage,
+      componentProps: { area }
+    });
 
-    // Pequeño delay para asegurar que el div del modal exista
-    setTimeout(() => {
-      const data = new google.visualization.DataTable();
-      data.addColumn('string', 'Producto');
-      data.addColumn('number', 'Cantidad');
-
-      // Llenamos con los datos del servidor
-      this.resumen.top_productos.forEach((p: any) => {
-        data.addRow([p.nombre_producto, parseInt(p.cantidad)]);
-      });
-
-      const options = {
-        title: 'Distribución de Ventas',
-        pieHole: 0.4, // Estilo Dona
-        chartArea: { width: '90%', height: '80%' },
-        legend: { position: 'bottom' },
-        colors: ['#4a3f35', '#ffc409', '#3880ff', '#10dc60', '#ff4961']
-      };
-
-      const chart = new google.visualization.PieChart(document.getElementById('donutchart'));
-      chart.draw(data, options);
-    }, 400);
+    await modal.present();
   }
 
+  /* ==============================
+     CERRAR MODAL
+  ==============================*/
   cerrarModal() {
     this.modalCtrl.dismiss();
   }
+
 }

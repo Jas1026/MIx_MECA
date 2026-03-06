@@ -1,0 +1,125 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="dark">
+    <ion-title>
+      📍 Área: {{ area?.area }}
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button (click)="close()" fill="clear">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- 🔥 MEJOR MESA -->
+  <ion-card *ngIf="mejorMesa">
+    <ion-card-header>
+      <ion-card-title>
+        🏆 Mejor Mesa del Área
+      </ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <h2>{{ mejorMesa.mesa }}</h2>
+
+      <ion-badge color="success">
+        Bs. {{ mejorMesa.total_ventas }}
+      </ion-badge>
+
+      <p class="ion-margin-top">
+        Total Pedidos: {{ mejorMesa.total_pedidos }}
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+
+  <!-- 📋 LISTA DE MESAS -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        🪑 Mesas del Área
+      </ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+
+      <ion-accordion-group>
+
+        <ion-accordion *ngFor="let mesa of mesas">
+
+          <!-- CABECERA -->
+          <ion-item slot="header">
+            <ion-label>
+              <h2>{{ mesa.mesa }}</h2>
+              <p>{{ mesa.total_pedidos }} pedidos</p>
+            </ion-label>
+
+            <ion-badge color="primary" slot="end">
+              Bs. {{ mesa.total_ventas }}
+            </ion-badge>
+          </ion-item>
+
+          <!-- CONTENIDO -->
+          <div class="ion-padding" slot="content">
+
+            <!-- PEDIDOS -->
+            <div *ngIf="mesa.pedidos?.length">
+
+              <h3>📦 Pedidos</h3>
+
+              <ion-list lines="full">
+
+                <ion-item *ngFor="let pedido of mesa.pedidos">
+
+                  <ion-label>
+                    <h3>Pedido #{{ pedido.order_id }}</h3>
+                    <p>{{ pedido.order_date | date:'short' }}</p>
+                  </ion-label>
+
+                  <ion-badge color="success" slot="end">
+                    Bs. {{ pedido.total_pedido }}
+                  </ion-badge>
+
+                </ion-item>
+
+              </ion-list>
+
+            </div>
+
+
+            <!-- PRODUCTOS -->
+            <div *ngIf="mesa.productos?.length" class="ion-margin-top">
+
+              <h3>🍽 Productos Más Vendidos</h3>
+
+              <ion-list lines="none">
+
+                <ion-item *ngFor="let prod of mesa.productos">
+
+                  <ion-label>
+                    {{ prod.producto }}
+                  </ion-label>
+
+                  <ion-badge color="warning" slot="end">
+                    {{ prod.cantidad }}
+                  </ion-badge>
+
+                </ion-item>
+
+              </ion-list>
+
+            </div>
+
+          </div>
+
+        </ion-accordion>
+
+      </ion-accordion-group>
+
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

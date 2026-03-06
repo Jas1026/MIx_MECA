@@ -1,96 +1,484 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="light">
-    <ion-title>Panel de Informes</ion-title>
+    <ion-title>Panel de Informes Avanzado</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
 
-  <ion-button expand="block" color="dark" (click)="dibujarGrafico()" id="open-modal-grafico" class="ion-margin-bottom">
-    <ion-icon name="analytics-outline" slot="start"></ion-icon>
-    Ver Análisis Visual
+
+  <!-- filtros -->
+  <ion-item>
+    <ion-label>Filtrar por</ion-label>
+    <ion-select [(ngModel)]="tipoFiltro">
+      <ion-select-option value="dia">Hoy</ion-select-option>
+      <ion-select-option value="mes">Este Mes</ion-select-option>
+      <ion-select-option value="anio">Este Año</ion-select-option>
+      <ion-select-option value="rango">Rango</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item *ngIf="tipoFiltro === 'rango'">
+    <ion-label>Desde</ion-label>
+    <ion-datetime [(ngModel)]="fechaInicio"></ion-datetime>
+  </ion-item>
+
+  <ion-item *ngIf="tipoFiltro === 'rango'">
+    <ion-label>Hasta</ion-label>
+    <ion-datetime [(ngModel)]="fechaFin"></ion-datetime>
+  </ion-item>
+
+  <ion-button expand="block" (click)="cargarResumen()">
+    Aplicar Filtro
   </ion-button>
 
+
+  <!-- BOTÓN ANÁLISIS -->
+  <ion-button expand="block"
+            color="dark"
+            (click)="modalGraficos.present()"
+            class="ion-margin-bottom">
+  <ion-icon name="analytics-outline" slot="start"></ion-icon>
+  Ver Análisis Completo
+</ion-button>
+
+  <!-- TARJETAS PRINCIPALES -->
+  <ion-row class="ion-margin-top">
+
+    <ion-col size="6">
+      <ion-card>
+        <ion-card-content>
+          <ion-item lines="none">
+            <ion-icon name="cash-outline" color="success" slot="start"></ion-icon>
+            <ion-label>
+              <h2>Bs. {{ resumen.total_dinero }}</h2>
+              <p>Ventas Totales</p>
+            </ion-label>
+          </ion-item>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+
+    <ion-col size="6">
+      <ion-card>
+        <ion-card-content>
+          <ion-item lines="none">
+            <ion-icon name="trending-up-outline" color="primary" slot="start"></ion-icon>
+            <ion-label>
+              <h2>Bs. {{ resumen.ganancia_total }}</h2>
+              <p>Ganancia Real</p>
+            </ion-label>
+          </ion-item>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+
+  </ion-row>
+  <!-- MEJOR MESA Y MESERO -->
   <ion-row>
+
     <ion-col size="6">
-      <ion-card class="stat-card total-ventas">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="trophy-outline" color="warning"></ion-icon>
+            Mesa Más Activa
+          </ion-card-title>
+        </ion-card-header>
         <ion-card-content>
-          <ion-icon name="cash-outline"></ion-icon>
-          <h3>Bs. {{ resumen.total_dinero }}</h3>
-          <p>Ventas Totales</p>
+          <h2>{{ resumen.mesa_top?.nombre }}</h2>
+          <ion-badge color="success">
+            {{ resumen.mesa_top?.total_pedidos }} pedidos
+          </ion-badge>
         </ion-card-content>
       </ion-card>
     </ion-col>
+
     <ion-col size="6">
-      <ion-card class="stat-card total-activos">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="person-outline" color="primary"></ion-icon>
+            Mejor Mesero
+          </ion-card-title>
+        </ion-card-header>
         <ion-card-content>
-          <ion-icon name="briefcase-outline"></ion-icon>
-          <h3>{{ resumen.activos_conteo }}</h3>
-          <p>Activos Operando</p>
+          <h2>{{ resumen.mesero_top?.name }}</h2>
+          <ion-badge color="success">
+            Bs. {{ resumen.mesero_top?.total_ventas }}
+          </ion-badge>
         </ion-card-content>
       </ion-card>
     </ion-col>
+
   </ion-row>
 
-  <ion-card class="ion-no-margin ion-margin-top list-card">
+
+
+
+
+
+
+
+
+
+  
+
+  <!-- ÁREAS QUE MÁS GENERAN -->
+ 
+<ion-card class="ion-margin-top">
+  <ion-card-header>
+    <ion-card-title>Áreas que más generan</ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+    <ion-list>
+
+      <ion-item *ngFor="let area of resumen.areas_top">
+
+        <ion-label>
+          <h2>{{ area.area }}</h2>
+          <p>Total generado</p>
+        </ion-label>
+
+        <ion-badge color="success" slot="end">
+          Bs. {{ area.total_area }}
+        </ion-badge>
+
+        <ion-button 
+          fill="clear" 
+          size="small" 
+          color="primary"
+          (click)="verDetalleArea(area)">
+          Ver detalle
+        </ion-button>
+
+      </ion-item>
+
+    </ion-list>
+  </ion-card-content>
+</ion-card>
+
+
+
+
+
+
+
+
+
+<ion-row class="ion-margin-top">
+
+  <ion-col size="6">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          Ventas con Alcohol
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <h2>Bs. {{ resumen.ventas_alcohol?.con }}</h2>
+      </ion-card-content>
+    </ion-card>
+  </ion-col>
+
+  <ion-col size="6">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          Ventas sin Alcohol
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <h2>Bs. {{ resumen.ventas_alcohol?.sin }}</h2>
+      </ion-card-content>
+    </ion-card>
+  </ion-col>
+
+</ion-row>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ion-card class="ion-margin-top">
+  <ion-card-header>
+    <ion-card-title>
+      Categoría Más Rentable
+    </ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+    <h2>{{ resumen.categoria_top?.name }}</h2>
+    <ion-badge color="success">
+      Bs. {{ resumen.categoria_top?.total_ganancia }}
+    </ion-badge>
+  </ion-card-content>
+</ion-card>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ion-card class="ion-margin-top">
+
+  <ion-card-header>
+    <ion-card-title>
+      Ranking de Retrasos
+    </ion-card-title>
+  </ion-card-header>
+
+  <ion-list>
+    <ion-item *ngFor="let m of resumen.meseros_retraso">
+      <ion-label>
+        <h3>{{ m.name }}</h3>
+      </ion-label>
+
+      <ion-badge color="danger" slot="end">
+        {{ m.promedio_retraso | number:'1.0-0' }} min
+      </ion-badge>
+    </ion-item>
+  </ion-list>
+
+</ion-card>
+
+
+
+
+  <!-- INGREDIENTES MÁS USADOS -->
+  <ion-card class="ion-margin-top">
+
     <ion-card-header>
       <ion-card-title>
-        <ion-icon name="star" color="warning"></ion-icon>
-        Más Vendidos
+        <ion-icon name="nutrition-outline" color="tertiary"></ion-icon>
+        Ingredientes Más Usados
       </ion-card-title>
     </ion-card-header>
-    <ion-card-content>
-      <ion-list lines="full">
-        <ion-item *ngFor="let prod of resumen.top_productos">
-          <ion-label>
-            <h2>{{ prod.nombre_producto }}</h2>
-            <p>{{ prod.cantidad }} unidades vendidas</p>
-          </ion-label>
-          <ion-badge color="primary" slot="end">{{ prod.cantidad }}</ion-badge>
-        </ion-item>
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
 
-  <ion-card class="ion-no-margin ion-margin-top list-card">
+    <ion-list lines="none">
+      <ion-item *ngFor="let ing of resumen.ingredientes_top">
+        <ion-label>
+          <h3>{{ ing.nombre }}</h3>
+        </ion-label>
+        <ion-badge color="warning" slot="end">
+          {{ ing.total_usado }}
+        </ion-badge>
+      </ion-item>
+    </ion-list>
+
+  </ion-card>
+  <!-- HORAS PICO -->
+  <ion-card class="ion-margin-top">
+
     <ion-card-header>
-      <ion-card-title color="danger">
-        <ion-icon name="alert-circle-outline"></ion-icon>
-        Reponer Stock
+      <ion-card-title>
+        <ion-icon name="flame-outline" color="danger"></ion-icon>
+        Horas Pico
       </ion-card-title>
     </ion-card-header>
-    <ion-card-content>
-      <ion-list lines="full">
-        <ion-item *ngFor="let ing of resumen.alertas_inventario">
-          <ion-label>
-            <h2>{{ ing.nombre }}</h2>
-            <p>Quedan: {{ ing.stock_act }} {{ ing.unidad_med }}</p>
-          </ion-label>
-          <ion-icon name="warning" color="warning" slot="end"></ion-icon>
-        </ion-item>
-      </ion-list>
-    </ion-card-content>
+
+    <ion-list lines="none">
+      <ion-item *ngFor="let hora of resumen.horas_pico">
+        <ion-label>
+          <h3>{{ hora.hora }}:00 hrs</h3>
+        </ion-label>
+        <ion-badge color="danger" slot="end">
+          {{ hora.total_pedidos }} pedidos
+        </ion-badge>
+      </ion-item>
+    </ion-list>
+
   </ion-card>
 
-  <ion-modal trigger="open-modal-grafico" (willPresent)="dibujarGrafico()">
-    <ng-template>
-      <ion-header class="ion-no-border">
-        <ion-toolbar color="light">
-          <ion-title>Estadísticas</ion-title>
+
+  <ion-row class="ion-margin-top">
+
+    <ion-col size="6">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="star-outline" color="success"></ion-icon>
+            Producto Más Vendido
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <h2>{{ resumen.producto_mas_usado?.nombre_producto }}</h2>
+          <ion-badge color="success">
+            {{ resumen.producto_mas_usado?.total_vendido }} ventas
+          </ion-badge>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+
+    <ion-col size="6">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="remove-circle-outline" color="danger"></ion-icon>
+            Producto Menos Vendido
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <h2>{{ resumen.producto_menos_usado?.nombre_producto }}</h2>
+          <ion-badge color="danger">
+            {{ resumen.producto_menos_usado?.total_vendido }} ventas
+          </ion-badge>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+
+  </ion-row>
+
+  <ion-card class="ion-margin-top">
+
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="alert-circle-outline" color="danger"></ion-icon>
+        Producto / Ingrediente con Menor Stock
+      </ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+
+      <ion-item lines="none">
+        <ion-label>
+          <h2>{{ resumen.stock_minimo?.nombre }}</h2>
+          <p>Stock disponible</p>
+        </ion-label>
+
+        <ion-badge color="danger" slot="end">
+          {{ resumen.stock_minimo?.stock_act }}
+          {{ resumen.stock_minimo?.unidad_med }}
+        </ion-badge>
+      </ion-item>
+
+    </ion-card-content>
+
+  </ion-card>
+
+  <ion-card class="ion-margin-top">
+
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="time-outline" color="warning"></ion-icon>
+        Producto Más Lento
+      </ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <h2>{{ resumen.producto_mas_lento?.nombre_producto }}</h2>
+      <ion-badge color="warning">
+        {{ resumen.producto_mas_lento?.tiempo_promedio | number:'1.0-0' }} min
+      </ion-badge>
+    </ion-card-content>
+
+  </ion-card>
+
+  <ion-row>
+
+    <ion-col size="6">
+      <ion-card class="ion-margin-top">
+
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="arrow-down-outline" color="medium"></ion-icon>
+            Mesa Menos Activa
+          </ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <h2>{{ resumen.mesa_low?.nombre }}</h2>
+          <ion-badge color="medium">
+            {{ resumen.mesa_low?.total_pedidos }} pedidos
+          </ion-badge>
+        </ion-card-content>
+
+      </ion-card>
+    </ion-col>
+
+    <ion-col size="6">
+
+      <ion-card>
+
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="trending-down-outline" color="medium"></ion-icon>
+            Meseros con Menor Venta
+          </ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+
+          <ion-list lines="none">
+
+            <ion-item *ngFor="let m of resumen.meseros.slice(1)">
+              <ion-label>
+                <h3>{{ m.name }}</h3>
+                <p>Ventas acumuladas</p>
+              </ion-label>
+
+              <ion-badge color="medium" slot="end">
+                Bs. {{ m.total_ventas }}
+              </ion-badge>
+            </ion-item>
+
+          </ion-list>
+
+        </ion-card-content>
+
+      </ion-card>
+
+    </ion-col>
+
+  </ion-row>
+
+
+
+
+
+
+  <!-- MODAL DE GRÁFICOS -->
+<ion-modal #modalGraficos (ionModalDidPresent)="dibujarGraficos()">    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Estadísticas Visuales</ion-title>
           <ion-buttons slot="end">
             <ion-button (click)="cerrarModal()">Cerrar</ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
+
       <ion-content class="ion-padding">
-        
-        <div id="donutchart" style="width: 100%; height: 350px;"></div>
-        
-        <div class="ion-text-center ion-padding">
-          <p style="color: #666; font-size: 0.9rem;">
-            Este gráfico muestra la proporción de los 5 productos más vendidos actualmente.
-          </p>
-        </div>
+
+        <div id="chartAlcohol" style="height: 300px;"></div>
+        <div id="chartAreas" style="height: 300px;"></div>
+        <div id="chartHoras" style="height: 300px;"></div>
+        <div id="chartGananciasArea" style="height: 300px;"></div>
+        <div id="chartAlcoholVs" style="height: 300px;"></div>
+        <div id="chartAtrasados" style="height: 300px;"></div>
 
       </ion-content>
     </ng-template>

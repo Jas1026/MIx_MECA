@@ -269,9 +269,57 @@ updateAssetState(payload: any) {
   return this.http.post(`${this.urlService}update_asset_state.php`, payload);
 }
 
-getInformes(system: string) {
-  return this.http.get(`${this.urlService}get_informes_resumen.php?system=${system}`);
+//getInformes(system: string) {
+  //return this.http.get(`${this.urlService}get_informes_resumen.php?system=${system}`);
+//}
+
+getInformes(
+  system: string,
+  filtro?: string,
+  inicio?: any,
+  fin?: any
+) {
+ 
+  let params: any = {
+    system: system
+  };
+ 
+  if (filtro) {
+    params.filtro = filtro;
+  }
+ 
+  if (inicio) {
+    params.inicio = inicio;
+  }
+ 
+  if (fin) {
+    params.fin = fin;
+  }
+ 
+  return this.http.get(
+    `${this.urlService}get_informes_resumen.php`,
+    { params }
+  );
 }
+ 
+ 
+getDetalleArea(system: string, area: string) {
+  return this.http.get(
+    `${this.urlService}get_detalle_area.php?system=${system}&area=${area}`
+  );
+}
+ 
+getResumen(filtro: string) {
+  return this.http.get<any>(`${this.urlService}get_informes_resumen.php`, {
+    params: {
+      system: 'mixtura',
+      filtro: filtro
+    }
+  });
+}
+
+
+
 // ---------------- GESTIÓN DE PISOS ----------------
 
 getFlatsCom(system: string) {
@@ -350,9 +398,6 @@ silenceAlert(detailId: number) {
   body.append("system", this.getSystem());
   return this.http.post(this.urlService + "silence_alert.php", body);
 }
-
-
-
 
 
 
