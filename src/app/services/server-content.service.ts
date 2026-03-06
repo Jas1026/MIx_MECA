@@ -273,35 +273,16 @@ updateAssetState(payload: any) {
   //return this.http.get(`${this.urlService}get_informes_resumen.php?system=${system}`);
 //}
 
-getInformes(
-  system: string,
-  filtro?: string,
-  inicio?: any,
-  fin?: any
-) {
- 
-  let params: any = {
-    system: system
-  };
- 
-  if (filtro) {
-    params.filtro = filtro;
-  }
- 
-  if (inicio) {
-    params.inicio = inicio;
-  }
- 
-  if (fin) {
-    params.fin = fin;
-  }
- 
-  return this.http.get(
-    `${this.urlService}get_informes_resumen.php`,
-    { params }
-  );
+getInformes(system: any, fecha: string) {
+
+  return this.http.get(this.urlService + "get_detalle_area.php", {
+    params: {
+      system: system,
+      fecha: fecha
+    }
+  });
+
 }
- 
  
 getDetalleArea(system: string, area: string) {
   return this.http.get(

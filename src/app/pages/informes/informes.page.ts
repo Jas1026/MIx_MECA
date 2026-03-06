@@ -14,9 +14,8 @@ declare var google: any;
 export class InformesPage implements OnInit {
 
   @ViewChild('modalGraficos') modalGraficos: any;
-  tipoFiltro: string = 'dia';
-  fechaInicio: string = '';
-  fechaFin: string = '';
+
+  fechaFiltro: string = '';
 
   resumen: any = {
     total_dinero: 0,
@@ -27,23 +26,25 @@ export class InformesPage implements OnInit {
     ventas_alcohol: {},
     categoria_top: null,
     meseros_retraso: [],
-    meseros: [],   // 👈 FALTABA ESTO
+    meseros: [],
     pedido_mayor_retraso: null,
     alertas_inventario: [],
-    ingredientes_top: [] // 👈 también usas esto en el HTML
+    ingredientes_top: []
   };
 
   constructor(
     private server: ServerContentService,
-    private modalCtrl: ModalController,
-  ) { }
+    private modalCtrl: ModalController
+  ) {}
 
   ngOnInit() {
+
     this.cargarResumen();
 
     if (typeof google !== 'undefined') {
       google.charts.load('current', { packages: ['corechart'] });
     }
+
   }
 
   ionViewWillEnter() {
@@ -51,57 +52,63 @@ export class InformesPage implements OnInit {
   }
 
   /* ==============================
+     SELECCIONAR FECHA DEL CALENDARIO
+  ==============================*/
+
+  fechaSeleccionada(event: any, modal: any) {
+
+    this.fechaFiltro = event.detail.value.split('T')[0];
+
+    console.log("Fecha seleccionada:", this.fechaFiltro);
+
+    modal.dismiss();
+
+  }
+
+  /* ==============================
      CARGAR DATOS DESDE BACKEND
   ==============================*/
 
-cargarResumen() {
+  cargarResumen() {
 
-  const system = this.server.getSystem();
+    const system = this.server.getSystem();
 
-  console.log("FILTROS ENVIADOS:", {
-    tipo: this.tipoFiltro,
-    inicio: this.fechaInicio,
-    fin: this.fechaFin
-  });
+    console.log("Fecha enviada al backend:", this.fechaFiltro);
 
-  this.server.getInformes(
-    system,
-    this.tipoFiltro,
-    this.fechaInicio,
-    this.fechaFin
-  ).subscribe((res: any) => {
+    this.server.getInformes(system, this.fechaFiltro)
+      .subscribe((res: any) => {
 
-    console.log("RESPUESTA COMPLETA BACKEND:", res);
+        console.log("RESPUESTA COMPLETA BACKEND:", res);
 
-    if (res.error === 0) {
+        if (res.error === 0) {
 
-     
+          console.log("TOTAL DINERO:", res.resumen.total_dinero);
+          console.log("GANANCIA TOTAL:", res.resumen.ganancia_total);
+          console.log("TOP PRODUCTOS:", res.resumen.top_productos);
+          console.log("CATEGORIA TOP:", res.resumen.categoria_top);
 
-      console.log("TOTAL DINERO:", res.resumen.total_dinero);
-      console.log("GANANCIA TOTAL:", res.resumen.ganancia_total);
-      console.log("TOP PRODUCTOS:", res.resumen.top_productos);
-      console.log("CATEGORIA TOP:", res.resumen.categoria_top);
-   
-      this.resumen = res.resumen;
+          this.resumen = res.resumen;
 
-      this.dibujarGraficos();
+          this.dibujarGraficos();
 
-    } else {
+        } else {
 
-      console.error("ERROR DEL BACKEND:", res);
+          console.error("ERROR DEL BACKEND:", res);
 
-    }
+        }
 
-  }, (error) => {
+      }, (error) => {
 
-    console.error("ERROR HTTP:", error);
+        console.error("ERROR HTTP:", error);
 
-  });
+      });
 
-}
+  }
+
   /* ==============================
-     DIBUJAR TODOS LOS GRÁFICOS
+     DIBUJAR GRÁFICOS
   ==============================*/
+
   dibujarGraficos() {
 
     if (typeof google === 'undefined') return;
@@ -111,84 +118,139 @@ cargarResumen() {
       setTimeout(() => {
 
         /* 🔹 TOP PRODUCTOS */
+
         if (this.resumen.top_productos?.length) {
+
           const cont = document.getElementById('chartAlcohol');
+
           if (cont) {
+
             const data = new google.visualization.DataTable();
+
             data.addColumn('string', 'Producto');
             data.addColumn('number', 'Cantidad');
 
             this.resumen.top_productos.forEach((p: any) => {
-              data.addRow([p.nombre_producto, Number(p.cantidad)]);
+
+              data.addRow([
+                p.nombre_producto,
+                Number(p.cantidad)
+              ]);
+
             });
 
             new google.visualization.PieChart(cont).draw(data, {
               title: 'Top Productos',
               pieHole: 0.4
             });
+
           }
+
         }
 
         /* 🔹 ÁREAS */
+
         if (this.resumen.areas_top?.length) {
+
           const cont = document.getElementById('chartAreas');
+
           if (cont) {
+
             const data = new google.visualization.DataTable();
+
             data.addColumn('string', 'Área');
             data.addColumn('number', 'Ventas');
 
             this.resumen.areas_top.forEach((a: any) => {
-              data.addRow([a.area, Number(a.total_area)]);
+
+              data.addRow([
+                a.area,
+                Number(a.total_area)
+              ]);
+
             });
 
             new google.visualization.ColumnChart(cont).draw(data, {
               title: 'Áreas que más generan',
               legend: { position: 'none' }
             });
+
           }
+
         }
 
         /* 🔹 HORAS PICO */
+
         if (this.resumen.horas_pico?.length) {
+
           const cont = document.getElementById('chartHoras');
+
           if (cont) {
+
             const data = new google.visualization.DataTable();
+
             data.addColumn('string', 'Hora');
             data.addColumn('number', 'Pedidos');
 
             this.resumen.horas_pico.forEach((h: any) => {
-              data.addRow([h.hora + ':00', Number(h.total_pedidos)]);
+
+              data.addRow([
+                h.hora + ':00',
+                Number(h.total_pedidos)
+              ]);
+
             });
 
             new google.visualization.LineChart(cont).draw(data, {
               title: 'Horas Pico'
             });
+
           }
+
         }
 
         /* 🔹 ALCOHOL VS SIN ALCOHOL */
+
         if (this.resumen.ventas_alcohol) {
+
           const cont = document.getElementById('chartAlcoholVs');
+
           if (cont) {
+
             const data = new google.visualization.DataTable();
+
             data.addColumn('string', 'Tipo');
             data.addColumn('number', 'Ventas');
 
-            data.addRow(['Con Alcohol', Number(this.resumen.ventas_alcohol.con)]);
-            data.addRow(['Sin Alcohol', Number(this.resumen.ventas_alcohol.sin)]);
+            data.addRow([
+              'Con Alcohol',
+              Number(this.resumen.ventas_alcohol.con)
+            ]);
+
+            data.addRow([
+              'Sin Alcohol',
+              Number(this.resumen.ventas_alcohol.sin)
+            ]);
 
             new google.visualization.PieChart(cont).draw(data, {
               title: 'Alcohol vs No Alcohol',
               pieHole: 0.4
             });
+
           }
+
         }
 
         /* 🔹 CATEGORÍA MÁS RENTABLE */
+
         if (this.resumen.categoria_top) {
+
           const cont = document.getElementById('chartGananciasArea');
+
           if (cont) {
+
             const data = new google.visualization.DataTable();
+
             data.addColumn('string', 'Categoría');
             data.addColumn('number', 'Ganancia');
 
@@ -201,31 +263,40 @@ cargarResumen() {
               title: 'Categoría Más Rentable',
               legend: { position: 'none' }
             });
+
           }
+
         }
 
       }, 400);
 
     });
+
   }
 
   /* ==============================
      VER DETALLE ÁREA
   ==============================*/
+
   async verDetalleArea(area: any) {
+
     const modal = await this.modalCtrl.create({
       component: AreaDetalleModalPage,
       componentProps: { area }
     });
 
     await modal.present();
+
   }
 
   /* ==============================
      CERRAR MODAL
   ==============================*/
+
   cerrarModal() {
+
     this.modalCtrl.dismiss();
+
   }
 
 }

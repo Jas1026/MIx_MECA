@@ -8,29 +8,35 @@
 
 
   <!-- filtros -->
-  <ion-item>
-    <ion-label>Filtrar por</ion-label>
-    <ion-select [(ngModel)]="tipoFiltro">
-      <ion-select-option value="dia">Hoy</ion-select-option>
-      <ion-select-option value="mes">Este Mes</ion-select-option>
-      <ion-select-option value="anio">Este Año</ion-select-option>
-      <ion-select-option value="rango">Rango</ion-select-option>
-    </ion-select>
-  </ion-item>
+<!-- BOTÓN ABRIR CALENDARIO -->
+<ion-button id="open-date" expand="block">
+  Seleccionar Fecha
+</ion-button>
 
-  <ion-item *ngIf="tipoFiltro === 'rango'">
-    <ion-label>Desde</ion-label>
-    <ion-datetime [(ngModel)]="fechaInicio"></ion-datetime>
-  </ion-item>
+<!-- MODAL CALENDARIO -->
+<ion-modal #modalFecha trigger="open-date" class="modal-calendario">
+  <ng-template>
+    <div class="datetime-wrapper">
 
-  <ion-item *ngIf="tipoFiltro === 'rango'">
-    <ion-label>Hasta</ion-label>
-    <ion-datetime [(ngModel)]="fechaFin"></ion-datetime>
-  </ion-item>
+      <ion-datetime
+        presentation="date"
+        locale="es-ES"
+        [showDefaultButtons]="true"
+        doneText="Confirmar"
+        cancelText="Cancelar"
+        (ionChange)="fechaSeleccionada($event, modalFecha)">
+      </ion-datetime>
 
-  <ion-button expand="block" (click)="cargarResumen()">
-    Aplicar Filtro
-  </ion-button>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<!-- BOTÓN APLICAR -->
+<ion-button expand="block" (click)="cargarResumen()">
+  Aplicar Filtro
+</ion-button>
+
+
 
 
   <!-- BOTÓN ANÁLISIS -->
@@ -203,7 +209,7 @@
 
 
 
- 
+
 
 
 
@@ -288,22 +294,44 @@
     <ion-card-header>
       <ion-card-title>
         <ion-icon name="flame-outline" color="danger"></ion-icon>
-        Horas Pico
+        Horas Pico del Restaurante
       </ion-card-title>
+      <ion-card-subtitle>
+        Momentos con mayor actividad de pedidos
+      </ion-card-subtitle>
     </ion-card-header>
 
-    <ion-list lines="none">
+    <ion-list lines="full">
+
       <ion-item *ngFor="let hora of resumen.horas_pico">
+
         <ion-label>
-          <h3>{{ hora.hora }}:00 hrs</h3>
+
+          <h2>
+            {{ hora.hora | number:'2.0' }}:00 -
+            {{ (+hora.hora + 1) | number:'2.0' }}:00
+          </h2>
+          <p>
+            Ventas: Bs {{ hora.total_ventas | number:'1.2-2' }}
+          </p>
+
+          <p>
+            Ticket promedio: Bs {{ hora.ticket_promedio | number:'1.2-2' }}
+          </p>
+
         </ion-label>
+
         <ion-badge color="danger" slot="end">
-          {{ hora.total_pedidos }} pedidos
+          {{ hora.total_pedidos }}
         </ion-badge>
+
       </ion-item>
+
     </ion-list>
 
   </ion-card>
+
+
 
 
   <ion-row class="ion-margin-top">
