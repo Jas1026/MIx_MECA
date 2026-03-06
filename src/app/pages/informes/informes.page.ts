@@ -27,14 +27,16 @@ export class InformesPage implements OnInit {
     ventas_alcohol: {},
     categoria_top: null,
     meseros_retraso: [],
+    meseros: [],   // 👈 FALTABA ESTO
     pedido_mayor_retraso: null,
-    alertas_inventario: []
+    alertas_inventario: [],
+    ingredientes_top: [] // 👈 también usas esto en el HTML
   };
 
   constructor(
     private server: ServerContentService,
     private modalCtrl: ModalController,
-   ) {}
+  ) { }
 
   ngOnInit() {
     this.cargarResumen();
@@ -51,10 +53,16 @@ export class InformesPage implements OnInit {
   /* ==============================
      CARGAR DATOS DESDE BACKEND
   ==============================*/
-  
+
 cargarResumen() {
 
   const system = this.server.getSystem();
+
+  console.log("FILTROS ENVIADOS:", {
+    tipo: this.tipoFiltro,
+    inicio: this.fechaInicio,
+    fin: this.fechaFin
+  });
 
   this.server.getInformes(
     system,
@@ -63,10 +71,30 @@ cargarResumen() {
     this.fechaFin
   ).subscribe((res: any) => {
 
+    console.log("RESPUESTA COMPLETA BACKEND:", res);
+
     if (res.error === 0) {
+
+     
+
+      console.log("TOTAL DINERO:", res.resumen.total_dinero);
+      console.log("GANANCIA TOTAL:", res.resumen.ganancia_total);
+      console.log("TOP PRODUCTOS:", res.resumen.top_productos);
+      console.log("CATEGORIA TOP:", res.resumen.categoria_top);
+   
       this.resumen = res.resumen;
+
       this.dibujarGraficos();
+
+    } else {
+
+      console.error("ERROR DEL BACKEND:", res);
+
     }
+
+  }, (error) => {
+
+    console.error("ERROR HTTP:", error);
 
   });
 

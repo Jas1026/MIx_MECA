@@ -34,13 +34,10 @@
 
 
   <!-- BOTÓN ANÁLISIS -->
-  <ion-button expand="block"
-            color="dark"
-            (click)="modalGraficos.present()"
-            class="ion-margin-bottom">
-  <ion-icon name="analytics-outline" slot="start"></ion-icon>
-  Ver Análisis Completo
-</ion-button>
+  <ion-button expand="block" color="dark" (click)="modalGraficos.present()" class="ion-margin-bottom">
+    <ion-icon name="analytics-outline" slot="start"></ion-icon>
+    Ver Análisis Completo
+  </ion-button>
 
   <!-- TARJETAS PRINCIPALES -->
   <ion-row class="ion-margin-top">
@@ -74,6 +71,9 @@
     </ion-col>
 
   </ion-row>
+
+
+
   <!-- MEJOR MESA Y MESERO -->
   <ion-row>
 
@@ -122,148 +122,140 @@
 
 
 
-  
+
 
   <!-- ÁREAS QUE MÁS GENERAN -->
+
+  <ion-card class="ion-margin-top">
+    <ion-card-header>
+      <ion-card-title>Áreas que más generan</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-list>
+
+        <ion-item *ngFor="let area of resumen.areas_top">
+
+          <ion-label>
+            <h2>{{ area.area }}</h2>
+            <p>Total generado</p>
+          </ion-label>
+
+          <ion-badge color="success" slot="end">
+            Bs. {{ area.total_area }}
+          </ion-badge>
+
+          <ion-button fill="clear" size="small" color="primary" (click)="verDetalleArea(area)">
+            Ver detalle
+          </ion-button>
+
+        </ion-item>
+
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+
+
+
+
+
+
+
+
+  <ion-row class="ion-margin-top">
+
+    <ion-col size="6">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            Ventas con Alcohol
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <h2>Bs. {{ resumen.ventas_alcohol?.con }}</h2>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+
+    <ion-col size="6">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            Ventas sin Alcohol
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <h2>Bs. {{ resumen.ventas_alcohol?.sin }}</h2>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+
+  </ion-row>
+
+
+
+
+
+
+
+
+
+
+
  
-<ion-card class="ion-margin-top">
-  <ion-card-header>
-    <ion-card-title>Áreas que más generan</ion-card-title>
-  </ion-card-header>
 
-  <ion-card-content>
+
+
+
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Categoría Más Rentable</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content *ngIf="resumen.categoria_top">
+      <h2>{{ resumen.categoria_top.name }}</h2>
+
+      <p>
+        Bs. {{ resumen.categoria_top.total_ganancia | number:'1.2-2' }}
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <ion-card class="ion-margin-top">
+
+    <ion-card-header>
+      <ion-card-title>
+        Ranking de Retrasos
+      </ion-card-title>
+    </ion-card-header>
+
     <ion-list>
-
-      <ion-item *ngFor="let area of resumen.areas_top">
-
+      <ion-item *ngFor="let m of resumen.meseros_retraso">
         <ion-label>
-          <h2>{{ area.area }}</h2>
-          <p>Total generado</p>
+          <h3>{{ m.name }}</h3>
         </ion-label>
 
-        <ion-badge color="success" slot="end">
-          Bs. {{ area.total_area }}
+        <ion-badge color="danger" slot="end">
+          {{ m.promedio_retraso | number:'1.0-0' }} min
         </ion-badge>
-
-        <ion-button 
-          fill="clear" 
-          size="small" 
-          color="primary"
-          (click)="verDetalleArea(area)">
-          Ver detalle
-        </ion-button>
-
       </ion-item>
-
     </ion-list>
-  </ion-card-content>
-</ion-card>
 
-
-
-
-
-
-
-
-
-<ion-row class="ion-margin-top">
-
-  <ion-col size="6">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>
-          Ventas con Alcohol
-        </ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <h2>Bs. {{ resumen.ventas_alcohol?.con }}</h2>
-      </ion-card-content>
-    </ion-card>
-  </ion-col>
-
-  <ion-col size="6">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>
-          Ventas sin Alcohol
-        </ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <h2>Bs. {{ resumen.ventas_alcohol?.sin }}</h2>
-      </ion-card-content>
-    </ion-card>
-  </ion-col>
-
-</ion-row>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<ion-card class="ion-margin-top">
-  <ion-card-header>
-    <ion-card-title>
-      Categoría Más Rentable
-    </ion-card-title>
-  </ion-card-header>
-
-  <ion-card-content>
-    <h2>{{ resumen.categoria_top?.name }}</h2>
-    <ion-badge color="success">
-      Bs. {{ resumen.categoria_top?.total_ganancia }}
-    </ion-badge>
-  </ion-card-content>
-</ion-card>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<ion-card class="ion-margin-top">
-
-  <ion-card-header>
-    <ion-card-title>
-      Ranking de Retrasos
-    </ion-card-title>
-  </ion-card-header>
-
-  <ion-list>
-    <ion-item *ngFor="let m of resumen.meseros_retraso">
-      <ion-label>
-        <h3>{{ m.name }}</h3>
-      </ion-label>
-
-      <ion-badge color="danger" slot="end">
-        {{ m.promedio_retraso | number:'1.0-0' }} min
-      </ion-badge>
-    </ion-item>
-  </ion-list>
-
-</ion-card>
+  </ion-card>
 
 
 
@@ -434,7 +426,7 @@
 
           <ion-list lines="none">
 
-            <ion-item *ngFor="let m of resumen.meseros.slice(1)">
+            <ion-item *ngFor="let m of (resumen.meseros || []).slice(1)">
               <ion-label>
                 <h3>{{ m.name }}</h3>
                 <p>Ventas acumuladas</p>
@@ -461,7 +453,7 @@
 
 
   <!-- MODAL DE GRÁFICOS -->
-<ion-modal #modalGraficos (ionModalDidPresent)="dibujarGraficos()">    <ng-template>
+  <ion-modal #modalGraficos (ionModalDidPresent)="dibujarGraficos()"> <ng-template>
       <ion-header>
         <ion-toolbar>
           <ion-title>Estadísticas Visuales</ion-title>
