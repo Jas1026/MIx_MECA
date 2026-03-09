@@ -196,6 +196,7 @@ $border-color: #e2e8f0;
   border-collapse: collapse;
   /* Asegura que la tabla no se corte si es muy ancha en pantallas medianas */
   min-width: 800px; 
+  
 }
 
 
@@ -255,4 +256,7 @@ ion-content {
     color: #f97316; // Naranja - Cerrado con retraso
     text-decoration: underline; 
   }
+}
+.mobile-order-item ion-button {
+  margin-left: auto;
 }

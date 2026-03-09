@@ -280,22 +280,6 @@ updateAssetState(payload: any) {
   //return this.http.get(`${this.urlService}get_informes_resumen.php?system=${system}`);
 //}
 
-getInformes(system: any, fecha: string) {
-
-  return this.http.get(this.urlService + "get_detalle_area.php", {
-    params: {
-      system: system,
-      fecha: fecha
-    }
-  });
-
-}
- 
-getDetalleArea(system: string, area: string) {
-  return this.http.get(
-    `${this.urlService}get_detalle_area.php?system=${system}&area=${area}`
-  );
-}
  
 getResumen(filtro: string) {
   return this.http.get<any>(`${this.urlService}get_informes_resumen.php`, {
@@ -305,8 +289,38 @@ getResumen(filtro: string) {
     }
   });
 }
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+getDetalleArea(system: string, area: string) {
+  return this.http.get(
+    `${this.urlService}get_detalle_area.php?system=${system}&area=${area}`
+  );
+}
 
-
+getInformes(
+  system: any,
+  filtro: any,
+  fecha: any,
+  fecha_inicio: any,
+  fecha_fin: any
+) {
+ 
+  const data = {
+    system: system,
+    filtro: filtro,
+    fecha: fecha,
+    fecha_inicio: fecha_inicio,
+    fecha_fin: fecha_fin
+  };
+ 
+  return this.http.post(this.urlService + "get_informes_resumen.php", data);
+ 
+}
 
 // ---------------- GESTIÓN DE PISOS ----------------
 
