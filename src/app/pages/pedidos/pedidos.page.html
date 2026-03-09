@@ -30,11 +30,23 @@
         <ion-col size="12" size-md="2">
           <div class="filter-item">
             <ion-label>Estado</ion-label>
-            <ion-select [(ngModel)]="estadoSeleccionado" interface="popover" placeholder="Todos">
-              <ion-select-option value="">Todos</ion-select-option>
-              <ion-select-option value="open">Abierto (Open)</ion-select-option>
-              <ion-select-option value="closed">Cerrado (Closed)</ion-select-option>
-            </ion-select>
+<ion-select [(ngModel)]="estadoSeleccionado" interface="popover" placeholder="Todos">
+
+  <ion-select-option value="">Todos</ion-select-option>
+
+  <ion-select-option value="open">
+    Abierto
+  </ion-select-option>
+
+  <ion-select-option value="closed">
+    Finalizado
+  </ion-select-option>
+
+  <ion-select-option value="cancel">
+    Cancelado
+  </ion-select-option>
+
+</ion-select>
           </div>
         </ion-col>
 
@@ -87,9 +99,11 @@
           </td>
           <td class="date-cell">{{ p.order_date }}</td>
           <td>
-            <span class="status-badge" [ngClass]="p.status">
-              {{ p.status }}
-            </span>
+<span class="status-badge" [ngClass]="p.cancel == 1 ? 'cancel' : p.status">
+
+  {{ p.cancel == 1 ? 'Cancelado' : (p.status == 'closed' ? 'Finalizado' : 'Abierto') }}
+
+</span>
           </td>
           <td class="ion-text-center">
             <div [ngClass]="p.isDelayed ? 'delayed' : 'normal'">
@@ -140,7 +154,11 @@
         <ion-label>
           <div class="mobile-header">
             <h3>PEDIDO #{{ p.order_id }}</h3>
-            <span class="status-badge" [ngClass]="p.status">{{ p.status }}</span>
+           <span class="status-badge" [ngClass]="p.cancel == 1 ? 'cancel' : p.status">
+
+  {{ p.cancel == 1 ? 'Cancelado' : (p.status == 'closed' ? 'Finalizado' : 'Abierto') }}
+
+</span>
           </div>
           <p><ion-icon name="person-outline"></ion-icon> {{ p.mesero }}</p>
           <p><ion-icon name="time-outline"></ion-icon> {{ p.order_date }}</p>

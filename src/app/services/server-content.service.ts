@@ -124,15 +124,16 @@ export class ServerContentService {
 
     return this.http.post(this.urlService + "get_kitchen_orders.php", body);
   }
+  
+updateDetailStatus(detailId: number, status: string = 'ready', force: boolean = false) {
+  let body = new FormData();
+  body.append("detail_id", detailId.toString());
+  body.append("status", status);
+  body.append("force", force ? "1" : "0"); // Enviamos 1 si es true
+  body.append("system", this.getSystem());
 
-  updateDetailStatus(detailId: number) {
-    let body = new FormData();
-    body.append("detail_id", detailId.toString());
-    body.append("status", "ready");
-    body.append("system", this.getSystem());
-
-    return this.http.post(this.urlService + "update_detail_status.php", body);
-  }
+  return this.http.post(this.urlService + "update_detail_status.php", body);
+}
 
   deliverOrder(orderId: number) {
     let body = new FormData();
@@ -157,7 +158,13 @@ export class ServerContentService {
 
     return this.http.post(this.urlService + "close_order.php", body);
   }
+  closeOrder_for(orderId: number) {
+    let body = new FormData();
+    body.append("order_id", orderId.toString());
+    body.append("system", this.getSystem());
 
+    return this.http.post(this.urlService + "close_order_obl.php", body);
+  }
   saveInvoiceData(orderId: number, nombre: string, nit: string) {
     let body = new FormData();
     body.append("order_id", orderId.toString());
@@ -380,8 +387,15 @@ silenceAlert(detailId: number) {
   return this.http.post(this.urlService + "silence_alert.php", body);
 }
 
+searchProducts(term: string) {
 
+  let body = new FormData();
+  body.append("term", term);
+  body.append("system", this.getSystem());
 
+  return this.http.post(this.urlService + 'search_products.php', body);
+
+}
 
 
 

@@ -24,7 +24,8 @@ export class OrderModalComponent implements OnInit {
   categories: any[] = [];
   products: any[] = [];
   cart: any[] = [];
-
+searchTerm: string = '';
+searchResults: any[] = [];
   selectedCategory: string = '';
 viewMode: 'categories' | 'products' = 'categories';
 currentCategoryName: string = '';
@@ -67,7 +68,7 @@ goBack() {
   this.viewMode = 'categories';
   this.products = [];
 }
-// 1. Al añadir un producto nuevo
+
 addProduct(product: any) {
   const found = this.cart.find(p => p.id_product === product.id_product);
 
@@ -79,25 +80,22 @@ addProduct(product: any) {
       name: product.name,
       price: product.price,
       quantity: 1,
-      notes: '',
-      sides: '',
-      isPriceEditable: false // 👈 NUEVO: Estado del candado del precio
+      notes: '', // 👈 Inicializar
+      sides: ''  // 👈 Inicializar
     });
   }
 }
-
-// 2. Al cargar detalles de un pedido existente
+// En order-modal.component.ts
 loadOrderDetails() {
   this.server.getOrderDetails(this.order_id).subscribe((res: any) => {
     if (res.error === 0) {
       this.cart = res.data.map((item: any) => ({
         id_product: item.product_id,
-        name: item.nombre_producto,
+        name: item.nombre_producto, // Asegúrate de que el nombre coincida con el SQL
         price: item.unit_price,
         quantity: item.quantity,
-        notes: item.notes || '',
-        sides: item.sides || '',
-        isPriceEditable: false // 👈 NUEVO: Cargar bloqueado por defecto
+        notes: item.notes || '', // <-- Ahora sí vendrá con info
+        sides: item.sides || ''  // <-- Ahora sí vendrá con info
       }));
     }
   });
@@ -170,4 +168,21 @@ clearCart() {
   close() {
     this.modalCtrl.dismiss();
   }
+
+
+  searchProducts() {
+
+  if (this.searchTerm.trim() === '') {
+    this.searchResults = [];
+    return;
+  }
+
+  this.server.searchProducts(this.searchTerm)
+    .subscribe((res: any) => {
+
+      this.searchResults = res.data || res;
+
+    });
+
+}
 }

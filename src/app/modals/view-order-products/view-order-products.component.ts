@@ -29,36 +29,71 @@ export class ViewOrderProductsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.timer) clearInterval(this.timer);
   }
+cargarProductos() {
+  this.server.getOrderProducts(this.order_id).subscribe((res: any) => {
+    if (res.error === 0) {
 
-  cargarProductos() {
-    this.server.getOrderProducts(this.order_id).subscribe((res: any) => {
-      if (res.error === 0) {
-        this.productos = res.data.map((prod: any) => ({
-          ...prod,
-          timeDisplay: '00:00'
-        }));
-        this.actualizarTiempos();
-      }
-    });
-  }
-actualizarTiempos() {
+      const nuevosProductos = res.data;
+
+      nuevosProductos.forEach((p: any) => {
+
+        const viejo = this.productos.find(x => x.detail_id == p.detail_id);
+
+        // 🔔 detectar cuando cocina silenció
+        if (viejo && viejo.alert_status == 1 && p.alert_status == 2) {
+          this.mostrarToast('👨‍🍳 Cocina silenció la alerta');
+        }
+
+      });
+
+      this.productos = nuevosProductos.map((prod: any) => ({
+        ...prod,
+        timeDisplay: '00:00'
+      }));
+
+      this.actualizarTiempos();
+    }
+  });
+}  
+  actualizarTiempos() {
   const now = new Date().getTime();
-  
+
   this.productos.forEach(p => {
-    // 1️⃣ Si el producto ya está TERMINADO (ready), no actualizamos más el tiempo
-    // Se quedará con el último valor que calculó antes de ser marcado.
+    // 1️⃣ CASO: PRODUCTO TERMINADO (ready)
+    // Mostramos el tiempo exacto guardado en la BD (que viene como decimal, ej: 1.52)
     if (p.status === 'ready') {
-      return; 
+      const tiempoDecimal = parseFloat(p.preparation_time);
+
+      if (tiempoDecimal > 0) {
+        const mins = Math.floor(tiempoDecimal);
+        // Multiplicamos la parte decimal por 60 para obtener los segundos reales
+        const secs = Math.round((tiempoDecimal - mins) * 60);
+        
+        // Ajuste por si el redondeo nos da 60 segundos
+        const finalMins = secs === 60 ? mins + 1 : mins;
+        const finalSecs = secs === 60 ? 0 : secs;
+
+        p.timeDisplay = `${finalMins}:${finalSecs.toString().padStart(2, '0')}`;
+      } else {
+        p.timeDisplay = '0:00';
+      }
+      return; // Saltamos al siguiente producto
     }
 
-    // 2️⃣ Si sigue pendiente, calculamos el tiempo transcurrido
-    const startTime = new Date(p.order_date.replace(' ', 'T')).getTime();
-    const diff = now - startTime;
-    
-    if (diff > 0) {
-      const mins = Math.floor(diff / 60000);
-      const secs = Math.floor((diff % 60000) / 1000);
-      p.timeDisplay = `${mins}:${secs.toString().padStart(2, '0')}`;
+    // 2️⃣ CASO: PRODUCTO PENDIENTE
+    // Calculamos la diferencia entre la hora actual y la hora del pedido
+    if (p.order_date) {
+      const startTime = new Date(p.order_date.replace(' ', 'T')).getTime();
+      const diff = now - startTime;
+
+      if (diff > 0) {
+        const totalSecs = Math.floor(diff / 1000);
+        const mins = Math.floor(totalSecs / 60);
+        const secs = totalSecs % 60;
+        p.timeDisplay = `${mins}:${secs.toString().padStart(2, '0')}`;
+      } else {
+        p.timeDisplay = '0:00';
+      }
     }
   });
 }

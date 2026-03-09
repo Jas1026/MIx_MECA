@@ -16,3 +16,13 @@
   border-radius: 10px;
   padding: 10px;
 }
+/* Esto ajusta el ancho del popover para que no dependa del ancho de la columna */
+ion-popover {
+  --width: 250px; 
+}
+
+/* Opcional: Para que el texto dentro del select no se corte en el input */
+ion-select {
+  width: 100%;
+  max-width: 100%;
+}

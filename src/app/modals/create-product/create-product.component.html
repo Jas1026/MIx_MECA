@@ -12,12 +12,13 @@
 <ion-content class="ion-padding" style="--background: #f8f9fa;">
   <ion-card class="ion-no-margin" style="border-radius: 12px; box-shadow: none; border: 1px solid #e0e0e0;">
     <ion-list lines="full">
-      
+
       <ion-row>
         <ion-col size="12" size-md="7">
           <ion-item>
             <ion-label position="stacked">Nombre del Producto</ion-label>
-            <ion-input [(ngModel)]="newProduct.nombre_producto" type="text" placeholder="Ej: Hamburguesa Especial"></ion-input>
+            <ion-input [(ngModel)]="newProduct.nombre_producto" type="text"
+              placeholder="Ej: Hamburguesa Especial"></ion-input>
           </ion-item>
         </ion-col>
         <ion-col size="12" size-md="5">
@@ -38,8 +39,11 @@
         <ion-col size="4">
           <ion-item>
             <ion-label position="stacked">Categoría</ion-label>
-            <ion-select [(ngModel)]="newProduct.id_category" placeholder="Elegir" interface="popover">
-              <ion-select-option *ngFor="let cat of categories" [value]="cat.id">{{cat.name}}</ion-select-option>
+            <ion-select [(ngModel)]="newProduct.id_category" placeholder="Elegir" interface="action-sheet"
+              header="Seleccionar Categoría">
+              <ion-select-option *ngFor="let cat of categories" [value]="cat.id">
+                {{cat.name}}
+              </ion-select-option>
             </ion-select>
           </ion-item>
         </ion-col>
@@ -60,39 +64,42 @@
     </ion-list>
   </ion-card>
 
-  <div class="ion-margin-top">
-    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
-      <h3 style="font-weight: bold; color: #444;">Receta / Insumos</h3>
-      <ion-button (click)="addIngredientRow()" size="small" fill="solid" color="secondary">
-        <ion-icon name="add" slot="start"></ion-icon> Insumo
-      </ion-button>
-    </div>
-
-    <div *ngFor="let item of receta; let i = index" 
-         style="background: white; border-radius: 8px; margin-bottom: 8px; border: 1px solid #eee;">
-      <ion-grid>
-        <ion-row class="ion-align-items-center">
-          <ion-col size="7">
-            <ion-select [(ngModel)]="item.id_ingredient" placeholder="Elegir Insumo" interface="popover" style="width: 100%;">
-              <ion-select-option *ngFor="let ing of allIngredients" [value]="ing.id_ingredients">
-                {{ing.nombre}} ({{ing.unidad_med}})
-              </ion-select-option>
-            </ion-select>
-          </ion-col>
-          <ion-col size="3">
-            <ion-input [(ngModel)]="item.cant_us" type="number" placeholder="Cant."></ion-input>
-          </ion-col>
-          <ion-col size="2" class="ion-text-right">
-            <ion-button (click)="removeIngredient(i)" fill="clear" color="danger">
-              <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
-            </ion-button>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </div>
+ <div *ngIf="allIngredients.length > 0" class="ion-margin-top">
+  <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
+    <h3 style="font-weight: bold; color: #444;">Receta / Insumos</h3>
+    <button (click)="addIngredientRow()" style="background: #3dc2ff; color: white; border: none; padding: 5px 10px; border-radius: 4px;">
+      + Insumo
+    </button>
   </div>
 
-  <ion-button (click)="saveProduct()" expand="block" color="dark" class="ion-margin-top" style="height: 50px; font-weight: bold;">
+  <div *ngFor="let item of receta; let i = index" 
+       style="background: white; border-radius: 8px; margin-bottom: 8px; border: 1px solid #eee; padding: 5px;">
+    <ion-row class="ion-align-items-center">
+      <ion-col size="7">
+        <ion-select [(ngModel)]="item.id_ingredient" 
+                    placeholder="Elegir Insumo" 
+                    interface="popover"
+                    [interfaceOptions]="{'header': 'Insumos'}">
+          <ion-select-option *ngFor="let ing of allIngredients" [value]="Number(ing.id_ingredients)">
+            {{ing.nombre}}
+          </ion-select-option>
+        </ion-select>
+      </ion-col>
+      
+      <ion-col size="3">
+        <ion-input [(ngModel)]="item.cant_us" type="number" placeholder="0.00"></ion-input>
+      </ion-col>
+      
+      <ion-col size="2" class="ion-text-right">
+        <ion-button (click)="removeIngredient(i)" fill="clear" color="danger">
+          <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </div>
+</div>
+  <ion-button (click)="saveProduct()" expand="block" color="dark" class="ion-margin-top"
+    style="height: 50px; font-weight: bold;">
     <ion-icon name="save-outline" slot="start"></ion-icon>
     GUARDAR PRODUCTO COMPLETO
   </ion-button>

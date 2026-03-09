@@ -8,6 +8,8 @@ import { ServerContentService } from 'src/app/services/server-content.service';
   styleUrls: ['./create-product.component.scss'],
 })
 export class CreateProductComponent implements OnInit {
+  public Number = Number;
+
   @Input() product: any; 
 
   newProduct: any = {
@@ -34,58 +36,66 @@ export class CreateProductComponent implements OnInit {
   ngOnInit() {
     this.getData();
   }
-
   async getData() {
-    const system = this.server.getSystem();
-    
-    // Carga de catálogos
-    this.server.getCategories().subscribe((res: any) => this.categories = res.data || res);
-    this.server.getIngredients().subscribe((res: any) => this.allIngredients = res.data || res);
-    this.server.getKitchens().subscribe((res: any) => this.allKitchens = res.data || res);
+  const loading = await this.loadingCtrl.create({ message: 'Cargando datos...' });
+  await loading.present();
 
-    if (this.product) {
-      this.newProduct = { ...this.product };
-      this.loadRecipe(this.product.id_product);
-      this.loadKitchensAssigned(this.product.id_product);
-    } else {
-      this.addIngredientRow();
+  // 1. Cargamos Catálogos Base
+  this.server.getIngredients().subscribe((resIng: any) => {
+    this.allIngredients = resIng.data || resIng;
+
+    this.server.getKitchens().subscribe((resKit: any) => {
+      this.allKitchens = resKit.data || resKit;
+
+      this.server.getCategories().subscribe((resCat: any) => {
+        this.categories = resCat.data || resCat;
+
+        // 2. Solo cuando TODO lo anterior existe, cargamos el producto
+        if (this.product) {
+          // Clonamos para no afectar la lista principal
+          this.newProduct = JSON.parse(JSON.stringify(this.product)); 
+          this.loadRecipe(this.product.id_product);
+          this.loadKitchensAssigned(this.product.id_product);
+        } else {
+          this.addIngredientRow();
+        }
+        loading.dismiss();
+      });
+    });
+  });
+}
+
+loadRecipe(id: number) {
+  this.server.getProductRecipe(id).subscribe((res: any) => {
+    if (res.error === 0 && res.data) {
+      // 🚨 CRÍTICO: Convertimos id_ingredient a Number para que el select lo reconozca
+      this.receta = res.data.map((item: any) => ({
+        id_ingredient: Number(item.id_ingredient),
+        cant_us: parseFloat(item.cant_us)
+      }));
     }
-  }
-
-  loadRecipe(id: number) {
-    this.server.getProductRecipe(id).subscribe((res: any) => {
-      if (res.data) this.receta = res.data;
-    });
-  }
-
-  loadKitchensAssigned(id: number) {
-    this.server.getProductKitchens(id).subscribe((res: any) => {
-      if (res.success) {
-        this.cocinasSeleccionadas = res.data.map((k: any) => parseInt(k.kitchen_id));
-      }
-    });
-  }
-
-  addIngredientRow() {
-    this.receta.push({ id_ingredient: null, cant_us: 0 });
-  }
-
-  removeIngredient(index: number) {
-    this.receta.splice(index, 1);
-  }
-
-  async saveProduct() {
+  });
+}
+async saveProduct() {
     if (!this.newProduct.nombre_producto || !this.newProduct.price) {
       this.showToast('Nombre y Precio son requeridos', 'warning');
       return;
     }
+
+    // 2. Limpieza profunda antes de enviar al PHP
+    const recetaLimpia = this.receta
+      .filter(item => item.id_ingredient && parseFloat(item.cant_us) > 0)
+      .map(item => ({
+        id_ingredient: Number(item.id_ingredient),
+        cant_us: parseFloat(item.cant_us)
+      }));
 
     const loading = await this.loadingCtrl.create({ message: 'Guardando...' });
     await loading.present();
 
     const payload = {
       product: this.newProduct,
-      recipe: this.receta.filter(r => r.id_ingredient != null && r.cant_us > 0),
+      recipe: recetaLimpia,
       kitchens: this.cocinasSeleccionadas,
       system: this.server.getSystem()
     };
@@ -106,6 +116,24 @@ export class CreateProductComponent implements OnInit {
       }
     });
   }
+  
+  
+  loadKitchensAssigned(id: number) {
+    this.server.getProductKitchens(id).subscribe((res: any) => {
+      if (res.success) {
+        this.cocinasSeleccionadas = res.data.map((k: any) => parseInt(k.kitchen_id));
+      }
+    });
+  }
+
+  addIngredientRow() {
+    this.receta.push({ id_ingredient: null, cant_us: 0 });
+  }
+
+  removeIngredient(index: number) {
+    this.receta.splice(index, 1);
+  }
+
 
   dismiss() { this.modalCtrl.dismiss(); }
 

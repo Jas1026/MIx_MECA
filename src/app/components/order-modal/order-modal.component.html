@@ -16,21 +16,57 @@
 
     <div class="left-panel">
 
-      <ng-container *ngIf="viewMode === 'categories'">
-        <ion-list-header>
-          <ion-label>Seleccione Categoría</ion-label>
-        </ion-list-header>
-        <ion-list class="custom-list">
-          <ion-item button detail="true" *ngFor="let cat of categories" (click)="selectCategory(cat)"
-            class="category-item">
-            <ion-icon name="folder-open-outline" slot="start" color="primary"></ion-icon>
-            <ion-label>
-              <h2>{{ cat.name }}</h2>
-            </ion-label>
-          </ion-item>
-        </ion-list>
-      </ng-container>
+<ng-container *ngIf="viewMode === 'categories'">
 
+  <!-- BUSCADOR -->
+  <ion-searchbar
+    placeholder="Buscar producto..."
+    [(ngModel)]="searchTerm"
+    (ionInput)="searchProducts()"
+    debounce="400">
+  </ion-searchbar>
+
+  <!-- RESULTADOS DE BUSQUEDA -->
+  <ion-list *ngIf="searchResults.length > 0">
+    <ion-item button *ngFor="let product of searchResults" (click)="addProduct(product)">
+      <ion-label>
+        <h3>{{ product.name }}</h3>
+        <p>Producto encontrado</p>
+      </ion-label>
+
+      <ion-badge slot="end" color="light">
+        Bs/ {{ product.price }}
+      </ion-badge>
+
+      <ion-icon name="add-circle-outline" slot="end" color="success"></ion-icon>
+    </ion-item>
+  </ion-list>
+
+  <!-- CATEGORIAS (solo si no hay busqueda) -->
+  <ng-container *ngIf="searchTerm === ''">
+
+    <ion-list-header>
+      <ion-label>Seleccione Categoría</ion-label>
+    </ion-list-header>
+
+    <ion-list class="custom-list">
+      <ion-item button detail="true"
+        *ngFor="let cat of categories"
+        (click)="selectCategory(cat)"
+        class="category-item">
+
+        <ion-icon name="folder-open-outline" slot="start" color="primary"></ion-icon>
+
+        <ion-label>
+          <h2>{{ cat.name }}</h2>
+        </ion-label>
+
+      </ion-item>
+    </ion-list>
+
+  </ng-container>
+
+</ng-container>
       <ng-container *ngIf="viewMode === 'products'">
         <div class="product-header">
           <ion-button fill="clear" (click)="goBack()" size="small">

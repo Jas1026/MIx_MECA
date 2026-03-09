@@ -62,9 +62,29 @@ private clockInterval: any;
     // ===============================
     // 2️⃣ FILTRO POR ESTADO
     // ===============================
-    if (this.estadoSeleccionado && p.status !== this.estadoSeleccionado) {
-      return false;
-    }
+
+// ===============================
+// 2️⃣ FILTRO POR ESTADO
+// ===============================
+
+if (this.estadoSeleccionado) {
+
+  // CANCELADOS
+  if (this.estadoSeleccionado === 'cancel' && p.cancel != 1) {
+    return false;
+  }
+
+  // FINALIZADOS
+  if (this.estadoSeleccionado === 'closed' && (p.status !== 'closed' || p.cancel == 1)) {
+    return false;
+  }
+
+  // ABIERTOS
+  if (this.estadoSeleccionado === 'open' && p.status !== 'open') {
+    return false;
+  }
+
+}
 
     // ===============================
     // 3️⃣ FILTRO POR DÍA OPERATIVO (5AM - 4:59AM)
@@ -152,7 +172,7 @@ private clockInterval: any;
   }
 
   ejecutarCierre(id: number) {
-    this.server.closeOrder(id).subscribe((res: any) => {
+    this.server.closeOrder_for(id).subscribe((res: any) => {
       if (res.error === 0) {
         this.presentToast("Orden finalizada y mesa liberada", "success");
         this.cargarPedidos(); // Refresca la tabla

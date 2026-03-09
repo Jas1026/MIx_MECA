@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, NgZone, ChangeDetectorRef, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ServerContentService } from 'src/app/services/server-content.service';
-
+import { AlertController } from '@ionic/angular';
 @Component({
   selector: 'app-cocina',
   templateUrl: './cocina.page.html',
@@ -22,7 +22,8 @@ export class CocinaPage implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private server: ServerContentService,
     private ngZone: NgZone,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private alertCtrl: AlertController,
   ) {
     this.audioAlarma.loop = true;
   }
@@ -133,12 +134,27 @@ checkAlerts() {
   getTimerClass(item: any) {
     return item.isLate ? 'time-badge late' : 'time-badge on-time';
   }
-
-  markReady(detailId: number) {
-    this.server.updateDetailStatus(detailId).subscribe((res: any) => {
+async markReady(detailId: number, force: boolean = false) {
+  this.server.updateDetailStatus(detailId, 'ready', force).subscribe(async (res: any) => {
+    if (res.error === 0) {
       this.loadOrders();
-    });
-  }
+    } else if (res.error === 2) {
+      // ERROR 2: Mostrar modal de confirmación
+      const alert = await this.alertCtrl.create({
+        header: 'Stock Insuficiente',
+        message: res.message + '. ¿Deseas continuar y dejar el stock en negativo?',
+        buttons: [
+          { text: 'Cancelar', role: 'cancel' },
+          { 
+            text: 'Sí, continuar', 
+            handler: () => { this.markReady(detailId, true); } // Llamamos de nuevo con force = true
+          }
+        ]
+      });
+      await alert.present();
+    }
+  });
+}
 
   silenciarAlerta(detailId: number) {
     // Llamamos al servicio para poner alert_status = 2

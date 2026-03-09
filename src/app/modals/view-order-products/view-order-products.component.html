@@ -22,13 +22,21 @@
     <ion-icon name="restaurant-outline"></ion-icon> 
     {{ prod.nombres_cocinas || 'Sin cocina asignada' }}
   </p>
-  <p [ngClass]="{'running': prod.status !== 'ready'}">
-    <ion-icon name="time-outline"></ion-icon> {{ prod.timeDisplay }}
-  </p>
+<p *ngIf="prod.status === 'pending' || prod.status === 'preparing'" class="running">
+  <ion-icon name="time-outline"></ion-icon> {{ prod.timeDisplay }}
+</p>
 </ion-label>
-    <ion-button *ngIf="prod.status !== 'ready'" slot="end" fill="clear" color="warning" (click)="llamarMesero(prod)">
-      <ion-icon name="megaphone-outline" slot="icon-only"></ion-icon>
-    </ion-button>
+<ion-button 
+  *ngIf="prod.status !== 'ready'"
+  slot="end"
+  fill="clear"
+  color="warning"
+  (click)="llamarMesero(prod)"
+  [class.blink-alert]="prod.alert_status == 1">
+
+  <ion-icon name="megaphone-outline" slot="icon-only"></ion-icon>
+
+</ion-button>
   </ion-item>
 </ion-card>
   </div>
