@@ -4,6 +4,7 @@ import { ModalController } from '@ionic/angular';
 import { CreateIngredientComponent } from 'src/app/modals/create-ingredient/create-ingredient.component';
 import { CreateProductComponent } from 'src/app/modals/create-product/create-product.component';
 import { ViewProductDetailComponent } from 'src/app/modals/view-product-detail/view-product-detail.component';
+import { BottleManagerComponent } from 'src/app/modals/bottle-manager/bottle-manager.component';
 
 @Component({
   selector: 'app-inventario',
@@ -279,4 +280,72 @@ async toggleAssetState(asset: any) {
     }
   });
 }
+// Añade esta función dentro de la clase InventarioPage
+async gestionarBotellas(ingredient: any) {
+  // Aquí abriríamos un modal específico para las botellas de este ingrediente
+  // Por ahora, para que no te de error, crearemos la lógica de apertura:
+  
+  console.log("Gestionando botellas de:", ingredient.nombre);
+  
+  const modal = await this.modalCtrl.create({
+    component: BottleManagerComponent, // Necesitas crear este componente
+    componentProps: {
+      ingredient: ingredient
+    }
+  });
+
+  modal.onDidDismiss().then(res => {
+    this.loadIngredients(); // Recargamos para ver el nuevo stock sumado
+  });
+
+  return await modal.present();
 }
+
+
+
+// --- Al inicio de la clase ---
+showCatManager: boolean = false;
+catForm = { id: null, name: '' };
+
+// --- Dentro de la clase InventarioPage ---
+
+// Reiniciar formulario
+resetCatForm() {
+  this.catForm = { id: null, name: '' };
+}
+
+// Preparar edición
+editCategory(cat: any) {
+  this.catForm = { id: cat.id, name: cat.name };
+}
+
+// Guardar (Crear o Editar)
+saveCategory() {
+  if (!this.catForm.name.trim()) return;
+
+  if (this.catForm.id) {
+    // EDITAR
+    this.server.updateCategory(this.catForm).subscribe((res: any) => {
+      this.loadCategories();
+      this.resetCatForm();
+    });
+  } else {
+    // CREAR
+    this.server.addCategory(this.catForm.name).subscribe((res: any) => {
+      this.loadCategories();
+      this.resetCatForm();
+    });
+  }
+}
+
+// Eliminar
+async deleteCategory(id: any) {
+  if (confirm('¿Estás seguro? Los productos en esta categoría podrían quedar huérfanos.')) {
+    this.server.deleteCategory(id).subscribe((res: any) => {
+      this.loadCategories();
+    });
+  }
+}
+}
+
+

@@ -190,3 +190,28 @@ ion-row {
     }
   }
 }
+.category-manager-card {
+  margin-bottom: 20px;
+  background: #f9f9f9;
+  border: 1px dashed #ccc;
+  box-shadow: none;
+
+  .clickable-header {
+    cursor: pointer;
+    padding: 10px;
+  }
+}
+
+.category-chip-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 10px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+ion-chip {
+  --background: white;
+  ion-label { cursor: pointer; }
+}

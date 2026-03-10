@@ -35,6 +35,7 @@ export class CreateProductComponent implements OnInit {
 
   ngOnInit() {
     this.getData();
+    console.log("producto recibido", this.product);
   }
   async getData() {
   const loading = await this.loadingCtrl.create({ message: 'Cargando datos...' });
@@ -43,10 +44,15 @@ export class CreateProductComponent implements OnInit {
   // 1. Cargamos Catálogos Base
   this.server.getIngredients().subscribe((resIng: any) => {
     this.allIngredients = resIng.data || resIng;
+this.server.getKitchens().subscribe((resKit: any) => {
 
-    this.server.getKitchens().subscribe((resKit: any) => {
-      this.allKitchens = resKit.data || resKit;
+  const kitchens = resKit.data || resKit;
 
+  this.allKitchens = kitchens.map((k:any)=>({
+    ...k,
+    id: Number(k.id)   // 🔥 FORZAMOS number
+  }));
+console.log("todas cocinas", this.allKitchens);
       this.server.getCategories().subscribe((resCat: any) => {
         this.categories = resCat.data || resCat;
 
@@ -117,14 +123,21 @@ async saveProduct() {
     });
   }
   
-  
   loadKitchensAssigned(id: number) {
-    this.server.getProductKitchens(id).subscribe((res: any) => {
-      if (res.success) {
-        this.cocinasSeleccionadas = res.data.map((k: any) => parseInt(k.kitchen_id));
-      }
-    });
-  }
+  this.server.getProductKitchens(id).subscribe((res: any) => {
+
+    if (res.success) {
+
+      this.cocinasSeleccionadas = res.data.map((k: any) =>
+        Number(k.kitchen_id)
+      );
+
+      console.log("cocinas cargadas", this.cocinasSeleccionadas);
+
+    }
+
+  });
+}
 
   addIngredientRow() {
     this.receta.push({ id_ingredient: null, cant_us: 0 });

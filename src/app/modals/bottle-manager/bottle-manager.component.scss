@@ -1,0 +1,142 @@
+.main-bg { --background: #fdfdfd; }
+
+.custom-toolbar {
+  --background: #fff;
+  ion-title {
+    font-size: 1rem; font-weight: 500; color: #444;
+    span { color: var(--ion-color-secondary); font-weight: 800; text-transform: uppercase; }
+  }
+}
+
+.close-btn { --color: #999; font-size: 1.5rem; }
+
+// --- PANEL DE REGISTRO ---
+.registration-panel {
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  overflow: hidden;
+  border: 1px solid #f0f0f0;
+
+  .panel-header {
+    padding: 15px 20px;
+    display: flex; align-items: center; gap: 10px;
+    background: #fafafa;
+    ion-label { font-weight: 700; color: #333; letter-spacing: 0.5px; }
+  }
+
+  .modern-input {
+    background: #f4f7f9;
+    padding: 8px 12px;
+    border-radius: 12px;
+    span { font-size: 0.65rem; color: #888; font-weight: 600; text-transform: uppercase; }
+    ion-input { --padding-top: 0; font-weight: 700; font-size: 1.1rem; }
+  }
+
+  .btn-gradient {
+    --border-radius: 14px;
+    --background: linear-gradient(135deg, #222, #444);
+    height: 50px; font-weight: 700; letter-spacing: 1px;
+  }
+}
+
+.modern-title {
+  font-size: 1.2rem; font-weight: 800; color: #222; margin: 25px 5px 15px;
+}
+
+// --- TARJETA DE BOTELLA PREMIUM ---
+.modern-bottle-card {
+  position: relative;
+  background: white;
+  border-radius: 20px;
+  padding: 10px;
+  margin-bottom: 18px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+  transition: transform 0.2s;
+
+  &:active { transform: scale(0.98); }
+
+  .id-tag {
+    background: #f0f0f0; color: #666; font-size: 0.6rem;
+    padding: 2px 8px; border-radius: 5px; display: inline-block;
+    font-weight: 800; margin-bottom: 5px;
+  }
+
+  .bottle-title { font-size: 1.1rem; font-weight: 700; margin: 0; color: #111; }
+  .bottle-meta { font-size: 0.75rem; color: #aaa; display: flex; align-items: center; gap: 4px; }
+
+  .neto-display {
+    margin-top: 10px;
+    background: var(--ion-color-secondary-light);
+    padding: 8px 12px; border-radius: 12px;
+    span { display: block; font-size: 0.65rem; color: #555; font-weight: 600; }
+    strong { font-size: 1.3rem; color: var(--ion-color-secondary); i { font-style: normal; font-size: 0.8rem; } }
+  }
+}
+
+// --- VISUAL DE LA BOTELLA (PRO) ---
+.bottle-wrapper {
+  position: relative; width: 55px; margin: 0 auto;
+  
+  .bottle-neck {
+    width: 20px; height: 10px; background: #ddd; 
+    margin: 0 auto; border-radius: 4px 4px 0 0;
+  }
+
+  .bottle-body {
+    height: 85px; background: #f0f0f0;
+    border: 3px solid #333; border-radius: 6px 6px 14px 14px;
+    position: relative; overflow: hidden;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+
+    .liquid {
+      position: absolute; bottom: 0; width: 100%;
+      background: linear-gradient(to top, #2dd36f, #81f5ae);
+      transition: height 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      
+      &.low { background: linear-gradient(to top, #eb445a, #ff8181); }
+
+      // Efecto de brillo/burbujas
+      &::after {
+        content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px;
+        background: rgba(255,255,255,0.4); filter: blur(2px);
+      }
+    }
+
+    .value {
+      position: absolute; width: 100%; text-align: center;
+      top: 50%; transform: translateY(-50%);
+      font-size: 0.8rem; font-weight: 900; color: #000; z-index: 5;
+    }
+  }
+}
+
+// --- CONTROL DE PESO ---
+.weight-card {
+  background: #f8f9fa; padding: 10px; border-radius: 16px; text-align: center;
+  ion-label { font-size: 0.6rem; font-weight: 800; color: #888; letter-spacing: 0.5px; }
+  
+  .modern-weight-input {
+    --background: transparent; font-size: 1.4rem; font-weight: 800;
+    margin: 2px 0; color: #222;
+  }
+
+  .save-btn { --border-radius: 12px; margin: 0; --box-shadow: none; }
+}
+
+// --- EMPTY STATE ---
+.premium-empty {
+  text-align: center; padding: 60px 20px;
+  .empty-icon-box {
+    width: 80px; height: 80px; background: #f0f0f0; border-radius: 30px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    ion-icon { font-size: 2.5rem; color: #ccc; }
+  }
+  h2 { font-weight: 800; color: #444; margin-bottom: 5px; }
+  p { color: #999; font-size: 0.9rem; }
+}
+.liquid.overloaded {
+  background: linear-gradient(to top, #7300ff, #bc86ff) !important; /* Color púrpura para indicar error de peso */
+}

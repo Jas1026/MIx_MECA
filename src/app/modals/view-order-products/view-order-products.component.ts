@@ -7,24 +7,31 @@ import { ServerContentService } from 'src/app/services/server-content.service';
   templateUrl: './view-order-products.component.html',
   styleUrls: ['./view-order-products.component.scss'],
 })
+
 export class ViewOrderProductsComponent implements OnInit, OnDestroy {
   @Input() order_id: any;
   productos: any[] = [];
   private timer: any;
-
+private sonidoConfirmacion = new Audio('assets/sounds/confirmacion.mp3');
   constructor(
     private modalCtrl: ModalController,
     private server: ServerContentService,
     private toast: ToastController
   ) {}
 
-  ngOnInit() {
+ngOnInit() {
+  this.cargarProductos();
+
+  // ⏱ reloj
+  this.timer = setInterval(() => {
+    this.actualizarTiempos();
+  }, 1000);
+
+  // 🔄 refrescar estado de productos
+  setInterval(() => {
     this.cargarProductos();
-    // Actualizamos el cronómetro cada segundo
-    this.timer = setInterval(() => {
-      this.actualizarTiempos();
-    }, 1000);
-  }
+  }, 2000);
+}
 
   ngOnDestroy() {
     if (this.timer) clearInterval(this.timer);
@@ -35,16 +42,17 @@ cargarProductos() {
 
       const nuevosProductos = res.data;
 
-      nuevosProductos.forEach((p: any) => {
+    nuevosProductos.forEach((p: any) => {
 
-        const viejo = this.productos.find(x => x.detail_id == p.detail_id);
+  const viejo = this.productos.find(x => x.detail_id == p.detail_id);
 
-        // 🔔 detectar cuando cocina silenció
-        if (viejo && viejo.alert_status == 1 && p.alert_status == 2) {
-          this.mostrarToast('👨‍🍳 Cocina silenció la alerta');
-        }
+  // cocina silenció alerta
+  if (viejo && viejo.alert_status == 1 && p.alert_status == 0) {
+    this.mostrarToast('👨‍🍳 Cocina recibió el aviso');
+    this.sonidoConfirmacion.play();
+  }
 
-      });
+});
 
       this.productos = nuevosProductos.map((prod: any) => ({
         ...prod,

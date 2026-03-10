@@ -290,8 +290,81 @@ getResumen(filtro: string) {
   });
 }
  
- 
- 
+ // En server-content.service.ts
+// server-content.service.ts
+addBottle(data: any) {
+  let body = new FormData();
+  body.append("ingredient_id", data.ingredient_id.toString());
+  body.append("peso_envase", data.peso_envase.toString());
+  body.append("capacidad_total", data.capacidad_total.toString());
+  body.append("peso_actual", data.peso_actual.toString());
+  body.append("cantidad", data.cantidad.toString()); // <--- ESTA LÍNEA ES VITAL
+  body.append("system", this.getSystem());
+
+  return this.http.post(this.urlService + "add_bottle.php", body);
+}
+getBottles(ingredientId: any) {
+  let body = new FormData();
+  body.append("ingredient_id", ingredientId.toString());
+  body.append("system", this.getSystem());
+
+  return this.http.post(this.urlService + "get_bottles.php", body);
+}
+
+updateBottleWeight(data: any) {
+  let body = new FormData();
+  body.append("id_bottle", data.id_bottle.toString());
+  body.append("peso_actual", data.peso_actual.toString());
+  body.append("estado", data.estado);
+  body.append("system", this.getSystem());
+
+  return this.http.post(this.urlService + "update_bottle.php", body);
+}
+addCategory(name: string) {
+  let body = new FormData();
+  body.append("name", name);
+  body.append("system", this.getSystem()); // <-- Ahora sí incluimos el sistema
+
+  return this.http.post(`${this.urlService}add_category.php`, body);
+}
+
+updateCategory(cat: any) {
+  let body = new FormData();
+  body.append("id", cat.id.toString());
+  body.append("name", cat.name);
+  body.append("system", this.getSystem()); // <-- Indispensable
+
+  return this.http.post(`${this.urlService}update_category.php`, body);
+}
+
+deleteCategory(id: any) {
+  let body = new FormData();
+  body.append("id", id.toString());
+  body.append("system", this.getSystem()); // <-- Indispensable
+
+  return this.http.post(`${this.urlService}delete_category.php`, body);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
  
  
@@ -410,7 +483,6 @@ searchProducts(term: string) {
   return this.http.post(this.urlService + 'search_products.php', body);
 
 }
-
 
 
 

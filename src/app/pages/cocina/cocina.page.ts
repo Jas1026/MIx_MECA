@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, NgZone, ChangeDetectorRef, HostListener }
 import { ActivatedRoute, Router } from '@angular/router';
 import { ServerContentService } from 'src/app/services/server-content.service';
 import { AlertController } from '@ionic/angular';
+import { KitchenNotifyService } from 'src/app/services/kitchen-notify.service';
 @Component({
   selector: 'app-cocina',
   templateUrl: './cocina.page.html',
@@ -24,6 +25,7 @@ export class CocinaPage implements OnInit, OnDestroy {
     private ngZone: NgZone,
     private cdr: ChangeDetectorRef,
     private alertCtrl: AlertController,
+    private notify: KitchenNotifyService,
   ) {
     this.audioAlarma.loop = true;
   }
@@ -136,9 +138,20 @@ checkAlerts() {
   }
 async markReady(detailId: number, force: boolean = false) {
   this.server.updateDetailStatus(detailId, 'ready', force).subscribe(async (res: any) => {
-    if (res.error === 0) {
-      this.loadOrders();
-    } else if (res.error === 2) {
+if (res.error === 0) {
+
+  const item = this.orders.find(o => o.detail_id == detailId);
+
+  if(item){
+    this.notify.pushNotification({
+      product: item.name,
+      table: item.table_id,
+      order: item.order_id
+    });
+  }
+
+  this.loadOrders();
+}else if (res.error === 2) {
       // ERROR 2: Mostrar modal de confirmación
       const alert = await this.alertCtrl.create({
         header: 'Stock Insuficiente',

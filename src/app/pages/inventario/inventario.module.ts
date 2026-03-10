@@ -10,6 +10,7 @@ import { InventarioPage } from './inventario.page';
 import { CreateIngredientModule } from '../../modals/create-ingredient/create-ingredient.module';
 import { CreateProductModule } from 'src/app/modals/create-product/create-product.module';
 import { ViewProductDetailModule } from 'src/app/modals/view-product-detail/view-product-detail.module';
+import { BottleManagerModule } from 'src/app/modals/bottle-manager/bottle-manager.module';
 @NgModule({
   imports: [
     CommonModule,
@@ -19,6 +20,7 @@ import { ViewProductDetailModule } from 'src/app/modals/view-product-detail/view
     CreateIngredientModule,
     CreateProductModule,
     ViewProductDetailModule,     
+    BottleManagerModule,
   ],
   declarations: [InventarioPage]
 })

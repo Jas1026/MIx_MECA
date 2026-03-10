@@ -34,10 +34,14 @@
       <!-- BODY -->
       <div class="ticket-body">
 
-        <h2 class="product-name">
-          <span class="quantity">{{ item.quantity }}x</span>
-          {{ item.name }}
-        </h2>
+<h2 class="product-name">
+  <span class="quantity">{{ item.quantity }}x</span>
+  {{ item.alias || item.name }}
+</h2>
+
+<small class="product-real" *ngIf="item.alias">
+  {{ item.name }}
+</small>
 
         <!-- 🚨 Notas y acompañamientos estilo ticket -->
         <div class="order-extra" *ngIf="item.notes || item.sides">
