@@ -281,15 +281,25 @@ updateAssetState(payload: any) {
 //}
 
  
-getResumen(filtro: string) {
-  return this.http.get<any>(`${this.urlService}get_informes_resumen.php`, {
+ getResumen(tipo: string, fechaInicio: string, fechaFin: string) {
+  return this.http.get(`${this.urlService}/get_informes_resumen.php`, {
     params: {
-      system: 'mixtura',
-      filtro: filtro
+      tipo: tipo,
+      fecha_inicio: fechaInicio,
+      fecha_fin: fechaFin
     }
   });
 }
  
+ 
+ 
+getDetalleArea(system: string, area: string) {
+  return this.http.get(
+    `${this.urlService}get_detalle_area.php?system=${system}&area=${area}`
+  );
+}
+
+
  // En server-content.service.ts
 // server-content.service.ts
 addBottle(data: any) {
@@ -369,31 +379,7 @@ deleteCategory(id: any) {
  
  
  
-getDetalleArea(system: string, area: string) {
-  return this.http.get(
-    `${this.urlService}get_detalle_area.php?system=${system}&area=${area}`
-  );
-}
-
-getInformes(
-  system: any,
-  filtro: any,
-  fecha: any,
-  fecha_inicio: any,
-  fecha_fin: any
-) {
  
-  const data = {
-    system: system,
-    filtro: filtro,
-    fecha: fecha,
-    fecha_inicio: fecha_inicio,
-    fecha_fin: fecha_fin
-  };
- 
-  return this.http.post(this.urlService + "get_informes_resumen.php", data);
- 
-}
 
 // ---------------- GESTIÓN DE PISOS ----------------
 
