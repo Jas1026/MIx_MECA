@@ -11,7 +11,7 @@ export class KitchenReadyToastComponent implements OnInit {
   visible = false;
   data:any = null;
 
-  private audio = new Audio('assets/sounds/ready.mp3');
+  private audio = new Audio('assets/sounds/notificacion.mp3');
 
   constructor(private notify:KitchenNotifyService){}
 

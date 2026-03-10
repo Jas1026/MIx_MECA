@@ -16,7 +16,7 @@ export class CocinaPage implements OnInit, OnDestroy {
   private clockInterval: any;
   
   // Sonido de alerta
-  private audioAlarma = new Audio('assets/sounds/sonidodeprueba.mp3');
+  private audioAlarma = new Audio('assets/sounds/alarma.mp3');
 
   constructor(
     private router: Router,
