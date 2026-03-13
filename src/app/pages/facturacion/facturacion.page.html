@@ -1,80 +1,90 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar color="primary">
-    <ion-title>Factura #{{ orderId }}</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="volverMesas()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Facturación Pedido #{{ orderId }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
 
-  <!-- 🔥 FORMULARIO CLIENTE -->
-  <ion-card>
+  <ion-card class="no-print">
     <ion-card-header>
       <ion-card-title>Datos del Cliente</ion-card-title>
     </ion-card-header>
 
     <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">NIT / CI / CEX</ion-label>
+        <ion-input type="text" [(ngModel)]="cliente.nit" placeholder="Ej: 1234567"></ion-input>
+      </ion-item>
 
       <ion-item>
         <ion-label position="stacked">Nombre / Razón Social</ion-label>
-        <ion-input [(ngModel)]="cliente.nombre"></ion-input>
+        <ion-input type="text" [(ngModel)]="cliente.nombre" placeholder="Ej: Juan Perez"></ion-input>
       </ion-item>
-
-      <ion-item>
-        <ion-label position="stacked">NIT / CI</ion-label>
-        <ion-input [(ngModel)]="cliente.nit"></ion-input>
-      </ion-item>
-
     </ion-card-content>
   </ion-card>
 
-  <!-- 🔥 FACTURA IMPRIMIBLE -->
-  <div id="factura">
+  <div id="factura-container" class="print-content">
+    <div class="ticket-header">
+      <h2 style="margin-bottom: 5px;">MIXURA - MECA</h2>
+      <p>Casa Matriz</p>
+      <p>La Paz - Bolivia</p>
+    </div>
 
-    <h2 style="text-align:center;">MIXURA - MECA</h2>
-    <p style="text-align:center;">
-      Fecha: {{ today | date:'dd/MM/yyyy HH:mm' }}
-    </p>
+    <hr class="dotted">
 
-    <hr>
+    <div class="ticket-info">
+      <p><strong>FECHA:</strong> {{ today | date:'dd/MM/yyyy HH:mm' }}</p>
+      <p><strong>CLIENTE:</strong> {{ cliente.nombre || 'SIN NOMBRE' }}</p>
+      <p><strong>NIT/CI:</strong> {{ cliente.nit || '0' }}</p>
+    </div>
 
-    <p><strong>Cliente:</strong> {{ cliente.nombre }}</p>
-    <p><strong>NIT:</strong> {{ cliente.nit }}</p>
+    <hr class="dotted">
 
-    <hr>
+    <table width="100%" class="items-table">
+      <thead>
+        <tr>
+          <th align="left">Cant.</th>
+          <th align="left">Producto</th>
+          <th align="right">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of detalles">
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.nombre_producto }}</td>
+          <td align="right">{{ item.total_price | number:'1.2-2' }}</td>
+        </tr>
+      </tbody>
+    </table>
 
-    <ion-list>
-      <ion-item *ngFor="let item of detalles">
-        <ion-label>
-          {{ item.nombre_producto }}
-          <p>{{ item.quantity }} x {{ item.unit_price }}</p>
-        </ion-label>
-        <ion-note slot="end">
-          {{ item.total_price }}
-        </ion-note>
-      </ion-item>
-    </ion-list>
-
-    <hr>
+    <hr class="dotted">
 
     <h2 style="text-align:right;">
       TOTAL Bs: {{ total | number:'1.2-2' }}
     </h2>
 
-    <p style="text-align:center; font-size:12px;">
-      Gracias por su preferencia
-    </p>
-
+    <div class="ticket-footer">
+      <p>"ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAÍS, EL USO ILÍCITO SERÁ SANCIONADO DE ACUERDO A LEY"</p>
+      <p style="font-size: 10px; margin-top: 10px;">Gracias por su preferencia</p>
+    </div>
   </div>
-<ion-button expand="block" color="primary" (click)="emitirFacturaSIAT()">
-      <ion-icon name="cloud-upload-outline" slot="start"></ion-icon>
-      GENERAR FACTURA ELECTRÓNICA SIAT
-    </ion-button>
-  <ion-button expand="full" color="success" (click)="imprimir()">
-    🖨 Imprimir Factura
-  </ion-button>
 
-  <ion-button expand="full" color="medium" (click)="volverMesas()">
-    Volver
-  </ion-button>
+  <div class="ion-padding no-print">
+    <ion-button expand="block" color="success" (click)="emitirFacturaSIAT()">
+      <ion-icon name="cloud-upload-outline" slot="start"></ion-icon>
+      GENERAR FACTURA SIAT
+    </ion-button>
+
+    <ion-button expand="block" fill="outline" color="dark" (click)="imprimir()">
+      <ion-icon name="print-outline" slot="start"></ion-icon>
+      IMPRIMIR TICKET
+    </ion-button>
+  </div>
 
 </ion-content>

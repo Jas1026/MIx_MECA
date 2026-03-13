@@ -15,7 +15,7 @@ export class FacturacionPage implements OnInit {
   total: number = 0;
   today: Date = new Date();
 
-  // 🔥 DATOS CLIENTE
+  // DATOS CLIENTE
   cliente = {
     nombre: '',
     nit: ''
@@ -28,76 +28,66 @@ export class FacturacionPage implements OnInit {
   ) {}
 
   ngOnInit() {
-
     this.orderId = this.route.snapshot.paramMap.get('id') || '';
+    this.cargarDetalles();
+  }
 
+  cargarDetalles() {
     this.server.getOrderDetails(Number(this.orderId))
       .subscribe((res: any) => {
-
         if (res.error === 0) {
-
           this.detalles = res.data;
-
-          this.subtotal = this.detalles.reduce(
+          this.total = this.detalles.reduce(
             (sum, item) => sum + Number(item.total_price), 0
           );
-
-          this.total = this.subtotal;
-
         }
-
       });
-
   }
+
+  emitirFacturaSIAT() {
+    if (!this.cliente.nombre || !this.cliente.nit) {
+      alert("Por favor, complete los datos de facturación (Nombre y NIT)");
+      return;
+    }
+
+    // CREAMOS UN SOLO OBJETO (Payload) para evitar el error TS2554
+    const payload = {
+      order_id: Number(this.orderId),
+      nit: this.cliente.nit,
+      razonSocial: this.cliente.nombre,
+      total: this.total,
+      detalles: this.detalles
+    };
+
+    console.log("Enviando al SIAT:", payload);
+
+    this.server.emitirFacturaReal(payload).subscribe({
+      next: (res: any) => {
+        if (res.error === 0) {
+          alert("Factura emitida con éxito. CUF: " + res.cuf);
+          // Opcional: imprimir automáticamente después de generar en SIAT
+          setTimeout(() => window.print(), 500);
+          this.router.navigate(['/panel']);
+        } else {
+          alert("Error de Impuestos: " + res.message);
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        alert("Error de conexión con el servidor");
+      }
+    });
+  }
+
   imprimir() {
-
-  if (!this.cliente.nombre || !this.cliente.nit) {
-    alert("Debe completar Nombre y NIT");
-    return;
-  }
-
-  this.server.saveInvoiceData(
-    Number(this.orderId),
-    this.cliente.nombre,
-    this.cliente.nit
-  ).subscribe(() => {
-
+    if (!this.cliente.nombre || !this.cliente.nit) {
+      alert("Debe completar Nombre y NIT para la impresión");
+      return;
+    }
     window.print();
-
-  });
-
-}
+  }
 
   volverMesas() {
     this.router.navigate(['/panel']);
   }
-// facturacion.page.ts
-emitirFacturaSIAT() {
-  if (!this.cliente.nombre || !this.cliente.nit) {
-    alert("Datos de facturación requeridos");
-    return;
-  }
-
-  // Mostramos un cargando (LoadingController de Ionic recomendado)
-  this.server.emitirFacturaReal(Number(this.orderId), this.cliente, this.detalles)
-    .subscribe((res: any) => {
-      if (res.status === 'SUCCESS') {
-        // Cucu devuelve una URL del PDF o el CUF
-        const urlFactura = res.pdf_url; 
-        window.open(urlFactura, '_blank'); // Abre la factura oficial de Impuestos
-        
-        // Cerramos la mesa en nuestro sistema
-        this.finalizarProceso();
-      } else {
-        alert("Error de Impuestos: " + res.message);
-      }
-    });
-}
-
-finalizarProceso() {
-  // Aquí llamas a tu PHP de close_order.php que ya tienes creado
-  this.server.closeOrder(Number(this.orderId)).subscribe(() => {
-  this.router.navigate(['/panel']);
-});
-}
 }

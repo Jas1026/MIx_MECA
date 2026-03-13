@@ -8,7 +8,7 @@ import { ServerContentService } from 'src/app/services/server-content.service';
   styleUrls: ['./view-product-detail.component.scss'],
 })
 export class ViewProductDetailComponent implements OnInit {
-  @Input() product: any; // Recibe el objeto producto desde la lista
+  @Input() product: any; 
 
   ingredients: any[] = [];
   kitchens: any[] = [];

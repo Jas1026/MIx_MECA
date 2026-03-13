@@ -116,43 +116,27 @@ loadOrderDetails() {
     return this.cart.reduce((sum, item) =>
       sum + (item.price * item.quantity), 0);
   }
-confirmOrder() {
-
-  if (this.cart.length === 0) {
-    alert("Agrega productos primero");
-    return;
-  }
-
-  if (this.editMode) {
-
-    this.server.updateOrder(this.order_id, this.cart)
-      .subscribe((res: any) => {
-
-        if (res.error === 0) {
-          alert("Pedido actualizado");
-          this.modalCtrl.dismiss(true);
-        } else {
-          alert("Error actualizando pedido");
+  confirmOrder(force: boolean = false) {
+  const id_user = localStorage.getItem("user_id") || '';
+  
+  // Añadimos el parámetro force_order al enviar
+  this.server.createOrder(this.table.id_table, id_user, this.cart, force)
+    .subscribe(async (res: any) => {
+      
+      if (res.error === 0) {
+        alert("Pedido creado");
+        this.modalCtrl.dismiss(true);
+      } 
+      // ERROR 2: Falta Stock
+      else if (res.error === 2) {
+        const confirmResult = confirm(`${res.message}. ¿Deseas continuar de todos modos? (El stock quedará en negativo)`);
+        if (confirmResult) {
+          this.confirmOrder(true); // Re-intentamos forzando la venta
         }
-
-      });
-
-  } else {
-
-    const id_user = localStorage.getItem("user_id") || '';
-
-    this.server.createOrder(this.table.id_table, id_user, this.cart)
-      .subscribe((res: any) => {
-
-        if (res.error === 0) {
-          alert("Pedido creado");
-          this.modalCtrl.dismiss(true);
-        }
-
-      });
-
-  }
-
+      } else {
+        alert(res.message);
+      }
+    });
 }
 // En OrderModalComponent
 

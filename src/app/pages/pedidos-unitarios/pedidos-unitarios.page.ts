@@ -19,6 +19,9 @@ export class PedidosUnitariosPage implements OnInit, OnDestroy {
   pedidos: any[] = [];
   fechaFiltro: string = '';
 
+  pisoSeleccionado: string = '';
+  pisos: any[] = [];
+
   constructor(
     private server: ServerContentService,
     private modalCtrl: ModalController,
@@ -30,7 +33,7 @@ export class PedidosUnitariosPage implements OnInit, OnDestroy {
     this.server.getWaiters().subscribe((res: any) => {
       this.meseros = res.data;
     });
-
+    this.cargarPisos()
     this.cargarPedidos();
     this.startClock();
   }
@@ -57,20 +60,32 @@ export class PedidosUnitariosPage implements OnInit, OnDestroy {
         }
       });
   }
-
-  get pedidosFiltrados() {
-    return this.pedidos.filter(p => {
-      if (this.meseroSeleccionado && p.mesero !== this.meseroSeleccionado) return false;
-      if (this.estadoSeleccionado && p.status !== this.estadoSeleccionado) return false;
-
-      if (this.fechaFiltro) {
-        const fechaPedido = new Date(p.order_date).toISOString().split('T')[0];
-        if (fechaPedido !== this.fechaFiltro) return false;
+get pedidosFiltrados() {
+  return this.pedidos.filter(p => {
+    // Filtro Mesero
+    if (this.meseroSeleccionado && p.mesero !== this.meseroSeleccionado) return false;
+    
+    // Filtro Estado (Mejorado para detectar cancel o status cancel)
+    if (this.estadoSeleccionado) {
+      if (this.estadoSeleccionado === 'cancel') {
+        if (p.status !== 'cancel' && p.cancel != 1) return false;
+      } else if (p.status !== this.estadoSeleccionado) {
+        return false;
       }
+    }
 
-      return true;
-    });
-  }
+    // Filtro Piso (Ubicación)
+    if (this.pisoSeleccionado && p.nombre_piso !== this.pisoSeleccionado) return false;
+
+    // Filtro Fecha
+    if (this.fechaFiltro) {
+      const fechaPedido = new Date(p.order_date).toISOString().split('T')[0];
+      if (fechaPedido !== this.fechaFiltro) return false;
+    }
+
+    return true;
+  });
+}
 
   limpiarFecha() {
     this.fechaFiltro = '';
@@ -171,5 +186,116 @@ export class PedidosUnitariosPage implements OnInit, OnDestroy {
   
       await modal.present();
     }
-  
+  cargarPisos() {
+  // Asegúrate de tener este método en tu servicio server-content
+  this.server.getFlats_panel().subscribe((res: any) => {
+    if(res.error === 0) {
+      this.pisos = res.data;
+    }
+  });
+}
+limpiarFiltros() {
+  this.fechaFiltro = '';
+  this.fechaMostrada = '';
+  this.estadoSeleccionado = '';
+  this.pisoSeleccionado = '';
+  this.meseroSeleccionado = '';
+}
+async cambiarMesa(pedido: any) {
+  this.server.getFlats().subscribe(async (res: any) => {
+    
+    if (!res.data || res.data.length === 0) {
+      this.presentToast("No se encontraron áreas configuradas.");
+      return;
+    }
+
+    const inputsPisos = res.data.map((p: any) => ({
+      type: 'radio',
+      label: p.name,
+      // CAMBIO AQUÍ: Debe ser Id_flats para coincidir con tu JSON
+      value: p.Id_flats, 
+      checked: p.name === pedido.nombre_piso
+    }));
+
+    const alertPisos = await this.alertCtrl.create({
+      header: 'Seleccionar Piso / Área',
+      subHeader: `Mesa actual: ${pedido.nombre_mesa}`,
+      inputs: inputsPisos,
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Siguiente',
+          handler: (idFlatSeleccionado) => {
+            // Ahora idFlatSeleccionado ya no será undefined
+            if (idFlatSeleccionado) {
+              this.seleccionarNuevaMesa(pedido, idFlatSeleccionado);
+              return true;
+            } else {
+              this.presentToast("Por favor, selecciona un área.");
+              return false;
+            }
+          }
+        }
+      ]
+    });
+
+    await alertPisos.present();
+  });
+}
+async seleccionarNuevaMesa(pedido: any, id_flat: any) {
+  console.log("Cargando mesas para el piso ID:", id_flat);
+
+  if (!id_flat) {
+    this.presentToast("Error: No se seleccionó un piso válido");
+    return;
+  }
+
+  this.server.getTables_new(id_flat).subscribe(async (res: any) => {
+    
+    if (!res.data || res.data.length === 0) {
+      this.presentToast("No hay mesas registradas en este área");
+      return;
+    }
+
+    const inputsMesas = res.data.map((m: any) => ({
+      type: 'radio',
+      label: m.nombre, 
+      value: m.id_table,
+    }));
+
+    const alertMesas = await this.alertCtrl.create({
+      header: 'Seleccionar Nueva Mesa',
+      inputs: inputsMesas,
+      buttons: [
+        { text: 'Atrás', handler: () => this.cambiarMesa(pedido) },
+        {
+          text: 'Cambiar',
+          handler: (id_table) => {
+            if (id_table) {
+              this.confirmarCambio(pedido.order_id, id_table);
+              return true; // <--- Agregamos retorno explícito
+            } else {
+              this.presentToast("Debes seleccionar una mesa");
+              return false; // Evita que se cierre el alert
+            }
+          }
+        }
+      ]
+    });
+    await alertMesas.present();
+  });
+}
+confirmarCambio(orderId: number, newTableId: number) {
+  this.server.changeOrderTable(orderId, newTableId).subscribe((res: any) => {
+    if (res.error === 0) {
+      this.cargarPedidos(); // Recargar la lista
+      this.presentToast("Mesa cambiada correctamente");
+    }
+  });
+}
+
+async presentToast(msg: string) {
+  const toast = await this.toastCtrl.create({ message: msg, duration: 2000 });
+  toast.present();
+}
 }

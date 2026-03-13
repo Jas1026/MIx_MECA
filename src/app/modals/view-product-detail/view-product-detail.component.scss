@@ -57,3 +57,26 @@
 }
 
 .empty-text { font-size: 0.9em; color: #999; margin-left: 5px; }
+.stock-grid {
+  margin-top: 10px;
+  .stock-box {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-radius: 12px;
+    gap: 10px;
+    
+    ion-icon { font-size: 24px; }
+    p { margin: 0; font-size: 0.8rem; opacity: 0.8; }
+    h3 { margin: 0; font-size: 1.2rem; font-weight: bold; }
+
+    &.frozen {
+      background: #e0f2f1; // Verde/Azul claro frío
+      color: #00695c;
+    }
+    &.ready {
+      background: #fff3e0; // Naranja claro caliente
+      color: #e65100;
+    }
+  }
+}

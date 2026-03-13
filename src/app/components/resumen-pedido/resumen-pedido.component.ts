@@ -46,5 +46,36 @@ generarFactura() {
   cerrar() {
     this.modalCtrl.dismiss();
   }
-  
+  //PARA GENERACION DE FACTURACIÓN 
+  // En ResumenPedidoComponent
+datosFactura = {
+  nit: '0',
+  razonSocial: 'SIN NOMBRE'
+};
+
+generarFacturaSIAT() {
+  if (!this.datosFactura.nit || !this.datosFactura.razonSocial) {
+    alert("Por favor rellena los datos del cliente");
+    return;
+  }
+
+  const payload = {
+    order_id: this.orderId,
+    nit: this.datosFactura.nit,
+    razonSocial: this.datosFactura.razonSocial,
+    total: this.total,
+    detalles: this.detalles // Enviamos los productos para el XML
+  };
+
+  this.server.emitirFacturaReal(payload).subscribe((res: any) => {
+    if (res.error === 0) {
+      alert("Factura emitida con éxito. CUF: " + res.cuf);
+      this.modalCtrl.dismiss(true);
+      this.router.navigate(['/facturacion-exito', res.id_factura]); 
+    } else {
+      alert("Error SIAT: " + res.message);
+    }
+  });
+}
+
 }

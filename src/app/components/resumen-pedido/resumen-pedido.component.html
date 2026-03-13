@@ -1,27 +1,41 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Resumen Pedido</ion-title>
+  <ion-toolbar color="primary">
+    <ion-title>Resumen Pedido #{{ orderId }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <ion-list lines="none">
+    <ion-item *ngFor="let d of detalles" style="--background: #f9f9f9; margin-bottom: 5px; border-radius: 10px;">
+      <ion-label>
+        <h3><b>{{ d.nombre_producto }}</b></h3>
+        <p>Cant: {{ d.quantity }} | Unit: Bs/ {{ d.unit_price }}</p>
+      </ion-label>
+      <ion-note slot="end" color="dark">Bs/ {{ d.total_price }}</ion-note>
+    </ion-item>
+  </ion-list>
 
-  <ion-card *ngFor="let d of detalles">
-    {{ d.nombre_producto }} x{{ d.quantity }}
-    <br>
-    Bs/ {{ d.total_price }}
-  </ion-card>
+  <div class="ion-padding">
+    <h2 style="text-align: right;">Total: Bs/ {{ total }}</h2>
+    
+    <hr>
+    
+    <h3>Datos de Facturación</h3>
+    <ion-item>
+      <ion-label position="floating">NIT / CI / CEX</ion-label>
+      <ion-input type="text" [(ngModel)]="datosFactura.nit"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Razón Social / Nombre</ion-label>
+      <ion-input type="text" [(ngModel)]="datosFactura.razonSocial"></ion-input>
+    </ion-item>
+  </div>
 
-  <ion-card>
-    <b>Total: Bs/ {{ total }}</b>
-  </ion-card>
-
-  <ion-button expand="block" color="success" (click)="generarFactura()">
-    GENERAR FACTURA
+  <ion-button expand="block" color="success" (click)="generarFacturaSIAT()" [disabled]="!datosFactura.nit">
+    EMITIR FACTURA LEGAL
   </ion-button>
 
-  <ion-button expand="block" color="medium" (click)="cerrar()">
+  <ion-button expand="block" fill="clear" color="medium" (click)="cerrar()">
     Cerrar
   </ion-button>
-
 </ion-content>

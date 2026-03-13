@@ -215,3 +215,90 @@ ion-chip {
   --background: white;
   ion-label { cursor: pointer; }
 }
+/* --- GESTIÓN DE CATEGORÍAS RESPONSIVE --- */
+
+.category-manager-card {
+  margin: 10px;
+  background: #ffffff;
+  border: 1px solid $borde-suave;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+
+  .form-row {
+    gap: 10px; // Espacio entre input y botón en móvil
+  }
+
+  .category-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+  }
+}
+
+.category-chip-container {
+  display: flex;
+  flex-wrap: wrap; // Permite que los chips bajen de línea
+  gap: 8px;
+  margin-top: 15px;
+  padding: 5px;
+  max-height: 200px;
+  overflow-y: auto;
+  
+  /* Scrollbar más fino para web */
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+  }
+}
+
+.custom-chip {
+  --background: #fdfdfd;
+  --color: #4a3f35;
+  border: 1px solid $borde-suave;
+  margin: 0; // Controlado por el gap del contenedor
+  height: 32px;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+
+  &:active {
+    background: #f0f0f0;
+  }
+
+  ion-icon {
+    color: #eb445a; // Color rojo para el icono de borrar
+    font-size: 18px;
+    opacity: 0.7;
+  }
+}
+
+/* --- MEDIA QUERY ESPECÍFICA PARA MÓVIL --- */
+@media (max-width: 768px) {
+  .category-manager-card {
+    .form-row {
+      ion-col {
+        padding: 4px 0;
+      }
+    }
+    
+    .category-buttons {
+      flex-direction: column; // Botones uno sobre otro en móvil si es necesario
+      ion-button {
+        width: 100%;
+        margin: 0;
+      }
+    }
+  }
+
+  .category-chip-container {
+    justify-content: center; // Centrar chips en móvil para que se vea mejor
+  }
+  
+  .custom-chip {
+    padding: 8px 12px;
+    height: auto; // Que crezca según el texto
+  }
+}

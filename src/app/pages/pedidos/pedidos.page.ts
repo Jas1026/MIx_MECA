@@ -18,7 +18,7 @@ export class PedidosPage implements OnInit {
   pedidos: any[] = [];
   filtroMesero: string = '';
   fechaFiltro: string = '';
-
+userRole: string = '';
   soloAtrasados: boolean = false;
 private clockInterval: any;
   constructor(
@@ -28,19 +28,26 @@ private clockInterval: any;
     private toastCtrl: ToastController   // 👈 Añadido
   ) {}
 
-  ngOnInit() {
-    this.server.getWaiters().subscribe((res: any) => {
-      this.meseros = res.data;
-    });
-    this.cargarPedidos();
-    this.server.getWaiters().subscribe((res: any) => {
-      console.log("Respuesta de meseros:", res); 
-      this.meseros = res.data;
-    });
-    this.cargarPedidos();
-    this.startClock();
+ ngOnInit() {
+  this.cargarDatosUsuario();
+  
+  // Carga inicial de datos
+  this.server.getWaiters().subscribe((res: any) => {
+    this.meseros = res.data;
+  });
+  this.cargarPedidos();
+  this.startClock();
+}
+ionViewWillEnter() {
+    this.cargarDatosUsuario();
   }
-
+cargarDatosUsuario() {
+  // Usamos 'role' que es la clave que sí funciona en tu Panel
+  const savedRole = localStorage.getItem('role'); 
+  this.userRole = savedRole ? savedRole.trim().toLowerCase() : '';
+  
+  console.log("PEDIDOS PAGE -> Rol verificado:", this.userRole);
+}
   cargarPedidos() {
     this.server.getAllOrders()
       .subscribe((res: any) => {
@@ -293,5 +300,17 @@ private updateAllClocks() {
   
       await modal.present();
     }
-  
+// pedidos.page.ts
+// pedidos.page.ts
+
+hasRole(roleName: string): boolean {
+  // Si no hay rol, no mostramos nada
+  if (!this.userRole) return false;
+
+  // Forzamos la comparación limpia
+  const actualRole = this.userRole.trim().toLowerCase();
+  const requiredRole = roleName.trim().toLowerCase();
+
+  return actualRole === requiredRole;
+}
 }

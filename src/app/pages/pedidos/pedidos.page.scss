@@ -1,78 +1,114 @@
 /* VARIABLES DE COLOR */
 $primary-cafe: #6f4e37;
-$bg-light: #f9fbfd;
+$bg-light: #f4f7f6;
 $border-color: #e2e8f0;
 
 /* CONTENEDOR PRINCIPAL */
 .dashboard-bg {
-  --background: #f4f7f6 !important;
+  --background: #{$bg-light} !important;
+  /* Evitamos que el rebote de iOS desconfigure el layout */
+  --overscroll-behavior: none; 
 }
 
-/* TARJETA DE FILTROS */
+/* TARJETA DE FILTROS - Optimizada para no "empujar" el contenido */
 .filter-card {
   background: white;
   border-radius: 16px;
   margin-bottom: 20px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  padding: 10px;
+  padding: 15px;
+  z-index: 10;
+  position: relative;
+
+  ion-grid {
+    padding: 0;
+  }
 
   .filter-item {
-    padding: 0 10px;
     ion-label {
-      font-size: 12px;
-      font-weight: bold;
-      color: #64748b;
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
       margin-bottom: 4px;
       display: block;
     }
     ion-select {
       --padding-start: 0;
       font-weight: 600;
+      min-height: 40px;
     }
   }
 }
 
-.btn-filter-date {
-  --border-radius: 12px;
-  --border-color: #e2e8f0;
-  color: #475569;
-  font-weight: 600;
-}
+/* LISTA MOBILE - Mejorada para estabilidad */
+.lista-mobile {
+  display: block;
+  background: transparent;
+  padding-bottom: 50px; /* Espacio para que el último elemento no choque con el borde */
 
-/* MODAL CALENDARIO (REPARADO) */
-.modal-calendario {
-  --width: 340px;
-  --height: fit-content;
-  --border-radius: 20px;
-  --box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-
-  &::part(content) {
-    border-radius: 20px;
+  ion-item-sliding {
+    margin-bottom: 12px;
+    border-radius: 16px;
+    overflow: hidden; /* Corta los bordes del sliding */
   }
-}
 
-.datetime-wrapper {
-  background: white;
-  padding: 10px;
-  ion-datetime {
+  .mobile-order-item {
     --background: white;
-    --title-color: #{$primary-cafe};
-    border-radius: 15px;
+    --padding-start: 16px;
+    --padding-end: 8px;
+    --inner-padding-end: 8px;
     
-    &::part(calendar-day active) {
-      background: #{$primary-cafe};
-      color: white;
+    .mobile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+      width: 100%;
+
+      h3 { 
+        margin: 0; 
+        font-size: 15px; 
+        font-weight: 800; 
+        color: $primary-cafe; 
+      }
+    }
+
+    p {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 4px 0;
+      font-size: 13px;
+      color: #64748b;
+      ion-icon { color: #94a3b8; }
     }
   }
 }
 
-/* TABLA WEB PREMIUM */
+/* BADGES DE ESTADO MEJORADOS */
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &.open { background: #e0f2fe; color: #0369a1; }
+  &.closed { background: #f1f5f9; color: #475569; }
+  &.cancel { background: #fee2e2; color: #b91c1c; }
+  &.ready { background: #dcfce7; color: #15803d; }
+}
+
+/* TABLA WEB (ESCRITORIO) */
 .tabla-web-container {
-  display: none; // Por defecto oculto
+  display: none;
   background: white;
   border-radius: 16px;
-  overflow: hidden;
   box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  margin-bottom: 30px;
+  overflow-x: auto; /* Permite scroll horizontal si la pantalla es media */
 }
 
 .mixtura-table {
@@ -83,89 +119,76 @@ $border-color: #e2e8f0;
     background: #f8fafc;
     color: #64748b;
     padding: 16px;
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    font-size: 12px;
+    text-align: left;
     border-bottom: 2px solid #f1f5f9;
   }
 
   tbody td {
     padding: 16px;
-    color: #334155;
     border-bottom: 1px solid #f1f5f9;
-    font-size: 14px;
   }
 
-  .order-id { font-weight: 800; color: $primary-cafe; }
+  .delayed { color: #dc2626; font-weight: 700; }
+  .normal { color: #16a34a; font-weight: 600; }
   
-  .user-cell {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    ion-icon { font-size: 20px; color: #94a3b8; }
-  }
-
-  tr:hover { background: #fdfdfd; }
-}
-
-/* BADGES DE ESTADO */
-.status-badge {
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-
-  &.open { background: #e0f2fe; color: #0369a1; }
-  &.closed { background: #f1f5f9; color: #475569; }
-}
-
-/* DISEÑO MOBILE */
-.lista-mobile {
-  display: block;
-}
-
-.mobile-order-item {
-  --background: white;
-  --border-radius: 16px;
-  margin-bottom: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-
-  .mobile-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-    h3 { margin: 0; font-size: 14px; font-weight: 800; color: $primary-cafe; }
-  }
-
-  p {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin: 3px 0;
-    font-size: 13px;
+  .delay-badge {
+    background: #fee2e2;
+    color: #b91c1c;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
   }
 }
 
-/* MEDIA QUERIES PARA CAMBIO WEB/MOBILE */
-@media (min-width: 768px) {
+/* RESPONSIVE BREAKPOINT */
+@media (min-width: 992px) {
   .tabla-web-container { display: block; }
   .lista-mobile { display: none; }
-}
-.delayed {
-  color: #e53935;
-  font-weight: bold;
-}
-
-.normal {
-  color: #2e7d32;
+  
+  .filter-card {
+    padding: 10px 20px;
+  }
 }
 
-.delay-badge {
-  background: #ffebee;
-  color: #c62828;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-weight: bold;
+/* BOTONES DE ACCIÓN */
+ion-button {
+  &.btn-filter-date {
+    --border-radius: 12px;
+    --color: #475569;
+    font-size: 13px;
+    margin-top: 10px;
+  }
+}
+.mobile-order-item {
+  /* ... tu código anterior ... */
+
+  .mobile-time-info {
+    .delayed {
+      color: #dc2626;
+      background: #fee2e2;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+    .normal {
+      color: #16a34a;
+      background: #dcfce7;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+  }
+
+  .mobile-actions {
+    display: flex;
+    flex-direction: column; // Los botones en columna ahorran espacio horizontal
+    justify-content: center;
+    
+    ion-button {
+      --padding-start: 4px;
+      --padding-end: 4px;
+      height: 30px;
+      margin: 0;
+    }
+  }
 }

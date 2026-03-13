@@ -22,7 +22,33 @@
   </div>
 
   <ion-divider class="ion-margin-vertical"></ion-divider>
+<div class="section-title ion-margin-top">
+  <ion-icon name="cube-outline"></ion-icon>
+  <ion-label>Inventario Actual</ion-label>
+</div>
 
+<ion-grid class="stock-grid">
+  <ion-row>
+    <ion-col size="6">
+      <div class="stock-box frozen">
+        <ion-icon name="snow-outline"></ion-icon>
+        <div class="text">
+          <p>Congelado</p>
+          <h3>{{ product.stock_congelado || 0 }}</h3>
+        </div>
+      </div>
+    </ion-col>
+    <ion-col size="6">
+      <div class="stock-box ready">
+        <ion-icon name="flame-outline"></ion-icon>
+        <div class="text">
+          <p>Disponible</p>
+          <h3>{{ product.stock_disponible || 0 }}</h3>
+        </div>
+      </div>
+    </ion-col>
+  </ion-row>
+</ion-grid>
   <div class="section-title">
     <ion-icon name="restaurant-outline"></ion-icon>
     <ion-label>Cocinas de Impresión</ion-label>

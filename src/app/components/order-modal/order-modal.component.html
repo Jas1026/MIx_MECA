@@ -31,6 +31,7 @@
     <ion-item button *ngFor="let product of searchResults" (click)="addProduct(product)">
       <ion-label>
         <h3>{{ product.name }}</h3>
+        
         <p>Producto encontrado</p>
       </ion-label>
 
@@ -81,6 +82,9 @@
             <ion-label>
               <h3>{{ product.name }}</h3>
               <p>Precio unitario</p>
+              <p [style.color]="product.stock_disponible <= 0 ? 'red' : 'inherit'">
+      Disponible: {{ product.stock_disponible }}
+    </p>
             </ion-label>
             <ion-badge slot="end" color="light">
               Bs/ {{ product.price }}

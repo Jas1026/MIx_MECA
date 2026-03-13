@@ -17,7 +17,10 @@ export class CreateProductComponent implements OnInit {
     alias: '',
     price: null,
     time_prep: 0,
-    id_category: null
+    id_category: null,
+    stock_congelado: 0,
+  stock_disponible: 0,
+  stock_minimo: 0
   };
 
   categories: any[] = [];
@@ -83,59 +86,74 @@ loadRecipe(id: number) {
   });
 }
 async saveProduct() {
-    if (!this.newProduct.nombre_producto || !this.newProduct.price) {
-      this.showToast('Nombre y Precio son requeridos', 'warning');
-      return;
-    }
-
-    // 2. Limpieza profunda antes de enviar al PHP
-    const recetaLimpia = this.receta
-      .filter(item => item.id_ingredient && parseFloat(item.cant_us) > 0)
-      .map(item => ({
-        id_ingredient: Number(item.id_ingredient),
-        cant_us: parseFloat(item.cant_us)
-      }));
-
-    const loading = await this.loadingCtrl.create({ message: 'Guardando...' });
-    await loading.present();
-
-    const payload = {
-      product: this.newProduct,
-      recipe: recetaLimpia,
-      kitchens: this.cocinasSeleccionadas,
-      system: this.server.getSystem()
-    };
-
-    this.server.saveFullProduct(payload).subscribe({
-      next: (res: any) => {
-        loading.dismiss();
-        if (res.success) {
-          this.showToast('Producto guardado con éxito', 'success');
-          this.modalCtrl.dismiss(true);
-        } else {
-          this.showToast(res.error || 'Error al guardar', 'danger');
-        }
-      },
-      error: () => {
-        loading.dismiss();
-        this.showToast('Error de conexión', 'danger');
-      }
-    });
+  // 1. Validación de campos básicos
+  if (!this.newProduct.nombre_producto || !this.newProduct.price) {
+    this.showToast('Nombre y Precio son requeridos', 'warning');
+    return;
   }
-  
-  loadKitchensAssigned(id: number) {
-  this.server.getProductKitchens(id).subscribe((res: any) => {
 
-    if (res.success) {
+  // 2. Validación de Cocinas
+  if (!this.cocinasSeleccionadas || this.cocinasSeleccionadas.length === 0) {
+    this.showToast('Debe seleccionar al menos una Cocina de destino', 'warning');
+    return;
+  }
 
-      this.cocinasSeleccionadas = res.data.map((k: any) =>
-        Number(k.kitchen_id)
-      );
+  // 3. Limpieza de Receta
+  const recetaLimpia = this.receta
+    .filter(item => item.id_ingredient && parseFloat(item.cant_us) > 0)
+    .map(item => ({
+      id_ingredient: Number(item.id_ingredient),
+      cant_us: parseFloat(item.cant_us)
+    }));
 
-      console.log("cocinas cargadas", this.cocinasSeleccionadas);
+  if (recetaLimpia.length === 0) {
+    this.showToast('Debe agregar al menos un insumo con cantidad válida', 'warning');
+    return;
+  }
 
+  // --- 4. Formateo de TODOS los campos numéricos (incluyendo Stock Mínimo) ---
+  this.newProduct.stock_congelado = parseFloat(this.newProduct.stock_congelado) || 0;
+  this.newProduct.stock_disponible = parseFloat(this.newProduct.stock_disponible) || 0;
+  this.newProduct.stock_minimo = parseFloat(this.newProduct.stock_minimo) || 0; // 🔥 Agregado
+  this.newProduct.time_prep = parseInt(this.newProduct.time_prep) || 0;
+  this.newProduct.price = parseFloat(this.newProduct.price) || 0;
+
+  // --- 5. Envío al servidor ---
+  const loading = await this.loadingCtrl.create({ message: 'Guardando producto...' });
+  await loading.present();
+
+  const payload = {
+    product: this.newProduct,
+    recipe: recetaLimpia,
+    kitchens: this.cocinasSeleccionadas,
+    system: this.server.getSystem()
+  };
+
+  this.server.saveFullProduct(payload).subscribe({
+    next: (res: any) => {
+      loading.dismiss();
+      if (res.success) {
+        this.showToast('Producto guardado con éxito', 'success');
+        this.modalCtrl.dismiss(true);
+      } else {
+        this.showToast(res.error || 'Error al guardar', 'danger');
+      }
+    },
+    error: (err) => {
+      loading.dismiss();
+      console.error('Error:', err);
+      this.showToast('Error de conexión', 'danger');
     }
-
+  });
+}
+loadKitchensAssigned(id: number) {
+  // Asegúrate de pasar el sistema en la petición si tu servicio lo requiere
+  this.server.getProductKitchens(id).subscribe((res: any) => {
+    if (res.success && res.data) {
+      // Forzamos que cada ID sea un número real
+      this.cocinasSeleccionadas = res.data.map((k: any) => Number(k.kitchen_id));
+      console.log("Cocinas asignadas cargadas (IDs):", this.cocinasSeleccionadas);
+    }
   });
 }
 

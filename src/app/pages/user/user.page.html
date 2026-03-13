@@ -18,8 +18,9 @@
         <ion-select [(ngModel)]="selectedRole" interface="popover" placeholder="Filtrar Rol">
           <ion-select-option value="all">Todos los Roles</ion-select-option>
           <ion-select-option value="admin">Administrador</ion-select-option>
+          <ion-select-option value="jefe_mesero">Jefe de mesero</ion-select-option>
           <ion-select-option value="mesero">Mesero</ion-select-option>
-          <ion-select-option value="cajero">Cajero</ion-select-option>
+          <ion-select-option value="cocina">Cocina</ion-select-option>
         </ion-select>
       </div>
 
@@ -67,7 +68,7 @@
           </ion-button>
         </ion-col>
 
-        <ion-col size="2" class="actions-cell">
+        <ion-col size="1" class="actions-cell">
           <ion-button fill="clear" color="primary" (click)="openCreateModal(user)">
             <ion-icon slot="icon-only" name="create-outline"></ion-icon>
           </ion-button>

@@ -10,3 +10,36 @@
   }
 
 }
+// Ocultar elementos en la impresión
+@media print {
+  .no-print, ion-header, ion-button {
+    display: none !important;
+  }
+  
+  body, ion-content {
+    --background: white;
+    background: white;
+  }
+
+  #factura-container {
+    width: 80mm; // Ancho estándar de ticket
+    margin: 0 auto;
+    padding: 10px;
+    font-family: 'Courier New', Courier, monospace;
+  }
+}
+
+// Estilos de pantalla
+#factura-container {
+  background: white;
+  padding: 20px;
+  border: 1px dashed #ccc;
+  color: black;
+  max-width: 500px;
+  margin: 20px auto;
+}
+
+.ticket-header { text-align: center; }
+.dotted { border: none; border-top: 1px dotted black; }
+.items-table { font-size: 14px; margin: 10px 0; }
+.ticket-footer { text-align: center; font-size: 11px; margin-top: 20px; }

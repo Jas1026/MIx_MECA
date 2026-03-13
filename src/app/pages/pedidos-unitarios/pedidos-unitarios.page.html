@@ -1,6 +1,11 @@
 <ion-header class="ion-no-border">
   <ion-toolbar class="toolbar-cafe">
     <ion-title>Mis pedidos</ion-title>
+    <ion-buttons slot="primary">
+      <ion-button (click)="cargarPedidos()">
+        <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -9,111 +14,116 @@
   <div class="filter-card">
     <ion-grid>
       <ion-row class="ion-align-items-center">
-        <ion-col size="12" size-md="3">
+        <ion-col size="12" size-md="4">
           <div class="filter-item">
             <ion-label>Estado</ion-label>
-            <ion-select [(ngModel)]="estadoSeleccionado" interface="popover" placeholder="Todos">
+            <ion-select [(ngModel)]="estadoSeleccionado" interface="popover">
               <ion-select-option value="">Todos</ion-select-option>
-              <ion-select-option value="open">Abierto (Open)</ion-select-option>
-              <ion-select-option value="closed">Cerrado (Closed)</ion-select-option>
+              <ion-select-option value="open">Abierto</ion-select-option>
+              <ion-select-option value="closed">Finalizado</ion-select-option>
+              <ion-select-option value="cancel">Cancelado</ion-select-option>
             </ion-select>
           </div>
+        </ion-col>
+
+        <ion-col size="12" size-md="4">
+          <div class="filter-item">
+            <ion-label>Ubicación / Área</ion-label>
+            <ion-select [(ngModel)]="pisoSeleccionado" interface="popover">
+              <ion-select-option value="">Todas las áreas</ion-select-option>
+              <ion-select-option *ngFor="let p of pisos" [value]="p.name">{{ p.name }}</ion-select-option>
+            </ion-select>
+          </div>
+        </ion-col>
+
+        <ion-col size="12" size-md="4">
+          <ion-button expand="block" fill="clear" color="danger" (click)="limpiarFiltros()">
+            <ion-icon name="trash-outline" slot="start"></ion-icon>
+            Limpiar Filtros
+          </ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
   </div>
 
-  <ion-modal #modalFecha trigger="open-date" class="modal-calendario">
-    <ng-template>
-      <div class="datetime-wrapper">
-        <ion-datetime presentation="date" locale="es-ES" [showDefaultButtons]="true" doneText="Confirmar"
-          cancelText="Cancelar" (ionChange)="fechaSeleccionada($event, modalFecha)">
-        </ion-datetime>
-      </div>
-    </ng-template>
-  </ion-modal>
-
   <div class="tabla-web-container">
     <table class="mixtura-table">
       <thead>
         <tr>
-          <th>Mesero</th>
           <th>Ubicación</th>
-          <th>Fecha y Hora</th>
+          <th>Fecha</th>
           <th>Estado</th>
-          <th>Tiempo Estimado (min)</th>
-
+          <th>Tiempo</th>
           <th class="ion-text-center">Acciones</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let p of pedidosFiltrados; let i = index" [style.opacity]="p.status === 'closed' ? '0.7' : '1'">
+        <tr *ngFor="let p of pedidosFiltrados" [style.opacity]="p.status === 'closed' ? '0.7' : '1'">
           <td>
-            <div class="user-cell">
-              <ion-icon name="person-circle-outline"></ion-icon>
-              {{ p.mesero }}
+            <div class="location-cell">
+              <ion-badge color="secondary" mode="ios">{{ p.nombre_mesa }}</ion-badge>
+              <small style="display: block; color: gray;">{{ p.nombre_piso }}</small>
             </div>
           </td>
-          <td>
-      <div class="location-cell">
-        <ion-badge color="secondary" mode="ios">{{ p.nombre_mesa }}</ion-badge>
-        <small style="display: block; color: gray;">{{ p.nombre_piso }}</small>
-      </div>
-    </td>
           <td class="date-cell">{{ p.order_date }}</td>
-
           <td>
             <span class="status-badge" [ngClass]="p.status">
-              {{ p.status }}
+              {{ p.status === 'cancel' ? 'Cancelado' : (p.status === 'closed' ? 'Finalizado' : 'Abierto') }}
             </span>
           </td>
-
           <td class="ion-text-center">
             <div [ngClass]="getTimerClassPedido(p)">
-              <ion-icon name="time-outline" *ngIf="p.status !== 'closed'"></ion-icon>
-              <ion-icon name="checkmark-done-outline" *ngIf="p.status === 'closed'"></ion-icon>
+              <ion-icon name="time-outline"></ion-icon>
               <strong>{{ p.timeDisplay }}</strong>
               <small> / {{ p.estimated_total_time }} min</small>
             </div>
-
-            <div *ngIf="p.status === 'ready'" class="ready-message">
-              ¡Listo para entrega!
-            </div>
+            <div *ngIf="p.status === 'ready'" class="ready-message">¡Listo!</div>
           </td>
-           <td class="ion-text-center">
-            <div style="display: flex; justify-content: center; gap: 8px;">
-              <ion-button size="small" color="medium" shape="round" (click)="View_Order(p)">
-                <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
-              </ion-button>
-            </div>
+          <td class="ion-text-center">
+            <ion-button size="small" color="warning" shape="round" (click)="cambiarMesa(p)" title="Cambiar Mesa">
+              <ion-icon name="swap-horizontal-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+
+            <ion-button size="small" color="medium" shape="round" (click)="View_Order(p)" title="Ver Pedido">
+              <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+            </ion-button>
           </td>
         </tr>
-        
       </tbody>
     </table>
   </div>
-<ion-item-sliding *ngFor="let p of pedidosFiltrados">
 
-  <ion-item class="mobile-order-item">
-    <ion-label>
+  <ion-list class="lista-mobile" lines="none">
+    <ion-item-sliding *ngFor="let p of pedidosFiltrados">
+      <ion-item class="mobile-order-item">
+        <ion-label>
+          <div class="mobile-header">
+            <h3>{{ p.nombre_mesa }} <small>({{ p.nombre_piso }})</small></h3>
+            <span class="status-badge" [ngClass]="p.status">
+                {{ p.status === 'cancel' ? 'Cancel' : (p.status === 'closed' ? 'Finalizado' : 'Abierto') }}
+            </span>
+          </div>
+          <p><ion-icon name="calendar-outline"></ion-icon> {{ p.order_date }}</p>
+          
+          <div class="mobile-time-info" style="margin-top: 8px; display: flex; align-items: center; gap: 10px;">
+            <div [ngClass]="getTimerClassPedido(p)" style="display: flex; align-items: center; gap: 4px; font-size: 13px;">
+              <ion-icon name="time-outline"></ion-icon>
+              <strong>{{ p.timeDisplay }}</strong> / {{ p.estimated_total_time }}m
+            </div>
+          </div>
+        </ion-label>
+        
+        <div slot="end" style="display: flex; gap: 5px;">
+          <ion-button  fill="clear" color="warning" (click)="cambiarMesa(p)">
+            <ion-icon name="swap-horizontal-outline" slot="icon-only"></ion-icon>
+          </ion-button>
 
-      <div class="mobile-header">
-        <h3>PEDIDO #{{ p.order_id }}</h3>
-        <span class="status-badge" [ngClass]="p.status">{{ p.status }}</span>
-      </div>
-
-      <p><ion-icon name="person-outline"></ion-icon> {{ p.mesero }}</p>
-      <p><ion-icon name="time-outline"></ion-icon> {{ p.order_date }}</p>
-
-    </ion-label>
-
-    <!-- BOTON VISIBLE SIEMPRE -->
-    <ion-button fill="clear" color="medium" (click)="View_Order(p)">
-      <ion-icon name="eye-outline"></ion-icon>
-    </ion-button>
-
-  </ion-item>
-
-</ion-item-sliding>
+          <ion-button fill="clear" color="medium" (click)="View_Order(p)">
+            <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-item>
+    </ion-item-sliding>
+  </ion-list>
 
 </ion-content>

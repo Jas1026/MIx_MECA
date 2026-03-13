@@ -30,23 +30,23 @@
         <ion-col size="12" size-md="2">
           <div class="filter-item">
             <ion-label>Estado</ion-label>
-<ion-select [(ngModel)]="estadoSeleccionado" interface="popover" placeholder="Todos">
+            <ion-select [(ngModel)]="estadoSeleccionado" interface="popover" placeholder="Todos">
 
-  <ion-select-option value="">Todos</ion-select-option>
+              <ion-select-option value="">Todos</ion-select-option>
 
-  <ion-select-option value="open">
-    Abierto
-  </ion-select-option>
+              <ion-select-option value="open">
+                Abierto
+              </ion-select-option>
 
-  <ion-select-option value="closed">
-    Finalizado
-  </ion-select-option>
+              <ion-select-option value="closed">
+                Finalizado
+              </ion-select-option>
 
-  <ion-select-option value="cancel">
-    Cancelado
-  </ion-select-option>
+              <ion-select-option value="cancel">
+                Cancelado
+              </ion-select-option>
 
-</ion-select>
+            </ion-select>
           </div>
         </ion-col>
 
@@ -99,11 +99,11 @@
           </td>
           <td class="date-cell">{{ p.order_date }}</td>
           <td>
-<span class="status-badge" [ngClass]="p.cancel == 1 ? 'cancel' : p.status">
+            <span class="status-badge" [ngClass]="p.cancel == 1 ? 'cancel' : p.status">
 
-  {{ p.cancel == 1 ? 'Cancelado' : (p.status == 'closed' ? 'Finalizado' : 'Abierto') }}
+              {{ p.cancel == 1 ? 'Cancelado' : (p.status == 'closed' ? 'Finalizado' : 'Abierto') }}
 
-</span>
+            </span>
           </td>
           <td class="ion-text-center">
             <div [ngClass]="p.isDelayed ? 'delayed' : 'normal'">
@@ -121,68 +121,70 @@
             </span>
           </td>
           <td class="ion-text-center">
-            <div style="display: flex; justify-content: center; gap: 8px;">
+  <div style="display: flex; justify-content: center; gap: 8px;">
 
-              <!-- 👁 BOTÓN VER (SIEMPRE VISIBLE) -->
-              <!-- 👁 BOTÓN VER (SIEMPRE VISIBLE) -->
-              <ion-button size="small" color="medium" shape="round" (click)="View_Order(p)">
-                <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
-              </ion-button>
+    <ion-button size="small" color="medium" shape="round" (click)="View_Order(p)">
+      <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+    </ion-button>
+<ion-button *ngIf="p.status?.toLowerCase() === 'open' && (userRole === 'admin' || userRole === 'jefe_mesero')" 
+            size="small" color="warning" shape="round" (click)="editarPedido(p)">
+  <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+</ion-button>
 
-              <!-- ✏️ BOTÓN EDITAR (SOLO SI ESTÁ OPEN) -->
-              <ion-button *ngIf="p.status === 'open'" size="small" color="warning" shape="round"
-                (click)="editarPedido(p)">
-                <ion-icon name="create-outline" slot="icon-only"></ion-icon>
-              </ion-button>
+<ion-button *ngIf="(p.status?.toLowerCase() === 'open' || p.status?.toLowerCase() === 'ready') && (userRole === 'admin' || userRole === 'jefe_mesero')" 
+            size="small" color="danger" shape="round" (click)="finalizarPedido(p)">
+  <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+</ion-button>
 
-              <!-- 🗑 BOTÓN CERRAR (YA LO TENÍAS) -->
-              <ion-button *ngIf="p.status === 'open' || p.status === 'ready'" size="small" color="danger" shape="round"
-                (click)="finalizarPedido(p)">
-                <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
-              </ion-button>
-
-            </div>
-          </td>
+  </div>
+</td>
         </tr>
       </tbody>
     </table>
   </div>
-
-  <ion-list class="lista-mobile" lines="none">
-    <ion-item-sliding *ngFor="let p of pedidosFiltrados">
-      <ion-item class="mobile-order-item">
-        <ion-label>
-          <div class="mobile-header">
-            <h3>PEDIDO #{{ p.order_id }}</h3>
-           <span class="status-badge" [ngClass]="p.cancel == 1 ? 'cancel' : p.status">
-
-  {{ p.cancel == 1 ? 'Cancelado' : (p.status == 'closed' ? 'Finalizado' : 'Abierto') }}
-
-</span>
-          </div>
-          <p><ion-icon name="person-outline"></ion-icon> {{ p.mesero }}</p>
-          <p><ion-icon name="time-outline"></ion-icon> {{ p.order_date }}</p>
-        </ion-label>
-        <div slot="end" style="display: flex; gap: 5px;">
-
-          <!-- 👁 VER (SIEMPRE) -->
-          <ion-button fill="clear" color="medium" (click)="View_Order(p)">
-            <ion-icon name="eye-outline"></ion-icon>
-          </ion-button>
-
-          <!-- ✏️ EDITAR (SOLO OPEN) -->
-          <ion-button *ngIf="p.status === 'open'" fill="clear" color="warning" (click)="editarPedido(p)">
-            <ion-icon name="create-outline"></ion-icon>
-          </ion-button>
-
-          <!-- 🗑 CERRAR (SOLO OPEN) -->
-          <ion-button *ngIf="p.status === 'open'" fill="clear" color="danger" (click)="finalizarPedido(p)">
-            <ion-icon name="trash-outline"></ion-icon>
-          </ion-button>
-
+<ion-list class="lista-mobile" lines="none">
+  <ion-item-sliding *ngFor="let p of pedidosFiltrados">
+    <ion-item class="mobile-order-item">
+      <ion-label>
+        <div class="mobile-header">
+          <h3>PEDIDO #{{ p.order_id }}</h3>
+          <span class="status-badge" [ngClass]="p.cancel == 1 ? 'cancel' : p.status">
+            {{ p.cancel == 1 ? 'Cancelado' : (p.status == 'closed' ? 'Finalizado' : 'Abierto') }}
+          </span>
         </div>
-      </ion-item>
-    </ion-item-sliding>
-  </ion-list>
+
+        <p><ion-icon name="person-outline"></ion-icon> {{ p.mesero }}</p>
+        <p><ion-icon name="calendar-outline"></ion-icon> {{ p.order_date }}</p>
+
+        <div class="mobile-time-info" style="margin-top: 8px; display: flex; align-items: center; gap: 10px;">
+          <div [ngClass]="p.isDelayed ? 'delayed' : 'normal'" style="display: flex; align-items: center; gap: 4px; font-size: 13px;">
+            <ion-icon name="time-outline"></ion-icon>
+            <strong>{{ p.timeDisplay }}</strong> / {{ p.estimated_time }}m
+          </div>
+
+          <span *ngIf="p.isDelayed" class="delay-badge" style="font-size: 11px; padding: 2px 6px;">
+            Atraso: +{{ p.delayTime }}
+          </span>
+        </div>
+      </ion-label>
+
+      <div slot="end" class="mobile-actions">
+  <ion-button fill="clear" color="medium" (click)="View_Order(p)">
+    <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+  </ion-button>
+<ion-button *ngIf="p.status?.toLowerCase() === 'open' && (userRole === 'admin' || userRole === 'jefe_mesero')" 
+            size="small" color="warning" shape="round" (click)="editarPedido(p)">
+  <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+</ion-button>
+
+<ion-button *ngIf="(p.status?.toLowerCase() === 'open' || p.status?.toLowerCase() === 'ready') && (userRole === 'admin' || userRole === 'jefe_mesero')" 
+            size="small" color="danger" shape="round" (click)="finalizarPedido(p)">
+  <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+</ion-button>
+
+</div>
+    </ion-item>
+  </ion-item-sliding>
+</ion-list>
 
 </ion-content>

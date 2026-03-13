@@ -52,7 +52,12 @@ export class ServerContentService {
 
     return this.http.post(this.urlService + "get_flats.php", body);
   }
+  getFlats_panel() {
+    let body = new FormData();
+    body.append("system", this.getSystem());
 
+    return this.http.post(this.urlService + "get_flats_panel.php", body);
+  }
   getTables(id_flat: string) {
     let body = new FormData();
     body.append("id_flat", id_flat);
@@ -60,7 +65,13 @@ export class ServerContentService {
 
     return this.http.post(this.urlService + "get_tables.php", body);
   }
+  getTables_new(id_flat: string) {
+    let body = new FormData();
+    body.append("id_flat", id_flat);
+    body.append("system", this.getSystem());
 
+    return this.http.post(this.urlService + "get_tables_new.php", body);
+  }
   // ---------------- PRODUCTOS ----------------
 
   getCategories() {
@@ -79,16 +90,16 @@ export class ServerContentService {
   }
 
   // ---------------- ÓRDENES ----------------
+createOrder(id_table: any, id_user: any, products: any[], force: boolean = false) {
+  const formData = new FormData();
+  formData.append('id_table', id_table);
+  formData.append('id_user', id_user);
+  formData.append('products', JSON.stringify(products));
+  formData.append('system', this.getSystem());
+  formData.append('force_order', force ? 'true' : 'false'); // <--- ENVIAR ESTO
 
-  createOrder(id_table: string, id_user: string, products: any[]) {
-    let body = new FormData();
-    body.append("id_table", id_table);
-    body.append("id_user", id_user);
-    body.append("products", JSON.stringify(products));
-    body.append("system", this.getSystem());
-
-    return this.http.post(this.urlService + "create_order.php", body);
-  }
+  return this.http.post(`${this.urlService}/create_order.php`, formData);
+}
 
   updateOrderStatus(id_order: string, status: string) {
     let body = new FormData();
@@ -355,7 +366,14 @@ deleteCategory(id: any) {
   return this.http.post(`${this.urlService}delete_category.php`, body);
 }
 
+changeOrderTable(orderId: number, newTableId: number) {
+  let body = new FormData();
+  body.append("order_id", orderId.toString());
+  body.append("new_table_id", newTableId.toString());
+  body.append("system", this.getSystem());
 
+  return this.http.post(`${this.urlService}change_order_table.php`, body);
+}
 
 
 
@@ -421,15 +439,15 @@ updateUserState(body: FormData) {
   // Asegúrate de que la ruta apunte al archivo toggle_user_state.php
   return this.http.post(`${this.urlService}toggle_user_state.php`, body);
 }
-// En tu server-content.service.ts
-emitirFacturaReal(orderId: number, cliente: any, detalles: any[]) {
-  const data = {
-    order_id: orderId,
-    razonSocial: cliente.nombre,
-    nit: cliente.nit,
-    items: detalles // Asegúrate de que los campos coincidan con lo que pide la API
-  };
-  return this.http.post(`${this.urlService}/emitir_factura_cucu.php`, data);
+
+emitirFacturaReal(payload: any) {
+  // Recuperamos el sistema actual (ej: 'mixtura')
+  const system = localStorage.getItem('system') || 'mixtura';
+  
+  // Agregamos el sistema al payload antes de enviar
+  const finalPayload = { ...payload, system: system };
+
+  return this.http.post(`${this.urlService}/emitir_factura_real.php`, finalPayload);
 }
 getOrdersByUser(userId: string) {
   let body = new FormData();
@@ -469,6 +487,40 @@ searchProducts(term: string) {
   return this.http.post(this.urlService + 'search_products.php', body);
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

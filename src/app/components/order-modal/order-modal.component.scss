@@ -1,263 +1,196 @@
+/* CONTENEDOR PRINCIPAL */
 .modal-container {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #ffffff;
+  background: #f4f7f6;
 
-  @media (min-width: 768px) {
+  // En pantallas grandes se divide en dos columnas
+  @media (min-width: 992px) {
     flex-direction: row;
   }
 }
 
-/* PANEL IZQUIERDO */
+/* PANEL IZQUIERDO (PRODUCTOS Y CATEGORÍAS) */
 .left-panel {
-  flex: 1.2;
-  overflow-y: auto;
-  padding: 12px;
-  background: #ffffff;
-
-  .custom-list ion-item {
-    --padding-start: 10px;
-    margin-bottom: 6px;
-    --border-radius: 8px;
-    border: 1px solid #f0f0f0;
-  }
-}
-
-/* PANEL DERECHO */
-.right-panel {
-  flex: 0.9;
+  flex: 1.3;
   display: flex;
   flex-direction: column;
-  background: #f8f8f8;
-  border-top: 1px solid #ddd;
+  height: 50%; // Altura inicial en móvil
+  background: #ffffff;
+  overflow: hidden; // Evita scroll doble
 
-  @media (min-width: 768px) {
-    border-top: none;
-    border-left: 1px solid #ddd;
+  @media (min-width: 992px) {
+    height: 100%;
+    border-right: 1px solid #e0e0e0;
   }
 
-  .cart-header {
-    padding: 15px;
-    background: #444;
-    color: white;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 600;
-  }
-
-  .cart-items-container {
+  // Contenedor interno con scroll para que el buscador se quede fijo
+  ion-list {
     flex: 1;
     overflow-y: auto;
     padding: 10px;
+    background: transparent;
   }
-
-  /* ITEM DEL CARRITO */
-  ion-item {
-    --background: #ffffff;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    padding-top: 8px;
-    padding-bottom: 8px;
-  }
-
-  .item-name {
-    font-weight: 600;
-    font-size: 0.95rem;
-  }
-
-  /* Inputs más limpios */
-  ion-item[lines="none"] {
-    margin-top: 4px;
-    margin-bottom: 4px;
-  }
-
-  ion-input {
-    font-size: 0.85rem;
-  }
-
-  /* Separar cantidad */
-  ion-buttons {
-    margin-left: 8px;
-  }
-
-  ion-badge {
-    margin: 0 4px;
-  }
-
-  .cart-footer {
-    padding: 15px;
-    background: white;
-    border-top: 1px solid #ddd;
-
-    .total-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 12px;
-
-      .total-amount {
-        font-size: 1.4rem;
-        font-weight: bold;
-        color: #2dd36f;
-      }
-    }
-
-    .confirm-btn {
-      --height: 48px;
-      font-weight: 600;
-    }
-  }
-}
-.modal-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background: #ffffff;
-
-  @media (min-width: 768px) {
-    flex-direction: row;
-  }
-}
-
-// PANEL IZQUIERDO
-.left-panel {
-  flex: 1.1;
-  overflow-y: auto;
-  padding: 10px;
-  background: #fdfdfd;
 
   .product-header {
+    padding: 10px 15px;
+    background: #fff;
     display: flex;
     align-items: center;
+    gap: 10px;
     border-bottom: 1px solid #f0f0f0;
-    margin-bottom: 10px;
-    .category-title { font-size: 1.1rem; font-weight: 700; color: #333; }
+    
+    .category-title { 
+      font-size: 1.1rem; 
+      font-weight: 700; 
+      color: #2c3e50;
+      margin: 0;
+    }
   }
 
-  .custom-list {
-    ion-item {
-      --padding-start: 8px;
-      --border-radius: 10px;
-      margin-bottom: 5px;
-      --background: #fff;
-      border: 1px solid #f0f0f0;
-    }
+  .category-item, .custom-list ion-item {
+    --background: #fff;
+    --border-radius: 12px;
+    margin-bottom: 8px;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    --padding-start: 12px;
+    transition: transform 0.2s;
+
+    &:active { transform: scale(0.98); }
+    h2, h3 { font-weight: 600; color: #333; }
   }
 }
 
-// PANEL DERECHO (CARRITO)
+/* PANEL DERECHO (CARRITO / RESUMEN) */
 .right-panel {
   flex: 0.9;
   display: flex;
   flex-direction: column;
-  background: #f5f5f5;
-  border-left: 1px solid #ddd;
+  height: 50%; // En móvil ocupa la otra mitad
+  background: #f8f9fa;
+  box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
+
+  @media (min-width: 992px) {
+    height: 100%;
+  }
 
   .cart-header {
     padding: 15px;
-    background: #444;
+    background: #222;
     color: white;
     display: flex;
     align-items: center;
     gap: 10px;
-    font-weight: bold;
+    font-size: 1rem;
+    font-weight: 600;
+    ion-icon { color: #2dd36f; }
   }
 
   .cart-items-container {
     flex: 1;
-    overflow-y: auto;
-
-    .cart-item {
-      --background: #fff;
-      margin: 8px;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-      --padding-start: 0; // Importante para que nuestro div interno ocupe todo
-      --inner-padding-end: 0;
-
-      // ESTO ARREGLA EL CLIC
-      .full-width-container {
-        width: 100%;
-        padding: 12px;
-        pointer-events: auto !important; // Fuerza a que los clics entren aquí
-      }
-    }
-
-    .item-main-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-      .item-name { font-weight: bold; font-size: 1rem; color: #222; }
-      .item-price { font-weight: 800; color: #444; }
-    }
-
-    .extra-inputs {
-      margin-bottom: 8px;
-
-      .input-box {
-        display: flex;
-        align-items: center;
-        background: #f9f9f9;
-        border-radius: 8px;
-        margin-bottom: 6px;
-        padding: 0 10px;
-        height: 38px;
-        border: 1px solid #eee;
-        pointer-events: auto !important; // Permite el clic en el cuadro
-
-        ion-icon { font-size: 16px; color: #888; margin-right: 8px; }
-        
-        ion-input { 
-          --padding-start: 0; 
-          font-size: 0.85rem;
-          height: 100%;
-          pointer-events: auto !important; // Permite el clic en el texto
-        }
-      }
-    }
-
-    .item-footer {
-      display: flex;
-      justify-content: flex-end;
-
-      .quantity-controls {
-        display: flex;
-        align-items: center;
-        background: #f0f0f0;
-        border-radius: 25px;
-        padding: 2px 5px;
-        pointer-events: auto !important; // Permite clic en los botones
-        
-        ion-button { 
-          --padding-start: 8px; 
-          --padding-end: 8px; 
-          height: 32px;
-          margin: 0;
-        }
-        ion-badge { background: transparent; color: #333; font-weight: bold; }
-      }
-    }
+    overflow-y: auto; // Solo los items hacen scroll
+    padding: 10px;
 
     .empty-cart {
-      text-align: center;
-      padding: 40px 20px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       color: #999;
-      ion-icon { font-size: 3rem; margin-bottom: 10px; }
+      ion-icon { font-size: 4rem; opacity: 0.3; }
     }
   }
 
+  /* ESTILO DE ITEMS EN CARRITO */
+  ion-item-sliding {
+    margin-bottom: 10px;
+    background: transparent;
+  }
+
+  ion-item {
+    --background: #ffffff;
+    --border-radius: 15px;
+    --padding-top: 10px;
+    --padding-bottom: 10px;
+    border: 1px solid #eee;
+    
+    .item-name {
+      font-weight: 700;
+      color: #222;
+      font-size: 0.95rem;
+      white-space: normal; // Permite que nombres largos bajen de línea
+    }
+  }
+
+  /* CONTENEDOR DE INPUTS (Notas y Acompañamiento) */
+  .extra-inputs {
+    margin-top: 8px;
+    
+    ion-item {
+      --min-height: 34px;
+      --background: #f5f6f7;
+      --border-radius: 8px;
+      margin-bottom: 4px;
+      font-size: 0.8rem;
+      border: none;
+      
+      ion-icon { font-size: 14px; color: #777; }
+    }
+  }
+
+  /* FOOTER FIJO DEL CARRITO */
   .cart-footer {
     padding: 20px;
-    background: white;
-    border-top: 1px solid #eee;
+    background: #ffffff;
+    border-top: 1px solid #e0e0e0;
+    box-shadow: 0 -5px 10px rgba(0,0,0,0.02);
 
     .total-row {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       margin-bottom: 15px;
-      .total-amount { font-size: 1.6rem; font-weight: 800; color: #2dd36f; }
+
+      span:first-child { color: #666; font-weight: 500; }
+      .total-amount { 
+        font-size: 1.5rem; 
+        font-weight: 800; 
+        color: #1a1a1a; 
+      }
+    }
+
+    .confirm-btn {
+      --height: 54px;
+      --box-shadow: 0 4px 12px rgba(45, 211, 111, 0.3);
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 0;
+    }
+  }
+}
+
+/* AJUSTE PARA EL TOGGLE Y PRECIO EDITABLE */
+.price-edit-container {
+  display: flex; 
+  flex-direction: column; 
+  align-items: flex-end; 
+  padding-left: 10px;
+
+  .price-input-row {
+    display: flex;
+    align-items: center;
+    font-weight: 800;
+    color: #333;
+    
+    ion-input {
+      --padding-start: 4px;
+      width: 70px;
+      background: #fff9c4; // Color crema para indicar que es editable
+      border-radius: 5px;
+      margin-left: 5px;
     }
   }
 }

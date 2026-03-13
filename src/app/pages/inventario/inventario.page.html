@@ -86,34 +86,39 @@
 
   <div *ngIf="segment === 'products'" class="table-container">
 <ion-card class="category-manager-card">
-    <ion-card-header (click)="showCatManager = !showCatManager" class="clickable-header">
-      <ion-card-title style="font-size: 0.9rem;">
-        <ion-icon [name]="showCatManager ? 'chevron-down' : 'chevron-forward'"></ion-icon>
-        Gestionar Categorías
-      </ion-card-title>
-    </ion-card-header>
+  <ion-card-header (click)="showCatManager = !showCatManager" class="clickable-header">
+    <ion-card-title style="font-size: 0.9rem;">
+      <ion-icon [name]="showCatManager ? 'chevron-down' : 'chevron-forward'"></ion-icon>
+      Gestionar Categorías
+    </ion-card-title>
+  </ion-card-header>
 
-    <ion-card-content *ngIf="showCatManager">
-      <ion-row class="ion-align-items-center">
-        <ion-col size="7">
-          <ion-input placeholder="Nombre de la categoría..." [(ngModel)]="catForm.name" class="stock-input"></ion-input>
-        </ion-col>
-        <ion-col size="5">
+  <ion-card-content *ngIf="showCatManager">
+    <ion-row class="ion-align-items-center form-row">
+      <ion-col size="12" size-md="7">
+        <ion-input placeholder="Nueva categoría..." [(ngModel)]="catForm.name" class="stock-input"></ion-input>
+      </ion-col>
+      <ion-col size="12" size-md="5" class="ion-text-right">
+        <div class="category-buttons">
           <ion-button expand="block" [color]="catForm.id ? 'warning' : 'dark'" (click)="saveCategory()">
+            <ion-icon name="save-outline" slot="start"></ion-icon>
             {{ catForm.id ? 'Actualizar' : 'Añadir' }}
           </ion-button>
-          <ion-button *ngIf="catForm.id" fill="clear" size="small" (click)="resetCatForm()">Cancelar</ion-button>
-        </ion-col>
-      </ion-row>
+          <ion-button *ngIf="catForm.id" fill="clear" size="small" (click)="resetCatForm()" color="medium">
+            Cancelar
+          </ion-button>
+        </div>
+      </ion-col>
+    </ion-row>
 
-      <div class="category-chip-container">
-        <ion-chip *ngFor="let cat of categories" outline="true">
-          <ion-label (click)="editCategory(cat)">{{ cat.name }}</ion-label>
-          <ion-icon name="close-circle" (click)="deleteCategory(cat.id)"></ion-icon>
-        </ion-chip>
-      </div>
-    </ion-card-content>
-  </ion-card>
+    <div class="category-chip-container">
+      <ion-chip *ngFor="let cat of categories" outline="true" class="custom-chip">
+        <ion-label (click)="editCategory(cat)">{{ cat.name }}</ion-label>
+        <ion-icon name="close-circle" (click)="deleteCategory(cat.id)"></ion-icon>
+      </ion-chip>
+    </div>
+  </ion-card-content>
+</ion-card>
     <div class="header-actions">
       <ion-searchbar placeholder="Buscar producto..." [(ngModel)]="filterProducto"
         class="custom-searchbar"></ion-searchbar>

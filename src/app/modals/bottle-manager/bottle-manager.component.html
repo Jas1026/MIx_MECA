@@ -8,7 +8,6 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-
 <ion-content class="ion-padding main-bg">
 
   <div class="registration-panel ion-margin-bottom">
@@ -17,32 +16,34 @@
       <ion-label>Registro de Envases</ion-label>
     </div>
     
-    <ion-row class="ion-padding-horizontal">
-      <ion-col size="3">
-        <div class="modern-input">
-          <span>Envase (g) - Peso actual</span>
-          <ion-input type="number" [(ngModel)]="nuevaBotella.peso_envase" placeholder="---"></ion-input>
-        </div>
-      </ion-col>
-      <ion-col size="3">
-        <div class="modern-input">
-          <span>Capacidad (ml) - De producto</span>
-          <ion-input type="number" [(ngModel)]="nuevaBotella.capacidad_total" placeholder="---"></ion-input>
-        </div>
-      </ion-col>
-      <ion-col size="3">
-        <div class="modern-input">
-          <span>Peso Total (g) - Botella llena </span>
-          <ion-input type="number" [(ngModel)]="nuevaBotella.peso_actual" placeholder="---"></ion-input>
-        </div>
-      </ion-col>
-      <ion-col size="3">
-        <div class="modern-input highlight-input">
-          <span>Cantidad</span>
-          <ion-input type="number" [(ngModel)]="nuevaBotella.cantidad"></ion-input>
-        </div>
-      </ion-col>
-    </ion-row>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12" size-sm="6" size-md="3">
+          <div class="modern-input">
+            <span>Peso (g) actual</span>
+            <ion-input type="number" [(ngModel)]="nuevaBotella.peso_envase" placeholder="0"></ion-input>
+          </div>
+        </ion-col>
+        <ion-col size="12" size-sm="6" size-md="3">
+          <div class="modern-input">
+            <span>Capacidad (ml)</span>
+            <ion-input type="number" [(ngModel)]="nuevaBotella.capacidad_total" placeholder="0"></ion-input>
+          </div>
+        </ion-col>
+        <ion-col size="12" size-sm="6" size-md="3">
+          <div class="modern-input">
+            <span>Peso Lleno (g)</span>
+            <ion-input type="number" [(ngModel)]="nuevaBotella.peso_actual" placeholder="0"></ion-input>
+          </div>
+        </ion-col>
+        <ion-col size="12" size-sm="6" size-md="3">
+          <div class="modern-input highlight-input">
+            <span>Cantidad</span>
+            <ion-input type="number" [(ngModel)]="nuevaBotella.cantidad"></ion-input>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
     
     <div class="ion-padding">
       <ion-button expand="block" (click)="registrarBotella()" mode="ios" class="btn-gradient" [disabled]="isSaving">
@@ -56,9 +57,9 @@
   <h3 class="modern-title">Envases en Uso</h3>
 
   <div *ngFor="let b of bottles" class="modern-bottle-card">
-    <ion-grid fixed>
+    <ion-grid fixed class="ion-no-padding">
       <ion-row class="ion-align-items-center">
-        <ion-col size="3" class="visual-col">
+        <ion-col size="3" size-sm="2" class="visual-col">
           <div class="bottle-wrapper">
             <div class="bottle-body">
               <div class="liquid" 
@@ -71,7 +72,7 @@
           </div>
         </ion-col>
 
-        <ion-col size="5" class="info-col">
+        <ion-col size="5" size-sm="6" class="info-col ion-padding-start">
           <div class="id-tag">ID: #{{ b.id_bottle }}</div>
           <h2 class="bottle-title">Envase Activo</h2>
           <div class="neto-display">
@@ -82,7 +83,7 @@
 
         <ion-col size="4" class="control-col">
           <div class="weight-card">
-            <ion-label>PESAJE ACTUAL</ion-label>
+            <ion-label>PESAJE</ion-label>
             <ion-input type="number" [(ngModel)]="b.peso_actual" class="modern-weight-input"></ion-input>
             <ion-button (click)="actualizarPeso(b)" mode="ios" fill="solid" color="success" class="save-btn">
               <ion-icon name="save" slot="icon-only"></ion-icon>
@@ -91,10 +92,5 @@
         </ion-col>
       </ion-row>
     </ion-grid>
-  </div>
-
-  <div *ngIf="bottles.length === 0" class="premium-empty">
-    <ion-icon name="flask-outline"></ion-icon>
-    <p>No hay botellas activas.</p>
   </div>
 </ion-content>
