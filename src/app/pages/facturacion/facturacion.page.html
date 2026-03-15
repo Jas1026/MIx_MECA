@@ -5,43 +5,18 @@
         <ion-icon name="arrow-back-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Facturación Pedido #{{ orderId }}</ion-title>
+    <ion-title>Resumen de Cuenta #{{ orderId }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-
-  <ion-card class="no-print">
-    <ion-card-header>
-      <ion-card-title>Datos del Cliente</ion-card-title>
-    </ion-card-header>
-
-    <ion-card-content>
-      <ion-item>
-        <ion-label position="stacked">NIT / CI / CEX</ion-label>
-        <ion-input type="text" [(ngModel)]="cliente.nit" placeholder="Ej: 1234567"></ion-input>
-      </ion-item>
-
-      <ion-item>
-        <ion-label position="stacked">Nombre / Razón Social</ion-label>
-        <ion-input type="text" [(ngModel)]="cliente.nombre" placeholder="Ej: Juan Perez"></ion-input>
-      </ion-item>
-    </ion-card-content>
-  </ion-card>
-
-  <div id="factura-container" class="print-content">
-    <div class="ticket-header">
-      <h2 style="margin-bottom: 5px;">MIXURA - MECA</h2>
-      <p>Casa Matriz</p>
-      <p>La Paz - Bolivia</p>
-    </div>
-
-    <hr class="dotted">
-
-    <div class="ticket-info">
-      <p><strong>FECHA:</strong> {{ today | date:'dd/MM/yyyy HH:mm' }}</p>
-      <p><strong>CLIENTE:</strong> {{ cliente.nombre || 'SIN NOMBRE' }}</p>
-      <p><strong>NIT/CI:</strong> {{ cliente.nit || '0' }}</p>
+  
+  <div id="factura-print" class="print-container">
+    <div class="ticket-header" style="text-align: center;">
+      <h2>MIXURA - MECA</h2>
+      <p>Comprobante de Consumo Final</p>
+      <p>Orden #{{ orderId }}</p>
+      <p>{{ today | date:'dd/MM/yyyy HH:mm' }}</p>
     </div>
 
     <hr class="dotted">
@@ -55,36 +30,50 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of detalles">
+        <tr *ngFor="let item of detallesTotales">
           <td>{{ item.quantity }}</td>
           <td>{{ item.nombre_producto }}</td>
-          <td align="right">{{ item.total_price | number:'1.2-2' }}</td>
+          <td align="right">Bs {{ item.total_price | number:'1.2-2' }}</td>
         </tr>
       </tbody>
     </table>
 
     <hr class="dotted">
 
-    <h2 style="text-align:right;">
-      TOTAL Bs: {{ total | number:'1.2-2' }}
-    </h2>
+    <div style="text-align: right;">
+      <h3>TOTAL GENERAL: Bs {{ totalGeneral | number:'1.2-2' }}</h3>
+    </div>
 
-    <div class="ticket-footer">
-      <p>"ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAÍS, EL USO ILÍCITO SERÁ SANCIONADO DE ACUERDO A LEY"</p>
-      <p style="font-size: 10px; margin-top: 10px;">Gracias por su preferencia</p>
+    <div class="pagos-realizados" style="margin-top: 20px; font-size: 0.9em;">
+      <p><b>HISTORIAL DE PAGOS:</b></p>
+      <div *ngFor="let pago of historialPagos" style="border-bottom: 1px solid #eee; padding: 5px 0;">
+        <span>{{ pago.razon_social }} ({{ pago.metodo_pago }}): <b>Bs {{ pago.monto_total }}</b></span>
+      </div>
+    </div>
+
+    <div class="ticket-footer" style="text-align: center; margin-top: 20px;">
+      <p>¡Gracias por su visita!</p>
     </div>
   </div>
 
   <div class="ion-padding no-print">
-    <ion-button expand="block" color="success" (click)="emitirFacturaSIAT()">
-      <ion-icon name="cloud-upload-outline" slot="start"></ion-icon>
-      GENERAR FACTURA SIAT
-    </ion-button>
-
-    <ion-button expand="block" fill="outline" color="dark" (click)="imprimir()">
+    <ion-button expand="block" color="dark" (click)="imprimir()">
       <ion-icon name="print-outline" slot="start"></ion-icon>
-      IMPRIMIR TICKET
+      IMPRIMIR RESUMEN COMPLETO
+    </ion-button>
+    
+    <ion-button expand="block" fill="clear" (click)="volverMesas()">
+      Finalizar y Salir
     </ion-button>
   </div>
 
 </ion-content>
+
+<style>
+  .dotted { border-top: 1px dashed #000; height: 1px; width: 100%; margin: 10px 0; }
+  .items-table th { border-bottom: 1px solid #000; padding: 5px 0; }
+  @media print {
+    .no-print { display: none; }
+    body { background: white; }
+  }
+</style>

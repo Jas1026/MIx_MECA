@@ -8,18 +8,11 @@ import { ServerContentService } from 'src/app/services/server-content.service';
   styleUrls: ['./facturacion.page.scss'],
 })
 export class FacturacionPage implements OnInit {
-
   orderId: string = '';
-  detalles: any[] = [];
-  subtotal: number = 0;
-  total: number = 0;
+  detallesTotales: any[] = [];
+  historialPagos: any[] = [];
+  totalGeneral: number = 0;
   today: Date = new Date();
-
-  // DATOS CLIENTE
-  cliente = {
-    nombre: '',
-    nit: ''
-  };
 
   constructor(
     private route: ActivatedRoute,
@@ -29,61 +22,25 @@ export class FacturacionPage implements OnInit {
 
   ngOnInit() {
     this.orderId = this.route.snapshot.paramMap.get('id') || '';
-    this.cargarDetalles();
+    this.cargarResumenFinal();
   }
-
-  cargarDetalles() {
-    this.server.getOrderDetails(Number(this.orderId))
-      .subscribe((res: any) => {
-        if (res.error === 0) {
-          this.detalles = res.data;
-          this.total = this.detalles.reduce(
-            (sum, item) => sum + Number(item.total_price), 0
-          );
-        }
-      });
-  }
-
-  emitirFacturaSIAT() {
-    if (!this.cliente.nombre || !this.cliente.nit) {
-      alert("Por favor, complete los datos de facturación (Nombre y NIT)");
-      return;
+cargarResumenFinal() {
+  // Solo mostramos lo que YA ESTÁ PAGADO para el ticket final
+  this.server.getOrderDetails(Number(this.orderId)).subscribe((res: any) => {
+    if (res.error === 0) {
+      // Filtramos solo los pagados para que el ticket no muestre lo que quedó pendiente (si fue pago parcial)
+      this.detallesTotales = res.data.filter((d:any) => d.estado_pago === 'pagado');
+      this.totalGeneral = this.detallesTotales.reduce((sum, item) => sum + Number(item.total_price), 0);
     }
+  });
 
-    // CREAMOS UN SOLO OBJETO (Payload) para evitar el error TS2554
-    const payload = {
-      order_id: Number(this.orderId),
-      nit: this.cliente.nit,
-      razonSocial: this.cliente.nombre,
-      total: this.total,
-      detalles: this.detalles
-    };
-
-    console.log("Enviando al SIAT:", payload);
-
-    this.server.emitirFacturaReal(payload).subscribe({
-      next: (res: any) => {
-        if (res.error === 0) {
-          alert("Factura emitida con éxito. CUF: " + res.cuf);
-          // Opcional: imprimir automáticamente después de generar en SIAT
-          setTimeout(() => window.print(), 500);
-          this.router.navigate(['/panel']);
-        } else {
-          alert("Error de Impuestos: " + res.message);
-        }
-      },
-      error: (err) => {
-        console.error(err);
-        alert("Error de conexión con el servidor");
-      }
-    });
-  }
-
+  this.server.getHistorialPagos(Number(this.orderId)).subscribe((res: any) => {
+    if (res.error === 0) {
+      this.historialPagos = res.data;
+    }
+  });
+}
   imprimir() {
-    if (!this.cliente.nombre || !this.cliente.nit) {
-      alert("Debe completar Nombre y NIT para la impresión");
-      return;
-    }
     window.print();
   }
 

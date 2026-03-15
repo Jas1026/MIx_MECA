@@ -1,41 +1,145 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar color="primary">
-    <ion-title>Resumen Pedido #{{ orderId }}</ion-title>
+    <ion-title>Cobro Mesa #{{ orderId }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrar()"><ion-icon name="close-outline"></ion-icon></ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-list lines="none">
-    <ion-item *ngFor="let d of detalles" style="--background: #f9f9f9; margin-bottom: 5px; border-radius: 10px;">
-      <ion-label>
-        <h3><b>{{ d.nombre_producto }}</b></h3>
-        <p>Cant: {{ d.quantity }} | Unit: Bs/ {{ d.unit_price }}</p>
-      </ion-label>
-      <ion-note slot="end" color="dark">Bs/ {{ d.total_price }}</ion-note>
-    </ion-item>
-  </ion-list>
+  <ion-segment [(ngModel)]="segmento" color="primary">
+    <ion-segment-button value="items"><ion-label>Por Items</ion-label></ion-segment-button>
+    <ion-segment-button value="partes"><ion-label>Partes</ion-label></ion-segment-button>
+    <ion-segment-button value="monto"><ion-label>Monto</ion-label></ion-segment-button>
+  </ion-segment>
 
   <div class="ion-padding">
-    <h2 style="text-align: right;">Total: Bs/ {{ total }}</h2>
     
-    <hr>
-    
-    <h3>Datos de Facturación</h3>
-    <ion-item>
-      <ion-label position="floating">NIT / CI / CEX</ion-label>
-      <ion-input type="text" [(ngModel)]="datosFactura.nit"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label position="floating">Razón Social / Nombre</ion-label>
-      <ion-input type="text" [(ngModel)]="datosFactura.razonSocial"></ion-input>
-    </ion-item>
+    <div [ngSwitch]="segmento" class="modo-container">
+      <div *ngSwitchCase="'items'">
+        <ion-list-header><ion-label>Pendientes de Cobro</ion-label></ion-list-header>
+        <ion-item *ngFor="let item of itemsPendientes" class="item-seleccion">
+          <ion-checkbox slot="start" [(ngModel)]="item.selected"></ion-checkbox>
+          <ion-label>
+            <h3>{{ item.nombre_producto }}</h3>
+            <p>Bs {{ item.unit_val | number:'1.2-2' }}</p>
+          </ion-label>
+        </ion-item>
+        <div *ngIf="itemsPendientes.length === 0" class="ion-text-center ion-padding">
+          <small>No hay más items por cobrar</small>
+        </div>
+      </div>
+
+      <div *ngSwitchCase="'partes'" class="ion-text-center">
+        <div class="card-pago-info">
+          <p>Dividir saldo restante <b>Bs {{ totalRestanteEnMesa | number:'1.2-2' }}</b> en:</p>
+          <ion-item lines="none">
+            <ion-range min="2" max="10" step="1" snaps="true" [(ngModel)]="numPartes" color="secondary">
+              <ion-icon slot="start" name="person-outline"></ion-icon>
+              <ion-icon slot="end" name="people-outline"></ion-icon>
+            </ion-range>
+          </ion-item>
+          <h1 class="monto-resaltado">Bs {{ (totalRestanteEnMesa / numPartes) | number:'1.2-2' }}</h1>
+          <ion-badge color="dark">Cada persona</ion-badge>
+        </div>
+      </div>
+
+      <div *ngSwitchCase="'monto'">
+        <ion-item lines="none" class="input-estilo">
+          <ion-label position="stacked">Monto Libre (Saldo: Bs {{totalRestanteEnMesa | number:'1.2-2'}})</ion-label>
+          <ion-input type="number" [(ngModel)]="montoManual" placeholder="0.00"></ion-input>
+        </ion-item>
+      </div>
+    </div>
+
+    <div class="seccion-factura ion-margin-top">
+      <div class="row-inputs">
+        <ion-item lines="none" class="input-estilo flex-1">
+          <ion-label position="stacked">NIT/CI</ion-label>
+          <ion-input type="text" [(ngModel)]="datosFactura.nit"></ion-input>
+        </ion-item>
+<ion-item lines="none" class="input-estilo flex-2">
+  <ion-label position="stacked">Razón Social</ion-label>
+  <ion-input 
+    #inputRazon
+    type="text" 
+    [(ngModel)]="datosFactura.razonSocial" 
+    (ionFocus)="seleccionarTexto(inputRazon)">
+  </ion-input>
+</ion-item>
+      </div>
+      <ion-item lines="none" class="input-estilo">
+        <ion-label position="stacked">Método de Pago</ion-label>
+        <ion-select [(ngModel)]="metodoPagoActual" interface="popover">
+          <ion-select-option value="efectivo">💵 Efectivo</ion-select-option>
+          <ion-select-option value="qr">📱 QR / Transferencia</ion-select-option>
+          <ion-select-option value="tarjeta">💳 Tarjeta</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </div>
+
+    <div class="seccion-extra ion-margin-top">
+      <p class="titulo-extra">¿CARGOS ADICIONALES?</p>
+      <div class="row-inputs">
+        <ion-item lines="none" class="input-estilo flex-1">
+          <ion-label position="stacked">Monto Extra</ion-label>
+          <ion-input type="number" [(ngModel)]="cargoExtra" placeholder="0.00"></ion-input>
+        </ion-item>
+        <ion-item lines="none" class="input-estilo flex-2" *ngIf="cargoExtra > 0">
+          <ion-label position="stacked">Motivo (Propina, delivery...)</ion-label>
+          <ion-input type="text" [(ngModel)]="motivoExtra" placeholder="Ej: Propina"></ion-input>
+        </ion-item>
+      </div>
+    </div>
+
+    <ion-button expand="block" shape="round" color="primary" class="ion-margin-top" (click)="agregarPago()" 
+                [disabled]="totalACobrarAhora <= 0">
+      <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+      {{ segmento === 'partes' ? 'Generar ' + numPartes + ' Pagos' : 'Añadir a Canasta' }}
+    </ion-button>
+
+    <div *ngIf="pagosTemporales.length > 0" class="canasta-container ion-margin-top">
+      <div class="canasta-header">
+        <ion-icon name="basket-outline"></ion-icon>
+        <span>PAGOS EN CANASTA</span>
+      </div>
+      
+      <ion-list lines="full">
+        <ion-item *ngFor="let p of pagosTemporales; let i = index">
+          <ion-label>
+            <h3>{{ p.razonSocial }}</h3>
+            <p>{{ p.metodo_pago | uppercase }} <span *ngIf="p.monto_extra > 0" color="success">(+ {{p.monto_extra}} {{p.motivo_extra}})</span></p>
+          </ion-label>
+          <div slot="end" class="ion-text-right">
+            <b style="font-size: 1.1em;">Bs {{ p.monto | number:'1.2-2' }}</b>
+          </div>
+          <ion-button slot="end" fill="clear" color="danger" (click)="quitarPago(p, i)">
+            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </ion-list>
+
+      <div class="resumen-final">
+        <div class="resumen-row">
+          <span>Acumulado Canasta:</span>
+          <b>Bs {{ totalAcumuladoCanasta | number:'1.2-2' }}</b>
+        </div>
+        <div class="resumen-row" [style.color]="totalRestanteEnMesa > 0.05 ? 'var(--ion-color-danger)' : 'var(--ion-color-success)'">
+          <span>Falta cobrar en Mesa:</span>
+          <b>Bs {{ totalRestanteEnMesa | number:'1.2-2' }}</b>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <ion-button expand="block" color="success" (click)="generarFacturaSIAT()" [disabled]="!datosFactura.nit">
-    EMITIR FACTURA LEGAL
-  </ion-button>
-
-  <ion-button expand="block" fill="clear" color="medium" (click)="cerrar()">
-    Cerrar
-  </ion-button>
 </ion-content>
+
+<ion-footer class="ion-no-border">
+  <ion-toolbar class="ion-padding">
+    <ion-button expand="block" color="success" shape="round" size="large" (click)="confirmarTodo()" 
+                [disabled]="totalRestanteEnMesa > 0.05 || pagosTemporales.length === 0">
+      <ion-icon name="checkmark-done-circle-outline" slot="start"></ion-icon>
+      CONFIRMAR Y CERRAR MESA
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>

@@ -439,15 +439,14 @@ updateUserState(body: FormData) {
   // Asegúrate de que la ruta apunte al archivo toggle_user_state.php
   return this.http.post(`${this.urlService}toggle_user_state.php`, body);
 }
-
 emitirFacturaReal(payload: any) {
-  // Recuperamos el sistema actual (ej: 'mixtura')
-  const system = localStorage.getItem('system') || 'mixtura';
+  // Obtenemos el sistema (mixtura o mecapos) desde donde lo tengas guardado
+  const sistemaActivo = localStorage.getItem('sistema') || 'mixtura'; 
   
-  // Agregamos el sistema al payload antes de enviar
-  const finalPayload = { ...payload, system: system };
+  // Añadimos el sistema al objeto que enviamos
+  const data = { ...payload, system: sistemaActivo };
 
-  return this.http.post(`${this.urlService}/emitir_factura_real.php`, finalPayload);
+  return this.http.post(`${this.urlService}/emitirFacturaLocal.php`, data);
 }
 getOrdersByUser(userId: string) {
   let body = new FormData();
@@ -487,11 +486,24 @@ searchProducts(term: string) {
   return this.http.post(this.urlService + 'search_products.php', body);
 
 }
+getHistorialPagos(orderId: number) {
+  const sistemaActivo = localStorage.getItem('sistema') || 'mixtura';
+  // Usamos params de URL porque el PHP espera un GET
+  return this.http.get(`${this.urlService}/getHistorialPagos.php?order_id=${orderId}&system=${sistemaActivo}`);
+}
 
 
+/**
+ * Procesa todos los bloques de pago acumulados en la canasta de cobro
+ * @param payload Objeto que contiene order_id, el array de pagos y el sistema
+ */
+procesarMultiplesPagos(payload: any) {
+  // Aseguramos que el sistema viaje en el cuerpo de la petición
+  const sistemaActivo = localStorage.getItem('sistema') || 'mixtura';
+  const data = { ...payload, system: sistemaActivo };
 
-
-
+  return this.http.post(`${this.urlService}/procesarMultiplesPagos.php`, data);
+}
 
 
 
