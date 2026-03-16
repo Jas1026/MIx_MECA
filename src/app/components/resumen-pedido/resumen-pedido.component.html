@@ -59,16 +59,13 @@
           <ion-label position="stacked">NIT/CI</ion-label>
           <ion-input type="text" [(ngModel)]="datosFactura.nit"></ion-input>
         </ion-item>
-<ion-item lines="none" class="input-estilo flex-2">
-  <ion-label position="stacked">Razón Social</ion-label>
-  <ion-input 
-    #inputRazon
-    type="text" 
-    [(ngModel)]="datosFactura.razonSocial" 
-    (ionFocus)="seleccionarTexto(inputRazon)">
-  </ion-input>
-</ion-item>
+
+        <ion-item lines="none" class="input-estilo flex-2">
+          <ion-label position="stacked">Razón Social</ion-label>
+          <ion-input #inputRazon type="text" [(ngModel)]="datosFactura.razonSocial" (ionFocus)="seleccionarTexto(inputRazon)"></ion-input>
+        </ion-item>
       </div>
+
       <ion-item lines="none" class="input-estilo">
         <ion-label position="stacked">Método de Pago</ion-label>
         <ion-select [(ngModel)]="metodoPagoActual" interface="popover">
@@ -77,17 +74,22 @@
           <ion-select-option value="tarjeta">💳 Tarjeta</ion-select-option>
         </ion-select>
       </ion-item>
+
+      <ion-item lines="none" class="input-estilo" *ngIf="metodoPagoActual === 'tarjeta'">
+        <ion-label position="stacked" color="primary">Número de Voucher / Referencia</ion-label>
+        <ion-input type="text" [(ngModel)]="datosFactura.voucher" placeholder="000000"></ion-input>
+      </ion-item>
     </div>
 
     <div class="seccion-extra ion-margin-top">
-      <p class="titulo-extra">¿CARGOS ADICIONALES?</p>
+      <p class="titulo-extra">¿CARGOS ADICIONALES? (Opcional)</p>
       <div class="row-inputs">
         <ion-item lines="none" class="input-estilo flex-1">
           <ion-label position="stacked">Monto Extra</ion-label>
           <ion-input type="number" [(ngModel)]="cargoExtra" placeholder="0.00"></ion-input>
         </ion-item>
         <ion-item lines="none" class="input-estilo flex-2" *ngIf="cargoExtra > 0">
-          <ion-label position="stacked">Motivo (Propina, delivery...)</ion-label>
+          <ion-label position="stacked">Motivo</ion-label>
           <ion-input type="text" [(ngModel)]="motivoExtra" placeholder="Ej: Propina"></ion-input>
         </ion-item>
       </div>
@@ -109,7 +111,11 @@
         <ion-item *ngFor="let p of pagosTemporales; let i = index">
           <ion-label>
             <h3>{{ p.razonSocial }}</h3>
-            <p>{{ p.metodo_pago | uppercase }} <span *ngIf="p.monto_extra > 0" color="success">(+ {{p.monto_extra}} {{p.motivo_extra}})</span></p>
+            <p>
+              {{ p.metodo_pago | uppercase }} 
+              <span *ngIf="p.voucher"> • Vouch: {{ p.voucher }}</span>
+              <span *ngIf="p.monto_extra > 0" style="color: green;"> (+ {{p.monto_extra}} {{p.motivo_extra}})</span>
+            </p>
           </ion-label>
           <div slot="end" class="ion-text-right">
             <b style="font-size: 1.1em;">Bs {{ p.monto | number:'1.2-2' }}</b>
@@ -122,12 +128,12 @@
 
       <div class="resumen-final">
         <div class="resumen-row">
-          <span>Acumulado Canasta:</span>
-          <b>Bs {{ totalAcumuladoCanasta | number:'1.2-2' }}</b>
+          <span style="color: black;">Acumulado Canasta:</span>
+          <b style="color: black;">Bs {{ totalAcumuladoCanasta | number:'1.2-2' }}</b>
         </div>
-        <div class="resumen-row" [style.color]="totalRestanteEnMesa > 0.05 ? 'var(--ion-color-danger)' : 'var(--ion-color-success)'">
-          <span>Falta cobrar en Mesa:</span>
-          <b>Bs {{ totalRestanteEnMesa | number:'1.2-2' }}</b>
+        <div style="color: black;" class="resumen-row" [style.color]="totalRestanteEnMesa > 0.05 ? 'var(--ion-color-danger)' : 'var(--ion-color-success)'">
+          <span style="color: black;">Falta cobrar en Mesa:</span>
+          <b style="color: black;">Bs {{ totalRestanteEnMesa | number:'1.2-2' }}</b>
         </div>
       </div>
     </div>
