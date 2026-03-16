@@ -504,8 +504,18 @@ procesarMultiplesPagos(payload: any) {
 
   return this.http.post(`${this.urlService}/procesarMultiplesPagos.php`, data);
 }
+saveAdjustments(detailId: number, adjustments: any[]) {
 
+  return this.http.post(
+    this.urlService + "save_detail_adjustments.php",
+    {
+      detail_id: detailId,
+      adjustments: adjustments,
+      system: this.getSystem()
+    }
+  );
 
+}
 
 
 

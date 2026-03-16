@@ -1,0 +1,54 @@
+<ion-header>
+  <ion-toolbar color="light">
+    <ion-title>Ajustar ingredientes</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-item>
+    <ion-label>Ingrediente</ion-label>
+    <ion-select [(ngModel)]="selectedIngredient">
+      <ion-select-option
+        *ngFor="let ing of ingredients"
+        [value]="ing"
+      >
+        {{ ing.nombre }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">Cantidad (+ / -)</ion-label>
+    <ion-input type="number" [(ngModel)]="qty"></ion-input>
+  </ion-item>
+
+  <ion-button expand="block" (click)="addIngredient()">
+    + Agregar
+  </ion-button>
+
+  <ion-list>
+
+    <ion-item *ngFor="let item of adjustList">
+
+      <ion-label>
+        {{ item.nombre }}
+      </ion-label>
+
+      <ion-badge color="dark">
+        {{ item.qty > 0 ? '+' : ''}}{{ item.qty }} {{ item.unidad }}
+      </ion-badge>
+
+    </ion-item>
+
+  </ion-list>
+
+  <ion-button expand="block" color="success" (click)="save()">
+    Guardar ajustes
+  </ion-button>
+
+</ion-content>

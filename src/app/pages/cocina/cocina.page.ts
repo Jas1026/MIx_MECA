@@ -3,6 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ServerContentService } from 'src/app/services/server-content.service';
 import { AlertController } from '@ionic/angular';
 import { KitchenNotifyService } from 'src/app/services/kitchen-notify.service';
+import { ModalController } from '@ionic/angular';
+import { IngredientAdjustModalComponent } from '../../ingredient-adjust-modal/ingredient-adjust-modal.component';
+
 @Component({
   selector: 'app-cocina',
   templateUrl: './cocina.page.html',
@@ -26,10 +29,12 @@ export class CocinaPage implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private alertCtrl: AlertController,
     private notify: KitchenNotifyService,
+    private modalCtrl: ModalController,
   ) {
     this.audioAlarma.loop = true;
   }
 ngOnInit() {
+  
   this.kitchenId = this.route.snapshot.paramMap.get('id');
 
   // 🔓 Desbloquear audio
@@ -49,7 +54,10 @@ ngOnInit() {
 
   this.startClock();
 }
-
+ingredients:any[] = [];
+adjustList:any[] = [];
+selectedIngredient:any = null;
+adjustQty:number = 0;
 ngOnDestroy() {
   if (this.dataInterval) clearInterval(this.dataInterval);
   if (this.clockInterval) clearInterval(this.clockInterval);
@@ -136,6 +144,8 @@ checkAlerts() {
   getTimerClass(item: any) {
     return item.isLate ? 'time-badge late' : 'time-badge on-time';
   }
+
+
 async markReady(detailId: number, force: boolean = false) {
   this.server.updateDetailStatus(detailId, 'ready', force).subscribe(async (res: any) => {
 if (res.error === 0) {
@@ -187,4 +197,56 @@ resumeAudioContext() {
     }).catch(() => {});
   }
 }
+async openIngredientAdjust(item:any){
+
+  const modal = await this.modalCtrl.create({
+    component: IngredientAdjustModalComponent,
+    componentProps:{
+      detailId:item.detail_id
+    }
+  });
+
+  await modal.present();
+
+}
+
+
+initIngredientEvents(){
+
+  const addBtn:any = document.getElementById("addIngredientBtn");
+
+  addBtn.onclick = ()=>{
+
+    const select:any = document.getElementById("ingredientSelect");
+    const qty:any = document.getElementById("qtyInput");
+
+    const ingId = Number(select.value);
+    const cantidad = Number(qty.value);
+
+    if(!ingId || !cantidad) return;
+
+    const ing = this.ingredients.find(i=>i.id_ingredients==ingId);
+
+    const ajuste = {
+      ingredient_id: ingId,
+      qty: cantidad
+    };
+
+    this.adjustList.push(ajuste);
+
+    const list:any = document.getElementById("ingredientList");
+
+    list.innerHTML += `
+      <div style="display:flex;justify-content:space-between;margin-top:5px">
+        <span>${ing.nombre}</span>
+        <b>${cantidad > 0 ? '+' : ''}${cantidad} ${ing.unidad_med}</b>
+      </div>
+    `;
+
+    qty.value="";
+
+  };
+
+}
+
 }

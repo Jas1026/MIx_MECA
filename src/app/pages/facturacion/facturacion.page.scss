@@ -1,45 +1,355 @@
-@media print {
-
-  ion-button,
-  ion-card {
-    display: none;
-  }
-
-  ion-header {
-    display: none;
-  }
-
+/* Fondo general */
+.ticket-page {
+  --background: #f2f4f7;
 }
-// Ocultar elementos en la impresión
+
+/* Header */
+.header-light ion-toolbar {
+  --background: #ffffff;
+  --color: #222;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+/* Contenedor del ticket */
+.print-container {
+  background: #ffffff;
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 28px;
+  border-radius: 12px;
+
+  font-family: "Courier New", monospace;
+  color: #2a2a2a;
+
+  box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+}
+
+/* Header del ticket */
+.ticket-header {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.ticket-header h2 {
+  font-size: 22px;
+  margin-bottom: 4px;
+  letter-spacing: 1px;
+}
+
+.ticket-header p {
+  font-size: 13px;
+  color: #777;
+  margin: 2px 0;
+}
+
+/* Linea divisora */
+.dotted {
+  border: none;
+  border-top: 1px dashed #d6d6d6;
+  margin: 14px 0;
+}
+
+/* Tabla */
+.items-table {
+  width: 100%;
+  font-size: 14px;
+}
+
+.items-table th {
+  text-align: left;
+  font-weight: 600;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #e8e8e8;
+  color: #444;
+}
+
+.items-table td {
+  padding: 8px 0;
+  border-bottom: 1px solid #f3f3f3;
+}
+
+.right {
+  text-align: right;
+}
+
+/* TOTAL */
+.total-section {
+  display: flex;
+  justify-content: space-between;
+  font-size: 19px;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+/* Historial de pagos */
+.pagos-realizados {
+  margin-top: 18px;
+  font-size: 13px;
+}
+
+.subtitle {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+.pago-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* Footer */
+.ticket-footer {
+  margin-top: 22px;
+  text-align: center;
+  font-size: 12px;
+  color: #888;
+}
+
+/* Botones */
+.botones {
+  max-width: 500px;
+  margin: auto;
+}
+
+.botones ion-button:first-child {
+  margin-top: 10px;
+}
+
+/* Hover bonito */
+ion-button {
+  transition: transform 0.15s ease;
+}
+
+ion-button:hover {
+  transform: scale(1.03);
+}
+
+/* Estilos impresión */
 @media print {
-  .no-print, ion-header, ion-button {
+
+  .no-print,
+  ion-header,
+  ion-button {
     display: none !important;
   }
-  
-  body, ion-content {
-    --background: white;
+
+  body,
+  ion-content {
     background: white;
   }
 
-  #factura-container {
-    width: 80mm; // Ancho estándar de ticket
+  .print-container {
+    width: 80mm;
     margin: 0 auto;
     padding: 10px;
-    font-family: 'Courier New', Courier, monospace;
+    box-shadow: none;
+    border-radius: 0;
   }
 }
-
-// Estilos de pantalla
-#factura-container {
-  background: white;
-  padding: 20px;
-  border: 1px dashed #ccc;
-  color: black;
-  max-width: 500px;
-  margin: 20px auto;
+/* ----- TICKET 80mm ----- */
+.ticket80 {
+  width: 80mm;
+  max-width: 80mm;
+  margin: auto;
 }
 
-.ticket-header { text-align: center; }
-.dotted { border: none; border-top: 1px dotted black; }
-.items-table { font-size: 14px; margin: 10px 0; }
-.ticket-footer { text-align: center; font-size: 11px; margin-top: 20px; }
+/* ----- TICKET 58mm ----- */
+.ticket58 {
+  width: 58mm;
+  max-width: 58mm;
+  margin: auto;
+  font-size: 12px;
+}
+
+/* ----- CARTA ----- */
+.carta {
+  width: 210mm;
+  max-width: 700px;
+  margin: auto;
+  font-size: 16px;
+}
+
+/* impresión */
+@media print {
+
+  ion-header,
+  ion-button,
+  .no-print {
+    display: none !important;
+  }
+
+  body,
+  ion-content {
+    background: white;
+  }
+
+  .ticket80 {
+    width: 80mm;
+  }
+
+  .ticket58 {
+    width: 58mm;
+  }
+
+  .carta {
+    width: 100%;
+  }
+
+}
+
+/* fondo */
+.ticket-page{
+  --background:#f2f4f7;
+}
+
+/* contenedor general */
+.print-container{
+  background:#fff;
+  width:100%;
+  max-width:500px;
+  margin:auto;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.06);
+  font-family:"Courier New", monospace;
+}
+
+/* móviles */
+@media (max-width:600px){
+
+  .print-container{
+    max-width:95%;
+    padding:16px;
+  }
+
+  .items-table{
+    font-size:13px;
+  }
+
+  .ticket-header h2{
+    font-size:18px;
+  }
+
+  .total-section{
+    font-size:16px;
+  }
+
+}
+
+/* header */
+.ticket-header{
+  text-align:center;
+}
+
+.ticket-header h2{
+  margin:0;
+}
+
+.ticket-header p{
+  margin:2px 0;
+  color:#666;
+  font-size:13px;
+}
+
+/* líneas */
+.dotted{
+  border:none;
+  border-top:1px dashed #ccc;
+  margin:12px 0;
+}
+
+/* tabla */
+.items-table{
+  width:100%;
+  font-size:14px;
+}
+
+.items-table th{
+  border-bottom:1px solid #ddd;
+  text-align:left;
+}
+
+.items-table td{
+  padding:6px 0;
+}
+
+.right{
+  text-align:right;
+}
+
+/* total */
+.total-section{
+  display:flex;
+  justify-content:space-between;
+  font-weight:bold;
+  font-size:18px;
+}
+
+/* pagos */
+.pagos-realizados{
+  margin-top:12px;
+}
+
+.pago-item{
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+}
+
+/* footer */
+.ticket-footer{
+  text-align:center;
+  margin-top:20px;
+  font-size:12px;
+  color:#777;
+}
+
+/* botones */
+.botones{
+  max-width:500px;
+  margin:auto;
+}
+
+/* ================== */
+/* IMPRESIÓN */
+/* ================== */
+
+@media print{
+
+  ion-header,
+  ion-button,
+  .no-print{
+    display:none !important;
+  }
+
+  body,
+  ion-content{
+    background:white;
+  }
+
+  .ticket80{
+    width:80mm;
+    max-width:80mm;
+  }
+
+  .ticket58{
+    width:58mm;
+    max-width:58mm;
+    font-size:12px;
+  }
+
+  .carta{
+    width:100%;
+    max-width:210mm;
+  }
+
+  .print-container{
+    box-shadow:none;
+    border-radius:0;
+    margin:auto;
+  }
+
+}

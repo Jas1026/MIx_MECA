@@ -13,7 +13,7 @@ export class FacturacionPage implements OnInit {
   historialPagos: any[] = [];
   totalGeneral: number = 0;
   today: Date = new Date();
-
+formatoImpresion: string = 'ticket80';
   constructor(
     private route: ActivatedRoute,
     private server: ServerContentService,

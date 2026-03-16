@@ -1,18 +1,49 @@
-<ion-header class="ion-no-border">
-  <ion-toolbar color="primary">
+<ion-header class="ion-no-border header-light">
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-button (click)="volverMesas()">
         <ion-icon name="arrow-back-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Resumen de Cuenta #{{ orderId }}</ion-title>
+
+    <ion-title>
+      Resumen de Cuenta #{{ orderId }}
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  
-  <div id="factura-print" class="print-container">
-    <div class="ticket-header" style="text-align: center;">
+
+<ion-content class="ion-padding ticket-page">
+
+  <!-- SELECTOR FORMATO IMPRESION -->
+  <ion-item class="no-print">
+    <ion-label>Formato de impresión</ion-label>
+
+    <ion-select [(ngModel)]="formatoImpresion">
+      <ion-select-option value="ticket80">
+        Ticket térmico 80mm
+      </ion-select-option>
+
+      <ion-select-option value="ticket58">
+        Ticket térmico 58mm
+      </ion-select-option>
+
+      <ion-select-option value="carta">
+        Hoja carta
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+
+  <!-- CONTENEDOR DEL TICKET -->
+  <div
+    id="factura-print"
+    class="print-container"
+    [ngClass]="formatoImpresion"
+  >
+
+    <!-- HEADER -->
+    <div class="ticket-header">
       <h2>MIXURA - MECA</h2>
       <p>Comprobante de Consumo Final</p>
       <p>Orden #{{ orderId }}</p>
@@ -21,59 +52,114 @@
 
     <hr class="dotted">
 
-    <table width="100%" class="items-table">
+
+    <!-- TABLA PRODUCTOS -->
+    <table class="items-table">
+
       <thead>
         <tr>
-          <th align="left">Cant.</th>
-          <th align="left">Producto</th>
-          <th align="right">Total</th>
+          <th>Cant.</th>
+          <th>Producto</th>
+          <th class="right">Total</th>
         </tr>
       </thead>
+
       <tbody>
+
         <tr *ngFor="let item of detallesTotales">
-          <td>{{ item.quantity }}</td>
-          <td>{{ item.nombre_producto }}</td>
-          <td align="right">Bs {{ item.total_price | number:'1.2-2' }}</td>
+
+          <td>
+            {{ item.quantity }}
+          </td>
+
+          <td>
+            {{ item.nombre_producto }}
+          </td>
+
+          <td class="right">
+            Bs {{ item.total_price | number:'1.2-2' }}
+          </td>
+
         </tr>
+
       </tbody>
+
     </table>
+
 
     <hr class="dotted">
 
-    <div style="text-align: right;">
-      <h3>TOTAL GENERAL: Bs {{ totalGeneral | number:'1.2-2' }}</h3>
+
+    <!-- TOTAL -->
+    <div class="total-section">
+
+      TOTAL GENERAL
+
+      <span>
+        Bs {{ totalGeneral | number:'1.2-2' }}
+      </span>
+
     </div>
 
-    <div class="pagos-realizados" style="margin-top: 20px; font-size: 0.9em;">
-      <p><b>HISTORIAL DE PAGOS:</b></p>
-      <div *ngFor="let pago of historialPagos" style="border-bottom: 1px solid #eee; padding: 5px 0;">
-        <span>{{ pago.razon_social }} ({{ pago.metodo_pago }}): <b>Bs {{ pago.monto_total }}</b></span>
+
+    <!-- HISTORIAL PAGOS -->
+    <div class="pagos-realizados">
+
+      <p class="subtitle">
+        Historial de pagos
+      </p>
+
+      <div
+        *ngFor="let pago of historialPagos"
+        class="pago-item"
+      >
+
+        {{ pago.razon_social }}
+        ({{ pago.metodo_pago }})
+
+        <span>
+          Bs {{ pago.monto_total }}
+        </span>
+
       </div>
+
     </div>
 
-    <div class="ticket-footer" style="text-align: center; margin-top: 20px;">
-      <p>¡Gracias por su visita!</p>
+
+    <!-- FOOTER -->
+    <div class="ticket-footer">
+      ¡Gracias por su visita!
     </div>
+
   </div>
 
-  <div class="ion-padding no-print">
-    <ion-button expand="block" color="dark" (click)="imprimir()">
-      <ion-icon name="print-outline" slot="start"></ion-icon>
-      IMPRIMIR RESUMEN COMPLETO
+
+
+  <!-- BOTONES -->
+  <div class="ion-padding no-print botones">
+
+    <ion-button
+      expand="block"
+      color="dark"
+      (click)="imprimir()"
+    >
+      <ion-icon
+        name="print-outline"
+        slot="start"
+      ></ion-icon>
+
+      IMPRIMIR RESUMEN
     </ion-button>
-    
-    <ion-button expand="block" fill="clear" (click)="volverMesas()">
+
+
+    <ion-button
+      expand="block"
+      fill="clear"
+      (click)="volverMesas()"
+    >
       Finalizar y Salir
     </ion-button>
+
   </div>
 
 </ion-content>
-
-<style>
-  .dotted { border-top: 1px dashed #000; height: 1px; width: 100%; margin: 10px 0; }
-  .items-table th { border-bottom: 1px solid #000; padding: 5px 0; }
-  @media print {
-    .no-print { display: none; }
-    body { background: white; }
-  }
-</style>

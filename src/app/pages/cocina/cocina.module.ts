@@ -7,13 +7,14 @@ import { IonicModule } from '@ionic/angular';
 import { CocinaPageRoutingModule } from './cocina-routing.module';
 
 import { CocinaPage } from './cocina.page';
-
+import { IngredientAdjustModalModule } from '../../ingredient-adjust-modal/ingredient-adjust-modal.module';
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    CocinaPageRoutingModule
+    CocinaPageRoutingModule,
+    IngredientAdjustModalModule,
   ],
   declarations: [CocinaPage]
 })
