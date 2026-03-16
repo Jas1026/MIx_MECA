@@ -24,9 +24,10 @@
     </ion-button>
   </div>
 
-  <ion-button expand="block" shape="round" class="apply-btn" (click)="cargarResumen()">
+  <!-- BOTÓN ANÁLISIS -->
+  <ion-button expand="block" color="dark" (click)="modalGraficos.present()" class="ion-margin-bottom">
     <ion-icon name="analytics-outline" slot="start"></ion-icon>
-    Actualizar Reporte
+    Ver Análisis Completo
   </ion-button>
 
 </div>
@@ -47,11 +48,7 @@
   </ng-template>
 </ion-modal>
 
-  <!-- BOTÓN ANÁLISIS -->
-  <ion-button expand="block" color="dark" (click)="modalGraficos.present()" class="ion-margin-bottom">
-    <ion-icon name="analytics-outline" slot="start"></ion-icon>
-    Ver Análisis Completo
-  </ion-button>
+
 
   <!-- TARJETAS PRINCIPALES -->
   <ion-row class="ion-margin-top">
@@ -69,19 +66,28 @@
       </ion-card>
     </ion-col>
  
-    <ion-col size="6">
-      <ion-card>
-        <ion-card-content>
-          <ion-item lines="none">
-            <ion-icon name="trending-up-outline" color="primary" slot="start"></ion-icon>
-            <ion-label>
-              <h2>Bs. {{ resumen.ganancia_total }}</h2>
-              <p>Ganancia Real</p>
-            </ion-label>
-          </ion-item>
-        </ion-card-content>
-      </ion-card>
-    </ion-col>
+<ion-col size="6">
+  <ion-card class="analytics-card profit-gradient">
+    <ion-card-content>
+      <ion-item lines="none" class="transparent-item">
+        <div class="icon-container" slot="start">
+          <ion-icon name="cash-outline" color="success"></ion-icon>
+        </div>
+        
+        <ion-label>
+          <p class="label-title">GANANCIA REAL</p>
+          <h2 class="amount-text">
+            <span class="currency">Bs.</span> 
+            {{ resumen.ganancia_total | number:'1.2-2' }}
+          </h2>
+          <ion-badge color="success" mode="ios" class="margin-badge">
+            Neto
+          </ion-badge>
+        </ion-label>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+</ion-col>
  
   </ion-row>
  
@@ -162,47 +168,98 @@
  
  
  
- 
- 
- 
-  <ion-card class="analytics-card">
- 
-    <ion-card-header>
-      <ion-card-title>
-        <ion-icon name="wine-outline"></ion-icon>
-        Ventas por Tipo de Producto
-      </ion-card-title>
-    </ion-card-header>
- 
-    <ion-card-content>
- 
-      <div class="ventas-grid">
- 
-        <div class="venta-box alcohol">
- 
-          <h3>Con Alcohol</h3>
- 
-          <h2>
-            Bs. {{ resumen.ventas_alcohol?.con | number:'1.2-2' }}
-          </h2>
- 
+
+  <!-- PAGOS POR EMPLEADO -->
+<ion-row>
+
+  <ion-col size="12" size-md="6" size-lg="4" *ngFor="let e of resumen.empleados_pagos">
+
+    <ion-card class="card-empleado">
+
+      <ion-card-header>
+
+        <ion-card-title class="titulo-empleado">
+          <ion-icon name="person-circle-outline" color="primary"></ion-icon>
+          {{ e.name }}
+        </ion-card-title>
+
+      </ion-card-header>
+
+      <ion-card-content>
+
+        <div class="pagos-grid">
+
+          <div class="metodo efectivo">
+            <ion-icon name="cash-outline"></ion-icon>
+            <span>Efectivo</span>
+            <strong>Bs {{ e.efectivo }}</strong>
+          </div>
+
+          <div class="metodo qr">
+            <ion-icon name="phone-portrait-outline"></ion-icon>
+            <span>QR</span>
+            <strong>Bs {{ e.qr }}</strong>
+          </div>
+
+          <div class="metodo tarjeta">
+            <ion-icon name="card-outline"></ion-icon>
+            <span>Tarjeta</span>
+            <strong>Bs {{ e.tarjeta }}</strong>
+          </div>
+
         </div>
- 
-        <div class="venta-box no-alcohol">
- 
-          <h3>Sin Alcohol</h3>
- 
+
+        <div class="total-empleado">
+
+          <span>Total vendido</span>
+
           <h2>
-            Bs. {{ resumen.ventas_alcohol?.sin | number:'1.2-2' }}
+            Bs {{ e.total_ventas }}
           </h2>
- 
+
         </div>
+
+      </ion-card-content>
+
+    </ion-card>
+
+  </ion-col>
+
+</ion-row>
  
+ 
+ <ion-card class="analytics-card">
+
+  <ion-card-header>
+    <ion-card-title>
+      <ion-icon name="stats-chart-outline"></ion-icon>
+      Ventas por Categoría
+    </ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+
+    <div class="ventas-grid">
+
+      <div 
+        class="venta-box categoria"
+        *ngFor="let c of resumen.ventas_categorias">
+
+        <h3>
+          {{ c.categoria }}
+        </h3>
+
+        <h2>
+          Bs {{ c.total_ventas | number:'1.2-2' }}
+        </h2>
+
       </div>
- 
-    </ion-card-content>
- 
-  </ion-card>
+
+    </div>
+
+  </ion-card-content>
+
+</ion-card>
  
  
 <ion-card class="analytics-card shadow-soft">

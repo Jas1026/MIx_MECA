@@ -449,3 +449,98 @@ font-size:18px;
     border-radius: 20px;
   }
 }
+
+
+.card-empleado{
+  border-radius:14px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+.titulo-empleado{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:600;
+}
+
+.pagos-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:10px;
+  margin-top:10px;
+}
+
+.metodo{
+  text-align:center;
+  padding:10px;
+  border-radius:10px;
+  font-size:13px;
+}
+
+.metodo ion-icon{
+  font-size:20px;
+  display:block;
+  margin-bottom:4px;
+}
+
+.metodo strong{
+  display:block;
+  font-size:15px;
+}
+
+.efectivo{
+  background:#e8f5e9;
+  color:#2e7d32;
+}
+
+.qr{
+  background:#e3f2fd;
+  color:#1565c0;
+}
+
+.tarjeta{
+  background:#fff3e0;
+  color:#ef6c00;
+}
+
+.total-empleado{
+  margin-top:15px;
+  text-align:center;
+}
+
+.total-empleado span{
+  font-size:12px;
+  color:#888;
+}
+
+.total-empleado h2{
+  margin:0;
+  color:#2c3e50;
+  font-weight:700;
+}
+
+.ventas-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+gap:12px;
+}
+
+.venta-box{
+background:#f8f9fb;
+border-radius:12px;
+padding:14px;
+text-align:center;
+box-shadow:0 2px 6px rgba(0,0,0,0.06);
+}
+
+.venta-box h3{
+font-size:14px;
+color:#666;
+margin-bottom:6px;
+}
+
+.venta-box h2{
+margin:0;
+color:#2c3e50;
+font-weight:700;
+}
