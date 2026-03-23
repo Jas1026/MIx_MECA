@@ -1,27 +1,42 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar color="dark">
-    <ion-title>Préstamo desde: {{ targetSystem | uppercase }}</ion-title>
+    <ion-title style="font-size: 1rem;">Préstamo desde: {{ targetSystem | uppercase }}</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="close()">Cerrar</ion-button>
+      <ion-button (click)="close()" style="font-weight: bold; font-size: 0.8rem;">CERRAR</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <ion-list>
-    <ion-item *ngFor="let item of externalItems">
-      <ion-label>
-        <h2>{{ item.nombre || item.nombre_producto }}</h2>
-        <p>Disponible en {{ targetSystem }}: <strong>{{ item.stock_act || item.stock_disponible }}</strong> {{ item.unidad_med }}</p>
+<ion-content color="light">
+  <ion-list lines="full" class="ion-no-padding">
+    <ion-item *ngFor="let item of externalItems" style="--padding-start: 16px; --inner-padding-end: 16px;">
+      <ion-label class="ion-text-wrap" style="margin-right: 10px;">
+        <h2 style="font-weight: bold; color: #333; margin-bottom: 4px;">{{ item.nombre || item.nombre_producto }}</h2>
+        <p style="font-size: 0.85rem; color: #666;">
+          Disponible en {{ targetSystem }}: 
+          <strong style="color: #2dd36f;">{{ item.stock_act || item.stock_disponible }}</strong> 
+          <span style="margin-left: 3px;">{{ item.unidad_med || 'uds' }}</span>
+        </p>
       </ion-label>
-      <ion-input slot="end" type="number" placeholder="Cant." [(ngModel)]="item.transfer_qty" 
-                 style="max-width: 80px; text-align: right; border-bottom: 1px solid #ccc;"></ion-input>
+
+      <div slot="end" style="display: flex; align-items: center; background: #f0f0f0; border-radius: 8px; padding: 0 8px; min-width: 110px; justify-content: flex-end;">
+        <ion-input type="number" 
+                   placeholder="0" 
+                   [(ngModel)]="item.transfer_qty" 
+                   style="--padding-start: 0; --padding-end: 5px; text-align: right; font-weight: bold; width: 60px;">
+        </ion-input>
+        <span style="font-size: 0.75rem; color: #888; text-transform: lowercase; min-width: 30px;">
+          {{ item.unidad_med || 'uds' }}
+        </span>
+      </div>
     </ion-item>
   </ion-list>
 </ion-content>
 
-<ion-footer>
-  <ion-button expand="block" color="success" (click)="confirmTransfer()">
-    Importar a {{ currentSystem | uppercase }}
-  </ion-button>
+<ion-footer class="ion-no-border">
+  <div style="padding: 10px; background: white;">
+    <ion-button expand="block" color="success" (click)="confirmTransfer()" style="--border-radius: 10px; margin: 0; height: 50px; font-weight: bold;">
+      IMPORTAR A {{ currentSystem | uppercase }}
+    </ion-button>
+  </div>
 </ion-footer>

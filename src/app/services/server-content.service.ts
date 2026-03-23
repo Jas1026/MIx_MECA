@@ -501,18 +501,27 @@ procesarMultiplesPagos(payload: any) {
 
   return this.http.post(`${this.urlService}/procesarMultiplesPagos.php`, data);
 }
-saveAdjustments(detailId: number, adjustments: any[]) {
+getExistingAdjustments(detailId: number): Observable<any> {
+  // Usamos FormData para que coincida con tu estándar
+  let body = new FormData();
+  body.append("detail_id", detailId.toString());
+  body.append("system", this.getSystem());
 
-  return this.http.post(
-    this.urlService + "save_detail_adjustments.php",
-    {
-      detail_id: detailId,
-      adjustments: adjustments,
-      system: this.getSystem()
-    }
-  );
-
+  return this.http.post(`${this.urlService}get_adjustments.php`, body);
 }
+
+saveAdjustments(detailId: number, adjustments: any[]): Observable<any> {
+  let body = new FormData();
+  body.append("detail_id", detailId.toString());
+  // Los arrays se deben enviar como string JSON en FormData
+  body.append("adjustments", JSON.stringify(adjustments));
+  body.append("system", this.getSystem());
+
+  return this.http.post(`${this.urlService}save_detail_adjustments.php`, body);
+}
+
+
+
 validateRecipeStock(cart: any[]): Observable<any> {
   const formData = new FormData();
   
@@ -540,7 +549,14 @@ getExternalIngredients(targetSystem: string): Observable<any> {
   // pero pasándole el sistema destino
   return this.http.post(this.urlService + "get_ingredients.php", body);
 }
+deleteAdjustment(detailId: number, ingredientId: number): Observable<any> {
+  let body = new FormData();
+  body.append("detail_id", detailId.toString());
+  body.append("ingredient_id", ingredientId.toString());
+  body.append("system", this.getSystem());
 
+  return this.http.post(`${this.urlService}delete_adjustment.php`, body);
+}
 // 2. Obtener Productos de la BD contraria (Para que no te de el error 2339)
 getProductsExternal(targetSystem: string): Observable<any> {
   let body = new FormData();

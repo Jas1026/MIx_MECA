@@ -97,30 +97,35 @@
         + Insumo
       </button>
     </div>
+<div *ngFor="let item of receta; let i = index"
+  style="background: white; border-radius: 8px; margin-bottom: 8px; border: 1px solid #eee; padding: 8px;">
+  <ion-row class="ion-align-items-center">
+    <ion-col size="6">
+      <ion-select [(ngModel)]="item.id_ingredient" placeholder="Elegir Insumo" interface="popover"
+        style="font-size: 0.9rem; --padding-start: 0;">
+        <ion-select-option *ngFor="let ing of allIngredients" [value]="Number(ing.id_ingredients)">
+          {{ing.nombre}}
+        </ion-select-option>
+      </ion-select>
+    </ion-col>
 
-    <div *ngFor="let item of receta; let i = index"
-      style="background: white; border-radius: 8px; margin-bottom: 8px; border: 1px solid #eee; padding: 5px;">
-      <ion-row class="ion-align-items-center">
-        <ion-col size="7">
-          <ion-select [(ngModel)]="item.id_ingredient" placeholder="Elegir Insumo" interface="popover"
-            [interfaceOptions]="{'header': 'Insumos'}">
-            <ion-select-option *ngFor="let ing of allIngredients" [value]="Number(ing.id_ingredients)">
-              {{ing.nombre}}
-            </ion-select-option>
-          </ion-select>
-        </ion-col>
+    <ion-col size="4">
+      <div style="display: flex; align-items: center; background: #f4f4f4; border-radius: 6px; padding: 0 8px;">
+        <ion-input [(ngModel)]="item.cant_us" type="number" placeholder="0.00" 
+                   style="text-align: right; font-weight: bold; --padding-end: 5px;"></ion-input>
+        <span style="font-size: 0.7rem; color: #666; min-width: 30px; text-transform: lowercase;">
+          {{ getIngredientUnit(item.id_ingredient) }}
+        </span>
+      </div>
+    </ion-col>
 
-        <ion-col size="3">
-          <ion-input [(ngModel)]="item.cant_us" type="number" placeholder="0.00"></ion-input>
-        </ion-col>
-
-        <ion-col size="2" class="ion-text-right">
-          <ion-button (click)="removeIngredient(i)" fill="clear" color="danger">
-            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
-          </ion-button>
-        </ion-col>
-      </ion-row>
-    </div>
+    <ion-col size="2" class="ion-text-right">
+      <ion-button (click)="removeIngredient(i)" fill="clear" color="danger" style="--padding-end: 0;">
+        <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</div>
   </div>
   <ion-button (click)="saveProduct()" expand="block" color="dark" class="ion-margin-top"
     style="height: 40px; font-weight: bold; font-size: 15px;">

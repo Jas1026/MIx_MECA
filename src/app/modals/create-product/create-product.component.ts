@@ -172,4 +172,14 @@ loadKitchensAssigned(id: number) {
     const t = await this.toastCtrl.create({ message: msg, duration: 2000, color: col });
     t.present();
   }
+
+getIngredientUnit(id_ingredient: any): string {
+  if (!id_ingredient || !this.allIngredients) return '';
+  
+  // Buscamos el ingrediente en la lista completa
+  const ing = this.allIngredients.find(i => Number(i.id_ingredients) === Number(id_ingredient));
+  
+  // Devolvemos la unidad o un guion si no lo encuentra
+  return ing ? ing.unidad_med : '';
+}
 }

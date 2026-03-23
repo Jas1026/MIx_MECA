@@ -1,54 +1,54 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar color="light">
     <ion-title>Ajustar ingredientes</ion-title>
-
     <ion-buttons slot="end">
-      <ion-button (click)="close()">Cerrar</ion-button>
+      <ion-button (click)="close()" style="font-weight: bold;">CERRAR</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-
-  <ion-item>
-    <ion-label>Ingrediente</ion-label>
-    <ion-select [(ngModel)]="selectedIngredient">
-      <ion-select-option
-        *ngFor="let ing of ingredients"
-        [value]="ing"
-      >
-        {{ ing.nombre }}
+  <ion-item lines="none" style="background: #f4f4f4; border-radius: 10px; margin-bottom: 10px;">
+    <ion-label position="stacked">Seleccionar Ingrediente Extra</ion-label>
+    <ion-select [(ngModel)]="selectedIngredient" interface="popover" placeholder="Elegir...">
+      <ion-select-option *ngFor="let ing of ingredients" [value]="ing">
+        {{ ing.nombre }} (S: {{ing.stock_act}})
       </ion-select-option>
     </ion-select>
   </ion-item>
 
-  <ion-item>
-    <ion-label position="stacked">Cantidad (+ / -)</ion-label>
-    <ion-input type="number" [(ngModel)]="qty"></ion-input>
-  </ion-item>
+  <ion-row class="ion-align-items-center">
+    <ion-col size="8">
+      <div style="display: flex; align-items: center; background: #f0f0f0; border-radius: 8px; padding: 0 10px;">
+        <ion-input type="number" [(ngModel)]="qty" placeholder="Cantidad"></ion-input>
+        <small style="color: #888;">{{ selectedIngredient?.unidad_med }}</small>
+      </div>
+    </ion-col>
+    <ion-col size="4">
+      <ion-button expand="block" (click)="addIngredient()" color="dark" style="margin: 0;">
+        Añadir
+      </ion-button>
+    </ion-col>
+  </ion-row>
 
-  <ion-button expand="block" (click)="addIngredient()">
-    + Agregar
-  </ion-button>
-
-  <ion-list>
-
-    <ion-item *ngFor="let item of adjustList">
-
+  <h6 class="ion-margin-top" style="font-weight: bold; color: #666;">LISTA DE AJUSTES EN ESTE PLATO:</h6>
+  
+  <ion-list lines="full">
+    <ion-item *ngFor="let item of adjustList; let i = index">
       <ion-label>
-        {{ item.nombre }}
+        <h2 style="font-weight: 500;">{{ item.nombre }}</h2>
       </ion-label>
-
-      <ion-badge color="dark">
+      <ion-badge slot="end" color="dark">
         {{ item.qty > 0 ? '+' : ''}}{{ item.qty }} {{ item.unidad }}
       </ion-badge>
-
+<ion-button slot="end" fill="clear" color="danger" (click)="removeIngredient(item, i)">
+  <ion-icon name="trash-outline"></ion-icon>
+</ion-button>
     </ion-item>
-
   </ion-list>
 
-  <ion-button expand="block" color="success" (click)="save()">
-    Guardar ajustes
+  <ion-button expand="block" color="success" (click)="save()" 
+              style="margin-top: 20px; height: 50px; font-weight: bold;">
+    GUARDAR AJUSTES DE STOCK
   </ion-button>
-
 </ion-content>
