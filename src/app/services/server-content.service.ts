@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-
+import { Observable } from 'rxjs'; // <--- AÑADE ESTA LÍNEA
 @Injectable({
   providedIn: 'root'
 })
@@ -301,12 +301,11 @@ updateAssetState(payload: any) {
     }
   });
 }
+
  
- 
- 
-getDetalleArea(system: string, area: string) {
+get_datos_ing(system: string, area: string) {
   return this.http.get(
-    `${this.urlService}get_detalle_area.php?system=${system}&area=${area}`
+    `${this.urlService}validate_ingredients.php`
   );
 }
 
@@ -516,14 +515,25 @@ saveAdjustments(detailId: number, adjustments: any[]) {
   );
 
 }
+validateRecipeStock(cart: any[]): Observable<any> {
+  const formData = new FormData();
+  
+  // Usamos el método centralizado getSystem() que ya tienes en tu clase
+  formData.append('products', JSON.stringify(cart));
+  formData.append('system', this.getSystem());
 
+  // Eliminamos el "/" extra si urlService ya termina en "/"
+  return this.http.post(`${this.urlService}validate_ingredients.php`, formData);
+}
 
+// Dentro de ServerContentService
+getDetalleArea(system: string, area: string): Observable<any> {
+  let body = new FormData();
+  body.append("system", system);
+  body.append("area", area);
 
-
-
-
-
-
+  return this.http.post(this.urlService + "get_detalle_area.php", body);
+}
 
 
 

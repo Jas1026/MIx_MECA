@@ -16,14 +16,6 @@ const routes: Routes = [
     loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
   },
   {
-    path: 'tables',
-    loadChildren: () => import('./pages/tables/tables.module').then( m => m.TablesPageModule)
-  },
-  {
-    path: 'table',
-    loadChildren: () => import('./pages/table/table.module').then( m => m.TablePageModule)
-  },
-  {
     path: 'categories',
     loadChildren: () => import('./pages/categories/categories.module').then( m => m.CategoriesPageModule)
   },
@@ -50,10 +42,6 @@ const routes: Routes = [
   {
     path: 'product',
     loadChildren: () => import('./pages/product/product.module').then( m => m.ProductPageModule)
-  },
-  {
-    path: 'kitchen',
-    loadChildren: () => import('./pages/kitchen/kitchen.module').then( m => m.KitchenPageModule)
   },
   {
     path: 'switch-table',

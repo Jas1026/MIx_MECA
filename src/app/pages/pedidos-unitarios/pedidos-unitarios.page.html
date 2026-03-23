@@ -79,15 +79,15 @@
             </div>
             <div *ngIf="p.status === 'ready'" class="ready-message">¡Listo!</div>
           </td>
-          <td class="ion-text-center">
-            <ion-button size="small" color="warning" shape="round" (click)="cambiarMesa(p)" title="Cambiar Mesa">
-              <ion-icon name="swap-horizontal-outline" slot="icon-only"></ion-icon>
-            </ion-button>
+         <td class="ion-text-center">
+  <ion-button *ngIf="p.status === 'open'" size="small" color="warning" shape="round" (click)="cambiarMesa(p)" title="Cambiar Mesa">
+    <ion-icon name="swap-horizontal-outline" slot="icon-only"></ion-icon>
+  </ion-button>
 
-            <ion-button size="small" color="medium" shape="round" (click)="View_Order(p)" title="Ver Pedido">
-              <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
-            </ion-button>
-          </td>
+  <ion-button size="small" color="medium" shape="round" (click)="View_Order(p)" title="Ver Pedido">
+    <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+  </ion-button>
+</td>
         </tr>
       </tbody>
     </table>
@@ -113,15 +113,15 @@
           </div>
         </ion-label>
         
-        <div slot="end" style="display: flex; gap: 5px;">
-          <ion-button  fill="clear" color="warning" (click)="cambiarMesa(p)">
-            <ion-icon name="swap-horizontal-outline" slot="icon-only"></ion-icon>
-          </ion-button>
+     <div slot="end" style="display: flex; gap: 5px;">
+  <ion-button *ngIf="p.status === 'open'" fill="clear" color="warning" (click)="cambiarMesa(p)">
+    <ion-icon name="swap-horizontal-outline" slot="icon-only"></ion-icon>
+  </ion-button>
 
-          <ion-button fill="clear" color="medium" (click)="View_Order(p)">
-            <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
-          </ion-button>
-        </div>
+  <ion-button fill="clear" color="medium" (click)="View_Order(p)">
+    <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+  </ion-button>
+</div>
       </ion-item>
     </ion-item-sliding>
   </ion-list>

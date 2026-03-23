@@ -118,21 +118,32 @@ loadOrderDetails() {
   }
   confirmOrder(force: boolean = false) {
   const id_user = localStorage.getItem("user_id") || '';
-  
-  // Añadimos el parámetro force_order al enviar
+
+  // 1. VALIDACIÓN PREVIA DE INGREDIENTES/BOTELLAS
+  if (!force) {
+    this.server.validateRecipeStock(this.cart).subscribe((res: any) => {
+      if (res.error === 3) {
+        // Si faltan ingredientes, lanzamos el confirm aquí
+        const proceed = confirm(`${res.message}. ¿Deseas enviar el pedido de todas formas?`);
+        if (proceed) {
+          this.executeOrder(id_user, true); // Enviamos forzado
+        }
+      } else {
+        this.executeOrder(id_user, false); // Todo bien, enviamos normal
+      }
+    });
+  } else {
+    this.executeOrder(id_user, true);
+  }
+}
+
+// Separamos la lógica de envío para que el código sea limpio
+private executeOrder(id_user: string, force: boolean) {
   this.server.createOrder(this.table.id_table, id_user, this.cart, force)
     .subscribe(async (res: any) => {
-      
       if (res.error === 0) {
-        alert("Pedido creado");
+        alert("Pedido enviado con éxito");
         this.modalCtrl.dismiss(true);
-      } 
-      // ERROR 2: Falta Stock
-      else if (res.error === 2) {
-        const confirmResult = confirm(`${res.message}. ¿Deseas continuar de todos modos? (El stock quedará en negativo)`);
-        if (confirmResult) {
-          this.confirmOrder(true); // Re-intentamos forzando la venta
-        }
       } else {
         alert(res.message);
       }
