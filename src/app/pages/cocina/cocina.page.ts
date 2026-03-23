@@ -145,36 +145,24 @@ checkAlerts() {
     return item.isLate ? 'time-badge late' : 'time-badge on-time';
   }
 
+markReady(detailId: number) {
+  // Ya no pasamos 'force' porque el stock se validó al crear el pedido
+  this.server.updateDetailStatus(detailId, 'ready').subscribe((res: any) => {
+    if (res.error === 0) {
+      const item = this.orders.find(o => o.detail_id == detailId);
 
-async markReady(detailId: number, force: boolean = false) {
-  this.server.updateDetailStatus(detailId, 'ready', force).subscribe(async (res: any) => {
-if (res.error === 0) {
+      if (item) {
+        this.notify.pushNotification({
+          product: item.name,
+          table: item.table_id,
+          order: item.order_id
+        });
+      }
 
-  const item = this.orders.find(o => o.detail_id == detailId);
-
-  if(item){
-    this.notify.pushNotification({
-      product: item.name,
-      table: item.table_id,
-      order: item.order_id
-    });
-  }
-
-  this.loadOrders();
-}else if (res.error === 2) {
-      // ERROR 2: Mostrar modal de confirmación
-      const alert = await this.alertCtrl.create({
-        header: 'Stock Insuficiente',
-        message: res.message + '. ¿Deseas continuar y dejar el stock en negativo?',
-        buttons: [
-          { text: 'Cancelar', role: 'cancel' },
-          { 
-            text: 'Sí, continuar', 
-            handler: () => { this.markReady(detailId, true); } // Llamamos de nuevo con force = true
-          }
-        ]
-      });
-      await alert.present();
+      this.loadOrders(); // Refrescar la lista de cocina
+    } else {
+      // Solo errores genéricos de conexión o base de datos
+      alert("Error al actualizar: " + res.message);
     }
   });
 }

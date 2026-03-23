@@ -116,41 +116,53 @@ loadOrderDetails() {
     return this.cart.reduce((sum, item) =>
       sum + (item.price * item.quantity), 0);
   }
-  confirmOrder(force: boolean = false) {
+  confirmOrder() {
   const id_user = localStorage.getItem("user_id") || '';
-
-  // 1. VALIDACIÓN PREVIA DE INGREDIENTES/BOTELLAS
-  if (!force) {
-    this.server.validateRecipeStock(this.cart).subscribe((res: any) => {
-      if (res.error === 3) {
-        // Si faltan ingredientes, lanzamos el confirm aquí
-        const proceed = confirm(`${res.message}. ¿Deseas enviar el pedido de todas formas?`);
-        if (proceed) {
-          this.executeOrder(id_user, true); // Enviamos forzado
+  
+  // IMPORTANTE: El servicio espera (id_table, id_user, products, force)
+  // No pases el "system" aquí, el servicio ya lo obtiene internamente con this.getSystem()
+  
+  this.server.createOrder(this.table.id_table, id_user, this.cart, false)
+    .subscribe({
+      next: (res: any) => {
+        if (res.error === 0) {
+          alert("✅ " + res.message);
+          this.modalCtrl.dismiss(true);
+        } else if (res.error === 2) {
+          // Bloqueo por falta de stock disponible
+          alert("🚫 STOCK INSUFICIENTE:\n" + res.message);
+        } else {
+          alert("❌ Error: " + res.message);
         }
-      } else {
-        this.executeOrder(id_user, false); // Todo bien, enviamos normal
+      },
+      error: (err) => {
+        console.error(err);
+        alert("Error de conexión con el servidor.");
       }
     });
-  } else {
-    this.executeOrder(id_user, true);
-  }
 }
-
-// Separamos la lógica de envío para que el código sea limpio
+// Cambiamos el método para que sea más limpio y maneje los errores de stock (error 2)
 private executeOrder(id_user: string, force: boolean) {
+  // Pasamos 'force' que es booleano, tal cual lo pide el service ahora
   this.server.createOrder(this.table.id_table, id_user, this.cart, force)
-    .subscribe(async (res: any) => {
-      if (res.error === 0) {
-        alert("Pedido enviado con éxito");
-        this.modalCtrl.dismiss(true);
-      } else {
-        alert(res.message);
+    .subscribe({
+      next: async (res: any) => {
+        if (res.error === 0) {
+          alert("✅ Pedido enviado con éxito");
+          this.modalCtrl.dismiss(true);
+        } else if (res.error === 2) {
+          // Si el PHP devuelve error 2 es que NO hay stock disponible
+          alert("🚫 STOCK INSUFICIENTE: " + res.message);
+        } else {
+          alert("❌ Error: " + res.message);
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        alert("Error de conexión con el servidor.");
       }
     });
 }
-// En OrderModalComponent
-
 // Eliminar el producto completamente del carrito, sin importar la cantidad
 deleteFromCart(product: any) {
   this.cart = this.cart.filter(p => p.id_product !== product.id_product);

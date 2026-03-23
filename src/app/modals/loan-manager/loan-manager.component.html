@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <ion-title>Préstamo desde: {{ targetSystem | uppercase }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-item *ngFor="let item of externalItems">
+      <ion-label>
+        <h2>{{ item.nombre || item.nombre_producto }}</h2>
+        <p>Disponible en {{ targetSystem }}: <strong>{{ item.stock_act || item.stock_disponible }}</strong> {{ item.unidad_med }}</p>
+      </ion-label>
+      <ion-input slot="end" type="number" placeholder="Cant." [(ngModel)]="item.transfer_qty" 
+                 style="max-width: 80px; text-align: right; border-bottom: 1px solid #ccc;"></ion-input>
+    </ion-item>
+  </ion-list>
+</ion-content>
+
+<ion-footer>
+  <ion-button expand="block" color="success" (click)="confirmTransfer()">
+    Importar a {{ currentSystem | uppercase }}
+  </ion-button>
+</ion-footer>

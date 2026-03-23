@@ -5,6 +5,7 @@ import { CreateIngredientComponent } from 'src/app/modals/create-ingredient/crea
 import { CreateProductComponent } from 'src/app/modals/create-product/create-product.component';
 import { ViewProductDetailComponent } from 'src/app/modals/view-product-detail/view-product-detail.component';
 import { BottleManagerComponent } from 'src/app/modals/bottle-manager/bottle-manager.component';
+import { LoanManagerComponent } from 'src/app/modals/loan-manager/loan-manager.component';
 
 @Component({
   selector: 'app-inventario',
@@ -345,6 +346,23 @@ async deleteCategory(id: any) {
       this.loadCategories();
     });
   }
+}
+async openLoanModal() {
+  const modal = await this.modalCtrl.create({
+    component: LoanManagerComponent,
+    componentProps: {
+      type: (this.segment === 'ingredients') ? 'ingredient' : 'product'
+    }
+  });
+
+  modal.onDidDismiss().then(res => {
+    if (res.data) {
+      if (this.segment === 'ingredients') this.loadIngredients();
+      else this.loadProducts();
+    }
+  });
+
+  return await modal.present();
 }
 }
 

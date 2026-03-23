@@ -88,19 +88,18 @@ export class ServerContentService {
 
     return this.http.post(this.urlService + "get_products_by_category.php", body);
   }
-
-  // ---------------- ÓRDENES ----------------
 createOrder(id_table: any, id_user: any, products: any[], force: boolean = false) {
   const formData = new FormData();
-  formData.append('id_table', id_table);
-  formData.append('id_user', id_user);
+  formData.append('id_table', id_table.toString()); // Aseguramos string para FormData
+  formData.append('id_user', id_user.toString());
   formData.append('products', JSON.stringify(products));
   formData.append('system', this.getSystem());
-  formData.append('force_order', force ? 'true' : 'false'); // <--- ENVIAR ESTO
+  
+  // Convertimos el boolean a string para el servidor
+  formData.append('force_order', force ? 'true' : 'false'); 
 
-  return this.http.post(`${this.urlService}/create_order.php`, formData);
+  return this.http.post(`${this.urlService}create_order.php`, formData);
 }
-
   updateOrderStatus(id_order: string, status: string) {
     let body = new FormData();
     body.append("id_order", id_order);
@@ -136,11 +135,10 @@ createOrder(id_table: any, id_user: any, products: any[], force: boolean = false
     return this.http.post(this.urlService + "get_kitchen_orders.php", body);
   }
   
-updateDetailStatus(detailId: number, status: string = 'ready', force: boolean = false) {
+updateDetailStatus(detailId: number, status: string = 'ready') {
   let body = new FormData();
   body.append("detail_id", detailId.toString());
   body.append("status", status);
-  body.append("force", force ? "1" : "0"); // Enviamos 1 si es true
   body.append("system", this.getSystem());
 
   return this.http.post(this.urlService + "update_detail_status.php", body);
@@ -534,7 +532,32 @@ getDetalleArea(system: string, area: string): Observable<any> {
 
   return this.http.post(this.urlService + "get_detalle_area.php", body);
 }
+// 1. Obtener Ingredientes de la BD contraria
+getExternalIngredients(targetSystem: string): Observable<any> {
+  let body = new FormData();
+  body.append("system", targetSystem);
+  // Reutilizamos el mismo PHP que ya tienes para listar ingredientes, 
+  // pero pasándole el sistema destino
+  return this.http.post(this.urlService + "get_ingredients.php", body);
+}
 
+// 2. Obtener Productos de la BD contraria (Para que no te de el error 2339)
+getProductsExternal(targetSystem: string): Observable<any> {
+  let body = new FormData();
+  body.append("system", targetSystem);
+  return this.http.post(this.urlService + "get_products.php", body);
+}
+
+// 3. Ejecutar la transferencia por Nombres
+transferStockByNames(data: any): Observable<any> {
+  let body = new FormData();
+  body.append("from_system", data.from_system);
+  body.append("to_system", data.to_system);
+  body.append("type", data.type);
+  body.append("items", JSON.stringify(data.items));
+  
+  return this.http.post(this.urlService + "transfer_inventory.php", body);
+}
 
 
 

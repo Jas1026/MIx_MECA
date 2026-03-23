@@ -11,6 +11,7 @@ import { CreateIngredientModule } from '../../modals/create-ingredient/create-in
 import { CreateProductModule } from 'src/app/modals/create-product/create-product.module';
 import { ViewProductDetailModule } from 'src/app/modals/view-product-detail/view-product-detail.module';
 import { BottleManagerModule } from 'src/app/modals/bottle-manager/bottle-manager.module';
+import { LoanManagerModule } from 'src/app/modals/loan-manager/loan-manager.module';
 @NgModule({
   imports: [
     CommonModule,
@@ -21,6 +22,7 @@ import { BottleManagerModule } from 'src/app/modals/bottle-manager/bottle-manage
     CreateProductModule,
     ViewProductDetailModule,     
     BottleManagerModule,
+    LoanManagerModule,
   ],
   declarations: [InventarioPage]
 })
