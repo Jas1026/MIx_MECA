@@ -124,10 +124,59 @@ startClock() {
     if (data) this.loadTables();
   }
 
-  async abrirResumen(orderId: number) {
-    const modal = await this.modalCtrl.create({
-      component: ResumenPedidoComponent, componentProps: { orderId }
-    });
-    await modal.present();
+async abrirResumen(orderId: number) {
+  const modal = await this.modalCtrl.create({
+    component: ResumenPedidoComponent,
+    componentProps: { 
+      orderId,
+      modo: 'final' // 🔥 explícito
+    }
+  });
+  await modal.present();
+}
+  async abrir_pago_parc(orderId: number) {
+  const modal = await this.modalCtrl.create({
+    component: ResumenPedidoComponent,
+    componentProps: { 
+      orderId: orderId,
+      modo: 'parcial' // opcional pero recomendado
+    }
+  });
+
+  await modal.present();
+
+  const { data } = await modal.onDidDismiss();
+
+  // 🔄 refresca mesas si hubo cambios
+  if (data) {
+    this.loadTables();
   }
+}
+cambiarEstadoMesa(mesa: any) {
+
+  let nuevoEstado = '';
+
+  if (mesa.estado === 'Libre') {
+    nuevoEstado = 'Reservado';
+  } else if (mesa.estado === 'Reservado') {
+    nuevoEstado = 'Libre';
+  } else {
+    return; // 🔥 no tocar mesas ocupadas
+  }
+
+  this.server.updateTableStatus(mesa.id_table, nuevoEstado)
+    .subscribe((res: any) => {
+
+      if (res.error === 0) {
+
+        mesa.estado = res.nuevo_estado; // 🔥 actualización instantánea
+
+      } else {
+        console.error(res.message);
+      }
+
+    }, err => {
+      console.error('Error servidor', err);
+    });
+}
 }

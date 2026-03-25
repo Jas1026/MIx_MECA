@@ -100,7 +100,17 @@
       <ion-icon name="add-circle-outline" slot="start"></ion-icon>
       {{ segmento === 'partes' ? 'Generar ' + numPartes + ' Pagos' : 'Añadir a Canasta' }}
     </ion-button>
+<ion-button 
+  expand="block" 
+  shape="round" 
+  color="warning" 
+  class="ion-margin-top"
+  (click)="guardarParcialBD()" 
+  [disabled]="pagosTemporales.length === 0">
 
+  <ion-icon name="save-outline" slot="start"></ion-icon>
+  GUARDAR PARCIAL
+</ion-button>
     <div *ngIf="pagosTemporales.length > 0" class="canasta-container ion-margin-top">
       <div class="canasta-header">
         <ion-icon name="basket-outline"></ion-icon>
@@ -140,9 +150,10 @@
   </div>
 </ion-content>
 
-<ion-footer class="ion-no-border">
+<ion-footer class="ion-no-border" *ngIf="modo !== 'parcial'">
   <ion-toolbar class="ion-padding">
-    <ion-button expand="block" color="success" shape="round" size="large" (click)="confirmarTodo()" 
+    <ion-button expand="block" color="success" shape="round" size="large" 
+                (click)="confirmarTodo()" 
                 [disabled]="totalRestanteEnMesa > 0.05 || pagosTemporales.length === 0">
       <ion-icon name="checkmark-done-circle-outline" slot="start"></ion-icon>
       CONFIRMAR Y CERRAR MESA

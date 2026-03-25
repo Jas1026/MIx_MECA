@@ -37,8 +37,31 @@
   <ion-icon name="megaphone-outline" slot="icon-only"></ion-icon>
 </ion-button>
   </ion-item>
-  
+  <div *ngIf="prod.pagos?.length > 0" class="pagos-producto">
+
+  <div *ngFor="let pago of prod.pagos" 
+       class="pago-card"
+       [ngClass]="{
+         'pago-efectivo': pago.metodo_pago === 'efectivo',
+         'pago-qr': pago.metodo_pago === 'qr',
+         'pago-tarjeta': pago.metodo_pago === 'tarjeta'
+       }">
+
+    <div class="pago-header">
+      <span class="nombre">👤 {{ pago.razonSocial }}</span>
+      <span class="monto">Bs {{ pago.monto | number:'1.2-2' }}</span>
+    </div>
+
+    <div class="pago-body">
+      <span class="nit">🪪 {{ pago.nit }}</span>
+      <span class="metodo">💳 {{ pago.metodo_pago | uppercase }}</span>
+    </div>
+
+  </div>
+
+</div>
 </ion-card>
 
   </div>
+  
 </ion-content>

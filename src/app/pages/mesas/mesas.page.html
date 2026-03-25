@@ -5,7 +5,21 @@
          'status-ready': mesa.estado === 'Ready',
          'status-ocupada': mesa.estado !== 'Libre' && mesa.estado !== 'Ready'
        }">
+<ion-button 
+  *ngIf="mesa.estado === 'Libre' || mesa.estado === 'Reservado'"
+  expand="block"
+  shape="round"
+  color="medium"
+  (click)="cambiarEstadoMesa(mesa)">
 
+  <ion-icon 
+    [name]="mesa.estado === 'Libre' ? 'bookmark-outline' : 'close-circle-outline'" 
+    slot="start">
+  </ion-icon>
+
+  {{ mesa.estado === 'Libre' ? 'Reservar Mesa' : 'Liberar Mesa' }}
+
+</ion-button>
     <div class="status-badge">{{ mesa.estado }}</div>
 
     <div class="table-icon-wrapper">
@@ -15,6 +29,7 @@
     </div>
 
     <div class="table-info">
+      
       <h2>{{ mesa.nombre }}</h2>
       
       <p [class]="getTimerClass(mesa)" *ngIf="mesa.estado !== 'Libre' && mesa.order_date">
@@ -29,10 +44,20 @@
       <ion-button *ngIf="mesa.estado === 'Libre'" expand="block" shape="round" class="btn-tomar" (click)="openOrderModal(mesa)">
         <ion-icon name="add-circle-outline" slot="start"></ion-icon> Tomar Pedido
       </ion-button>
-
+<ion-button shape="round"
+  *ngIf="mesa.estado === 'Pendiente'"
+  expand="block" 
+  class="btn-ready" 
+  (click)="abrir_pago_parc(mesa.order_id)">
+  
+  <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+  PAGO PARCIAL
+</ion-button>
+      <br>
       <ion-button *ngIf="mesa.estado === 'Ready'" expand="block" shape="round" color="warning" (click)="abrirResumen(mesa.order_id)">
         <ion-icon name="checkmark-done-circle-outline" slot="start"></ion-icon> ENTREGAR
       </ion-button>
+
 
       <p class="msg-ocupada" *ngIf="mesa.estado === 'Pendiente' || (mesa.estado !== 'Libre' && mesa.estado !== 'Ready')">
         En servicio...

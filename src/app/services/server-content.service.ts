@@ -574,8 +574,31 @@ transferStockByNames(data: any): Observable<any> {
   
   return this.http.post(this.urlService + "transfer_inventory.php", body);
 }
+getPagosParciales(orderId: number) {
+  const system = localStorage.getItem('sistema') || 'mixtura'; // 🔥 FIX
 
+  return this.http.get(
+    this.urlService + `get_pagos_parciales.php?order_id=${orderId}&system=${system}`
+  );
+}
+deletePago(id_pago: number) {
+  const system = localStorage.getItem('sistema') || 'mixtura';
 
+  return this.http.post(
+    this.urlService + 'delete_pago.php',
+    {
+      id_pago,
+      system
+    }
+  );
+}
+updateTableStatus(id_table: number, estado: string) {
+  return this.http.post<any>(this.urlService + 'update_table_status_reservado.php', {
+    id_table,
+    estado,
+    system: localStorage.getItem('sistema') || 'mixtura' // 🔥 CLAVE
+  });
+}
 
 
 

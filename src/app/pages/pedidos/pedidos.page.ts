@@ -66,13 +66,7 @@ cargarDatosUsuario() {
       return false;
     }
 
-    // ===============================
-    // 2️⃣ FILTRO POR ESTADO
-    // ===============================
 
-// ===============================
-// 2️⃣ FILTRO POR ESTADO
-// ===============================
 
 if (this.estadoSeleccionado) {
 
@@ -283,7 +277,7 @@ private updateAllClocks() {
   });
 }
 
-    async View_Order(p: any) {
+async View_Order(p: any) {
       const modal = await this.modalCtrl.create({
         component: ViewOrderProductsComponent,
         componentProps: {
@@ -299,9 +293,8 @@ private updateAllClocks() {
       });
   
       await modal.present();
-    }
-// pedidos.page.ts
-// pedidos.page.ts
+}
+
 
 hasRole(roleName: string): boolean {
   // Si no hay rol, no mostramos nada

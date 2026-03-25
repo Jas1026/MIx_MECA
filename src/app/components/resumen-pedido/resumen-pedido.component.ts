@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 })
 export class ResumenPedidoComponent implements OnInit {
   @Input() orderId!: number;
-
+@Input() modo: 'parcial' | 'final' = 'final';
   segmento = 'items';
   itemsPendientes: any[] = []; 
   pagosTemporales: any[] = []; 
@@ -33,26 +33,47 @@ export class ResumenPedidoComponent implements OnInit {
   ngOnInit() {
     this.cargarDatosIniciales();
   }
+cargarDatosIniciales() {
 
-  cargarDatosIniciales() {
-    this.server.getOrderDetails(this.orderId).subscribe((res: any) => {
-      const data = res.data || [];
-      this.itemsPendientes = [];
-      data.filter((item: any) => item.estado_pago !== 'pagado')
-          .forEach((item: any) => {
-            for (let i = 0; i < Number(item.quantity); i++) {
-              this.itemsPendientes.push({ 
-                ...item, 
-                detail_id: item.detail_id,
-                nombre_producto: item.nombre_producto,
-                selected: false,
-                unit_val: Number(item.unit_price)
-              });
-            }
+  // 🔥 1. cargar items pendientes
+  this.server.getOrderDetails(this.orderId).subscribe((res: any) => {
+    const data = res.data || [];
+    this.itemsPendientes = [];
+
+    data.filter((item: any) => item.estado_pago !== 'pagado')
+      .forEach((item: any) => {
+        for (let i = 0; i < Number(item.quantity); i++) {
+          this.itemsPendientes.push({ 
+            ...item, 
+            detail_id: item.detail_id,
+            nombre_producto: item.nombre_producto,
+            selected: false,
+            unit_val: Number(item.unit_price)
           });
-    });
-  }
+        }
+      });
+  });
 
+  // 🔥 2. cargar pagos parciales (LA CLAVE)
+  this.server.getPagosParciales(this.orderId).subscribe((res: any) => {
+    if (res.error === 0) {
+
+      this.pagosTemporales = res.data.map((p: any) => ({
+         id_pago: p.id_pago,
+        nit: p.nit_cliente,
+        razonSocial: p.razon_social,
+        metodo_pago: p.metodo_pago,
+        voucher: p.voucher,
+        monto: Number(p.monto_total),
+        monto_extra: 0,
+        motivo_extra: '',
+        tipo: 'parcial_bd',
+        items_referencia: [] // 🔥 luego lo mejoramos si quieres
+      }));
+
+    }
+  });
+}
   get totalRestanteEnMesa(): number {
     return this.itemsPendientes.reduce((sum, i) => sum + i.unit_val, 0);
   }
@@ -118,16 +139,40 @@ export class ResumenPedidoComponent implements OnInit {
     }
     this.resetFormulario();
   }
-
   quitarPago(pago: any, index: number) {
-    if (pago.tipo === 'items' || pago.tipo === 'partes') {
-      pago.items_referencia.forEach((item: any) => {
-        item.selected = false;
-        this.itemsPendientes.push(item);
-      });
-    }
-    this.pagosTemporales.splice(index, 1);
+
+  if (pago.tipo === 'parcial_bd') {
+
+    this.server.deletePago(pago.id_pago).subscribe((res: any) => {
+
+      if (res.error === 0) {
+
+        this.toast.create({
+          message: 'Pago eliminado 🗑️',
+          duration: 1500,
+          color: 'warning'
+        }).then(t => t.present());
+
+        // 🔥 LA MAGIA REAL
+        this.cargarDatosIniciales(); // ← recarga TODO desde BD
+
+      }
+
+    });
+
+    return;
   }
+
+  // comportamiento local normal
+  if (pago.tipo === 'items' || pago.tipo === 'partes') {
+    pago.items_referencia.forEach((item: any) => {
+      item.selected = false;
+      this.itemsPendientes.push(item);
+    });
+  }
+
+  this.pagosTemporales.splice(index, 1);
+}
 
   resetFormulario() {
     this.cargoExtra = 0;
@@ -173,6 +218,40 @@ export class ResumenPedidoComponent implements OnInit {
       });
     }, 50);
   }
+guardarParcialBD() {
+  const payload = {
+    order_id: this.orderId,
+    pagos: this.pagosTemporales.map(p => ({
+      nit: p.nit,
+      razonSocial: p.razonSocial,
+      metodo_pago: p.metodo_pago,
+      voucher: p.voucher || '',
+      monto: p.monto,
+      monto_extra: p.monto_extra,
+      motivo_extra: p.motivo_extra,
+      detalle_ids: p.items_referencia.reduce((acc: any, item: any) => {
+        const id = item.detail_id;
+        if (!id) return acc; // 🔥 evita undefined
+        acc[id] = (acc[id] || 0) + 1;
+        return acc;
+      }, {})
+    })),
+    system: localStorage.getItem('sistema') || 'mixtura',
+    parcial: 1 // 🔥 IMPORTANTE
+  };
 
+  this.server.procesarMultiplesPagos(payload).subscribe((res: any) => {
+    if (res.error === 0) {
+      this.toast.create({
+        message: 'Pago parcial guardado 💾',
+        duration: 1500,
+        color: 'success'
+      }).then(t => t.present());
+
+      this.pagosTemporales = []; // limpiar canasta
+      this.cargarDatosIniciales(); // recargar items
+    }
+  });
+}
   cerrar() { this.modalCtrl.dismiss(); }
 }
