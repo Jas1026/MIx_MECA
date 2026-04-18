@@ -198,7 +198,7 @@ cargarDatosIniciales() {
           return acc;
         }, {})
       })),
-      system: localStorage.getItem('sistema') || 'mixtura'
+      system: sessionStorage.getItem('sistema') || 'mixtura'
     };
 
     this.server.procesarMultiplesPagos(payload).subscribe((res: any) => {
@@ -236,7 +236,7 @@ guardarParcialBD() {
         return acc;
       }, {})
     })),
-    system: localStorage.getItem('sistema') || 'mixtura',
+    system: sessionStorage.getItem('sistema') || 'mixtura',
     parcial: 1 // 🔥 IMPORTANTE
   };
 

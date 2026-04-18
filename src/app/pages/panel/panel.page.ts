@@ -22,21 +22,21 @@ constructor(
 ) {}
 
   ngOnInit() {
-this.userRole = (localStorage.getItem('role') || '').toLowerCase();
+this.userRole = (sessionStorage.getItem('role') || '').toLowerCase();
   }
 ionViewWillEnter() {
   this.checkSession();
   this.cargarRol();
 }
 cargarRol() {
-    const role = localStorage.getItem('role');
+    const role = sessionStorage.getItem('role');
     console.log("Rol detectado en el Panel:", role); // Para que verifiques en consola
     this.userRole = role ? role.toLowerCase() : '';
   }
   checkSession() {
 
-    const userId = localStorage.getItem("user_id");
-    const system = localStorage.getItem("system");
+    const userId = sessionStorage.getItem("user_id");
+    const system = sessionStorage.getItem("system");
 
     if (!userId || !system) {
       alert("No hay sesión activa");
@@ -57,7 +57,7 @@ cargarRol() {
 
   loadFlats() {
 
-  const system = localStorage.getItem("system") || '';
+  const system = sessionStorage.getItem("system") || '';
 
 this.server.getFlats().subscribe((res: any) => {
 

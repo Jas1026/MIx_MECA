@@ -117,7 +117,7 @@ loadOrderDetails() {
       sum + (item.price * item.quantity), 0);
   }
   confirmOrder() {
-  const id_user = localStorage.getItem("user_id") || '';
+  const id_user = sessionStorage.getItem("user_id") || '';
   
   // IMPORTANTE: El servicio espera (id_table, id_user, products, force)
   // No pases el "system" aquí, el servicio ya lo obtiene internamente con this.getSystem()

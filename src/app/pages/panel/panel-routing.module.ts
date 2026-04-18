@@ -64,6 +64,12 @@ const routes: Routes = [
         canActivate: [RoleGuard],
         data: { expectedRoles:  ['admin', 'mesero', 'jefe_mesero']  }
       },
+            {
+        path: 'locations',
+        loadChildren: () => import('../../locations/locations-routing.module').then(m => m.LocationsPageRoutingModule),
+        canActivate: [RoleGuard],
+        data: { expectedRoles:  ['admin', 'mesero', 'jefe_mesero']  }
+      },
       {
         path: '',
         redirectTo: '',

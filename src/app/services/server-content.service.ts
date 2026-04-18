@@ -6,13 +6,13 @@ import { Observable } from 'rxjs'; // <--- AÑADE ESTA LÍNEA
 })
 export class ServerContentService {
 
-  private urlService = "http://localhost/api/";
+private urlService = "http://localhost/api/";
 
   constructor(private http: HttpClient) { }
 
   // 🔥 Obtener sistema actual
   public getSystem(): string {
-    return localStorage.getItem('system') || 'mecapos';
+    return sessionStorage.getItem('system') || 'mecapos';
   }
 
   // ---------------- LOGIN ----------------
@@ -37,8 +37,8 @@ export class ServerContentService {
 
   Logout() {
     let body = new FormData();
-    body.append("user_cash", localStorage.getItem("cash_id") || "");
-    body.append("id_user", localStorage.getItem("id_user") || "");
+    body.append("user_cash", sessionStorage.getItem("cash_id") || "");
+    body.append("id_user", sessionStorage.getItem("id_user") || "");
     body.append("system", this.getSystem());
 
     return this.http.post(this.urlService + "logout.php", body);
@@ -438,7 +438,7 @@ updateUserState(body: FormData) {
 }
 emitirFacturaReal(payload: any) {
   // Obtenemos el sistema (mixtura o mecapos) desde donde lo tengas guardado
-  const sistemaActivo = localStorage.getItem('sistema') || 'mixtura'; 
+  const sistemaActivo = sessionStorage.getItem('sistema') || 'mixtura'; 
   
   // Añadimos el sistema al objeto que enviamos
   const data = { ...payload, system: sistemaActivo };
@@ -484,7 +484,7 @@ searchProducts(term: string) {
 
 }
 getHistorialPagos(orderId: number) {
-  const sistemaActivo = localStorage.getItem('sistema') || 'mixtura';
+  const sistemaActivo = sessionStorage.getItem('sistema') || 'mixtura';
   // Usamos params de URL porque el PHP espera un GET
   return this.http.get(`${this.urlService}/getHistorialPagos.php?order_id=${orderId}&system=${sistemaActivo}`);
 }
@@ -496,7 +496,7 @@ getHistorialPagos(orderId: number) {
  */
 procesarMultiplesPagos(payload: any) {
   // Aseguramos que el sistema viaje en el cuerpo de la petición
-  const sistemaActivo = localStorage.getItem('sistema') || 'mixtura';
+  const sistemaActivo = sessionStorage.getItem('sistema') || 'mixtura';
   const data = { ...payload, system: sistemaActivo };
 
   return this.http.post(`${this.urlService}/procesarMultiplesPagos.php`, data);
@@ -575,14 +575,14 @@ transferStockByNames(data: any): Observable<any> {
   return this.http.post(this.urlService + "transfer_inventory.php", body);
 }
 getPagosParciales(orderId: number) {
-  const system = localStorage.getItem('sistema') || 'mixtura'; // 🔥 FIX
+  const system = sessionStorage.getItem('sistema') || 'mixtura'; // 🔥 FIX
 
   return this.http.get(
     this.urlService + `get_pagos_parciales.php?order_id=${orderId}&system=${system}`
   );
 }
 deletePago(id_pago: number) {
-  const system = localStorage.getItem('sistema') || 'mixtura';
+  const system = sessionStorage.getItem('sistema') || 'mixtura';
 
   return this.http.post(
     this.urlService + 'delete_pago.php',
@@ -596,8 +596,31 @@ updateTableStatus(id_table: number, estado: string) {
   return this.http.post<any>(this.urlService + 'update_table_status_reservado.php', {
     id_table,
     estado,
-    system: localStorage.getItem('sistema') || 'mixtura' // 🔥 CLAVE
+    system: sessionStorage.getItem('sistema') || 'mixtura' // 🔥 CLAVE
   });
+}
+  // ✅ GET
+  getLocations(){
+    return this.http.get(this.urlService + 'getLocations.php');
+  }
+
+  // ✅ CREATE + UPDATE
+  saveLocation(data:any){
+    return this.http.post(this.urlService + 'saveLocation.php', data);
+  }
+
+  // ✅ DELETE
+  deleteLocation(id:any){
+    return this.http.post(this.urlService + 'delete_location.php', { id });
+  }
+updateOrdera(data: any) {
+  const formData = new FormData();
+  formData.append('data', JSON.stringify(data));
+
+  return this.http.post(
+    'http://localhost/api/update_locations_order.php',
+    formData
+  );
 }
 
 
@@ -664,7 +687,7 @@ payOrder(orderId: any, method: string) {
  }
  AddBrief (description:string) {
   let bodyLogin = new FormData();
-  bodyLogin.append("id_user", localStorage.getItem("id_user") || "");
+  bodyLogin.append("id_user", sessionStorage.getItem("id_user") || "");
   bodyLogin.append("note", description);
   return this.http.post(this.urlService + "add_brief.php", bodyLogin);
  }
@@ -693,7 +716,7 @@ payOrder(orderId: any, method: string) {
   }
   LoadYourTables() {
     let bodyLogin = new FormData();
-    bodyLogin.append("id_user", localStorage.getItem("user_id") || "");
+    bodyLogin.append("id_user", sessionStorage.getItem("user_id") || "");
     return this.http.post(this.urlService + "your_tables.php", bodyLogin);
   }
   LoadTables (zone:string) {
@@ -741,7 +764,7 @@ payOrder(orderId: any, method: string) {
   AssignTable (table:string) {
     let bodyLogin = new FormData();
     bodyLogin.append("table", table);
-    bodyLogin.append("id_user", localStorage.getItem("user_id") || "");
+    bodyLogin.append("id_user", sessionStorage.getItem("user_id") || "");
     return this.http.post(this.urlService + "assign_table.php", bodyLogin);
   }
   IsDeliveryTable (table:string) {
@@ -790,7 +813,7 @@ payOrder(orderId: any, method: string) {
     bodyLogin.append("notes", notes);
     bodyLogin.append("accompaniment", accompaniment);
     bodyLogin.append("price", price);
-    bodyLogin.append("id_user", localStorage.getItem("user_id") || "");
+    bodyLogin.append("id_user", sessionStorage.getItem("user_id") || "");
     return this.http.post(this.urlService + "add_products.php", bodyLogin);
   }
   SendProductsToKitchen (pid:string, table:string, people:string) {
@@ -840,24 +863,24 @@ payOrder(orderId: any, method: string) {
     bodyLogin.append("tickets", tickets);
     bodyLogin.append("quantities", quantities);
     bodyLogin.append("subtotals", subtotals);
-    bodyLogin.append("user_cash", localStorage.getItem("cash_id") || "");
+    bodyLogin.append("user_cash", sessionStorage.getItem("cash_id") || "");
     return this.http.post(this.urlService + "add_invoice.php", bodyLogin);
   }
   //CIERRE DE CAJA--------------------
   OpenCash(floor:string) {
     let bodyLogin = new FormData();
     bodyLogin.append("user_type", floor);
-    bodyLogin.append("user_name", localStorage.getItem("user_id") || "");
+    bodyLogin.append("user_name", sessionStorage.getItem("user_id") || "");
     return this.http.post(this.urlService + "open_cash.php", bodyLogin);
   }
   CheckCash() {
     let bodyLogin = new FormData();
-    bodyLogin.append("user_cash", localStorage.getItem("cash_id") || "");
+    bodyLogin.append("user_cash", sessionStorage.getItem("cash_id") || "");
     return this.http.post(this.urlService + "check_cash.php", bodyLogin);
   }
   CloseCash() {
     let bodyLogin = new FormData();
-    bodyLogin.append("user_cash", localStorage.getItem("cash_id") || "");
+    bodyLogin.append("user_cash", sessionStorage.getItem("cash_id") || "");
     return this.http.post(this.urlService + "close_cash.php", bodyLogin);
   }
   AddExtraCost(id_table:string, cost:string, description:string) {
@@ -865,8 +888,8 @@ payOrder(orderId: any, method: string) {
     bodyLogin.append("id_table", id_table);
     bodyLogin.append("cost", cost);
     bodyLogin.append("note", description);
-    bodyLogin.append("id_user", localStorage.getItem("user_id") || "");
-    bodyLogin.append("id_cash", localStorage.getItem("cash_id") || "");
+    bodyLogin.append("id_user", sessionStorage.getItem("user_id") || "");
+    bodyLogin.append("id_cash", sessionStorage.getItem("cash_id") || "");
     return this.http.post(this.urlService + "add_extra.php", bodyLogin);
   }
 }

@@ -28,8 +28,8 @@ export class BriefPage {
       this.next = params['next'];
       this.floor = params['item'];
     });
-    this.role = localStorage.getItem("user_role") || "";
-    this.name = localStorage.getItem("user_name") || "";
+    this.role = sessionStorage.getItem("user_role") || "";
+    this.name = sessionStorage.getItem("user_name") || "";
     this.LoadBrief();
   }
   ionViewWillEnter(){
@@ -37,8 +37,8 @@ export class BriefPage {
       this.next = params['next'];
       this.floor = params['item'];
     });
-    this.role = localStorage.getItem("user_role") || "";
-    this.name = localStorage.getItem("user_name") || "";
+    this.role = sessionStorage.getItem("user_role") || "";
+    this.name = sessionStorage.getItem("user_name") || "";
     this.LoadBrief();
     
   }

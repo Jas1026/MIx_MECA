@@ -7,8 +7,8 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
 
-  const token = localStorage.getItem('token');
-  const system = localStorage.getItem('system');
+  const token = sessionStorage.getItem('token');
+  const system = sessionStorage.getItem('system');
 
   let headers: any = {};
 

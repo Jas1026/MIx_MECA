@@ -20,7 +20,7 @@ export class CloseCashPage implements OnInit {
     private popoverController: PopoverController) { }
 
   ngOnInit() {
-    this.user_name = localStorage.getItem("nombre") || "";
+    this.user_name = sessionStorage.getItem("nombre") || "";
     this.serverContent.CheckCash().subscribe(async data => {
       this.cash_data = data;
     });

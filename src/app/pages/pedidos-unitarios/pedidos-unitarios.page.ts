@@ -45,7 +45,7 @@ export class PedidosUnitariosPage implements OnInit, OnDestroy {
   }
 
   cargarPedidos() {
-    const userId = localStorage.getItem("user_id");
+    const userId = sessionStorage.getItem("user_id");
 
     this.server.getOrdersByUser(userId!)
       .subscribe((res: any) => {

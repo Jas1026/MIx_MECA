@@ -17,20 +17,22 @@ constructor(
   password = '';
 
 ngOnInit() {
-  localStorage.clear();
+  sessionStorage.clear(); // solo limpia esta pestaña
 }
 login() {
-  localStorage.clear();
+  // ⚠️ SOLO limpiamos esta pestaña
   sessionStorage.clear();
+
   const system = this.isMeca ? 'mecapos' : 'mixtura';
 
   this.server.LoginWithPassword(this.email, this.password, system).subscribe((res: any) => {
     if (res.error === 0) {
-      localStorage.setItem("user_id", res.id);
-      localStorage.setItem("user_name", res.name);
-      localStorage.setItem("system", system);
-      // GUARDAMOS EL ROL
-      localStorage.setItem("role", res.role); 
+
+      // ✅ Guardamos por pestaña (NO global)
+      sessionStorage.setItem("user_id", res.id);
+      sessionStorage.setItem("user_name", res.name);
+      sessionStorage.setItem("system", system);
+      sessionStorage.setItem("role", res.role);
 
       this.router.navigate(['/panel']);
     } else {

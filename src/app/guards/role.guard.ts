@@ -9,7 +9,7 @@ export class RoleGuard implements CanActivate {
   constructor(private router: Router) {}
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
-    const userRole = (localStorage.getItem('role') || '').toLowerCase().trim();
+    const userRole = (sessionStorage.getItem('role') || '').toLowerCase().trim();
     
     // Obtenemos los roles permitidos para esta ruta desde la configuración del routing
     const expectedRoles = route.data['expectedRoles'];

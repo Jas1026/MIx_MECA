@@ -23,13 +23,13 @@ export class DashboardPage {
     private popoverController: PopoverController) { }
 
   ionViewWillEnter() {
-    if (localStorage.getItem("user_role") == "cocina") {
-      this.router.navigate(['kitchen', { item: localStorage.getItem("floor") }]);
+    if (sessionStorage.getItem("user_role") == "cocina") {
+      this.router.navigate(['kitchen', { item: sessionStorage.getItem("floor") }]);
     }
     this.canUpdate = true;
     this.route.params.subscribe(params => {
       if (params['item'] == null) {
-        this.zoneId = parseInt(localStorage.getItem("zone") || "0");
+        this.zoneId = parseInt(sessionStorage.getItem("zone") || "0");
       } else {
         this.zoneId = params['item']; 
         localStorage.setItem("zone", this.zoneId.toString());

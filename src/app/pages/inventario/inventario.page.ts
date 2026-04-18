@@ -73,7 +73,7 @@ segmentChanged() {
   if (this.segment === 'assets') this.loadAssets();
   if (this.segment === 'products') this.loadProducts();
 }
-
+   
   /* ---------------- INGREDIENTES ---------------- */
 loadIngredients() {
   this.server.getIngredients().subscribe((res: any) => {

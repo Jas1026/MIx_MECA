@@ -114,7 +114,7 @@ startClock() {
 
   // --- Funciones de Modales (Mantenlas igual) ---
   async openOrderModal(table: any) {
-    const userData = JSON.parse(localStorage.getItem('user_data') || '{}');
+    const userData = JSON.parse(sessionStorage.getItem('user_data') || '{}');
     const modal = await this.modalCtrl.create({
       component: OrderModalComponent,
       componentProps: { table: table, userId: userData.id_user || userData.id }

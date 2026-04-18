@@ -11,13 +11,14 @@ export class CreateIngredientComponent implements OnInit {
 
   @Input() ingredient: any;
   isSaving: boolean = false;
-
+locations: any[] = [];
   form: any = {
     id_ingredients: null,
     nombre: '',
     stock_act: 0,
     unidad_med: '',
-    tipo: 'normal'
+    tipo: 'normal',
+    location_id: null 
   };
 
   constructor(
@@ -27,15 +28,27 @@ export class CreateIngredientComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loadLocations();
+  }
+  loadLocations() {
+  this.server.getLocations().subscribe((res: any) => {
+    this.locations = res.data;
+
+    // 👇 AQUÍ VA
     if (this.ingredient) {
-      this.form = { ...this.ingredient };
-      // Si al editar ya es botella, aseguramos que la unidad sea g
+      this.form = {
+        ...this.ingredient,
+        location_id: this.ingredient.location_id 
+          ? +this.ingredient.location_id 
+          : null
+      };
+
       if (this.form.tipo === 'botella') {
         this.form.unidad_med = 'g';
       }
     }
-  }
-
+  });
+}
   // Se ejecuta cada vez que el usuario cambia el tipo de control
   onTipoChange() {
     if (this.form.tipo === 'botella') {

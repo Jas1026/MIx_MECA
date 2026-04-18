@@ -43,7 +43,7 @@ ionViewWillEnter() {
   }
 cargarDatosUsuario() {
   // Usamos 'role' que es la clave que sí funciona en tu Panel
-  const savedRole = localStorage.getItem('role'); 
+  const savedRole = sessionStorage.getItem('role'); 
   this.userRole = savedRole ? savedRole.trim().toLowerCase() : '';
   
   console.log("PEDIDOS PAGE -> Rol verificado:", this.userRole);

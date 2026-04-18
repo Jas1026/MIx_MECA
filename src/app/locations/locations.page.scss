@@ -1,0 +1,169 @@
+/* 🔥 SOLO bloquear scroll externo */
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* 🚫 NO tocar ion-content overflow manualmente */
+ion-content {
+  --overflow: auto;
+}
+
+/* 🚫 evitar contenedores extra con scroll */
+ion-app, ion-router-outlet, ion-page {
+  height: 100%;
+}
+
+/* CONTENEDOR */
+.tree-container {
+  padding: 10px 12px 30px;
+}
+
+/* FORM */
+.form-container {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-actions {
+  margin-top: 10px;
+}
+
+/* TREE */
+.drop-zone {
+  min-height: 40px;
+}
+
+/* HIJOS */
+.children-zone {
+  margin-left: 20px;
+  border-left: 2px dashed #dcdcdc;
+  padding-left: 10px;
+  margin-bottom: 10px;
+  min-height: 20px;
+  transition: all 0.2s ease;
+}
+
+.children-zone.cdk-drop-list-dragging {
+  background: #f4f8ff;
+}
+
+/* TARJETAS */
+.location-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  border: 1px solid #f1f1f1;
+  transition: 0.2s;
+
+  &:hover {
+    transform: scale(1.01);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  &.parent {
+    background: #f6f8ff;
+    border-left: 4px solid #3880ff;
+  }
+
+  &.child {
+    background: #f9fdfb;
+    border-left: 4px solid #2dd36f;
+  }
+}
+
+/* HEADER */
+.card-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+}
+
+/* TOGGLE */
+.toggle {
+  cursor: pointer;
+  font-size: 14px;
+  width: 18px;
+  text-align: center;
+  color: #666;
+  transition: 0.2s;
+
+  &:hover {
+    color: #000;
+  }
+}
+
+/* ICONO */
+.icon {
+  font-size: 18px;
+}
+
+/* TEXTO */
+.info {
+  flex: 1;
+}
+
+.title {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.subtitle {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+/* BOTONES */
+.actions {
+  display: flex;
+  gap: 4px;
+}
+
+/* DRAG */
+.cdk-drag-preview {
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.3;
+}
+ion-page {
+  display: flex;
+  flex-direction: column;
+}
+/* 1. Reset total para evitar que el navegador genere scroll propio */
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Bloquea el scroll del navegador */
+}
+
+/* 2. Asegurar que Ionic ocupe el 100% sin desbordar */
+ion-app, ion-router-outlet, ion-page {
+  height: 100% !important;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* 3. El ÚNICO que debe mandar es ion-content */
+ion-content {
+  --overflow: auto; /* Permite scroll interno de Ionic */
+  height: 100%;
+}
+
+/* 4. IMPORTANTE: Quita márgenes negativos o anchos mayores al 100% en el tree */
+.tree-container {
+  padding: 10px 12px 30px;
+  box-sizing: border-box; /* Evita que el padding sume al ancho total */
+}

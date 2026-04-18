@@ -1,0 +1,130 @@
+<ion-header>
+
+</ion-header>
+
+<ion-content>
+
+  <!-- 🔽 FORM -->
+  <ion-accordion-group>
+    <ion-accordion value="form">
+      <ion-item slot="header">
+        <ion-label>
+          {{ form.id_location ? '✏️ Editar Ubicación' : '➕ Nueva Ubicación' }}
+        </ion-label>
+      </ion-item>
+
+      <div class="form-container" slot="content">
+
+        <ion-item>
+          <ion-input placeholder="Nombre" [(ngModel)]="form.nombre"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-select placeholder="Tipo" [(ngModel)]="form.tipo">
+            <ion-select-option value="bodega">📦 Bodega</ion-select-option>
+            <ion-select-option value="refrigerador">❄️ Refrigerador</ion-select-option>
+            <ion-select-option value="almacen">🏬 Almacén</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-select placeholder="Ubicación padre (opcional)" [(ngModel)]="form.parent_id">
+            <ion-select-option [value]="null">Sin padre</ion-select-option>
+            <ion-select-option *ngFor="let loc of locations" [value]="loc.id_location">
+              {{ loc.nombre }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <div class="form-actions">
+          <ion-button expand="block" (click)="saveLocation()">
+            {{ form.id_location ? 'Actualizar' : 'Guardar' }}
+          </ion-button>
+
+          <ion-button expand="block" fill="clear" *ngIf="form.id_location" (click)="resetForm()">
+            Cancelar
+          </ion-button>
+        </div>
+
+      </div>
+    </ion-accordion>
+  </ion-accordion-group>
+
+  <!-- 🌳 TREE -->
+  <div class="tree-container">
+
+    <!-- 🔥 ROOT SOLO PARA PADRES -->
+    <div cdkDropList
+         id="rootList"
+         [cdkDropListData]="tree"
+         [cdkDropListConnectedTo]="allDropLists"
+         class="drop-zone"
+         (cdkDropListDropped)="drop($event, null)">
+
+      <div *ngFor="let loc of tree; let i = index" cdkDrag [cdkDragData]="loc">
+
+        <!-- 🔹 PADRE -->
+        <div class="location-card parent">
+
+          <div class="card-header">
+
+            <!-- 🔽 TOGGLE -->
+            <span class="toggle"
+                  (click)="loc.expanded = !loc.expanded">
+              {{ loc.expanded ? '▼' : '▶' }}
+            </span>
+
+            <span class="icon">📦</span>
+
+            <div class="info">
+              <div class="title">{{ loc.nombre }}</div>
+              <div class="subtitle">{{ loc.tipo }}</div>
+            </div>
+
+            <div class="actions">
+              <ion-button size="small" fill="clear" (click)="edit(loc)">✏️</ion-button>
+              <ion-button size="small" fill="clear" color="danger" (click)="delete(loc.id_location)">🗑️</ion-button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 🔹 HIJOS -->
+        <div class="children-zone"
+             *ngIf="loc.expanded !== false"
+             cdkDropList
+             [id]="'list-' + loc.id_location"
+             [cdkDropListData]="loc.children"
+             [cdkDropListConnectedTo]="allDropLists"
+             (cdkDropListDropped)="drop($event, loc.id_location)">
+
+          <div *ngFor="let child of loc.children"
+               cdkDrag
+               [cdkDragData]="child"
+               class="location-card child">
+
+            <div class="card-header">
+              <span class="icon">📍</span>
+
+              <div class="info">
+                <div class="title">{{ child.nombre }}</div>
+                <div class="subtitle">{{ child.tipo }}</div>
+              </div>
+
+              <div class="actions">
+                <ion-button size="small" fill="clear" (click)="edit(child)">✏️</ion-button>
+                <ion-button size="small" fill="clear" color="danger" (click)="delete(child.id_location)">🗑️</ion-button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</ion-content>

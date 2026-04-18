@@ -130,7 +130,11 @@ const routes: Routes = [
   {
     path: 'pedidos-unitarios',
     loadChildren: () => import('./pages/pedidos-unitarios/pedidos-unitarios.module').then( m => m.PedidosUnitariosPageModule)
+  },  {
+    path: 'locations',
+    loadChildren: () => import('./locations/locations.module').then( m => m.LocationsPageModule)
   }
+
 ];
 
 @NgModule({

@@ -51,6 +51,17 @@
     <ion-note slot="error" *ngIf="form.tipo === 'botella'">Obligatorio en gramos para pesaje.</ion-note>
   </ion-item>
 
+  <ion-item class="ion-margin-bottom">
+    <ion-label position="stacked">Ubicación</ion-label>
+  <ion-select [(ngModel)]="form.location_id" interface="popover">
+    <ion-select-option [value]="null">Sin ubicación</ion-select-option>
+    <ion-select-option *ngFor="let loc of locations" [value]="+loc.id_location"> 
+      {{ loc.nombre }}
+    </ion-select-option>
+  </ion-select>
+  </ion-item>
+
+
   <ion-button expand="block" (click)="guardar()" [disabled]="isSaving" class="ion-margin-top" shape="round">
     <ion-spinner name="crescent" *ngIf="isSaving"></ion-spinner>
     <ion-icon name="save-outline" slot="start" *ngIf="!isSaving"></ion-icon>
