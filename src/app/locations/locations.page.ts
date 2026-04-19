@@ -1,6 +1,7 @@
 import { Component, ViewEncapsulation, ViewChildren, QueryList } from '@angular/core';
 import { ServerContentService } from 'src/app/services/server-content.service';
-
+import { ModalController } from '@ionic/angular';
+import { LocationDetailComponent } from '../modals/location-detail/location-detail.component';
 import { 
   CdkDragDrop, 
   moveItemInArray, 
@@ -28,7 +29,9 @@ dummyList: any[] = [];
     parent_id: null
   };
 
-  constructor(private server: ServerContentService) {}
+  constructor(private server: ServerContentService, private modalCtrl: ModalController  ) {
+    
+  }
 
   ngOnInit() {
     this.loadLocations();
@@ -216,5 +219,14 @@ drop(event: CdkDragDrop<any[]>, newParentId: number | null) {
 
   return false;
 }
+async verContenido(loc: any) {
+  const modal = await this.modalCtrl.create({
+    component: LocationDetailComponent,
+    componentProps: {
+      location: loc
+    }
+  });
 
+  await modal.present();
+}
 }

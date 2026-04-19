@@ -203,3 +203,119 @@
     }
   }
 }
+// Re-estructuración de la tarjeta para orden total
+.modern-bottle-card {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 18px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border: 1px solid #f0f0f0;
+  overflow: hidden;
+
+  .card-main-content {
+    display: flex;
+    padding: 12px;
+    align-items: center;
+  }
+
+  .visual-section {
+    flex: 0 0 60px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .info-section {
+    flex: 1;
+    padding: 0 12px;
+    
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .bottle-title {
+      font-size: 0.75rem;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+
+    .neto-display {
+      strong {
+        font-size: 1.4rem;
+        color: #222;
+        span { font-size: 0.9rem; color: #666; font-weight: 400; }
+      }
+    }
+  }
+
+  .action-section {
+    flex: 0 0 100px;
+    
+    .weight-control {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 6px;
+      text-align: center;
+
+      small { font-size: 0.6rem; color: #999; font-weight: 700; }
+      .weight-input {
+        --padding-start: 0;
+        --padding-end: 0;
+        font-weight: 800;
+        font-size: 1.1rem;
+        height: 30px;
+      }
+      ion-button {
+        --border-radius: 8px;
+        height: 28px;
+        font-size: 0.65rem;
+        margin-top: 4px;
+      }
+    }
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    background: #fafafa;
+    padding: 4px 12px;
+    border-top: 1px inset #f0f0f0;
+    gap: 8px;
+
+    .location-select {
+      font-size: 0.85rem;
+      color: var(--ion-color-primary);
+      font-weight: 600;
+      width: 100%;
+      --placeholder-color: var(--ion-color-primary);
+    }
+  }
+}
+
+.delete-mini-btn {
+  --padding-start: 0;
+  --padding-end: 0;
+  height: 24px;
+  margin: 0;
+}
+
+// Ajustes al panel de registro para móviles
+.registration-panel {
+  .modern-input {
+    margin-bottom: 5px;
+    ion-select { padding: 0; font-weight: 700; }
+  }
+}
+.filter-bar {
+  .filter-item {
+    --background: #fff;
+    border-radius: 12px;
+    border: 1px solid #eee;
+  }
+}

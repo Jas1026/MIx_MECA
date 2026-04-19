@@ -1,0 +1,42 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ location.nombre }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrar()">✖</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-segment [(ngModel)]="tab">
+    <ion-segment-button value="ingredientes">INGREDIENTES</ion-segment-button>
+    <ion-segment-button value="botellas">BOTELLAS</ion-segment-button>
+    <ion-segment-button value="productos">PRODUCTOS</ion-segment-button>
+  </ion-segment>
+
+  <!-- INGREDIENTES -->
+  <div *ngIf="tab==='ingredientes'" class="list">
+    <div *ngFor="let i of ingredientes" class="item">
+      <b>{{ i.nombre }}</b>
+      <span>{{ i.stock_actual }} {{ i.unidad_med }}</span>
+    </div>
+  </div>
+
+  <!-- BOTELLAS -->
+  <div *ngIf="tab==='botellas'" class="list">
+    <div *ngFor="let b of botellas" class="item">
+      <b>{{ b.nombre }}</b>
+      <span>{{ b.cantidad }} envases</span>
+    </div>
+  </div>
+
+  <!-- PRODUCTOS -->
+  <div *ngIf="tab==='productos'" class="list">
+    <div *ngFor="let p of productos" class="item">
+      <b>{{ p.nombre_producto }}</b>
+      <span>{{ p.stock_disponible }}</span>
+    </div>
+  </div>
+
+</ion-content>

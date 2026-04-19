@@ -15,16 +15,25 @@ import { LoanManagerComponent } from 'src/app/modals/loan-manager/loan-manager.c
 
 export class InventarioPage {
   /* ---------------- FILTRAR INGREDIENTES ---------------- */
-  // Dentro de la clase InventarioPage
+filterLocation: string = '';
+locations: any[] = [];
 filterNombre: string = '';
 filterUnidad: string = '';
 unidadesDisponibles: string[] = [];
-// Nueva lista filtrada
+
 get filteredIngredients() {
   return this.ingredients.filter(ing => {
+
     const matchNombre = ing.nombre.toLowerCase().includes(this.filterNombre.toLowerCase());
+
     const matchUnidad = ing.unidad_med.toLowerCase().includes(this.filterUnidad.toLowerCase());
-    return matchNombre && matchUnidad;
+
+    const matchLocation =
+      this.filterLocation === ''
+        ? true
+        : (ing.location_id == this.filterLocation);
+
+    return matchNombre && matchUnidad && matchLocation;
   });
 }
   /* ---------------- FILTRAR PRODUCTOS ---------------- */
@@ -44,6 +53,7 @@ editingAssetId: number | null = null;
   ngOnInit() {
 this.loadIngredients();
 this.loadCategories();
+this.loadLocations();
   }
   segment: string = 'ingredients';
 
@@ -281,7 +291,7 @@ async toggleAssetState(asset: any) {
     }
   });
 }
-// Añade esta función dentro de la clase InventarioPage
+
 async gestionarBotellas(ingredient: any) {
   // Aquí abriríamos un modal específico para las botellas de este ingrediente
   // Por ahora, para que no te de error, crearemos la lógica de apertura:
@@ -363,6 +373,14 @@ async openLoanModal() {
   });
 
   return await modal.present();
+}
+
+loadLocations() {
+  this.server.getLocations().subscribe((res: any) => {
+    if (res.error === 0) {
+      this.locations = res.data;
+    }
+  });
 }
 }
 

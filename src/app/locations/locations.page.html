@@ -83,6 +83,7 @@
 
             <div class="actions">
               <ion-button size="small" fill="clear" (click)="edit(loc)">✏️</ion-button>
+              <ion-button size="small" fill="clear" color="medium" (click)="verContenido(loc)">👁</ion-button>
               <ion-button size="small" fill="clear" color="danger" (click)="delete(loc.id_location)">🗑️</ion-button>
             </div>
 
@@ -111,10 +112,19 @@
                 <div class="subtitle">{{ child.tipo }}</div>
               </div>
 
-              <div class="actions">
-                <ion-button size="small" fill="clear" (click)="edit(child)">✏️</ion-button>
-                <ion-button size="small" fill="clear" color="danger" (click)="delete(child.id_location)">🗑️</ion-button>
-              </div>
+<div class="actions">
+  <ion-button size="small" fill="clear" (click)="edit(child)">✏️</ion-button>
+
+  <ion-button 
+    size="small" 
+    fill="clear" 
+    color="medium" 
+    (click)="verContenido(child)">
+    👁
+  </ion-button>
+
+  <ion-button size="small" fill="clear" color="danger" (click)="delete(child.id_location)">🗑️</ion-button>
+</div>
             </div>
 
           </div>

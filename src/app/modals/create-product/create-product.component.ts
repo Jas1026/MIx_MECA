@@ -11,17 +11,19 @@ export class CreateProductComponent implements OnInit {
   public Number = Number;
 
   @Input() product: any; 
-
-  newProduct: any = {
-    nombre_producto: '',
-    alias: '',
-    price: null,
-    time_prep: 0,
-    id_category: null,
-    stock_congelado: 0,
+locations: any[] = [];
+stocks: any[] = [];
+newProduct: any = {
+  nombre_producto: '',
+  alias: '',
+  price: null,
+  time_prep: 0,
+  id_category: null,
+  stock_congelado: 0,
   stock_disponible: 0,
-  stock_minimo: 0
-  };
+  stock_minimo: 1, // 🔥 aquí
+  location_id: null  
+};
 
   categories: any[] = [];
   allIngredients: any[] = [];
@@ -39,6 +41,12 @@ export class CreateProductComponent implements OnInit {
   ngOnInit() {
     this.getData();
     console.log("producto recibido", this.product);
+    if (this.product) {
+  this.newProduct = JSON.parse(JSON.stringify(this.product)); 
+  this.loadRecipe(this.product.id_product);
+  this.loadKitchensAssigned(this.product.id_product);
+  this.loadLocationsStock(this.product.id_product); // 🔥 ESTA ES LA CLAVE
+}
   }
   async getData() {
   const loading = await this.loadingCtrl.create({ message: 'Cargando datos...' });
@@ -72,6 +80,11 @@ console.log("todas cocinas", this.allKitchens);
       });
     });
   });
+  this.server.getLocations().subscribe((res: any) => {
+  if (res.error === 0) {
+    this.locations = res.data;
+  }
+});
 }
 
 loadRecipe(id: number) {
@@ -118,16 +131,30 @@ async saveProduct() {
   this.newProduct.time_prep = parseInt(this.newProduct.time_prep) || 0;
   this.newProduct.price = parseFloat(this.newProduct.price) || 0;
 
+
+  const totalDisponible = this.stocks.reduce((sum, s) => sum + Number(s.stock_disponible || 0), 0);
+const totalCongelado = this.stocks.reduce((sum, s) => sum + Number(s.stock_congelado || 0), 0);
+
+if (totalDisponible > this.newProduct.stock_disponible) {
+  this.showToast('El stock distribuido disponible supera el total', 'danger');
+  return;
+}
+
+if (totalCongelado > this.newProduct.stock_congelado) {
+  this.showToast('El stock congelado distribuido supera el total', 'danger');
+  return;
+}
   // --- 5. Envío al servidor ---
   const loading = await this.loadingCtrl.create({ message: 'Guardando producto...' });
   await loading.present();
 
-  const payload = {
-    product: this.newProduct,
-    recipe: recetaLimpia,
-    kitchens: this.cocinasSeleccionadas,
-    system: this.server.getSystem()
-  };
+const payload = {
+  product: this.newProduct,
+  recipe: recetaLimpia,
+  kitchens: this.cocinasSeleccionadas,
+  stocks: this.stocks, // 🔥 clave
+  system: this.server.getSystem()
+};
 
   this.server.saveFullProduct(payload).subscribe({
     next: (res: any) => {
@@ -182,4 +209,29 @@ getIngredientUnit(id_ingredient: any): string {
   // Devolvemos la unidad o un guion si no lo encuentra
   return ing ? ing.unidad_med : '';
 }
+addStock() {
+  this.stocks.push({
+    location_id: null,
+    stock_disponible: 0,
+    stock_congelado: 0,
+    stock_minimo: 1 // 🔥 aquí también
+  });
+}
+
+removeStock(i: number) {
+  this.stocks.splice(i, 1);
+}
+loadLocationsStock(id: number) {
+  this.server.getProductLocations(id, this.server.getSystem()).subscribe((res: any) => {
+    if (res.success) {
+      this.stocks = res.data.map((s: any) => ({
+        location_id: Number(s.location_id),
+        stock_disponible: Number(s.stock_disponible),
+        stock_congelado: Number(s.stock_congelado),
+        stock_minimo: Number(s.stock_minimo || 1)
+      }));
+    }
+  });
+}
+
 }

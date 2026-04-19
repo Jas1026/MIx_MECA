@@ -1,96 +1,149 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="white" class="custom-toolbar">
-    <ion-title>Control de Insumo: <span>{{ ingredient?.nombre }}</span></ion-title>
+    <ion-title>Control: <span>{{ ingredient?.nombre }}</span></ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="cerrar()" class="close-btn">
-        <ion-icon name="close-circle" slot="icon-only"></ion-icon>
+        <ion-icon name="close" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
+
 <ion-content class="ion-padding main-bg">
 
   <div class="registration-panel ion-margin-bottom">
     <div class="panel-header">
-      <ion-icon name="layers" color="primary"></ion-icon>
-      <ion-label>Registro de Envases</ion-label>
+      <ion-icon name="add-circle" color="primary"></ion-icon>
+      <ion-label>Nuevo Envase</ion-label>
     </div>
-    
+
     <ion-grid>
       <ion-row>
-        <ion-col size="12" size-sm="6" size-md="3">
+        <ion-col size="6" size-md="3">
           <div class="modern-input">
-            <span>Peso (g) actual</span>
+            <span>Peso Envase (g)</span>
             <ion-input type="number" [(ngModel)]="nuevaBotella.peso_envase" placeholder="0"></ion-input>
           </div>
         </ion-col>
-        <ion-col size="12" size-sm="6" size-md="3">
+        <ion-col size="6" size-md="3">
           <div class="modern-input">
             <span>Capacidad (ml)</span>
             <ion-input type="number" [(ngModel)]="nuevaBotella.capacidad_total" placeholder="0"></ion-input>
           </div>
         </ion-col>
-        <ion-col size="12" size-sm="6" size-md="3">
+        <ion-col size="6" size-md="3">
           <div class="modern-input">
-            <span>Peso Lleno (g)</span>
+            <span>Peso Actual (g)</span>
             <ion-input type="number" [(ngModel)]="nuevaBotella.peso_actual" placeholder="0"></ion-input>
           </div>
         </ion-col>
-        <ion-col size="12" size-sm="6" size-md="3">
+        <ion-col size="6" size-md="3">
           <div class="modern-input highlight-input">
             <span>Cantidad</span>
-            <ion-input type="number" [(ngModel)]="nuevaBotella.cantidad"></ion-input>
+            <ion-input type="number" [(ngModel)]="nuevaBotella.cantidad" placeholder="1"></ion-input>
+          </div>
+        </ion-col>
+        <ion-col size="12">
+          <div class="modern-input">
+            <span>Ubicación Inicial</span>
+            <ion-select [(ngModel)]="nuevaBotella.location_id" interface="popover" placeholder="Seleccionar...">
+              <ion-select-option [value]="null">Sin ubicación</ion-select-option>
+              <ion-select-option *ngFor="let loc of locations" [value]="loc.id_location">{{ loc.nombre }}</ion-select-option>
+            </ion-select>
           </div>
         </ion-col>
       </ion-row>
     </ion-grid>
-    
-    <div class="ion-padding">
+
+    <div class="ion-padding-horizontal ion-padding-bottom">
       <ion-button expand="block" (click)="registrarBotella()" mode="ios" class="btn-gradient" [disabled]="isSaving">
         <ion-spinner name="crescent" *ngIf="isSaving"></ion-spinner>
-        <ion-icon name="add-circle" slot="start" *ngIf="!isSaving"></ion-icon>
-        {{ isSaving ? 'REGISTRANDO...' : 'AÑADIR AL INVENTARIO' }}
+        <span *ngIf="!isSaving">AÑADIR AL INVENTARIO</span>
       </ion-button>
     </div>
   </div>
+<!-- 🔎 FILTRO -->
+<div class="filter-bar ion-margin-bottom">
 
+  <ion-item lines="none" class="filter-item">
+    <ion-icon name="funnel-outline" slot="start"></ion-icon>
+
+    <ion-select 
+      [(ngModel)]="filtroLocation" 
+      placeholder="Filtrar por ubicación"
+      (ionChange)="filtrarBotellas()"
+    >
+      <ion-select-option [value]="null">Todas</ion-select-option>
+
+      <ion-select-option 
+        *ngFor="let loc of locations" 
+        [value]="loc.id_location"
+      >
+        {{ loc.nombre }}
+      </ion-select-option>
+
+    </ion-select>
+
+    <ion-button 
+      fill="clear" 
+      size="small" 
+      (click)="limpiarFiltro()"
+    >
+      Limpiar
+    </ion-button>
+
+  </ion-item>
+
+</div>
   <h3 class="modern-title">Envases en Uso</h3>
 
-  <div *ngFor="let b of bottles" class="modern-bottle-card">
-    <ion-grid fixed class="ion-no-padding">
-      <ion-row class="ion-align-items-center">
-        <ion-col size="3" size-sm="2" class="visual-col">
-          <div class="bottle-wrapper">
-            <div class="bottle-body">
-              <div class="liquid" 
-                   [style.height]="(getPorcentaje(b) > 100 ? 100 : getPorcentaje(b)) + '%'" 
-                   [class.overloaded]="getPorcentaje(b) > 100"
-                   [class.low]="getPorcentaje(b) < 20">
-              </div>
-              <span class="value">{{ getPorcentaje(b) }}%</span>
+  <div *ngFor="let b of bottlesFiltradas" class="modern-bottle-card">
+    <div class="card-main-content">
+      <div class="visual-section">
+        <div class="bottle-wrapper">
+          <div class="bottle-body">
+            <div class="liquid" 
+                 [style.height]="(getPorcentaje(b) > 100 ? 100 : getPorcentaje(b)) + '%'"
+                 [class.overloaded]="getPorcentaje(b) > 100" 
+                 [class.low]="getPorcentaje(b) < 20">
             </div>
+            <span class="value">{{ getPorcentaje(b) }}%</span>
           </div>
-        </ion-col>
+        </div>
+      </div>
 
-        <ion-col size="5" size-sm="6" class="info-col ion-padding-start">
-          <div class="id-tag">ID: #{{ b.id_bottle }}</div>
-          <h2 class="bottle-title">Envase Activo</h2>
-          <div class="neto-display">
-            <span>Contenido Neto</span>
-            <strong>{{ getNeto(b) }} <i>g</i></strong>
-          </div>
-        </ion-col>
+      <div class="info-section">
+        <div class="top-row">
+          <span class="id-tag">#{{ b.id_bottle }}</span>
+          <ion-button fill="clear" color="danger" size="small" (click)="eliminarBotella(b)" class="delete-mini-btn">
+            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+        <h2 class="bottle-title">Contenido Neto</h2>
+        <div class="neto-display">
+          <strong>{{ getNeto(b) }} <span>g</span></strong>
+        </div>
+      </div>
 
-        <ion-col size="4" class="control-col">
-          <div class="weight-card">
-            <ion-label>PESAJE</ion-label>
-            <ion-input type="number" [(ngModel)]="b.peso_actual" class="modern-weight-input"></ion-input>
-            <ion-button (click)="actualizarPeso(b)" mode="ios" fill="solid" color="success" class="save-btn">
-              <ion-icon name="save" slot="icon-only"></ion-icon>
-            </ion-button>
-          </div>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+      <div class="action-section">
+        <div class="weight-control">
+          <small>PESO TOTAL (g)</small>
+          <ion-input type="number" [(ngModel)]="b.peso_actual" class="weight-input"></ion-input>
+          <ion-button (click)="actualizarPeso(b)" mode="ios" size="small" color="success">
+            ACTUALIZAR
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer">
+       <span>Ubicación: </span>
+      <ion-icon name="location-outline" color="medium"></ion-icon>
+      <ion-select [(ngModel)]="b.location_id" interface="popover" class="location-select" (ionChange)="actualizarUbicacion(b)">
+        <ion-select-option [value]="null">Sin ubicación</ion-select-option>
+        <ion-select-option *ngFor="let loc of locations" [value]="loc.id_location">{{ loc.nombre }}</ion-select-option>
+      </ion-select>
+    </div>
   </div>
+
 </ion-content>

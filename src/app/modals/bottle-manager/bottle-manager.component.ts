@@ -11,13 +11,15 @@ export class BottleManagerComponent implements OnInit {
   @Input() ingredient: any; 
   bottles: any[] = [];
   isSaving: boolean = false;
-  
-  // FORMULARIO LIMPIO POR DEFECTO
+  locations: any[] = [];
+  bottlesFiltradas: any[] = [];
+filtroLocation: any = null;
   nuevaBotella: any = {
     peso_envase: null,
     capacidad_total: null,
     peso_actual: null,
-    cantidad: 1
+    cantidad: 1,
+      location_id: null 
   };
 
   constructor(
@@ -27,19 +29,35 @@ export class BottleManagerComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+      this.loadLocations();
     if (this.ingredient) {
       this.loadBottles();
     }
   }
 
-  loadBottles() {
-    this.server.getBottles(this.ingredient.id_ingredients).subscribe((res: any) => {
-      if (res.error === 0) {
-        this.bottles = res.data;
-      }
-    });
+loadBottles() {
+  this.server.getBottles(this.ingredient.id_ingredients).subscribe((res: any) => {
+    if (res.error === 0) {
+      this.bottles = res.data;
+      this.bottlesFiltradas = [...this.bottles]; // 👈 copia inicial
+    }
+  });
+}
+filtrarBotellas() {
+
+  if (this.filtroLocation === null) {
+    this.bottlesFiltradas = [...this.bottles];
+    return;
   }
 
+  this.bottlesFiltradas = this.bottles.filter(b => 
+    b.location_id == this.filtroLocation
+  );
+}
+limpiarFiltro() {
+  this.filtroLocation = null;
+  this.bottlesFiltradas = [...this.bottles];
+}
   registrarBotella() {
     // Validar que no falten datos esenciales
     if (!this.nuevaBotella.peso_envase || !this.nuevaBotella.capacidad_total || !this.nuevaBotella.peso_actual) {
@@ -72,7 +90,8 @@ export class BottleManagerComponent implements OnInit {
       peso_envase: pesoEnvase,
       capacidad_total: capacidad,
       peso_actual: pesoTotal,
-      cantidad: qty
+      cantidad: qty,
+       location_id: this.nuevaBotella.location_id 
     };
 
     this.server.addBottle(data).subscribe({
@@ -142,7 +161,42 @@ export class BottleManagerComponent implements OnInit {
     });
     t.present();
   }
+loadLocations() {
+  this.server.getLocations().subscribe((res: any) => {
+    if (res.error === 0) {
+      this.locations = res.data;
+    }
+  });
+}
 
+
+
+actualizarUbicacion(bottle: any) {
+
+  const data = {
+    id_bottle: bottle.id_bottle,
+    location_id: bottle.location_id
+  };
+
+  this.server.updateBottleLocation(data).subscribe((res: any) => {
+    if (res.error === 0) {
+      this.showToast("📍 Ubicación actualizada");
+    }
+  });
+
+}
+eliminarBotella(bottle: any) {
+
+  if (!confirm("¿Eliminar este envase?")) return;
+
+  this.server.deleteBottle(bottle.id_bottle).subscribe((res: any) => {
+    if (res.error === 0) {
+      this.showToast("🗑️ Eliminado");
+      this.loadBottles();
+    }
+  });
+
+}
   cerrar() {
     this.modalCtrl.dismiss(true);
   }

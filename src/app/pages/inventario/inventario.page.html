@@ -21,11 +21,22 @@
       </ion-searchbar>
 
       <ion-select interface="popover" placeholder="Unidad" [(ngModel)]="filterUnidad" class="custom-select">
-        <ion-select-option value="">Todas</ion-select-option>
+        <ion-select-option value="">Todas las medidas</ion-select-option>
         <ion-select-option *ngFor="let uni of unidadesDisponibles" [value]="uni">
           {{ uni }}
         </ion-select-option>
       </ion-select>
+      <ion-select interface="popover" placeholder="Ubicación"
+  [(ngModel)]="filterLocation"
+  class="custom-select">
+
+  <ion-select-option value="">Todas las ubicaciones</ion-select-option>
+
+  <ion-select-option *ngFor="let loc of locations" [value]="loc.id_location">
+    {{ loc.nombre }}
+  </ion-select-option>
+
+</ion-select>
 
       <ion-button (click)="openCreateModal()" fill="solid" color="dark">
         <ion-icon name="add-outline" slot="start"></ion-icon>

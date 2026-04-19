@@ -307,17 +307,16 @@ get_datos_ing(system: string, area: string) {
   );
 }
 
-
- // En server-content.service.ts
-// server-content.service.ts
 addBottle(data: any) {
   let body = new FormData();
-  body.append("ingredient_id", data.ingredient_id.toString());
-  body.append("peso_envase", data.peso_envase.toString());
-  body.append("capacidad_total", data.capacidad_total.toString());
-  body.append("peso_actual", data.peso_actual.toString());
-  body.append("cantidad", data.cantidad.toString()); // <--- ESTA LÍNEA ES VITAL
-  body.append("system", this.getSystem());
+
+  body.append("ingredient_id", data.ingredient_id);
+  body.append("peso_envase", data.peso_envase);
+  body.append("capacidad_total", data.capacidad_total);
+  body.append("peso_actual", data.peso_actual);
+  body.append("cantidad", data.cantidad);
+  body.append("location_id", data.location_id ?? "");
+  body.append("system", this.getSystem()); // 🔥 SIEMPRE
 
   return this.http.post(this.urlService + "add_bottle.php", body);
 }
@@ -622,12 +621,52 @@ updateOrdera(data: any) {
     formData
   );
 }
+updateBottleLocation(data: any) {
+  let body = new FormData();
 
+  body.append("id_bottle", data.id_bottle);
+  body.append("location_id", data.location_id ?? "");
+  body.append("system", this.getSystem()); // 🔥 AQUÍ ESTÁ LA MAGIA
 
+  return this.http.post(this.urlService + "updateBottleLocation.php", body);
+}
 
+deleteBottle(id: any) {
+  const formData = new FormData();
+  formData.append('id_bottle', id);
 
+  return this.http.post(this.urlService + 'deleteBottle.php', formData);
+}
+getIngredientsByLocation(id:number, system:string){
+  let body = new FormData();
+  body.append("location_id", id.toString());
+  body.append("system", system);
 
+  return this.http.post(this.urlService + "get_ingredients_by_location.php", body);
+}
 
+getBottlesByLocation(id:number, system:string){
+  let body = new FormData();
+  body.append("location_id", id.toString());
+  body.append("system", system);
+
+  return this.http.post(this.urlService + "get_bottles_by_location.php", body);
+}
+
+getProductsByLocation(id:number, system:string){
+  let body = new FormData();
+  body.append("location_id", id.toString());
+  body.append("system", system);
+
+  return this.http.post(this.urlService + "get_products_by_location.php", body);
+}
+getProductLocations(id: number, system: string) {
+  let body = new FormData();
+  body.append("product_id", id.toString()); // 🔥 importante
+  body.append("system", system);
+
+  return this.http.post(this.urlService + "getProductLocations.php", body);
+}
 
 
 

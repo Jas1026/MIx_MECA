@@ -51,7 +51,7 @@
     <ion-note slot="error" *ngIf="form.tipo === 'botella'">Obligatorio en gramos para pesaje.</ion-note>
   </ion-item>
 
-  <ion-item class="ion-margin-bottom">
+<ion-item class="ion-margin-bottom" *ngIf="form.tipo !== 'botella'">
     <ion-label position="stacked">Ubicación</ion-label>
   <ion-select [(ngModel)]="form.location_id" interface="popover">
     <ion-select-option [value]="null">Sin ubicación</ion-select-option>
