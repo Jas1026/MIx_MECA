@@ -13,8 +13,7 @@
 
         <ng-container *ngIf="hasRole('admin') || hasRole('jefe_mesero') || hasRole('mesero')">
           <ion-item-divider color="light">Pisos</ion-item-divider>
-          <ion-item *ngFor="let flat of flats"
-                    (click)="goToFlat(flat.id_flat || flat.Id_flats || flat.id)">
+          <ion-item *ngFor="let flat of flats" (click)="goToFlat(flat.id_flat || flat.Id_flats || flat.id)">
             <ion-icon name="cafe-outline" slot="start"></ion-icon>
             <ion-label>{{ flat.name }}</ion-label>
           </ion-item>
@@ -22,8 +21,7 @@
 
         <ng-container *ngIf="hasRole('admin') || hasRole('cocina')">
           <ion-item-divider color="light">Cocinas</ion-item-divider>
-          <ion-item *ngFor="let kitchen of kitchens"
-                    (click)="goToKitchen(kitchen.id)">
+          <ion-item *ngFor="let kitchen of kitchens" (click)="goToKitchen(kitchen.id)">
             <ion-icon name="restaurant-outline" slot="start"></ion-icon>
             <ion-label>{{ kitchen.name }}</ion-label>
           </ion-item>
@@ -35,25 +33,27 @@
           <ion-icon name="list-circle-outline" slot="start"></ion-icon>
           <ion-label>Gestión de pedidos</ion-label>
         </ion-item>
-        <ion-item *ngIf="hasRole('admin') || hasRole('jefe_mesero') || hasRole('mesero')" routerLink="/panel/pedidos_unit">
+        <ion-item *ngIf="hasRole('admin') || hasRole('jefe_mesero') || hasRole('mesero')"
+          routerLink="/panel/pedidos_unit">
           <ion-icon name="list-circle-outline" slot="start"></ion-icon>
           <ion-label>Mis pedidos</ion-label>
         </ion-item>
-        <ion-item *ngIf="hasRole('admin')"routerLink="/panel/user">
+        <ion-item *ngIf="hasRole('admin')" routerLink="/panel/user">
           <ion-icon name="people-outline" slot="start"></ion-icon>
           <ion-label>Gestión de usuarios</ion-label>
         </ion-item>
 
-        <ion-item *ngIf="hasRole('admin')"routerLink="/panel/flats">
+        <ion-item *ngIf="hasRole('admin')" routerLink="/panel/flats">
           <ion-icon name="people-outline" slot="start"></ion-icon>
           <ion-label>Gestión de pisos</ion-label>
         </ion-item>
-        
-        <ion-item *ngIf="hasRole('admin')"routerLink="/panel/tables">
+
+        <ion-item *ngIf="hasRole('admin')" routerLink="/panel/tables">
           <ion-icon name="people-outline" slot="start"></ion-icon>
           <ion-label>Gestión de mesas</ion-label>
         </ion-item>
-        <ion-item *ngIf="hasRole('admin') || hasRole('jefe_mesero') || hasRole('cocina')" routerLink="/panel/inventario">
+        <ion-item *ngIf="hasRole('admin') || hasRole('jefe_mesero') || hasRole('cocina')"
+          routerLink="/panel/inventario">
           <ion-icon name="cube-outline" slot="start"></ion-icon>
           <ion-label>Inventario</ion-label>
         </ion-item>
@@ -61,6 +61,11 @@
         <ion-item *ngIf="hasRole('admin')" routerLink="/panel/informes">
           <ion-icon name="bar-chart-outline" slot="start"></ion-icon>
           <ion-label>Informes y reportes</ion-label>
+        </ion-item>
+
+        <ion-item *ngIf="hasRole('admin') || hasRole('jefe_mesero') " routerLink="/panel/locations">
+          <ion-icon name="bar-chart-outline" slot="start"></ion-icon>
+          <ion-label>Ubicaciones</ion-label>
         </ion-item>
 
       </ion-list>
