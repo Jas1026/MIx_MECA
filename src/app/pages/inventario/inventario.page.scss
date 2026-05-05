@@ -302,3 +302,47 @@ ion-chip {
     height: auto; // Que crezca según el texto
   }
 }
+.subcategory-tree {
+  margin-top: 10px;
+}
+
+.category-block {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background: #fff;
+}
+
+.category-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  background: #f8f9fa;
+}
+
+.category-header:hover {
+  background: #ececec;
+}
+
+.category-name {
+  font-size: 0.9rem;
+}
+
+.subcategory-list {
+  padding: 5px 15px;
+}
+
+.subcategory-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px dashed #eee;
+}
+
+.subcategory-item:last-child {
+  border-bottom: none;
+}

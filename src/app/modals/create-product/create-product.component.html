@@ -39,11 +39,23 @@
         <ion-col size="4">
           <ion-item>
             <ion-label position="stacked">Categoría</ion-label>
-            <ion-select [(ngModel)]="newProduct.id_category" placeholder="Elegir" interface="action-sheet"
+            <ion-select [(ngModel)]="newProduct.id_category"   (ionChange)="onCategoryChange()" placeholder="Elegir" interface="action-sheet"
               header="Seleccionar Categoría">
               <ion-select-option *ngFor="let cat of categories" [value]="cat.id">
                 {{cat.name}}
               </ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+        <ion-col size="4">
+          <ion-item>
+            <ion-label position="stacked">Subcategoría</ion-label>
+            <ion-select [(ngModel)]="newProduct.id_subcategory" placeholder="Elegir">
+
+              <ion-select-option *ngFor="let sub of subcategories" [value]="sub.id_subcategory">
+                {{sub.name}}
+              </ion-select-option>
+
             </ion-select>
           </ion-item>
         </ion-col>
@@ -99,35 +111,35 @@
       </h3>
     </ion-list>
   </ion-card>
-<h3>Stock por Ubicación</h3>
+  <h3>Stock por Ubicación</h3>
 
-<div *ngFor="let s of stocks; let i = index">
+  <div *ngFor="let s of stocks; let i = index">
 
-  <ion-item>
-    <ion-select [(ngModel)]="s.location_id" placeholder="Ubicación">
-      <ion-select-option *ngFor="let loc of locations" [value]="loc.id_location">
-        {{ loc.nombre }}
-      </ion-select-option>
-    </ion-select>
-  </ion-item>
+    <ion-item>
+      <ion-select [(ngModel)]="s.location_id" placeholder="Ubicación">
+        <ion-select-option *ngFor="let loc of locations" [value]="loc.id_location">
+          {{ loc.nombre }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
 
-  <ion-item>
-    <ion-input type="number" [(ngModel)]="s.stock_disponible" placeholder="Disponible"></ion-input>
-  </ion-item>
+    <ion-item>
+      <ion-input type="number" [(ngModel)]="s.stock_disponible" placeholder="Disponible"></ion-input>
+    </ion-item>
 
-  <ion-item>
-    <ion-input type="number" [(ngModel)]="s.stock_congelado" placeholder="Congelado"></ion-input>
-  </ion-item>
+    <ion-item>
+      <ion-input type="number" [(ngModel)]="s.stock_congelado" placeholder="Congelado"></ion-input>
+    </ion-item>
 
-  <ion-item>
-    <ion-input type="number" [(ngModel)]="s.stock_minimo" placeholder="Mínimo"></ion-input>
-  </ion-item>
+    <ion-item>
+      <ion-input type="number" [(ngModel)]="s.stock_minimo" placeholder="Mínimo"></ion-input>
+    </ion-item>
 
-  <ion-button color="danger" (click)="removeStock(i)">Eliminar</ion-button>
+    <ion-button color="danger" (click)="removeStock(i)">Eliminar</ion-button>
 
-</div>
+  </div>
 
-<ion-button (click)="addStock()">+ Agregar ubicación</ion-button>
+  <ion-button (click)="addStock()">+ Agregar ubicación</ion-button>
 
 
 

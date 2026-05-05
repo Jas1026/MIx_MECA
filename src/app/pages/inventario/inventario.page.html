@@ -26,17 +26,15 @@
           {{ uni }}
         </ion-select-option>
       </ion-select>
-      <ion-select interface="popover" placeholder="Ubicación"
-  [(ngModel)]="filterLocation"
-  class="custom-select">
+      <ion-select interface="popover" placeholder="Ubicación" [(ngModel)]="filterLocation" class="custom-select">
 
-  <ion-select-option value="">Todas las ubicaciones</ion-select-option>
+        <ion-select-option value="">Todas las ubicaciones</ion-select-option>
 
-  <ion-select-option *ngFor="let loc of locations" [value]="loc.id_location">
-    {{ loc.nombre }}
-  </ion-select-option>
+        <ion-select-option *ngFor="let loc of locations" [value]="loc.id_location">
+          {{ loc.nombre }}
+        </ion-select-option>
 
-</ion-select>
+      </ion-select>
 
       <ion-button (click)="openCreateModal()" fill="solid" color="dark">
         <ion-icon name="add-outline" slot="start"></ion-icon>
@@ -128,6 +126,88 @@
         </div>
       </ion-card-content>
     </ion-card>
+    <!-- 🔥 SUBCATEGORÍAS -->
+    <ion-card class="category-manager-card">
+      <ion-card-header (click)="showSubcatManager = !showSubcatManager" class="clickable-header">
+        <ion-card-title style="font-size: 0.9rem;">
+          <ion-icon [name]="showSubcatManager ? 'chevron-down' : 'chevron-forward'"></ion-icon>
+          Gestionar Subcategorías
+        </ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content *ngIf="showSubcatManager">
+
+        <!-- SELECT CATEGORÍA PADRE -->
+        <ion-row class="ion-align-items-center form-row">
+          <ion-col size="12" size-md="6">
+            <ion-select placeholder="Seleccionar categoría" [(ngModel)]="selectedCategoryForSub">
+              <ion-select-option *ngFor="let cat of categories" [value]="cat.id">
+                {{ cat.name }}
+              </ion-select-option>
+            </ion-select>
+          </ion-col>
+
+          <ion-col size="12" size-md="6">
+            <ion-input placeholder="Nueva subcategoría..." [(ngModel)]="subcatForm.name" class="stock-input">
+            </ion-input>
+          </ion-col>
+        </ion-row>
+
+        <!-- BOTONES -->
+        <ion-row>
+          <ion-col size="12" class="ion-text-right">
+            <ion-button expand="block" [color]="subcatForm.id ? 'warning' : 'dark'" (click)="saveSubcategory()">
+              <ion-icon name="save-outline" slot="start"></ion-icon>
+              {{ subcatForm.id ? 'Actualizar' : 'Añadir' }}
+            </ion-button>
+
+            <ion-button *ngIf="subcatForm.id" fill="clear" size="small" (click)="resetSubcatForm()" color="medium">
+              Cancelar
+            </ion-button>
+          </ion-col>
+        </ion-row>
+
+        <!-- CHIPS -->
+<div class="subcategory-tree">
+
+  <div *ngFor="let cat of categories" class="category-block">
+
+    <!-- HEADER CATEGORÍA -->
+    <div class="category-header" (click)="toggleCategory(cat.id)">
+      
+      <ion-icon 
+        [name]="expandedCategories[cat.id] ? 'chevron-down' : 'chevron-forward'">
+      </ion-icon>
+
+      <span class="category-name">{{ cat.name }}</span>
+
+    </div>
+
+    <!-- SUBCATEGORÍAS -->
+    <div *ngIf="expandedCategories[cat.id]" class="subcategory-list">
+
+      <div *ngFor="let sub of subcategoriesByCategory[cat.id]" class="subcategory-item">
+
+        <span (click)="editSubcategory(sub)">
+          {{ sub.name }}
+        </span>
+
+        <ion-icon 
+          name="close-circle" 
+          color="danger"
+          (click)="deleteSubcategory(sub.id_subcategory)">
+        </ion-icon>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+      </ion-card-content>
+    </ion-card>
     <div class="header-actions">
       <ion-searchbar placeholder="Buscar producto..." [(ngModel)]="filterProducto"
         class="custom-searchbar"></ion-searchbar>
@@ -181,6 +261,7 @@
       </ion-row>
     </ion-grid>
   </div>
+
   <div *ngIf="segment === 'assets'" class="table-container">
     <div class="header-actions">
       <ion-searchbar placeholder="Buscar activo..." [(ngModel)]="filterAssetNombre"

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, ToastController } from '@ionic/angular';
+import { ModalController, ToastController, LoadingController } from '@ionic/angular';
 import { ServerContentService } from 'src/app/services/server-content.service';
 import { Router } from '@angular/router';
 
@@ -27,7 +27,8 @@ export class ResumenPedidoComponent implements OnInit {
     private server: ServerContentService, 
     private modalCtrl: ModalController, 
     private router: Router,
-    private toast: ToastController
+    private toast: ToastController,
+      private loader: LoadingController
   ) {}
 
   ngOnInit() {
@@ -180,36 +181,40 @@ cargarDatosIniciales() {
     this.montoManual = 0;
     this.datosFactura = { nit: '0', razonSocial: 'SIN NOMBRE', voucher: '' };
   }
+async confirmarTodo() {
+  const loading = await this.loader.create({ message: 'Facturando en SIAT...' });
+  await loading.present();
 
-  async confirmarTodo() {
-    const payload = {
-      order_id: this.orderId,
-      pagos: this.pagosTemporales.map(p => ({
-        nit: p.nit,
-        razonSocial: p.razonSocial,
-        metodo_pago: p.metodo_pago,
-        voucher: p.voucher || '', // Incluimos voucher en el envío al servidor
-        monto: p.monto,
-        monto_extra: p.monto_extra,
-        motivo_extra: p.motivo_extra,
-        detalle_ids: p.items_referencia.reduce((acc: any, item: any) => {
-          const id = item.detail_id; 
-          acc[id] = (acc[id] || 0) + 1;
-          return acc;
-        }, {})
-      })),
-      system: sessionStorage.getItem('sistema') || 'mixtura'
-    };
+  const payload = {
+    order_id: this.orderId,
+    pagos: this.pagosTemporales.map(p => ({
+      nit: p.nit,
+      razonSocial: p.razonSocial,
+      montoTotal: p.monto,
+      metodoPago: p.metodo_pago === 'efectivo' ? 1 : 2,
+      detalles: p.items_referencia.map((item: any) => ({
+        descripcion: item.nombre_producto,
+        precio: item.unit_val,
+        cantidad: 1
+      }))
+    }))
+  };
 
-    this.server.procesarMultiplesPagos(payload).subscribe((res: any) => {
-      if (res.error === 0) {
+  this.server.procesarFacturacionSiat(payload).subscribe({
+    next: (res: any) => {
+      loading.dismiss();
+      if (res.success) {
         this.server.closeOrder(this.orderId).subscribe(() => {
           this.modalCtrl.dismiss(true);
-          this.router.navigate(['/facturacion', this.orderId]);
+          // Redirigir a una vista donde pueda imprimir los recibos/facturas
+          this.router.navigate(['/post-pago', { data: JSON.stringify(res.data) }]);
         });
       }
-    });
-  }
+    },
+    error: () => loading.dismiss()
+  });
+}
+
 
   seleccionarTexto(input: any) {
     setTimeout(() => {

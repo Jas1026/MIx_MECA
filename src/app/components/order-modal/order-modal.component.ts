@@ -27,7 +27,9 @@ export class OrderModalComponent implements OnInit {
 searchTerm: string = '';
 searchResults: any[] = [];
   selectedCategory: string = '';
-viewMode: 'categories' | 'products' = 'categories';
+  subcategories: any[] = [];
+selectedSubcategory: any = null;
+viewMode: 'categories' | 'subcategories' | 'products' = 'categories';
 currentCategoryName: string = '';
   constructor(
     private server: ServerContentService,
@@ -49,26 +51,37 @@ currentCategoryName: string = '';
 }
 selectCategory(cat: any) {
 
-  console.log("Categoria enviada:", cat);
-
   this.currentCategoryName = cat.name;
+  this.selectedCategory = cat.id;
 
-  this.viewMode = 'products'; // 👈 ESTO ES CLAVE
+  this.viewMode = 'subcategories'; // 🔥 ahora va aquí
 
-  this.server.getProductsByCategory(cat.id)
+  this.server.getSubcategories(cat.id)
     .subscribe((res: any) => {
+      this.subcategories = res.data || res;
+    });
+}
+selectSubcategory(sub: any) {
 
-      console.log("Productos recibidos:", res);
+  this.selectedSubcategory = sub;
 
+  this.viewMode = 'products';
+
+  this.server.getProductsBySubcategory(sub.id_subcategory)
+    .subscribe((res: any) => {
       this.products = res.data || res;
-
     });
 }
 goBack() {
-  this.viewMode = 'categories';
+
+  if (this.viewMode === 'products') {
+    this.viewMode = 'subcategories';
+  } else if (this.viewMode === 'subcategories') {
+    this.viewMode = 'categories';
+  }
+
   this.products = [];
 }
-
 addProduct(product: any) {
   const found = this.cart.find(p => p.id_product === product.id_product);
 

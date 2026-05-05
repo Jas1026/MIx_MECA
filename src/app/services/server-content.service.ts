@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs'; // <--- AÑADE ESTA LÍNEA
+
 @Injectable({
   providedIn: 'root'
 })
@@ -80,6 +81,19 @@ private urlService = "http://localhost/api/";
 
     return this.http.post(this.urlService + "get_categories.php", body);
   }
+  getSubcategories(id_category?: number) {
+  let url = `${this.urlService}get_subcategories.php`;
+
+  if (id_category) {
+    url += `?id_category=${id_category}`;
+  }
+
+  return this.http.get(url, {
+    headers: {
+      system: this.getSystem()
+    }
+  });
+}
 
   getProductsByCategory(id_category: string) {
     let body = new FormData();
@@ -337,6 +351,7 @@ updateBottleWeight(data: any) {
 
   return this.http.post(this.urlService + "update_bottle.php", body);
 }
+
 addCategory(name: string) {
   let body = new FormData();
   body.append("name", name);
@@ -361,7 +376,32 @@ deleteCategory(id: any) {
 
   return this.http.post(`${this.urlService}delete_category.php`, body);
 }
+createSubcategory(name: string, categoryId: number) {
+  let body = new FormData();
+  body.append("name", name);
+  body.append("id_category", categoryId.toString());
+  body.append("system", this.getSystem());
 
+  return this.http.post(`${this.urlService}add_subcategory.php`, body);
+}
+
+updateSubcategory(sub: any) {
+  let body = new FormData();
+  body.append("id", sub.id.toString());
+  body.append("name", sub.name);
+  body.append("id_category", sub.id_category.toString());
+  body.append("system", this.getSystem());
+
+  return this.http.post(`${this.urlService}update_subcategory.php`, body);
+}
+
+deleteSubcategory(id: any) {
+  let body = new FormData();
+  body.append("id_subcategory", id.toString()); // 🔥 CORRECTO
+  body.append("system", this.getSystem());
+
+  return this.http.post(`${this.urlService}delete_subcategory.php`, body);
+}
 changeOrderTable(orderId: number, newTableId: number) {
   let body = new FormData();
   body.append("order_id", orderId.toString());
@@ -667,12 +707,28 @@ getProductLocations(id: number, system: string) {
 
   return this.http.post(this.urlService + "getProductLocations.php", body);
 }
+getProductsBySubcategory(id_subcategory: number) {
+  const formData = new FormData();
+  formData.append('id_subcategory', id_subcategory.toString());
+  formData.append('system', this.getSystem()); // 👈 AÑADE ESTO
+
+  return this.http.post(this.urlService + 'getProductsBySubcategory.php', formData);
+}
 
 
+// server-content.service.ts
 
+procesarFacturacionSiat(payload: any): Observable<any> {
+    // Definimos los headers para que dbconnect.php funcione
+    const headers = new HttpHeaders({
+        'system': this.getSystem() // Envía 'mixtura' o 'mecapos'
+    });
 
-
-
+    // Limpiamos la URL (quitamos la doble barra si existiera)
+    const url = `${this.urlService}/facturar.php`.replace(/([^:]\/)\/+/g, "$1");
+    
+    return this.http.post(url, payload, { headers });
+}
 
 
 

@@ -20,7 +20,28 @@ locations: any[] = [];
 filterNombre: string = '';
 filterUnidad: string = '';
 unidadesDisponibles: string[] = [];
+subcategories: any[] = [];
+subcategoriesByCategory: any = {};
+expandedCategories: any = {};
+showSubcatManager: boolean = false;
 
+selectedCategoryForSub: any = null;
+
+subcatForm = {
+  id: null,
+  name: ''
+};
+loadSubcategories() {
+  this.server.getSubcategories().subscribe((res: any) => {
+    if (res.error === 0) {
+      this.subcategories = res.data;
+      this.buildSubcategoryMap(); 
+    }
+  });
+}
+toggleCategory(catId: any) {
+  this.expandedCategories[catId] = !this.expandedCategories[catId];
+}
 get filteredIngredients() {
   return this.ingredients.filter(ing => {
 
@@ -53,6 +74,7 @@ editingAssetId: number | null = null;
   ngOnInit() {
 this.loadIngredients();
 this.loadCategories();
+this.loadSubcategories();
 this.loadLocations();
   }
   segment: string = 'ingredients';
@@ -83,7 +105,55 @@ segmentChanged() {
   if (this.segment === 'assets') this.loadAssets();
   if (this.segment === 'products') this.loadProducts();
 }
-   
+   filteredSubcategories() {
+  if (!this.selectedCategoryForSub) return [];
+
+  return this.subcategories.filter(
+    s => s.id_category == this.selectedCategoryForSub
+  );
+}resetSubcatForm() {
+  this.subcatForm = { id: null, name: '' };
+}editSubcategory(sub: any) {
+  this.subcatForm = {
+    id: sub.id_subcategory,
+    name: sub.name
+  };
+  this.selectedCategoryForSub = sub.id_category;
+}saveSubcategory() {
+  if (!this.subcatForm.name.trim() || !this.selectedCategoryForSub) return;
+
+const payload = {
+  id: this.subcatForm.id, 
+  name: this.subcatForm.name,
+  id_category: this.selectedCategoryForSub
+};
+
+  if (this.subcatForm.id) {
+    // UPDATE
+    this.server.updateSubcategory(payload).subscribe(() => {
+      this.loadSubcategories();
+      this.resetSubcatForm();
+    });
+  } else {
+  // CREATE
+  this.server.createSubcategory(
+    this.subcatForm.name,
+    this.selectedCategoryForSub
+  ).subscribe(() => {
+    this.loadSubcategories();
+    this.resetSubcatForm();
+  });
+}
+}
+
+
+deleteSubcategory(id: any) {
+  if (confirm('¿Eliminar subcategoría?')) {
+    this.server.deleteSubcategory(id).subscribe(() => {
+      this.loadSubcategories();
+    });
+  }
+}
   /* ---------------- INGREDIENTES ---------------- */
 loadIngredients() {
   this.server.getIngredients().subscribe((res: any) => {
@@ -380,6 +450,16 @@ loadLocations() {
     if (res.error === 0) {
       this.locations = res.data;
     }
+  });
+}
+buildSubcategoryMap() {
+  this.subcategoriesByCategory = {};
+
+  this.subcategories.forEach(sub => {
+    if (!this.subcategoriesByCategory[sub.id_category]) {
+      this.subcategoriesByCategory[sub.id_category] = [];
+    }
+    this.subcategoriesByCategory[sub.id_category].push(sub);
   });
 }
 }

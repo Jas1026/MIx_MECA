@@ -29,6 +29,7 @@ newProduct: any = {
   allIngredients: any[] = [];
   allKitchens: any[] = [];
   receta: any[] = []; 
+  subcategories: any[] = [];
   cocinasSeleccionadas: any[] = []; 
 
   constructor(
@@ -38,16 +39,25 @@ newProduct: any = {
     private loadingCtrl: LoadingController
   ) {}
 
-  ngOnInit() {
-    this.getData();
-    console.log("producto recibido", this.product);
-    if (this.product) {
-  this.newProduct = JSON.parse(JSON.stringify(this.product)); 
-  this.loadRecipe(this.product.id_product);
-  this.loadKitchensAssigned(this.product.id_product);
-  this.loadLocationsStock(this.product.id_product); // 🔥 ESTA ES LA CLAVE
-}
+ngOnInit() {
+  this.getData();
+
+  if (this.product) {
+    this.newProduct = JSON.parse(JSON.stringify(this.product));
+
+    // 🔥 CARGAR SUBCATEGORÍAS AQUÍ (NO en locations)
+    if (this.product.id_category) {
+      this.server.getSubcategories(this.product.id_category)
+        .subscribe((res: any) => {
+          this.subcategories = res.data || [];
+        });
+    }
+
+    this.loadRecipe(this.product.id_product);
+    this.loadKitchensAssigned(this.product.id_product);
+    this.loadLocationsStock(this.product.id_product);
   }
+}
   async getData() {
   const loading = await this.loadingCtrl.create({ message: 'Cargando datos...' });
   await loading.present();
@@ -84,9 +94,23 @@ console.log("todas cocinas", this.allKitchens);
   if (res.error === 0) {
     this.locations = res.data;
   }
+  if (this.product?.id_category) {
+  this.server.getSubcategories(this.product.id_category)
+    .subscribe((res: any) => {
+      this.subcategories = res.data || [];
+    });
+}
 });
 }
 
+onCategoryChange() {
+  if (!this.newProduct.id_category) return;
+
+  this.server.getSubcategories(this.newProduct.id_category)
+    .subscribe((res: any) => {
+      this.subcategories = res.data || [];
+    });
+}
 loadRecipe(id: number) {
   this.server.getProductRecipe(id).subscribe((res: any) => {
     if (res.error === 0 && res.data) {
