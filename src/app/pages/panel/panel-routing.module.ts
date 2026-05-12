@@ -47,6 +47,12 @@ const routes: Routes = [
         data: { expectedRoles: ['admin'] }
       },
       {
+        path: 'kitchens',
+        loadChildren: () => import('../../kitchens/kitchens-routing.module').then(m => m.KitchensPageRoutingModule),
+        canActivate: [RoleGuard],
+        data: { expectedRoles: ['admin'] }
+      },
+      {
         path: 'tables',
         loadChildren: () => import('../cafe-tables/cafe-tables-routing.module').then(m => m.CafeTablesPageRoutingModule),
         canActivate: [RoleGuard],

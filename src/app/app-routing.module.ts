@@ -133,6 +133,10 @@ const routes: Routes = [
   },  {
     path: 'locations',
     loadChildren: () => import('./locations/locations.module').then( m => m.LocationsPageModule)
+  },
+  {
+    path: 'kitchens',
+    loadChildren: () => import('./kitchens/kitchens.module').then( m => m.KitchensPageModule)
   }
 
 ];

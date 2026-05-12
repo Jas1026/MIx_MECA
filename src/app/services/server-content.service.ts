@@ -447,6 +447,16 @@ createFlat(body: FormData) {
 updateFlatState(body: FormData) {
   return this.http.post(`${this.urlService}toggle_flat_state.php`, body);
 }
+//----------------- GESTION DE COCINAS---------------
+getKitchensCom(system: string) {
+  return this.http.get(`${this.urlService}get_kitchens_complete.php?system=${system}`);
+}
+createKitchen(body: FormData) {
+  return this.http.post(`${this.urlService}create_kitchen.php`, body);
+}
+updateKitchenState(body: FormData) {
+  return this.http.post(`${this.urlService}toggle_kitchen_state.php`, body);
+}
 // ---------------- GESTIÓN DE MESAS ----------------
 
 getTables_complete(system: string) {
