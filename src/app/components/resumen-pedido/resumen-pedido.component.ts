@@ -2,7 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ModalController, ToastController, LoadingController } from '@ionic/angular';
 import { ServerContentService } from 'src/app/services/server-content.service';
 import { Router } from '@angular/router';
-
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 @Component({
   selector: 'app-resumen-pedido',
   templateUrl: './resumen-pedido.component.html',
@@ -181,40 +182,114 @@ cargarDatosIniciales() {
     this.montoManual = 0;
     this.datosFactura = { nit: '0', razonSocial: 'SIN NOMBRE', voucher: '' };
   }
-async confirmarTodo() {
-  const loading = await this.loader.create({ message: 'Facturando en SIAT...' });
+  async confirmarTodo() {
+
+  const loading = await this.loader.create({
+    message: 'Facturando en SIAT...'
+  });
+
   await loading.present();
 
   const payload = {
     order_id: this.orderId,
+ formato: this.formatoImpresion,
     pagos: this.pagosTemporales.map(p => ({
+
       nit: p.nit,
+
       razonSocial: p.razonSocial,
+
       montoTotal: p.monto,
-      metodoPago: p.metodo_pago === 'efectivo' ? 1 : 2,
+
+      metodoPago:
+        p.metodo_pago === 'efectivo'
+          ? 1
+          : 2,
+
       detalles: p.items_referencia.map((item: any) => ({
+
         descripcion: item.nombre_producto,
+
         precio: item.unit_val,
+
         cantidad: 1
+
       }))
+
     }))
   };
 
-  this.server.procesarFacturacionSiat(payload).subscribe({
-    next: (res: any) => {
-      loading.dismiss();
-      if (res.success) {
-        this.server.closeOrder(this.orderId).subscribe(() => {
-          this.modalCtrl.dismiss(true);
-          // Redirigir a una vista donde pueda imprimir los recibos/facturas
-          this.router.navigate(['/post-pago', { data: JSON.stringify(res.data) }]);
-        });
-      }
-    },
-    error: () => loading.dismiss()
-  });
-}
+  this.server.procesarFacturacionSiat(payload)
+    .subscribe({
 
+      next: async (res: any) => {
+
+        await loading.dismiss();
+
+        if (res.success) {
+
+          // 🔥 ABRIR TODAS LAS FACTURAS
+          if (res.facturas) {
+
+            res.facturas.forEach((f: any) => {
+
+              window.open(f.pdf, '_blank');
+
+            });
+
+          }
+
+          // 🔥 CERRAR MESA
+          this.server.closeOrder(this.orderId)
+            .subscribe({
+
+              next: () => {
+
+                this.toast.create({
+                  message: 'Mesa cerrada correctamente ✅',
+                  duration: 2000,
+                  color: 'success'
+                }).then(t => t.present());
+
+                // 🔥 CERRAR MODAL
+                this.modalCtrl.dismiss(true);
+
+                // 🔥 VOLVER AL PANEL
+                this.router.navigate(['/panel']);
+
+              },
+
+              error: () => {
+
+                this.toast.create({
+                  message: 'Facturado pero no se pudo cerrar mesa ⚠️',
+                  duration: 2500,
+                  color: 'warning'
+                }).then(t => t.present());
+
+              }
+
+            });
+
+        }
+
+      },
+
+      error: async () => {
+
+        await loading.dismiss();
+
+        this.toast.create({
+          message: 'Error al facturar ❌',
+          duration: 2500,
+          color: 'danger'
+        }).then(t => t.present());
+
+      }
+
+    });
+
+}
 
   seleccionarTexto(input: any) {
     setTimeout(() => {
@@ -259,4 +334,38 @@ guardarParcialBD() {
   });
 }
   cerrar() { this.modalCtrl.dismiss(); }
+  generarPDFFactura(data: any) {
+
+  const doc = new jsPDF();
+
+  doc.setFontSize(18);
+  doc.text('FACTURA', 105, 15, { align: 'center' });
+
+  doc.setFontSize(11);
+
+  doc.text(`NIT: ${data.nit}`, 10, 30);
+  doc.text(`CLIENTE: ${data.razonSocial}`, 10, 38);
+  doc.text(`CUF: ${data.cuf}`, 10, 46);
+
+  doc.text(`FECHA: ${new Date().toLocaleString()}`, 10, 54);
+
+  autoTable(doc, {
+    startY: 65,
+    head: [['Producto', 'Cant.', 'P.Unit', 'Subtotal']],
+    body: data.detalles.map((d: any) => [
+      d.descripcion,
+      d.cantidad,
+      d.precio,
+      d.cantidad * d.precio
+    ])
+  });
+
+  const finalY = (doc as any).lastAutoTable.finalY + 10;
+
+  doc.setFontSize(14);
+  doc.text(`TOTAL: Bs ${data.montoTotal}`, 10, finalY);
+
+  doc.save(`Factura_${data.numeroFactura}.pdf`);
+}
+formatoImpresion = '80';
 }

@@ -149,7 +149,26 @@
     </div>
   </div>
 </ion-content>
+<ion-item lines="none" class="input-estilo">
+  <ion-label>Formato impresión</ion-label>
 
+  <ion-select [(ngModel)]="formatoImpresion">
+
+    <ion-select-option value="80">
+      Ticket 80mm
+    </ion-select-option>
+
+    <ion-select-option value="58">
+      Ticket 58mm
+    </ion-select-option>
+
+    <ion-select-option value="carta">
+      Carta
+    </ion-select-option>
+
+  </ion-select>
+
+</ion-item>
 <ion-footer class="ion-no-border" *ngIf="modo !== 'parcial'">
   <ion-toolbar class="ion-padding">
     <ion-button expand="block" color="success" shape="round" size="large" 
