@@ -169,13 +169,60 @@
   </ion-select>
 
 </ion-item>
-<ion-footer class="ion-no-border" *ngIf="modo !== 'parcial'">
-  <ion-toolbar class="ion-padding">
-    <ion-button expand="block" color="success" shape="round" size="large" 
-                (click)="confirmarTodo()" 
-                [disabled]="totalRestanteEnMesa > 0.05 || pagosTemporales.length === 0">
-      <ion-icon name="checkmark-done-circle-outline" slot="start"></ion-icon>
-      CONFIRMAR Y CERRAR MESA
+<ion-footer class="ion-no-border">
+
+  <ion-toolbar class="ion-padding footer-actions">
+
+    <!-- SOLO CERRAR -->
+    <ion-button
+      expand="block"
+      color="medium"
+      shape="round"
+      class="btn-footer"
+      (click)="cerrarSoloMesa()"
+    >
+      <ion-icon
+        name="close-circle-outline"
+        slot="start"
+      ></ion-icon>
+
+      CERRAR SIN FACTURA
     </ion-button>
+
+    <!-- RECIBO SIMPLE -->
+    <ion-button
+      expand="block"
+      color="warning"
+      shape="round"
+      class="btn-footer"
+      (click)="confirmarConRecibo()"
+      [disabled]="totalRestanteEnMesa > 0.05 || pagosTemporales.length === 0"
+    >
+      <ion-icon
+        name="receipt-outline"
+        slot="start"
+      ></ion-icon>
+
+      RECIBO SIMPLE
+    </ion-button>
+
+    <!-- SIAT -->
+    <ion-button
+      expand="block"
+      color="success"
+      shape="round"
+      class="btn-footer"
+      (click)="confirmarTodo()"
+      [disabled]="totalRestanteEnMesa > 0.05 || pagosTemporales.length === 0"
+    >
+      <ion-icon
+        name="document-text-outline"
+        slot="start"
+      ></ion-icon>
+
+      FACTURA SIAT
+    </ion-button>
+
   </ion-toolbar>
+
 </ion-footer>

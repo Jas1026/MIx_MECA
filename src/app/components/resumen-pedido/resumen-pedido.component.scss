@@ -283,3 +283,14 @@ ion-footer {
     margin: 10px 0;
     color: var(--ion-color-primary);
 }
+.footer-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-footer {
+  height: 48px;
+  font-weight: bold;
+  letter-spacing: 0.4px;
+}

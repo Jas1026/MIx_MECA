@@ -333,39 +333,98 @@ guardarParcialBD() {
     }
   });
 }
-  cerrar() { this.modalCtrl.dismiss(); }
-  generarPDFFactura(data: any) {
+// ======================================
+// CERRAR SOLO MESA
+// ======================================
 
-  const doc = new jsPDF();
+cerrarSoloMesa() {
 
-  doc.setFontSize(18);
-  doc.text('FACTURA', 105, 15, { align: 'center' });
+  this.server.closeOrder(this.orderId)
+    .subscribe({
 
-  doc.setFontSize(11);
+      next: async () => {
 
-  doc.text(`NIT: ${data.nit}`, 10, 30);
-  doc.text(`CLIENTE: ${data.razonSocial}`, 10, 38);
-  doc.text(`CUF: ${data.cuf}`, 10, 46);
+        const toast = await this.toast.create({
+          message: 'Mesa cerrada ✅',
+          duration: 2000,
+          color: 'success'
+        });
 
-  doc.text(`FECHA: ${new Date().toLocaleString()}`, 10, 54);
+        toast.present();
 
-  autoTable(doc, {
-    startY: 65,
-    head: [['Producto', 'Cant.', 'P.Unit', 'Subtotal']],
-    body: data.detalles.map((d: any) => [
-      d.descripcion,
-      d.cantidad,
-      d.precio,
-      d.cantidad * d.precio
-    ])
+        this.modalCtrl.dismiss(true);
+
+        this.router.navigate(['/panel']);
+      },
+
+      error: async () => {
+
+        const toast = await this.toast.create({
+          message: 'No se pudo cerrar mesa ❌',
+          duration: 2000,
+          color: 'danger'
+        });
+
+        toast.present();
+      }
+
+    });
+
+}// ======================================
+// RECIBO SIMPLE
+// ======================================
+async confirmarConRecibo() {
+
+  const loading = await this.loader.create({
+    message: 'Cerrando mesa...'
   });
 
-  const finalY = (doc as any).lastAutoTable.finalY + 10;
+  await loading.present();
 
-  doc.setFontSize(14);
-  doc.text(`TOTAL: Bs ${data.montoTotal}`, 10, finalY);
+  this.server.closeOrder(this.orderId)
+    .subscribe({
 
-  doc.save(`Factura_${data.numeroFactura}.pdf`);
+      next: async () => {
+
+        await loading.dismiss();
+
+        const toast = await this.toast.create({
+          message: 'Mesa cerrada ✅',
+          duration: 1800,
+          color: 'success'
+        });
+
+        toast.present();
+
+        // 🔥 cerrar modal
+        this.modalCtrl.dismiss();
+
+        // 🔥 abrir página de recibo bonito
+        this.router.navigate([
+          '/facturacion',
+          this.orderId
+        ]);
+
+      },
+
+      error: async () => {
+
+        await loading.dismiss();
+
+        const toast = await this.toast.create({
+          message: 'No se pudo cerrar mesa ❌',
+          duration: 2000,
+          color: 'danger'
+        });
+
+        toast.present();
+
+      }
+
+    });
+
 }
+  cerrar() { this.modalCtrl.dismiss(); }
+  
 formatoImpresion = '80';
 }
