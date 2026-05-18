@@ -77,10 +77,10 @@ const routes: Routes = [
         data: { expectedRoles:  ['admin', 'mesero', 'jefe_mesero']  }
       },
       {
-        path: '',
-        redirectTo: '',
-        pathMatch: 'full'
-      }
+  path: '',
+  redirectTo: 'pedidos',
+  pathMatch: 'full'
+}
     ]
   }
 ];

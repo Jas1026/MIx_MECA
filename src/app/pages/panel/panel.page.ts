@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ServerContentService } from '../../services/server-content.service';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
-
+import { MenuController } from '@ionic/angular';
 @Component({
   selector: 'app-panel',
   templateUrl: './panel.page.html',
@@ -18,7 +18,8 @@ export class PanelPage implements OnInit {
 constructor(
   private server: ServerContentService,
   private router: Router,
-  private route: ActivatedRoute
+  private route: ActivatedRoute,
+  private menu: MenuController
 ) {}
 
   ngOnInit() {
@@ -74,13 +75,36 @@ this.server.getFlats().subscribe((res: any) => {
 
 }
 
-  logout() {
-    localStorage.clear();
-    this.router.navigate(['/selector-login']);
+logout() {
+
+  sessionStorage.clear();
+
+  this.router.navigate(
+    ['/selector-login'],
+    {
+      replaceUrl: true
+    }
+  );
+
+}
+async goToFlat(id: any) {
+
+  await this.menu.close();
+
+  const active = document.activeElement as HTMLElement;
+
+  if (active) {
+    active.blur();
   }
-goToFlat(id: any) {
-  console.log("ID que envío:", id);
-  this.router.navigate(['panel/mesas', id]);
+
+  setTimeout(() => {
+
+    this.router.navigate(
+      ['/panel/mesas', id]
+    );
+
+  }, 100);
+
 }
 
 loadKitchens() {
@@ -93,12 +117,64 @@ loadKitchens() {
     }
   });
 }
-goToKitchen(id: any) {
-  console.log("Navegando a cocina:", id);
-  this.router.navigate(['cocina', id], { relativeTo: this.route });
+async goToKitchen(id: any) {
+
+  await this.menu.close();
+
+  const active = document.activeElement as HTMLElement;
+
+  if (active) {
+    active.blur();
+  }
+
+  setTimeout(() => {
+
+    this.router.navigate(
+      ['/panel/cocina', id]
+    );
+
+  }, 100);
+
 }
 hasRole(roleName: string): boolean {
     // Comparamos sin importar mayúsculas/minúsculas
     return this.userRole === roleName.toLowerCase();
   }
+  removeFocus(event: any) {
+
+  const target = event.target as HTMLElement;
+
+  if (target) {
+    target.blur();
+  }
+
+}
+onMenuOpen() {
+
+  setTimeout(() => {
+
+    const backdrop = document.querySelector('ion-backdrop') as HTMLElement;
+
+    if (backdrop) {
+      backdrop.blur();
+      backdrop.removeAttribute('aria-hidden');
+    }
+
+  }, 50);
+
+}
+
+onMenuClose() {
+
+  setTimeout(() => {
+
+    const active = document.activeElement as HTMLElement;
+
+    if (active) {
+      active.blur();
+    }
+
+  }, 50);
+
+}
 }

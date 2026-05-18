@@ -6,8 +6,8 @@ import { Observable } from 'rxjs'; // <--- AÑADE ESTA LÍNEA
   providedIn: 'root'
 })
 export class ServerContentService {
-
-private urlService = "http://localhost/api/";
+//private urlService = "http://localhost/api/";
+private urlService = "http://192.168.88.204:8000/api/";
 
   constructor(private http: HttpClient) { }
 
@@ -253,7 +253,7 @@ addIngredient(data: any) {
   };
 
   // Enviamos 'payload' en lugar de 'data'
-  return this.http.post('http://localhost/api/add_ingredient.php', payload, {
+  return this.http.post('http://192.168.88.204:8000/api/add_ingredient.php', payload, {
     headers: { 'Content-Type': 'application/json' }
   });
 }
@@ -265,7 +265,7 @@ updateIngredient(data: any) {
     system: this.getSystem()
   };
 
-  return this.http.post('http://localhost/api/update_ingredient.php', payload, {
+  return this.http.post('http://local192.168.88.204:8000host/api/update_ingredient.php', payload, {
     headers: { 'Content-Type': 'application/json' }
   });
 }
@@ -667,7 +667,7 @@ updateOrdera(data: any) {
   formData.append('data', JSON.stringify(data));
 
   return this.http.post(
-    'http://localhost/api/update_locations_order.php',
+    'http://192.168.88.204:8000/api/update_locations_order.php',
     formData
   );
 }
