@@ -88,7 +88,10 @@
           <ion-icon name="location-outline" slot="start"></ion-icon>
           <ion-label>Ubicaciones</ion-label>
         </ion-item>
-
+        <ion-item button *ngIf="hasRole('admin') || hasRole('jefe_mesero')" routerLink="/panel/proveedor">
+          <ion-icon name="location-outline" slot="start"></ion-icon>
+          <ion-label>proveedor</ion-label>
+        </ion-item>
       </ion-list>
     </ion-content>
   </ion-menu>

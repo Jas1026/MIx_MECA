@@ -70,9 +70,15 @@ const routes: Routes = [
         canActivate: [RoleGuard],
         data: { expectedRoles:  ['admin', 'mesero', 'jefe_mesero']  }
       },
-            {
+      {
         path: 'locations',
         loadChildren: () => import('../../locations/locations-routing.module').then(m => m.LocationsPageRoutingModule),
+        canActivate: [RoleGuard],
+        data: { expectedRoles:  ['admin', 'mesero', 'jefe_mesero']  }
+      },
+      {
+        path: 'proveedor',
+        loadChildren: () => import('../../proveedor/proveedor-routing.module').then(m => m.ProveedorPageRoutingModule),
         canActivate: [RoleGuard],
         data: { expectedRoles:  ['admin', 'mesero', 'jefe_mesero']  }
       },

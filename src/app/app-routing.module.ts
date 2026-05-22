@@ -137,6 +137,10 @@ const routes: Routes = [
   {
     path: 'kitchens',
     loadChildren: () => import('./kitchens/kitchens.module').then( m => m.KitchensPageModule)
+  },
+  {
+    path: 'proveedor',
+    loadChildren: () => import('./proveedor/proveedor.module').then( m => m.ProveedorPageModule)
   }
 
 ];

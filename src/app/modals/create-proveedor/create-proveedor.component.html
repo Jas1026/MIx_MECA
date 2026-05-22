@@ -1,0 +1,334 @@
+<ion-header class="ion-no-border">
+
+  <ion-toolbar color="dark">
+
+    <ion-title>
+      {{ proveedor ? 'Editar' : 'Nuevo' }} Proveedor
+    </ion-title>
+
+    <ion-buttons slot="end">
+
+      <ion-button (click)="dismiss()">
+
+        <ion-icon name="close"></ion-icon>
+
+      </ion-button>
+
+    </ion-buttons>
+
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content
+  class="ion-padding"
+  style="--background: #f7f8fb;">
+
+  <ion-card
+    class="ion-no-margin"
+    style="
+      border-radius: 22px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+      border: 1px solid #ececec;
+    ">
+
+    <ion-list
+      lines="full"
+      style="background: transparent;">
+
+      <!-- EMPRESA -->
+      <ion-item>
+
+        <ion-label
+          position="stacked"
+          style="font-weight: 700; color: #333;">
+
+          Empresa
+
+        </ion-label>
+
+        <ion-input
+          [(ngModel)]="newProveedor.nombre_empresa"
+          placeholder="Ej: Distribuidora El Valle">
+        </ion-input>
+
+      </ion-item>
+
+      <!-- NIT -->
+      <ion-item>
+
+        <ion-label
+          position="stacked"
+          style="font-weight: 700; color: #333;">
+
+          NIT
+
+        </ion-label>
+
+        <ion-input
+          [(ngModel)]="newProveedor.nit"
+          placeholder="Ej: 123456789">
+        </ion-input>
+
+      </ion-item>
+
+      <!-- RUBRO -->
+      <ion-item>
+
+        <ion-label
+          position="stacked"
+          style="font-weight: 700; color: #333;">
+
+          Rubro
+
+        </ion-label>
+
+        <ion-input
+          [(ngModel)]="newProveedor.rubro"
+          placeholder="Ej: Bebidas">
+        </ion-input>
+
+      </ion-item>
+
+      <!-- CONTACTO -->
+      <ion-item>
+
+        <ion-label
+          position="stacked"
+          style="font-weight: 700; color: #333;">
+
+          Nombre de Contacto
+
+        </ion-label>
+
+        <ion-input
+          [(ngModel)]="newProveedor.nombre_contacto"
+          placeholder="Ej: Carlos Mendoza">
+        </ion-input>
+
+      </ion-item>
+
+      <!-- CARGO -->
+      <ion-item>
+
+        <ion-label
+          position="stacked"
+          style="font-weight: 700; color: #333;">
+
+          Cargo
+
+        </ion-label>
+
+        <ion-input
+          [(ngModel)]="newProveedor.cargo_contacto"
+          placeholder="Ej: Supervisor">
+        </ion-input>
+
+      </ion-item>
+
+      <!-- TEL -->
+      <ion-item>
+
+        <ion-label
+          position="stacked"
+          style="font-weight: 700; color: #333;">
+
+          Teléfono
+
+        </ion-label>
+
+        <ion-input
+          [(ngModel)]="newProveedor.telefono"
+          type="tel"
+          placeholder="Ej: 76543210">
+        </ion-input>
+
+      </ion-item>
+
+      <!-- TEL 2 -->
+      <ion-item>
+
+        <ion-label
+          position="stacked"
+          style="font-weight: 700; color: #333;">
+
+          Teléfono Secundario
+
+        </ion-label>
+
+        <ion-input
+          [(ngModel)]="newProveedor.telefono_secundario"
+          type="tel">
+        </ion-input>
+
+      </ion-item>
+
+      <!-- CORREO -->
+      <ion-item>
+
+        <ion-label
+          position="stacked"
+          style="font-weight: 700; color: #333;">
+
+          Correo
+
+        </ion-label>
+
+        <ion-input
+          [(ngModel)]="newProveedor.correo"
+          type="email">
+        </ion-input>
+
+      </ion-item>
+
+      <!-- DIRECCION -->
+      <ion-item>
+
+        <ion-label
+          position="stacked"
+          style="font-weight: 700; color: #333;">
+
+          Dirección
+
+        </ion-label>
+
+        <ion-textarea
+          rows="2"
+          [(ngModel)]="newProveedor.direccion">
+        </ion-textarea>
+
+      </ion-item>
+
+      <!-- CIUDAD -->
+      <ion-item>
+
+        <ion-label
+          position="stacked"
+          style="font-weight: 700; color: #333;">
+
+          Ciudad
+
+        </ion-label>
+
+        <ion-input
+          [(ngModel)]="newProveedor.ciudad">
+        </ion-input>
+
+      </ion-item>
+
+      <!-- BANCO -->
+      <ion-item>
+
+        <ion-label
+          position="stacked"
+          style="font-weight: 700; color: #333;">
+
+          Banco
+
+        </ion-label>
+
+        <ion-input
+          [(ngModel)]="newProveedor.banco">
+        </ion-input>
+
+      </ion-item>
+
+      <!-- CUENTA -->
+      <ion-item>
+
+        <ion-label
+          position="stacked"
+          style="font-weight: 700; color: #333;">
+
+          Número de Cuenta
+
+        </ion-label>
+
+        <ion-input
+          [(ngModel)]="newProveedor.numero_cuenta">
+        </ion-input>
+
+      </ion-item>
+
+      <!-- HORARIO -->
+      <ion-item>
+
+        <ion-label
+          position="stacked"
+          style="font-weight: 700; color: #333;">
+
+          Horario de Atención
+
+        </ion-label>
+
+        <ion-input
+          [(ngModel)]="newProveedor.horario_atencion"
+          placeholder="08:00 - 18:00">
+        </ion-input>
+
+      </ion-item>
+
+      <!-- VISITA -->
+      <ion-item>
+
+        <ion-label
+          position="stacked"
+          style="font-weight: 700; color: #333;">
+
+          Día de Visita
+
+        </ion-label>
+
+        <ion-input
+          [(ngModel)]="newProveedor.dia_usual_visita"
+          placeholder="Lunes y Jueves">
+        </ion-input>
+
+      </ion-item>
+
+      <!-- COMENTARIOS -->
+      <ion-item>
+
+        <ion-label
+          position="stacked"
+          style="font-weight: 700; color: #333;">
+
+          Comentarios
+
+        </ion-label>
+
+        <ion-textarea
+          rows="4"
+          [(ngModel)]="newProveedor.comentarios"
+          placeholder="Notas adicionales...">
+        </ion-textarea>
+
+      </ion-item>
+
+    </ion-list>
+
+  </ion-card>
+
+  <!-- BOTON -->
+  <ion-button
+    expand="block"
+    color="dark"
+    (click)="saveProveedor()"
+    class="ion-margin-top"
+    style="
+      --border-radius: 16px;
+      height: 50px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    ">
+
+    <ion-icon
+      slot="start"
+      name="save-outline">
+    </ion-icon>
+
+    Guardar Proveedor
+
+  </ion-button>
+
+</ion-content>

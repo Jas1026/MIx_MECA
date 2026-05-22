@@ -447,6 +447,18 @@ createFlat(body: FormData) {
 updateFlatState(body: FormData) {
   return this.http.post(`${this.urlService}toggle_flat_state.php`, body);
 }
+// ---------------- GESTIÓN DE PROVEEDORES ----------------
+
+getProveedor(system: string) {
+  return this.http.get(`${this.urlService}get_proveedor.php?system=${system}`);
+}
+
+createProveedor(body: FormData) {
+  return this.http.post(`${this.urlService}create_proveedor.php`, body);
+}
+updateProveedorState(body: FormData) {
+  return this.http.post(`${this.urlService}toggle_prov_state.php`, body);
+}
 //----------------- GESTION DE COCINAS---------------
 getKitchensCom(system: string) {
   return this.http.get(`${this.urlService}get_kitchens_complete.php?system=${system}`);

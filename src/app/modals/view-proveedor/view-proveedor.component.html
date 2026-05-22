@@ -1,0 +1,212 @@
+<ion-header class="ion-no-border">
+
+  <ion-toolbar color="dark">
+
+    <ion-title>
+
+      Detalle del Proveedor
+
+    </ion-title>
+
+    <ion-buttons slot="end">
+
+      <ion-button (click)="dismiss()">
+
+        <ion-icon name="close-outline"></ion-icon>
+
+      </ion-button>
+
+    </ion-buttons>
+
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content
+  class="ion-padding"
+  style="--background: #f6f7fb;">
+
+  <div
+    style="
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    ">
+
+    <!-- CARD -->
+    <ion-card
+      style="
+        border-radius: 22px;
+        box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+      ">
+
+      <ion-card-content>
+
+        <div
+          style="
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+          ">
+
+          <!-- EMPRESA -->
+          <div>
+
+            <h2
+              style="
+                margin: 0;
+                font-size: 1.3rem;
+                font-weight: 800;
+                color: #222;
+              ">
+
+              {{ proveedor.nombre_empresa }}
+
+            </h2>
+
+            <small style="color:#888;">
+
+              📍 {{ proveedor.ciudad || '-' }}
+
+            </small>
+
+          </div>
+
+          <!-- GRID -->
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 14px;
+            ">
+
+            <div>
+              <small style="color:#999;">Contacto</small>
+              <div style="font-weight:600;">
+                {{ proveedor.nombre_contacto || '-' }}
+              </div>
+            </div>
+
+            <div>
+              <small style="color:#999;">Cargo</small>
+              <div style="font-weight:600;">
+                {{ proveedor.cargo_contacto || '-' }}
+              </div>
+            </div>
+
+            <div>
+              <small style="color:#999;">Teléfono</small>
+              <div style="font-weight:600;">
+                {{ proveedor.telefono || '-' }}
+              </div>
+            </div>
+
+            <div>
+              <small style="color:#999;">Correo</small>
+              <div style="font-weight:600;">
+                {{ proveedor.correo || '-' }}
+              </div>
+            </div>
+
+            <div>
+              <small style="color:#999;">Rubro</small>
+              <div style="font-weight:600;">
+                {{ proveedor.rubro || '-' }}
+              </div>
+            </div>
+
+            <div>
+              <small style="color:#999;">NIT</small>
+              <div style="font-weight:600;">
+                {{ proveedor.nit || '-' }}
+              </div>
+            </div>
+
+            <div>
+              <small style="color:#999;">Banco</small>
+              <div style="font-weight:600;">
+                {{ proveedor.banco || '-' }}
+              </div>
+            </div>
+
+            <div>
+              <small style="color:#999;">Cuenta</small>
+              <div style="font-weight:600;">
+                {{ proveedor.numero_cuenta || '-' }}
+              </div>
+            </div>
+
+            <div>
+              <small style="color:#999;">Horario</small>
+              <div style="font-weight:600;">
+                {{ proveedor.horario_atencion || '-' }}
+              </div>
+            </div>
+
+            <div>
+              <small style="color:#999;">Día Visita</small>
+              <div style="font-weight:600;">
+                {{ proveedor.dia_usual_visita || '-' }}
+              </div>
+            </div>
+
+          </div>
+
+          <!-- DIRECCION -->
+          <div>
+
+            <small style="color:#999;">
+
+              Dirección
+
+            </small>
+
+            <div
+              style="
+                margin-top: 4px;
+                font-weight: 600;
+              ">
+
+              {{ proveedor.direccion || '-' }}
+
+            </div>
+
+          </div>
+
+          <!-- COMENTARIOS -->
+          <div>
+
+            <small style="color:#999;">
+
+              Comentarios
+
+            </small>
+
+            <div
+              style="
+                margin-top: 4px;
+
+                background: #f5f5f5;
+
+                border-radius: 14px;
+
+                padding: 12px;
+
+                font-size: 0.92rem;
+              ">
+
+              {{ proveedor.comentarios || 'Sin comentarios' }}
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </ion-card-content>
+
+    </ion-card>
+
+  </div>
+
+</ion-content>
