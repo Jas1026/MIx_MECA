@@ -701,14 +701,27 @@ updateTableStatus(id_table: number, estado: string) {
   });
 }
   // ✅ GET
-  getLocations(){
-    return this.http.get(this.urlService + 'getLocations.php');
-  }
+getLocations() {
+
+  let body = new FormData();
+  body.append("system", this.getSystem());
+
+  return this.http.post(
+    this.urlService + 'getLocations.php',
+    body
+  );
+}
 
   // ✅ CREATE + UPDATE
-  saveLocation(data:any){
-    return this.http.post(this.urlService + 'saveLocation.php', data);
-  }
+saveLocation(data:any){
+
+  data.system = this.getSystem();
+
+  return this.http.post(
+    this.urlService + 'saveLocation.php',
+    data
+  );
+}
 
   // ✅ DELETE
   deleteLocation(id:any){

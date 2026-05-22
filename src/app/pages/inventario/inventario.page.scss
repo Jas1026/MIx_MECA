@@ -346,3 +346,37 @@ ion-chip {
 .subcategory-item:last-child {
   border-bottom: none;
 }
+.stock-red {
+  background: rgba(255, 0, 0, 0.08);
+}
+
+.stock-orange {
+  background: rgba(255, 165, 0, 0.10);
+}
+
+.stock-yellow {
+  background: rgba(255, 255, 0, 0.08);
+}
+
+.stock-green {
+  background: rgba(0, 128, 0, 0.08);
+}
+.stock-red {
+  background: rgba(255, 59, 48, 0.10);
+  border-left: 4px solid #ff3b30;
+}
+
+.stock-orange {
+  background: rgba(255, 149, 0, 0.10);
+  border-left: 4px solid #ff9500;
+}
+
+.stock-yellow {
+  background: rgba(255, 204, 0, 0.10);
+  border-left: 4px solid #ffcc00;
+}
+
+.stock-green {
+  background: rgba(52, 199, 89, 0.10);
+  border-left: 4px solid #34c759;
+}

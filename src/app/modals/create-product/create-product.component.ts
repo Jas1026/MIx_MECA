@@ -47,7 +47,14 @@ ngOnInit() {
   this.getData();
 
   if (this.product) {
-    this.newProduct = JSON.parse(JSON.stringify(this.product));
+    console.log("PRODUCT ORIGINAL:", this.product);
+    this.newProduct = {
+  ...JSON.parse(JSON.stringify(this.product)),
+
+  // 🔥 si no existe tipo => elaborado
+  tipo_producto:
+    this.product.tipo_producto || 'elaborado'
+};
 
     // 🔥 CARGAR SUBCATEGORÍAS AQUÍ (NO en locations)
     if (this.product.id_category) {
@@ -87,12 +94,23 @@ this.server.getProveedor(this.server.getSystem())
 
 });
         // 2. Solo cuando TODO lo anterior existe, cargamos el producto
-        if (this.product) {
-          // Clonamos para no afectar la lista principal
-          this.newProduct = JSON.parse(JSON.stringify(this.product)); 
-          this.loadRecipe(this.product.id_product);
-          this.loadKitchensAssigned(this.product.id_product);
-        } else {
+if (this.product) {
+console.log("PRODUCT ORIGINAL:", this.product);
+  this.newProduct = {
+    ...JSON.parse(JSON.stringify(this.product)),
+
+    tipo_producto:
+      this.product.tipo_producto || 'elaborado'
+  };
+
+  console.log("PRODUCTO EDITANDO:", this.newProduct);
+
+  this.loadRecipe(this.product.id_product);
+  this.loadKitchensAssigned(this.product.id_product);
+
+}
+        
+        else {
           this.addIngredientRow();
         }
 
@@ -171,11 +189,35 @@ if (totalCongelado > this.newProduct.stock_congelado) {
   const loading = await this.loadingCtrl.create({ message: 'Guardando producto...' });
   await loading.present();
 
+// 🔥 Si eligieron ubicación principal y no existe en stocks
+if (this.newProduct.location_id) {
+
+  const existe = this.stocks.find(
+    s => Number(s.location_id) === Number(this.newProduct.location_id)
+  );
+
+  if (!existe) {
+
+    this.stocks.push({
+      location_id: Number(this.newProduct.location_id),
+
+      stock_disponible:
+        Number(this.newProduct.stock_disponible || 0),
+
+      stock_congelado:
+        Number(this.newProduct.stock_congelado || 0),
+
+      stock_minimo:
+        Number(this.newProduct.stock_minimo || 1)
+    });
+
+  }
+}
 const payload = {
   product: this.newProduct,
   recipe: recetaLimpia,
   kitchens: this.cocinasSeleccionadas,
-  stocks: this.stocks, // 🔥 clave
+  stocks: this.stocks,
   system: this.server.getSystem()
 };
 

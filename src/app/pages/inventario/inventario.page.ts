@@ -23,12 +23,13 @@ filterProveedorIng: string = '';
 filterProveedorProd: string = '';
 filterNombre: string = '';
 filterUnidad: string = '';
+filterNivelStock: string = '';
 unidadesDisponibles: string[] = [];
 subcategories: any[] = [];
 subcategoriesByCategory: any = {};
 expandedCategories: any = {};
 showSubcatManager: boolean = false;
-
+filterNivelProducto: string = '';
 selectedCategoryForSub: any = null;
 
 subcatForm = {
@@ -68,12 +69,18 @@ const matchProveedor =
     ? true
     : (ing.nombre_proveedor === this.filterProveedorIng);
 
-    return (
-      matchNombre &&
-      matchUnidad &&
-      matchLocation &&
-      matchProveedor
-    );
+const matchNivel =
+  this.filterNivelStock === ''
+    ? true
+    : this.getStockLevel(ing) === this.filterNivelStock;
+
+return (
+  matchNombre &&
+  matchUnidad &&
+  matchLocation &&
+  matchProveedor &&
+  matchNivel
+);
   });
 }
   /* ---------------- FILTRAR PRODUCTOS ---------------- */
@@ -278,17 +285,22 @@ get filteredProducts() {
       (this.filterState === 'todos')
         ? true
         : (p.state === this.filterState);
-
 const matchProveedor =
   this.filterProveedorProd === ''
     ? true
     : (p.nombre_proveedor === this.filterProveedorProd);
 
-    return (
-      matchNombre &&
-      matchState &&
-      matchProveedor
-    );
+const matchNivel =
+  this.filterNivelProducto === ''
+    ? true
+    : this.getStockLevel(p) === this.filterNivelProducto;
+
+return (
+  matchNombre &&
+  matchState &&
+  matchProveedor &&
+  matchNivel
+);
   });
 }
 
@@ -514,6 +526,122 @@ buildSubcategoryMap() {
     }
     this.subcategoriesByCategory[sub.id_category].push(sub);
   });
+}
+// ========================================
+// EVALUAR NIVEL STOCK
+// ========================================
+
+getStockLevel(item: any): string {
+
+
+  // =========================
+// PRODUCTOS
+// =========================
+// =========================
+// PRODUCTOS
+// =========================
+if (item.stock_disponible !== undefined) {
+
+  const stock = Number(item.stock_disponible || 0);
+  const minimo = Number(item.stock_minimo || 1);
+
+  if (stock <= 0) {
+    return 'inexistente';
+  }
+
+  if (stock <= minimo) {
+    return 'muy_poco';
+  }
+
+  if (stock <= minimo * 3) {
+    return 'medio';
+  }
+
+  return 'lleno';
+}
+  if (item.tipo === 'normal') {
+
+    const stock = Number(item.stock_act || 0);
+
+    if (stock <= 0) return 'inexistente';
+    if (stock <= 5) return 'muy_poco';
+    if (stock <= 15) return 'medio';
+
+    return 'lleno';
+  }
+
+  // =========================
+  // BOTELLA
+  // =========================
+  if (item.tipo === 'botella') {
+
+    const stock = Number(item.stock_act || 0);
+
+    if (stock <= 0) return 'inexistente';
+    if (stock <= 300) return 'muy_poco';
+    if (stock <= 1000) return 'medio';
+
+    return 'lleno';
+  }
+
+  // =========================
+  // FRACCIONADO
+  // =========================
+  if (item.tipo === 'fraccionado') {
+
+    const stock = Number(item.stock_act || 0);
+
+    if (stock <= 0) return 'inexistente';
+    if (stock <= 5) return 'muy_poco';
+    if (stock <= 20) return 'medio';
+
+    return 'lleno';
+  }
+
+  return 'medio';
+}
+getStockClass(item: any): string {
+
+  const level = this.getStockLevel(item);
+
+  switch(level) {
+
+    case 'inexistente':
+      return 'stock-red';
+
+    case 'muy_poco':
+      return 'stock-orange';
+
+    case 'medio':
+      return 'stock-yellow';
+
+    case 'lleno':
+      return 'stock-green';
+
+    default:
+      return '';
+  }
+}getStockLabel(item: any): string {
+
+  const level = this.getStockLevel(item);
+
+  switch(level) {
+
+    case 'inexistente':
+      return 'Sin stock';
+
+    case 'muy_poco':
+      return 'Muy poco';
+
+    case 'medio':
+      return 'Medio';
+
+    case 'lleno':
+      return 'Lleno';
+
+    default:
+      return '';
+  }
 }
 }
 

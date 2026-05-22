@@ -40,7 +40,7 @@
   placeholder="Proveedor"
   [(ngModel)]="filterProveedorIng"
   class="custom-select">
-
+  
   <ion-select-option value="">
     Todos los proveedores
   </ion-select-option>
@@ -52,6 +52,34 @@
   {{ prov.nombre_empresa }}
 
 </ion-select-option>
+
+</ion-select>
+
+<ion-select
+  interface="popover"
+  placeholder="Nivel stock"
+  [(ngModel)]="filterNivelStock"
+  class="custom-select">
+
+  <ion-select-option value="">
+    Todos los niveles
+  </ion-select-option>
+
+  <ion-select-option value="lleno">
+    Lleno
+  </ion-select-option>
+
+  <ion-select-option value="medio">
+    Medio
+  </ion-select-option>
+
+  <ion-select-option value="muy_poco">
+    Muy poco
+  </ion-select-option>
+
+  <ion-select-option value="inexistente">
+    Sin stock
+  </ion-select-option>
 
 </ion-select>
       <ion-button (click)="openCreateModal()" fill="solid" color="dark">
@@ -72,9 +100,25 @@
 <ion-col size="1">Acciones</ion-col>
       </ion-row>
 
-      <ion-row *ngFor="let ing of filteredIngredients" class="align-center">
+    <ion-row
+  *ngFor="let ing of filteredIngredients"
+  class="align-center"
+  [ngClass]="getStockClass(ing)">
         <ion-col size="3">
           <span class="ing-name">{{ ing.nombre }}</span>
+          <ion-badge
+  style="margin-left:8px;"
+  [color]="
+    getStockLevel(ing) === 'lleno'
+      ? 'success'
+      : getStockLevel(ing) === 'medio'
+      ? 'warning'
+      : 'danger'
+  ">
+
+  {{ getStockLabel(ing) }}
+
+</ion-badge>
           <ion-badge *ngIf="ing.tipo === 'botella'" color="warning"
             style="font-size: 0.6rem; display: block; width: fit-content;">BOTELLA</ion-badge>
         </ion-col>
@@ -92,7 +136,7 @@
               <strong style="color: #2dd36f;">{{ ing.stock_act }}</strong>
               <ion-button size="small" (click)="gestionarBotellas(ing)" color="secondary" fill="outline">
                 <ion-icon name="flask-outline" slot="start"></ion-icon>
-                Envases
+                control
               </ion-button>
             </div>
           </ng-container>
@@ -101,7 +145,7 @@
               <strong style="color: #2dc0d3;">{{ ing.stock_act }}</strong>
               <ion-button size="small" (click)="gestionarfracciones(ing)" color="secondary" fill="outline">
                 <ion-icon name="flask-outline" slot="start"></ion-icon>
-                Envases
+                control
               </ion-button>
             </div>
           </ng-container>
@@ -280,6 +324,34 @@
 
 </ion-select-option>
 </ion-select>
+<!-- FILTRO NIVEL STOCK -->
+<ion-select
+  [(ngModel)]="filterNivelProducto"
+  interface="popover"
+  class="custom-select"
+  placeholder="Nivel stock">
+
+  <ion-select-option value="">
+    Todos los niveles
+  </ion-select-option>
+
+  <ion-select-option value="lleno">
+    Lleno
+  </ion-select-option>
+
+  <ion-select-option value="medio">
+    Medio
+  </ion-select-option>
+
+  <ion-select-option value="muy_poco">
+    Muy poco
+  </ion-select-option>
+
+  <ion-select-option value="inexistente">
+    Sin stock
+  </ion-select-option>
+
+</ion-select>
       <ion-button (click)="openCreateProductModal()" fill="solid" color="dark">
         <ion-icon name="add-outline" slot="start"></ion-icon>
         Nuevo Producto
@@ -300,9 +372,33 @@
         <ion-col size="1">Acciones</ion-col>
       </ion-row>
 
-      <ion-row *ngFor="let p of filteredProducts" class="align-center"
-        [style.opacity]="p.state === 'inactive' ? '0.5' : '1'">
-        <ion-col size="2"><strong class="ing-name">{{ p.nombre_producto }}</strong></ion-col>
+      <ion-row
+  *ngFor="let p of filteredProducts"
+  class="align-center"
+  [ngClass]="getStockClass(p)"
+  [style.opacity]="p.state === 'inactive' ? '0.5' : '1'">
+  
+       <ion-col size="2">
+
+  <strong class="ing-name">
+    {{ p.nombre_producto }}
+  </strong>
+
+  <ion-badge
+    style="margin-left:8px;"
+    [color]="
+      getStockLevel(p) === 'lleno'
+        ? 'success'
+        : getStockLevel(p) === 'medio'
+        ? 'warning'
+        : 'danger'
+    ">
+
+    {{ getStockLabel(p) }}
+
+  </ion-badge>
+
+</ion-col>
         <ion-col size="2">{{ p.price }} Bs</ion-col>
        <ion-col size="2">
   {{ getCategoryName(p.id_category) }}
