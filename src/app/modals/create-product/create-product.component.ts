@@ -13,6 +13,7 @@ export class CreateProductComponent implements OnInit {
   @Input() product: any; 
 locations: any[] = [];
 stocks: any[] = [];
+providers: any[] = [];
 newProduct: any = {
   nombre_producto: '',
   alias: '',
@@ -22,7 +23,8 @@ newProduct: any = {
   stock_congelado: 0,
   stock_disponible: 0,
   stock_minimo: 1, // 🔥 aquí
-  location_id: null  
+  location_id: null,
+   proveedor_id: null  
 };
 
   categories: any[] = [];
@@ -58,7 +60,7 @@ ngOnInit() {
     this.loadLocationsStock(this.product.id_product);
   }
 }
-  async getData() {
+async getData() {
   const loading = await this.loadingCtrl.create({ message: 'Cargando datos...' });
   await loading.present();
 
@@ -76,7 +78,12 @@ this.server.getKitchens().subscribe((resKit: any) => {
 console.log("todas cocinas", this.allKitchens);
       this.server.getCategories().subscribe((resCat: any) => {
         this.categories = resCat.data || resCat;
+this.server.getProveedor(this.server.getSystem())
+.subscribe((res: any) => {
 
+  this.providers = res;
+
+});
         // 2. Solo cuando TODO lo anterior existe, cargamos el producto
         if (this.product) {
           // Clonamos para no afectar la lista principal
@@ -86,6 +93,7 @@ console.log("todas cocinas", this.allKitchens);
         } else {
           this.addIngredientRow();
         }
+
         loading.dismiss();
       });
     });

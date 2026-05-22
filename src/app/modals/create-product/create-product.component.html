@@ -47,6 +47,28 @@
             </ion-select>
           </ion-item>
         </ion-col>
+        <ion-col size="12" size-md="6">
+  <ion-item>
+    <ion-label position="stacked">Proveedor</ion-label>
+
+    <ion-select [(ngModel)]="newProduct.proveedor_id"
+                placeholder="Seleccionar proveedor">
+
+      <ion-select-option [value]="null">
+        Sin proveedor
+      </ion-select-option>
+
+      <ion-select-option
+        *ngFor="let prov of providers"
+        [value]="prov.id_proveedor">
+
+        {{ prov.nombre_empresa }}
+
+      </ion-select-option>
+
+    </ion-select>
+  </ion-item>
+</ion-col>
         <ion-col size="4">
           <ion-item>
             <ion-label position="stacked">Subcategoría</ion-label>
@@ -105,10 +127,6 @@
           <ion-select-option *ngFor="let k of allKitchens" [value]="k.id">{{k.nombre || k.name}}</ion-select-option>
         </ion-select>
       </ion-item>
-
-      <h3 [style.color]="receta.length === 0 ? 'red' : '#444'" style="font-weight: bold;">
-        Receta / Insumos <span *ngIf="receta.length === 0">(Requerido)</span>
-      </h3>
     </ion-list>
   </ion-card>
   <h3>Stock por Ubicación</h3>

@@ -12,13 +12,15 @@ export class CreateIngredientComponent implements OnInit {
   @Input() ingredient: any;
   isSaving: boolean = false;
 locations: any[] = [];
+providers: any[] = [];
   form: any = {
     id_ingredients: null,
     nombre: '',
     stock_act: 0,
     unidad_med: '',
     tipo: 'normal',
-    location_id: null 
+    location_id: null ,
+    provider_id: null
   };
 
   constructor(
@@ -29,6 +31,7 @@ locations: any[] = [];
 
   ngOnInit() {
     this.loadLocations();
+      this.loadProviders();
   }
   loadLocations() {
   this.server.getLocations().subscribe((res: any) => {
@@ -36,12 +39,17 @@ locations: any[] = [];
 
     // 👇 AQUÍ VA
     if (this.ingredient) {
-      this.form = {
-        ...this.ingredient,
-        location_id: this.ingredient.location_id 
-          ? +this.ingredient.location_id 
-          : null
-      };
+     this.form = {
+  ...this.ingredient,
+
+  location_id: this.ingredient.location_id
+    ? +this.ingredient.location_id
+    : null,
+
+provider_id: this.ingredient.proveedor_id
+    ? +this.ingredient.provider_id
+    : null
+};
 
       if (this.form.tipo === 'botella') {
         this.form.unidad_med = 'g';
@@ -111,7 +119,14 @@ locations: any[] = [];
     });
     t.present();
   }
+  loadProviders() {
+  this.server.getProveedor(this.server.getSystem())
+  .subscribe((res: any) => {
 
+    this.providers = res;
+
+  });
+}
   cerrar() {
     this.modalCtrl.dismiss();
   }

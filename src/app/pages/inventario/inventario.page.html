@@ -35,7 +35,25 @@
         </ion-select-option>
 
       </ion-select>
+<ion-select
+  interface="popover"
+  placeholder="Proveedor"
+  [(ngModel)]="filterProveedorIng"
+  class="custom-select">
 
+  <ion-select-option value="">
+    Todos los proveedores
+  </ion-select-option>
+
+<ion-select-option
+  *ngFor="let prov of proveedores"
+  [value]="prov.nombre_empresa">
+
+  {{ prov.nombre_empresa }}
+
+</ion-select-option>
+
+</ion-select>
       <ion-button (click)="openCreateModal()" fill="solid" color="dark">
         <ion-icon name="add-outline" slot="start"></ion-icon>
         Añadir Nuevo
@@ -48,8 +66,10 @@
     <ion-grid>
       <ion-row class="table-header">
         <ion-col size="3">Nombre</ion-col>
-        <ion-col size="5">Stock / Gestión</ion-col> <ion-col size="2">Unidad</ion-col>
-        <ion-col size="2">Acciones</ion-col>
+        <ion-col size="2">Stock / Gestión</ion-col>
+<ion-col size="2">Unidad</ion-col>
+<ion-col size="2">Proveedor</ion-col>
+<ion-col size="1">Acciones</ion-col>
       </ion-row>
 
       <ion-row *ngFor="let ing of filteredIngredients" class="align-center">
@@ -59,7 +79,7 @@
             style="font-size: 0.6rem; display: block; width: fit-content;">BOTELLA</ion-badge>
         </ion-col>
 
-        <ion-col size="5" class="stock-cell">
+        <ion-col size="2" class="stock-cell">
           <ng-container *ngIf="ing.tipo === 'normal'">
             <ion-input type="number" [(ngModel)]="ing.stock_act" class="stock-input"></ion-input>
             <ion-button size="small" (click)="updateStock(ing)" color="success" fill="solid" class="btn-save">
@@ -78,11 +98,27 @@
           </ng-container>
         </ion-col>
 
-        <ion-col size="2">
-          <ion-badge color="light" mode="ios">{{ ing.unidad_med }}</ion-badge>
-        </ion-col>
+     <ion-col size="2">
+  <ion-badge color="light" mode="ios">
+    {{ ing.unidad_med }}
+  </ion-badge>
+</ion-col>
 
-        <ion-col size="2" class="actions-cell">
+<ion-col size="2">
+
+  <small
+    style="
+      font-weight: 600;
+      color: #444;
+    ">
+
+    {{ ing.nombre_proveedor || '—' }}
+
+  </small>
+
+</ion-col>
+
+<ion-col size="1" class="actions-cell">
           <ion-button fill="clear" color="primary" (click)="showIngredientModal(ing)">
             <ion-icon slot="icon-only" name="create-outline"></ion-icon>
           </ion-button>
@@ -217,7 +253,24 @@
         <ion-select-option value="active">Solo Activos</ion-select-option>
         <ion-select-option value="inactive">Solo Inactivos</ion-select-option>
       </ion-select>
+<ion-select
+  [(ngModel)]="filterProveedorProd"
+  interface="popover"
+  class="custom-select"
+  placeholder="Proveedor">
 
+  <ion-select-option value="">
+    Todos los proveedores
+  </ion-select-option>
+
+<ion-select-option
+  *ngFor="let prov of proveedores"
+  [value]="prov.nombre_empresa">
+
+  {{ prov.nombre_empresa }}
+
+</ion-select-option>
+</ion-select>
       <ion-button (click)="openCreateProductModal()" fill="solid" color="dark">
         <ion-icon name="add-outline" slot="start"></ion-icon>
         Nuevo Producto
@@ -230,17 +283,35 @@
 
     <ion-grid>
       <ion-row class="table-header">
-        <ion-col size="3">Nombre</ion-col>
+        <ion-col size="2">Nombre</ion-col>
         <ion-col size="2">Precio</ion-col>
-        <ion-col size="3">Categoría</ion-col>
-        <ion-col size="2">Estado</ion-col> <ion-col size="2">Acciones</ion-col>
+        <ion-col size="2">Categoría</ion-col>
+        <ion-col size="2">Proveedor</ion-col>
+        <ion-col size="2">Estado</ion-col> 
+        <ion-col size="1">Acciones</ion-col>
       </ion-row>
 
       <ion-row *ngFor="let p of filteredProducts" class="align-center"
         [style.opacity]="p.state === 'inactive' ? '0.5' : '1'">
-        <ion-col size="3"><strong class="ing-name">{{ p.nombre_producto }}</strong></ion-col>
+        <ion-col size="2"><strong class="ing-name">{{ p.nombre_producto }}</strong></ion-col>
         <ion-col size="2">{{ p.price }} Bs</ion-col>
-        <ion-col size="3">{{ getCategoryName(p.id_category) }}</ion-col>
+       <ion-col size="2">
+  {{ getCategoryName(p.id_category) }}
+</ion-col>
+
+<ion-col size="2">
+
+  <small
+    style="
+      font-weight: 600;
+      color: #444;
+    ">
+
+    {{ p.nombre_proveedor || '—' }}
+
+  </small>
+
+</ion-col>
 
         <ion-col size="2">
           <ion-button fill="clear" [color]="p.state === 'active' ? 'success' : 'danger'"
@@ -250,7 +321,7 @@
           </ion-button>
         </ion-col>
 
-        <ion-col size="2" class="actions-cell">
+        <ion-col size="1" class="actions-cell">
           <ion-button fill="clear" color="primary" (click)="openCreateProductModal(p)">
             <ion-icon slot="icon-only" name="create-outline"></ion-icon>
           </ion-button>

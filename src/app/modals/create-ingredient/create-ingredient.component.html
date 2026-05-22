@@ -60,7 +60,25 @@
     </ion-select-option>
   </ion-select>
   </ion-item>
+<ion-item class="ion-margin-bottom">
+  <ion-label position="stacked">Proveedor</ion-label>
 
+  <ion-select [(ngModel)]="form.provider_id" interface="popover">
+    
+    <ion-select-option [value]="null">
+      Sin proveedor
+    </ion-select-option>
+
+    <ion-select-option 
+      *ngFor="let prov of providers" 
+      [value]="prov.id_proveedor">
+
+      {{ prov.nombre_empresa }}
+
+    </ion-select-option>
+
+  </ion-select>
+</ion-item>
 
   <ion-button expand="block" (click)="guardar()" [disabled]="isSaving" class="ion-margin-top" shape="round">
     <ion-spinner name="crescent" *ngIf="isSaving"></ion-spinner>

@@ -17,6 +17,9 @@ export class InventarioPage {
   /* ---------------- FILTRAR INGREDIENTES ---------------- */
 filterLocation: string = '';
 locations: any[] = [];
+proveedores: any[] = [];
+filterProveedorIng: string = '';
+filterProveedorProd: string = '';
 filterNombre: string = '';
 filterUnidad: string = '';
 unidadesDisponibles: string[] = [];
@@ -43,18 +46,33 @@ toggleCategory(catId: any) {
   this.expandedCategories[catId] = !this.expandedCategories[catId];
 }
 get filteredIngredients() {
+
   return this.ingredients.filter(ing => {
 
-    const matchNombre = ing.nombre.toLowerCase().includes(this.filterNombre.toLowerCase());
+    const matchNombre =
+      ing.nombre.toLowerCase()
+      .includes(this.filterNombre.toLowerCase());
 
-    const matchUnidad = ing.unidad_med.toLowerCase().includes(this.filterUnidad.toLowerCase());
+    const matchUnidad =
+      ing.unidad_med.toLowerCase()
+      .includes(this.filterUnidad.toLowerCase());
 
     const matchLocation =
       this.filterLocation === ''
         ? true
         : (ing.location_id == this.filterLocation);
 
-    return matchNombre && matchUnidad && matchLocation;
+const matchProveedor =
+  this.filterProveedorIng === ''
+    ? true
+    : (ing.nombre_proveedor === this.filterProveedorIng);
+
+    return (
+      matchNombre &&
+      matchUnidad &&
+      matchLocation &&
+      matchProveedor
+    );
   });
 }
   /* ---------------- FILTRAR PRODUCTOS ---------------- */
@@ -71,12 +89,13 @@ assetCategories: string[] = ['Muebles', 'Cubiertos', 'Cristalería', 'Maquinaria
 
 editingAssetId: number | null = null;
 /* ---------------- AL INICIAR ---------------- */
-  ngOnInit() {
-this.loadIngredients();
-this.loadCategories();
-this.loadSubcategories();
-this.loadLocations();
-  }
+ngOnInit() {
+  this.loadIngredients();
+  this.loadCategories();
+  this.loadSubcategories();
+  this.loadLocations();
+  this.loadProveedores();
+}
   segment: string = 'ingredients';
 
   ingredients: any[] = [];
@@ -113,7 +132,15 @@ segmentChanged() {
   );
 }resetSubcatForm() {
   this.subcatForm = { id: null, name: '' };
-}editSubcategory(sub: any) {
+}
+loadProveedores() {
+  const system = this.server.getSystem();
+
+  this.server.getProveedor(system).subscribe((res: any) => {
+    this.proveedores = res;
+  });
+}
+editSubcategory(sub: any) {
   this.subcatForm = {
     id: sub.id_subcategory,
     name: sub.name
@@ -239,14 +266,28 @@ getCategoryName(id: any) {
   return cat ? cat.name : 'Sin categoría';
 }
 get filteredProducts() {
+
   return this.products.filter(p => {
-    // Filtro por nombre
-    const matchNombre = p.nombre_producto.toLowerCase().includes(this.filterProducto.toLowerCase());
-    
-    // Filtro por estado (activo/inactivo/todos)
-    const matchState = (this.filterState === 'todos') ? true : (p.state === this.filterState);
-    
-    return matchNombre && matchState;
+
+    const matchNombre =
+      p.nombre_producto.toLowerCase()
+      .includes(this.filterProducto.toLowerCase());
+
+    const matchState =
+      (this.filterState === 'todos')
+        ? true
+        : (p.state === this.filterState);
+
+const matchProveedor =
+  this.filterProveedorProd === ''
+    ? true
+    : (p.nombre_proveedor === this.filterProveedorProd);
+
+    return (
+      matchNombre &&
+      matchState &&
+      matchProveedor
+    );
   });
 }
 
