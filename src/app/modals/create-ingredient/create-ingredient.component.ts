@@ -57,13 +57,25 @@ provider_id: this.ingredient.proveedor_id
     }
   });
 }
-  // Se ejecuta cada vez que el usuario cambia el tipo de control
-  onTipoChange() {
-    if (this.form.tipo === 'botella') {
-      this.form.unidad_med = 'g'; // Forzamos gramos
-      this.form.stock_act = 0;    // El stock dinámico ignora este campo manual
-    }
+onTipoChange() {
+
+  // BOTELLAS
+  if (this.form.tipo === 'botella') {
+
+    this.form.unidad_med = 'g';
+    this.form.stock_act = 0;
+
   }
+
+  // FRACCIONADOS
+  else if (this.form.tipo === 'fraccionado') {
+
+    this.form.unidad_med = 'porcion';
+    this.form.stock_act = 0;
+
+  }
+
+}
 
   async guardar() {
     // Validaciones básicas
@@ -81,9 +93,20 @@ provider_id: this.ingredient.proveedor_id
     this.isSaving = true;
 
     // Aseguramos consistencia antes de enviar
-    if (this.form.tipo === 'botella') {
-      this.form.unidad_med = 'g';
-    }
+// Consistencia automática
+if (this.form.tipo === 'botella') {
+
+  this.form.unidad_med = 'g';
+  this.form.stock_act = 0;
+
+}
+
+if (this.form.tipo === 'fraccionado') {
+
+  this.form.unidad_med = 'porcion';
+  this.form.stock_act = 0;
+
+}
 
     const payload = {
       ...this.form,

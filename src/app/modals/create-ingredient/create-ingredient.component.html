@@ -22,10 +22,13 @@
     <ion-select [(ngModel)]="form.tipo" interface="popover" (ionChange)="onTipoChange()">
       <ion-select-option value="normal">Normal (Sacos, Cajas, Kilos)</ion-select-option>
       <ion-select-option value="botella">Botella (Control por Pesaje)</ion-select-option>
+    <ion-select-option value="fraccionado">
+  Fraccionado (Porciones, Cortes, Partes)
+</ion-select-option>
     </ion-select>
   </ion-item>
 
-  <div *ngIf="form.tipo === 'normal'">
+<div *ngIf="form.tipo !== 'botella' && form.tipo !== 'fraccionado'">
     <ion-item class="ion-margin-bottom">
       <ion-label position="stacked">Stock Actual</ion-label>
       <ion-input type="number" [(ngModel)]="form.stock_act"></ion-input>
@@ -38,8 +41,18 @@
       El stock se calcula sumando el contenido neto de cada envase registrado.
     </p>
   </div>
+<div *ngIf="form.tipo === 'fraccionado'" class="ion-padding ion-text-center">
 
-  <ion-item class="ion-margin-bottom">
+  <ion-badge color="tertiary" mode="ios">
+    Modo Fraccionado Activado
+  </ion-badge>
+
+  <p style="font-size: 0.8rem; color: #666; margin-top: 8px;">
+    El stock se controla por partes o porciones.
+  </p>
+
+</div>
+  <ion-item *ngIf="form.tipo !== 'botella' && form.tipo !== 'fraccionado'" class="ion-margin-bottom">
     <ion-label position="stacked">Unidad de Medida</ion-label>
     <ion-select [(ngModel)]="form.unidad_med" interface="popover" [disabled]="form.tipo === 'botella'">
       <ion-select-option value="kg">Kilogramos (kg)</ion-select-option>

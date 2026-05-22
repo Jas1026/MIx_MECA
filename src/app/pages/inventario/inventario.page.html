@@ -96,6 +96,15 @@
               </ion-button>
             </div>
           </ng-container>
+           <ng-container *ngIf="ing.tipo === 'fraccionado'">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <strong style="color: #2dc0d3;">{{ ing.stock_act }}</strong>
+              <ion-button size="small" (click)="gestionarfracciones(ing)" color="secondary" fill="outline">
+                <ion-icon name="flask-outline" slot="start"></ion-icon>
+                Envases
+              </ion-button>
+            </div>
+          </ng-container>
         </ion-col>
 
      <ion-col size="2">

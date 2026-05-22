@@ -1,0 +1,167 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>
+      Fraccionado: {{ ingredient?.nombre }}
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrar()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+<div class="fraction-card">
+
+  <div class="fraction-icon">
+    🍫
+  </div>
+
+  <h2>Nuevo Fraccionamiento</h2>
+
+  <p class="helper-text">
+    Divide este insumo en partes, cortes o porciones.
+  </p>
+
+  <ion-item>
+    <ion-label position="stacked">
+      ¿En cuántas partes se divide?
+    </ion-label>
+
+    <ion-input
+      type="number"
+      [(ngModel)]="nuevaFraccion.cantidad_total"
+      placeholder="Ej. 20">
+    </ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">
+      ¿Cuántas partes quedan actualmente?
+    </ion-label>
+
+    <ion-input
+      type="number"
+      [(ngModel)]="nuevaFraccion.cantidad_actual"
+      placeholder="Ej. 20">
+    </ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">
+      Descripción
+    </ion-label>
+
+    <ion-input
+      [(ngModel)]="nuevaFraccion.descripcion"
+      placeholder="Ej. Barra grande">
+    </ion-input>
+  </ion-item>
+
+  <ion-button
+    expand="block"
+    (click)="registrarFraccion()">
+
+    Registrar
+
+  </ion-button>
+
+</div>
+<div class="fractions-list" *ngIf="fractions.length > 0">
+
+  <h3 class="section-title">
+    Fraccionamientos registrados
+  </h3>
+
+  <div
+    class="fraction-item"
+    *ngFor="let f of fractions">
+
+    <div class="fraction-top">
+
+      <div class="fraction-info">
+
+        <div class="fraction-name">
+          🍫 {{ f.descripcion || 'Sin descripción' }}
+        </div>
+
+        <div class="fraction-meta">
+
+          {{ f.cantidad_actual }}
+          /
+          {{ f.cantidad_total }}
+
+          porciones
+
+        </div>
+
+      </div>
+
+      <div
+        class="fraction-status"
+        [class.agotado]="f.estado === 'agotado'">
+
+        {{ f.estado }}
+
+      </div>
+
+    </div>
+
+    <ion-progress-bar
+      [value]="f.cantidad_actual / f.cantidad_total">
+    </ion-progress-bar>
+
+    <div class="fraction-actions">
+
+      <ion-button
+        size="small"
+        fill="outline"
+        color="success"
+        (click)="actualizarCantidad(f)">
+
+        <ion-icon
+          slot="start"
+          name="save-outline">
+        </ion-icon>
+
+        Guardar
+
+      </ion-button>
+
+      <ion-button
+        size="small"
+        fill="outline"
+        color="danger"
+        (click)="eliminarFraccion(f)">
+
+        <ion-icon
+          slot="start"
+          name="trash-outline">
+        </ion-icon>
+
+        Eliminar
+
+      </ion-button>
+
+    </div>
+
+    <ion-item lines="none">
+
+      <ion-label position="stacked">
+        Porciones restantes
+      </ion-label>
+
+      <ion-input
+        type="number"
+        [(ngModel)]="f.cantidad_actual">
+      </ion-input>
+
+    </ion-item>
+
+  </div>
+
+</div>
+</ion-content>

@@ -6,6 +6,7 @@ import { CreateProductComponent } from 'src/app/modals/create-product/create-pro
 import { ViewProductDetailComponent } from 'src/app/modals/view-product-detail/view-product-detail.component';
 import { BottleManagerComponent } from 'src/app/modals/bottle-manager/bottle-manager.component';
 import { LoanManagerComponent } from 'src/app/modals/loan-manager/loan-manager.component';
+import { FractionManagerComponent } from 'src/app/modals/fraction-manager/fraction-manager.component';
 
 @Component({
   selector: 'app-inventario',
@@ -403,10 +404,24 @@ async toggleAssetState(asset: any) {
   });
 }
 
-async gestionarBotellas(ingredient: any) {
-  // Aquí abriríamos un modal específico para las botellas de este ingrediente
-  // Por ahora, para que no te de error, crearemos la lógica de apertura:
+async gestionarfracciones(ingredient: any) {
+ 
+  console.log("Gestionando fracciones de:", ingredient.nombre);
   
+  const modal = await this.modalCtrl.create({
+    component: FractionManagerComponent, 
+    componentProps: {
+      ingredient: ingredient
+    }
+  });
+
+  modal.onDidDismiss().then(res => {
+    this.loadIngredients(); 
+  });
+
+  return await modal.present();
+}
+async gestionarBotellas(ingredient: any) {
   console.log("Gestionando botellas de:", ingredient.nombre);
   
   const modal = await this.modalCtrl.create({
@@ -422,9 +437,6 @@ async gestionarBotellas(ingredient: any) {
 
   return await modal.present();
 }
-
-
-
 // --- Al inicio de la clase ---
 showCatManager: boolean = false;
 catForm = { id: null, name: '' };

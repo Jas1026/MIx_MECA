@@ -410,7 +410,47 @@ changeOrderTable(orderId: number, newTableId: number) {
 
   return this.http.post(`${this.urlService}change_order_table.php`, body);
 }
+getFractions(ingredient_id: number) {
 
+  let body = new FormData();
+
+  body.append(
+    "system",
+    this.getSystem()
+  );
+
+  body.append(
+    "ingredient_id",
+    ingredient_id.toString()
+  );
+
+  return this.http.post(
+    this.urlService + "getFractions.php",
+    body
+  );
+
+}
+addFraction(data: any) {
+
+  return this.http.post(
+    this.urlService + 'addFraction.php',
+    data
+  );
+
+}
+updateFraction(data: any) {
+  return this.http.post(
+    this.urlService + "updateFraction.php",
+    data
+  );
+}
+
+deleteFraction(data: any) {
+  return this.http.post(
+    this.urlService + "deleteFraction.php",
+    data
+  );
+}
 
 
 

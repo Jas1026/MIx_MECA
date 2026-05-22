@@ -14,6 +14,7 @@ export class CreateProductComponent implements OnInit {
 locations: any[] = [];
 stocks: any[] = [];
 providers: any[] = [];
+
 newProduct: any = {
   nombre_producto: '',
   alias: '',
@@ -22,9 +23,10 @@ newProduct: any = {
   id_category: null,
   stock_congelado: 0,
   stock_disponible: 0,
-  stock_minimo: 1, // 🔥 aquí
+  stock_minimo: 1,
   location_id: null,
-   proveedor_id: null  
+  proveedor_id: null,
+  tipo_producto: 'elaborado'
 };
 
   categories: any[] = [];
@@ -137,12 +139,6 @@ async saveProduct() {
     return;
   }
 
-  // 2. Validación de Cocinas
-  if (!this.cocinasSeleccionadas || this.cocinasSeleccionadas.length === 0) {
-    this.showToast('Debe seleccionar al menos una Cocina de destino', 'warning');
-    return;
-  }
-
   // 3. Limpieza de Receta
   const recetaLimpia = this.receta
     .filter(item => item.id_ingredient && parseFloat(item.cant_us) > 0)
@@ -150,11 +146,6 @@ async saveProduct() {
       id_ingredient: Number(item.id_ingredient),
       cant_us: parseFloat(item.cant_us)
     }));
-
-  if (recetaLimpia.length === 0) {
-    this.showToast('Debe agregar al menos un insumo con cantidad válida', 'warning');
-    return;
-  }
 
   // --- 4. Formateo de TODOS los campos numéricos (incluyendo Stock Mínimo) ---
   this.newProduct.stock_congelado = parseFloat(this.newProduct.stock_congelado) || 0;
@@ -265,5 +256,51 @@ loadLocationsStock(id: number) {
     }
   });
 }
+onTipoProductoChange() {
 
+  if (this.newProduct.tipo_producto === 'final') {
+
+    this.newProduct.alias = null;
+
+    this.newProduct.id_category = null;
+
+    this.newProduct.id_subcategory = null;
+
+    this.newProduct.time_prep = 0;
+
+    this.newProduct.stock_congelado = 0;
+
+    this.receta = [];
+
+    this.cocinasSeleccionadas = [];
+
+  }
+
+}
+onIngredientBaseSelected(ev: any) {
+
+  const ing = ev.detail.value;
+
+  if (!ing) return;
+
+  // 🔥 rellenar automáticamente
+  this.newProduct.nombre_producto = ing.nombre || '';
+
+  this.newProduct.stock_disponible =
+    Number(ing.stock_act || 0);
+
+  this.newProduct.proveedor_id =
+    ing.proveedor_id
+      ? Number(ing.proveedor_id)
+      : null;
+
+  this.newProduct.location_id =
+    ing.location_id
+      ? Number(ing.location_id)
+      : null;
+
+  // opcional
+  this.newProduct.stock_minimo = 1;
+
+}
 }
