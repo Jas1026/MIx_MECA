@@ -16,24 +16,46 @@
   </ion-segment>
 
   <!-- INGREDIENTES -->
-  <div *ngIf="tab==='ingredientes'" class="list">
-    <div *ngFor="let i of ingredientes" class="item">
+ <div
+  *ngIf="tab==='ingredientes'"
+  class="list"
+  cdkDropList
+  [cdkDropListData]="ingredientes"
+  (cdkDropListDropped)="dropIngredientes($event)"
+>
+    <div
+  *ngFor="let i of ingredientes"
+  class="item"
+  cdkDrag
+>
       <b>{{ i.nombre }}</b>
-      <span>{{ i.stock_actual }} {{ i.unidad_med }}</span>
+      <span>{{ i.stock_final }} {{ i.unidad_med }}</span>
     </div>
   </div>
 
   <!-- BOTELLAS -->
-  <div *ngIf="tab==='botellas'" class="list">
-    <div *ngFor="let b of botellas" class="item">
+<div
+  *ngIf="tab==='botellas'"
+  class="list"
+  cdkDropList
+  [cdkDropListData]="botellas"
+  (cdkDropListDropped)="dropBotellas($event)"
+>
+   <div *ngFor="let b of botellas" class="item" cdkDrag>
       <b>{{ b.nombre }}</b>
       <span>{{ b.cantidad }} envases</span>
     </div>
   </div>
 
   <!-- PRODUCTOS -->
-  <div *ngIf="tab==='productos'" class="list">
-    <div *ngFor="let p of productos" class="item">
+ <div
+  *ngIf="tab==='productos'"
+  class="list"
+  cdkDropList
+  [cdkDropListData]="productos"
+  (cdkDropListDropped)="dropProductos($event)"
+>
+    <div *ngFor="let p of productos" class="item" cdkDrag>
       <b>{{ p.nombre_producto }}</b>
       <span>{{ p.stock_disponible }}</span>
     </div>

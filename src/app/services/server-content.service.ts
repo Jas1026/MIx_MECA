@@ -453,7 +453,44 @@ deleteFraction(data: any) {
 }
 
 
+updateIngredientOrder(data:any){
 
+  const body = {
+    data: JSON.stringify(data),
+    system: this.getSystem()
+  };
+
+  return this.http.post(
+    this.urlService + 'updateIngredientOrder.php',
+    body
+  );
+}
+
+updateBottleOrder(data:any){
+
+  const body = {
+    data: JSON.stringify(data),
+    system: this.getSystem()
+  };
+
+  return this.http.post(
+    this.urlService + 'updateBottleOrder.php',
+    body
+  );
+}
+
+updateProductOrder(data:any){
+
+  const body = {
+    data: JSON.stringify(data),
+    system: this.getSystem()
+  };
+
+  return this.http.post(
+    this.urlService + 'updateProductOrder.php',
+    body
+  );
+}
 
 
 

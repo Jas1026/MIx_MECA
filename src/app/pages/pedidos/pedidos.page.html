@@ -26,7 +26,15 @@
             <ion-toggle [(ngModel)]="soloAtrasados" color="danger"></ion-toggle>
           </ion-item>
         </ion-col>
-
+<ion-col size="12" size-md="3">
+  <ion-item lines="none">
+    <ion-label>Priorizar atrasados</ion-label>
+    <ion-toggle
+      [(ngModel)]="soloMasRetrasadosPrimero"
+      color="warning">
+    </ion-toggle>
+  </ion-item>
+</ion-col>
         <ion-col size="12" size-md="2">
           <div class="filter-item">
             <ion-label>Estado</ion-label>

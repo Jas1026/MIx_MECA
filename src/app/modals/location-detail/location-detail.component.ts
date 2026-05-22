@@ -1,7 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { ServerContentService } from 'src/app/services/server-content.service';
-
+import {
+  CdkDragDrop,
+  moveItemInArray
+} from '@angular/cdk/drag-drop';
 @Component({
   selector: 'app-location-detail',
   templateUrl: './location-detail.component.html',
@@ -51,7 +54,53 @@ export class LocationDetailComponent implements OnInit {
       }
     });
   }
+dropIngredientes(event: CdkDragDrop<any[]>) {
 
+  moveItemInArray(
+    this.ingredientes,
+    event.previousIndex,
+    event.currentIndex
+  );
+
+  const data = this.ingredientes.map((x, index) => ({
+    id: x.id_ingredients,
+    orden: index
+  }));
+
+  this.server.updateIngredientOrder(data).subscribe();
+}
+
+dropBotellas(event: CdkDragDrop<any[]>) {
+
+  moveItemInArray(
+    this.botellas,
+    event.previousIndex,
+    event.currentIndex
+  );
+
+  const data = this.botellas.map((x, index) => ({
+    id: x.id_bottle,
+    orden: index
+  }));
+
+  this.server.updateBottleOrder(data).subscribe();
+}
+
+dropProductos(event: CdkDragDrop<any[]>) {
+
+  moveItemInArray(
+    this.productos,
+    event.previousIndex,
+    event.currentIndex
+  );
+
+  const data = this.productos.map((x, index) => ({
+    id: x.id,
+    orden: index
+  }));
+
+  this.server.updateProductOrder(data).subscribe();
+}
   cerrar(){
     this.modalCtrl.dismiss();
   }
