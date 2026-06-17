@@ -150,3 +150,65 @@ $borde-suave: #e8e1d9;
     }
   }
 }
+.filter-row {
+  background: #fff;
+  padding: 8px 12px;
+  border-bottom: 1px solid #eee;
+
+  input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+  }
+}
+
+.sortable {
+  cursor: pointer;
+  user-select: none;
+
+  ion-icon {
+    margin-left: 6px;
+    font-size: 14px;
+  }
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-top: 1px solid #eee;
+  background: white;
+}
+
+.page-size {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  ion-select {
+    min-width: 80px;
+  }
+}
+
+.page-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+ .header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+
+  .custom-searchbar {
+    flex: 2;
+    padding: 0;
+    --box-shadow: none;
+    --background: #f8f5f2;
+  }
+}

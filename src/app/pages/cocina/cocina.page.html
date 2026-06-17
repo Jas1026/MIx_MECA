@@ -14,74 +14,324 @@
 
   <div class="orders-grid">
 
-    <div class="order-ticket" *ngFor="let item of orders" [class.blink-alert]="item.alert_status == 1">
+    <div
+      class="order-ticket"
+      *ngFor="let item of orders"
+      [class.blink-alert]="item.alert_status == 1">
+
+      <!-- CABECERA DE ORDEN -->
+
+      <div class="order-badge">
+
+        Pedido #{{item.order_id}}
+
+        <small
+          class="same-order"
+          *ngIf="countProducts(item.order_id)>1">
+
+          {{countProducts(item.order_id)}} productos
+
+        </small>
+
+      </div>
+
 
       <!-- HEADER -->
+
       <div class="ticket-header">
 
         <span class="table-number">
-          Mesa {{ item.table_id }}
+
+          Mesa {{item.table_id}}
+
         </span>
 
-        <!-- ⏱ TIMER -->
         <div [class]="getTimerClass(item)">
-          <ion-icon name="time-outline"></ion-icon>
-          <span>{{ item.timeLeft }}</span>
+
+          <ion-icon name="time-outline">
+
+          </ion-icon>
+
+          <span>
+
+            {{item.timeLeft}}
+
+          </span>
+
         </div>
 
       </div>
+
+
+      <!-- BARRA DE ESTADO -->
+
+      <div class="process-bar">
+
+        <!-- NUEVO -->
+
+        <div
+          class="step"
+          [class.active]="
+
+          item.process_status=='new'
+
+          ||
+
+          item.process_status=='preparing'
+
+          ||
+
+          item.process_status=='ready_pickup'
+
+          ">
+
+          <div class="circle"></div>
+
+          <span>Nuevo</span>
+
+        </div>
+
+
+        <div class="line"></div>
+
+
+        <!-- PREPARANDO -->
+
+        <div
+          class="step"
+          [class.active]="
+
+          item.process_status=='preparing'
+
+          ||
+
+          item.process_status=='ready_pickup'
+
+          ">
+
+          <div class="circle"></div>
+
+          <span>Preparando</span>
+
+        </div>
+
+
+        <div class="line"></div>
+
+
+        <!-- LISTO -->
+
+        <div
+          class="step"
+          [class.active]="
+
+          item.process_status=='ready_pickup'
+
+          ">
+
+          <div class="circle"></div>
+
+          <span>Listo</span>
+
+        </div>
+
+      </div>
+
 
       <!-- BODY -->
+
       <div class="ticket-body">
 
-<h2 class="product-name">
-  <span class="quantity">{{ item.quantity }}x</span>
-  {{ item.alias || item.name }}
-</h2>
+        <h2 class="product-name">
 
-<small class="product-real" *ngIf="item.alias">
-  {{ item.name }}
-</small>
+          <span class="quantity">
 
-        <!-- 🚨 Notas y acompañamientos estilo ticket -->
-        <div class="order-extra" *ngIf="item.notes || item.sides">
+            {{item.quantity}}x
 
-          <!-- 📝 Notas -->
-          <div class="extra-note" *ngIf="item.notes">
-            <ion-icon name="document-text-outline"></ion-icon>
-            <span>{{ item.notes }}</span>
+          </span>
+
+          {{item.alias || item.name}}
+
+        </h2>
+
+
+        <small
+          class="product-real"
+          *ngIf="item.alias">
+
+          {{item.name}}
+
+        </small>
+
+
+        <!-- NOTAS -->
+
+        <div
+          class="order-extra"
+          *ngIf="item.notes || item.sides">
+
+
+          <div
+            class="extra-note"
+            *ngIf="item.notes">
+
+            <ion-icon
+
+              name="document-text-outline">
+
+            </ion-icon>
+
+            <span>
+
+              {{item.notes}}
+
+            </span>
+
           </div>
 
-          <!-- 🥗 Acompañamientos -->
-          <div class="extra-sides" *ngIf="item.sides">
-            <ion-icon name="restaurant-outline"></ion-icon>
-            <span>{{ item.sides }}</span>
+
+          <div
+            class="extra-sides"
+            *ngIf="item.sides">
+
+            <ion-icon
+
+              name="restaurant-outline">
+
+            </ion-icon>
+
+            <span>
+
+              {{item.sides}}
+
+            </span>
+
           </div>
 
         </div>
+
       </div>
-<ion-button 
-size="small"
-fill="outline"
-(click)="openIngredientAdjust(item)">
-<ion-icon name="options-outline"></ion-icon>
-Modificar ingredientes
-</ion-button>
+
+
+      <!-- MODIFICAR INGREDIENTES -->
+
+      <ion-button
+
+        size="small"
+
+        fill="outline"
+
+        (click)="openIngredientAdjust(item)">
+
+        <ion-icon
+
+          name="options-outline">
+
+        </ion-icon>
+
+        Modificar ingredientes
+
+      </ion-button>
+
+
       <!-- FOOTER -->
+
       <div class="ticket-footer">
 
-        <!-- 🔔 BOTÓN CALLAR (SOLO SI ALERTA ACTIVA) -->
-        <ion-button *ngIf="item.alert_status == 1" color="danger" expand="block"
+
+        <!-- ALERTA -->
+
+        <ion-button
+
+          *ngIf="item.alert_status==1"
+
+          color="danger"
+
+          expand="block"
+
           (click)="silenciarAlerta(item.detail_id)">
-          <ion-icon name="volume-mute-outline" slot="start"></ion-icon>
+
+          <ion-icon
+
+            name="volume-mute-outline"
+
+            slot="start">
+
+          </ion-icon>
+
           CALLAR ALERTA
+
         </ion-button>
 
-        <!-- ✅ TERMINADO -->
-        <ion-button expand="block" class="btn-ready" (click)="markReady(item.detail_id)">
-          <ion-icon name="checkmark-circle" slot="start"></ion-icon>
-          TERMINADO
+
+        <!-- NUEVO -->
+
+        <ion-button
+
+          *ngIf="item.process_status=='new'"
+
+          color="warning"
+
+          expand="block"
+
+          (click)="startPreparing(item)">
+
+          <ion-icon
+
+            name="play"
+
+            slot="start">
+
+          </ion-icon>
+
+          EMPEZAR
+
         </ion-button>
+
+
+        <!-- PREPARANDO -->
+
+        <ion-button
+
+          *ngIf="item.process_status=='preparing'"
+
+          expand="block"
+
+          class="btn-ready"
+
+          (click)="readyPickup(item)">
+
+          <ion-icon
+
+            name="checkmark"
+
+            slot="start">
+
+          </ion-icon>
+
+          LISTO PARA RECOGER
+
+        </ion-button>
+
+
+        <!-- LISTO -->
+
+        <div
+
+          class="waiting-pickup"
+
+          *ngIf="item.process_status=='ready_pickup'">
+
+          <ion-icon
+
+            name="bag-check-outline">
+
+          </ion-icon>
+
+          Esperando al mesero
+
+        </div>
+
 
       </div>
 
@@ -89,10 +339,27 @@ Modificar ingredientes
 
   </div>
 
+
   <!-- VACÍO -->
-  <div *ngIf="orders.length === 0" class="empty-kitchen">
-    <ion-icon name="restaurant-outline"></ion-icon>
-    <p>¡Cocina al día! No hay pedidos pendientes.</p>
+
+  <div
+
+    *ngIf="orders.length===0"
+
+    class="empty-kitchen">
+
+    <ion-icon
+
+      name="restaurant-outline">
+
+    </ion-icon>
+
+    <p>
+
+      ¡Cocina al día! No hay pedidos pendientes.
+
+    </p>
+
   </div>
 
 </ion-content>

@@ -16,7 +16,11 @@ export class CreateUserComponent implements OnInit {
     code: '',
     password: ''
   };
+showPassword = false;
 
+togglePassword() {
+  this.showPassword = !this.showPassword;
+}
   constructor(
     private modalCtrl: ModalController,
     private server: ServerContentService,
@@ -31,7 +35,7 @@ export class CreateUserComponent implements OnInit {
       this.newUser.role = this.user.role;
       this.newUser.code = this.user.code;
       // La contraseña se deja vacía por seguridad al editar
-      this.newUser.password = ''; 
+      this.newUser.password = this.user.password;
     }
   }
 

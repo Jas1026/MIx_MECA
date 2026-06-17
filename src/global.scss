@@ -298,3 +298,25 @@ ion-radio-group {
         display: block;
     }
 }
+/* 🔴 Forzar que si Ionic mete la clase dark por error, siga usando el modo claro */
+body.dark, html.dark, [data-theme="dark"] {
+  --ion-background-color: #F6F1EB !important;
+  --ion-text-color: #4B3A2F !important;
+  --ion-card-background: #FFFFFF !important;
+  --ion-item-background: #ffffff !important;
+  --ion-border-color: #E6DDD2 !important;
+  
+  // Si tienes más componentes oscuros internos:
+  background-color: #F6F1EB !important;
+  color: #4B3A2F !important;
+}
+
+/* Forzar el contenedor del segmento e inputs en el responsive */
+ion-content {
+  --background: #F6F1EB !important;
+  background: #F6F1EB !important;
+}
+
+.table-container {
+  background: #fcfaf8 !important; // Tu variable $crema-fondo
+}

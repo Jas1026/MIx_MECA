@@ -60,31 +60,176 @@ export class PedidosUnitariosPage implements OnInit, OnDestroy {
         }
       });
   }
-get pedidosFiltrados() {
-  return this.pedidos.filter(p => {
-    // Filtro Mesero
-    if (this.meseroSeleccionado && p.mesero !== this.meseroSeleccionado) return false;
-    
-    // Filtro Estado (Mejorado para detectar cancel o status cancel)
-    if (this.estadoSeleccionado) {
-      if (this.estadoSeleccionado === 'cancel') {
-        if (p.status !== 'cancel' && p.cancel != 1) return false;
-      } else if (p.status !== this.estadoSeleccionado) {
+  get pedidosFiltrados() {
+
+  let lista = [...this.pedidos];
+
+  lista = lista.filter(p => {
+
+    if (
+      this.estadoSeleccionado &&
+      (
+        this.estadoSeleccionado === 'cancel'
+          ? (p.status !== 'cancel' && p.cancel != 1)
+          : p.status !== this.estadoSeleccionado
+      )
+    ) {
+      return false;
+    }
+
+    if (
+      this.pisoSeleccionado &&
+      p.nombre_piso !== this.pisoSeleccionado
+    ) {
+      return false;
+    }
+
+    if (this.fechaFiltro) {
+
+      const fechaPedido =
+        new Date(p.order_date)
+          .toISOString()
+          .split('T')[0];
+
+      if (fechaPedido !== this.fechaFiltro) {
         return false;
       }
     }
 
-    // Filtro Piso (Ubicación)
-    if (this.pisoSeleccionado && p.nombre_piso !== this.pisoSeleccionado) return false;
+    if (
+      this.filtros.nombre_mesa &&
+      !String(p.nombre_mesa)
+        .toLowerCase()
+        .includes(this.filtros.nombre_mesa.toLowerCase())
+    ) {
+      return false;
+    }
 
-    // Filtro Fecha
-    if (this.fechaFiltro) {
-      const fechaPedido = new Date(p.order_date).toISOString().split('T')[0];
-      if (fechaPedido !== this.fechaFiltro) return false;
+    if (
+      this.filtros.nombre_piso &&
+      !String(p.nombre_piso)
+        .toLowerCase()
+        .includes(this.filtros.nombre_piso.toLowerCase())
+    ) {
+      return false;
+    }
+
+    if (
+      this.filtros.order_date &&
+      !String(p.order_date)
+        .toLowerCase()
+        .includes(this.filtros.order_date.toLowerCase())
+    ) {
+      return false;
+    }
+
+    if (
+      this.filtros.status &&
+      !String(p.status)
+        .toLowerCase()
+        .includes(this.filtros.status.toLowerCase())
+    ) {
+      return false;
     }
 
     return true;
+
   });
+
+  if (this.sortColumn) {
+
+    lista.sort((a, b) => {
+
+      const valorA =
+        String(a[this.sortColumn] ?? '')
+        .toLowerCase();
+
+      const valorB =
+        String(b[this.sortColumn] ?? '')
+        .toLowerCase();
+
+      const resultado =
+        valorA > valorB ? 1 :
+        valorA < valorB ? -1 : 0;
+
+      return this.sortDirection === 'asc'
+        ? resultado
+        : -resultado;
+
+    });
+
+  }
+
+  return lista;
+}
+ordenar(columna: string) {
+
+  if (this.sortColumn === columna) {
+
+    this.sortDirection =
+      this.sortDirection === 'asc'
+        ? 'desc'
+        : 'asc';
+
+  } else {
+
+    this.sortColumn = columna;
+    this.sortDirection = 'asc';
+
+  }
+
+  this.paginaActual = 1;
+}
+paginaActual = 1;
+
+itemsPorPagina = 10;
+
+opcionesPagina = [5, 10, 30];
+get totalPaginas(): number {
+
+  return Math.ceil(
+    this.pedidosFiltrados.length /
+    this.itemsPorPagina
+  ) || 1;
+
+}
+get pedidosPaginados() {
+
+  const inicio =
+    (this.paginaActual - 1)
+    * this.itemsPorPagina;
+
+  const fin =
+    inicio + this.itemsPorPagina;
+
+  return this.pedidosFiltrados.slice(
+    inicio,
+    fin
+  );
+}
+paginaAnterior() {
+
+  if (this.paginaActual > 1) {
+    this.paginaActual--;
+  }
+
+}
+
+paginaSiguiente() {
+
+  if (
+    this.paginaActual <
+    this.totalPaginas
+  ) {
+    this.paginaActual++;
+  }
+
+}
+
+cambiarItemsPorPagina() {
+
+  this.paginaActual = 1;
+
 }
 
   limpiarFecha() {
@@ -195,11 +340,26 @@ get pedidosFiltrados() {
   });
 }
 limpiarFiltros() {
+
   this.fechaFiltro = '';
   this.fechaMostrada = '';
+
   this.estadoSeleccionado = '';
   this.pisoSeleccionado = '';
   this.meseroSeleccionado = '';
+
+  this.filtros = {
+    nombre_mesa: '',
+    nombre_piso: '',
+    order_date: '',
+    status: '',
+    estimated_total_time: ''
+  };
+
+  this.sortColumn = '';
+  this.sortDirection = 'asc';
+
+  this.paginaActual = 1;
 }
 async cambiarMesa(pedido: any) {
   this.server.getFlats().subscribe(async (res: any) => {
@@ -298,4 +458,15 @@ async presentToast(msg: string) {
   const toast = await this.toastCtrl.create({ message: msg, duration: 2000 });
   toast.present();
 }
+filtros = {
+  nombre_mesa: '',
+  nombre_piso: '',
+  order_date: '',
+  status: '',
+  estimated_total_time: ''
+};
+
+sortColumn = '';
+sortDirection: 'asc' | 'desc' = 'asc';
+
 }

@@ -15,7 +15,11 @@ export class MesasPage implements OnInit, OnDestroy {
   flatId: string = '';
   private dataInterval: any;
   private clockInterval: any;
+filteredTables: any[] = [];
 
+searchName = '';
+filterCapacity = '';
+filterStatus = '';
   constructor(
     private route: ActivatedRoute,
     private server: ServerContentService,
@@ -59,10 +63,12 @@ export class MesasPage implements OnInit, OnDestroy {
       if (res.error === 0) {
         // Al recibir las mesas, inicializamos el campo 'timeDisplay'
         this.tables = res.data.map((m: any) => ({
-          ...m,
-          timeDisplay: '0.00'
-        }));
-        this.updateAllClocks();
+  ...m,
+  timeDisplay: '0.00'
+}));
+
+this.applyFilters();
+this.updateAllClocks();
       }
     });
   }
@@ -179,4 +185,27 @@ cambiarEstadoMesa(mesa: any) {
       console.error('Error servidor', err);
     });
 }
+applyFilters() {
+
+  this.filteredTables = this.tables.filter(mesa => {
+
+    const matchName =
+      !this.searchName ||
+      mesa.nombre.toLowerCase()
+      .includes(this.searchName.toLowerCase());
+
+    const matchCapacity =
+      !this.filterCapacity ||
+      mesa.capacidad == this.filterCapacity;
+
+    const matchStatus =
+      !this.filterStatus ||
+      mesa.estado == this.filterStatus;
+
+    return matchName && matchCapacity && matchStatus;
+
+  });
+
+}
+
 }

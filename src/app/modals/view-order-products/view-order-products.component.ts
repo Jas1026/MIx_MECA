@@ -12,6 +12,9 @@ export class ViewOrderProductsComponent implements OnInit, OnDestroy {
   @Input() order_id: any;
   productos: any[] = [];
   private timer: any;
+  orden:any={};
+historial:any[]=[];
+
 private sonidoConfirmacion = new Audio('assets/sounds/bell2.wav');
   constructor(
     private modalCtrl: ModalController,
@@ -38,31 +41,58 @@ pagos: any[] = [];
   }
   cargarProductos() {
   this.server.getOrderProducts(this.order_id).subscribe((res: any) => {
+
     if (res.error === 0) {
 
-      // 🔥 PRODUCTOS
-      const nuevosProductos = res.data;
+      const nuevosProductos = res.productos || [];
 
       nuevosProductos.forEach((p: any) => {
-        const viejo = this.productos.find(x => x.detail_id == p.detail_id);
 
-        if (viejo && viejo.alert_status == 1 && p.alert_status == 0) {
-          this.mostrarToast('👨‍🍳 Cocina recibió el aviso');
+        const viejo = this.productos.find(
+          x => x.detail_id == p.detail_id
+        );
+
+        if (
+
+          viejo &&
+
+          viejo.alert_status == 1 &&
+
+          p.alert_status == 0
+
+        ) {
+
+          this.mostrarToast(
+            '👨‍🍳 Cocina recibió el aviso'
+          );
+
           this.sonidoConfirmacion.play();
+
         }
+
       });
 
-      this.productos = nuevosProductos.map((prod: any) => ({
-        ...prod,
-        timeDisplay: '00:00'
-      }));
 
-      // 🔥 PAGOS
+      this.productos = nuevosProductos.map(
+        (prod:any)=>({
+
+        ...prod,
+
+        timeDisplay:'00:00'
+
+      }));
+this.orden = res.orden || {};
+
+this.historial = res.historial || [];
+
       this.pagos = res.pagos || [];
 
       this.actualizarTiempos();
+
     }
+
   });
+
 }
   actualizarTiempos() {
   const now = new Date().getTime();

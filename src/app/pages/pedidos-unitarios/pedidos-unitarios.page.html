@@ -1,4 +1,6 @@
-<ion-header class="ion-no-border">
+
+
+<ion-content class="ion-padding dashboard-bg">
   <ion-toolbar class="toolbar-cafe">
     <ion-title>Mis pedidos</ion-title>
     <ion-buttons slot="primary">
@@ -7,10 +9,6 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
-</ion-header>
-
-<ion-content class="ion-padding dashboard-bg">
-
   <div class="filter-card">
     <ion-grid>
       <ion-row class="ion-align-items-center">
@@ -26,7 +24,7 @@
           </div>
         </ion-col>
 
-        <ion-col size="12" size-md="4">
+        <ion-col size="12" size-md="2">
           <div class="filter-item">
             <ion-label>Ubicación / Área</ion-label>
             <ion-select [(ngModel)]="pisoSeleccionado" interface="popover">
@@ -49,16 +47,84 @@
   <div class="tabla-web-container">
     <table class="mixtura-table">
       <thead>
+
         <tr>
-          <th>Ubicación</th>
-          <th>Fecha</th>
-          <th>Estado</th>
-          <th>Tiempo</th>
-          <th class="ion-text-center">Acciones</th>
+
+          <th (click)="ordenar('nombre_mesa')" class="sortable">
+
+            Ubicación
+
+            <ion-icon *ngIf="sortColumn === 'nombre_mesa'" [name]="sortDirection === 'asc'
+? 'arrow-up'
+: 'arrow-down'">
+            </ion-icon>
+
+          </th>
+
+          <th (click)="ordenar('order_date')" class="sortable">
+
+            Fecha
+
+            <ion-icon *ngIf="sortColumn === 'order_date'" [name]="sortDirection === 'asc'
+? 'arrow-up'
+: 'arrow-down'">
+            </ion-icon>
+
+          </th>
+
+          <th (click)="ordenar('status')" class="sortable">
+
+            Estado
+
+            <ion-icon *ngIf="sortColumn === 'status'" [name]="sortDirection === 'asc'
+? 'arrow-up'
+: 'arrow-down'">
+            </ion-icon>
+
+          </th>
+
+          <th (click)="ordenar('estimated_total_time')" class="sortable">
+
+            Tiempo
+
+            <ion-icon *ngIf="sortColumn === 'estimated_total_time'" [name]="sortDirection === 'asc'
+? 'arrow-up'
+: 'arrow-down'">
+            </ion-icon>
+
+          </th>
+
+          <th>
+            Acciones
+          </th>
+
         </tr>
+
+        <tr class="filter-row">
+
+          <th>
+            <input type="text" [(ngModel)]="filtros.nombre_mesa" placeholder="Buscar ubicación...">
+          </th>
+
+          <th>
+            <input type="text" [(ngModel)]="filtros.order_date" placeholder="Buscar fecha...">
+          </th>
+
+          <th>
+            <input type="text" [(ngModel)]="filtros.status" placeholder="Buscar estado...">
+          </th>
+
+          <th>
+            <input type="text" [(ngModel)]="filtros.estimated_total_time" placeholder="Buscar...">
+          </th>
+
+          <th></th>
+
+        </tr>
+
       </thead>
       <tbody>
-        <tr *ngFor="let p of pedidosFiltrados" [style.opacity]="p.status === 'closed' ? '0.7' : '1'">
+        <tr *ngFor="let p of pedidosPaginados" [style.opacity]="p.status === 'closed' ? '0.7' : '1'">
           <td>
             <div class="location-cell">
               <ion-badge color="secondary" mode="ios">{{ p.nombre_mesa }}</ion-badge>
@@ -79,49 +145,103 @@
             </div>
             <div *ngIf="p.status === 'ready'" class="ready-message">¡Listo!</div>
           </td>
-         <td class="ion-text-center">
-  <ion-button *ngIf="p.status === 'open'" size="small" color="warning" shape="round" (click)="cambiarMesa(p)" title="Cambiar Mesa">
-    <ion-icon name="swap-horizontal-outline" slot="icon-only"></ion-icon>
-  </ion-button>
+          <td class="ion-text-center">
+            <ion-button *ngIf="p.status === 'open'" size="small" color="warning" shape="round" (click)="cambiarMesa(p)"
+              title="Cambiar Mesa">
+              <ion-icon name="swap-horizontal-outline" slot="icon-only"></ion-icon>
+            </ion-button>
 
-  <ion-button size="small" color="medium" shape="round" (click)="View_Order(p)" title="Ver Pedido">
-    <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
-  </ion-button>
-</td>
+            <ion-button size="small" color="medium" shape="round" (click)="View_Order(p)" title="Ver Pedido">
+              <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </td>
         </tr>
       </tbody>
     </table>
+    <div class="pagination-container">
+
+<div class="page-size">
+
+<span>Mostrar:</span>
+
+<ion-select
+[(ngModel)]="itemsPorPagina"
+(ionChange)="cambiarItemsPorPagina()">
+
+<ion-select-option
+*ngFor="let opcion of opcionesPagina"
+[value]="opcion">
+
+{{ opcion }}
+
+</ion-select-option>
+
+</ion-select>
+
+</div>
+
+<div class="page-controls">
+
+<ion-button
+fill="clear"
+(click)="paginaAnterior()"
+[disabled]="paginaActual === 1">
+
+←
+
+</ion-button>
+
+<span>
+
+Página {{ paginaActual }}
+de {{ totalPaginas }}
+
+</span>
+
+<ion-button
+fill="clear"
+(click)="paginaSiguiente()"
+[disabled]="paginaActual === totalPaginas">
+
+→
+
+</ion-button>
+
+</div>
+
+</div>
   </div>
 
   <ion-list class="lista-mobile" lines="none">
-    <ion-item-sliding *ngFor="let p of pedidosFiltrados">
+    <ion-item-sliding *ngFor="let p of pedidosPaginados">
       <ion-item class="mobile-order-item">
         <ion-label>
           <div class="mobile-header">
             <h3>{{ p.nombre_mesa }} <small>({{ p.nombre_piso }})</small></h3>
             <span class="status-badge" [ngClass]="p.status">
-                {{ p.status === 'cancel' ? 'Cancel' : (p.status === 'closed' ? 'Finalizado' : 'Abierto') }}
+              {{ p.status === 'cancel' ? 'Cancel' : (p.status === 'closed' ? 'Finalizado' : 'Abierto') }}
             </span>
           </div>
           <p><ion-icon name="calendar-outline"></ion-icon> {{ p.order_date }}</p>
-          
+
           <div class="mobile-time-info" style="margin-top: 8px; display: flex; align-items: center; gap: 10px;">
-            <div [ngClass]="getTimerClassPedido(p)" style="display: flex; align-items: center; gap: 4px; font-size: 13px;">
+            <div [ngClass]="getTimerClassPedido(p)"
+              style="display: flex; align-items: center; gap: 4px; font-size: 13px;">
               <ion-icon name="time-outline"></ion-icon>
               <strong>{{ p.timeDisplay }}</strong> / {{ p.estimated_total_time }}m
             </div>
           </div>
         </ion-label>
-        
-     <div slot="end" style="display: flex; gap: 5px;">
-  <ion-button *ngIf="p.status === 'open'" fill="clear" color="warning" (click)="cambiarMesa(p)">
-    <ion-icon name="swap-horizontal-outline" slot="icon-only"></ion-icon>
-  </ion-button>
 
-  <ion-button fill="clear" color="medium" (click)="View_Order(p)">
-    <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
-  </ion-button>
-</div>
+        <div slot="end" style="display: flex; gap: 5px;">
+          <ion-button *ngIf="p.status === 'open'" fill="clear" color="warning" (click)="cambiarMesa(p)">
+            <ion-icon name="swap-horizontal-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+
+          <ion-button fill="clear" color="medium" (click)="View_Order(p)">
+            <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
       </ion-item>
     </ion-item-sliding>
   </ion-list>

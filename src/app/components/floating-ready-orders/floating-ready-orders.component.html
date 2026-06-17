@@ -1,0 +1,78 @@
+<!-- BOTON -->
+
+<div class="floating-btn"
+
+(click)="toggle()">
+
+<ion-icon
+
+name="restaurant">
+
+</ion-icon>
+
+<ion-badge
+
+*ngIf="orders.length>0">
+
+{{orders.length}}
+
+</ion-badge>
+
+</div>
+
+
+<!-- VENTANA -->
+
+<div
+
+class="floating-window"
+
+*ngIf="expanded">
+
+<div class="header">
+
+Pedidos listos
+
+</div>
+
+
+<div
+
+class="pedido"
+
+*ngFor="let p of orders">
+
+<div>
+
+<b>
+
+Mesa {{p.table_id}}
+
+</b>
+
+</div>
+
+<div>
+
+{{p.quantity}}x
+
+{{p.alias ||
+
+p.product_name}}
+
+</div>
+
+</div>
+
+
+<div
+
+*ngIf="orders.length==0"
+
+class="empty">
+
+No hay pedidos listos
+
+</div>
+
+</div>

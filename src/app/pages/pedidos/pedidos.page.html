@@ -1,15 +1,10 @@
-<ion-header class="ion-no-border">
-  <ion-toolbar class="toolbar-cafe">
-    <ion-title>Gestión de Pedidos</ion-title>
-  </ion-toolbar>
-</ion-header>
 
 <ion-content class="ion-padding dashboard-bg">
 
   <div class="filter-card">
     <ion-grid>
       <ion-row class="ion-align-items-center">
-        <ion-col size="12" size-md="2">
+        <ion-col size="2" size-md="1">
           <div class="filter-item">
             <ion-label>Mesero</ion-label>
             <ion-select [(ngModel)]="meseroSeleccionado" interface="popover" placeholder="Todos">
@@ -26,7 +21,7 @@
             <ion-toggle [(ngModel)]="soloAtrasados" color="danger"></ion-toggle>
           </ion-item>
         </ion-col>
-<ion-col size="12" size-md="3">
+<ion-col size="12" size-md="2">
   <ion-item lines="none">
     <ion-label>Priorizar atrasados</ion-label>
     <ion-toggle
@@ -35,7 +30,7 @@
     </ion-toggle>
   </ion-item>
 </ion-col>
-        <ion-col size="12" size-md="2">
+        <ion-col size="12" size-md="1">
           <div class="filter-item">
             <ion-label>Estado</ion-label>
             <ion-select [(ngModel)]="estadoSeleccionado" interface="popover" placeholder="Todos">
@@ -58,14 +53,14 @@
           </div>
         </ion-col>
 
-        <ion-col size="12" size-md="3">
+        <ion-col size="12" size-md="2">
           <ion-button id="open-date" expand="block" fill="outline" class="btn-filter-date">
             <ion-icon name="calendar-outline" slot="start"></ion-icon>
             {{ fechaMostrada ? fechaMostrada : 'Seleccionar fecha' }}
           </ion-button>
         </ion-col>
 
-        <ion-col size="12" size-md="3">
+        <ion-col size="12" size-md="2">
           <ion-button expand="block" fill="clear" color="danger" (click)="limpiarFecha()" class="btn-clear">
             <ion-icon name="trash-outline" slot="start"></ion-icon>
             Limpiar Filtros
@@ -87,18 +82,103 @@
 
   <div class="tabla-web-container">
     <table class="mixtura-table">
-      <thead>
-        <tr>
-          <th>Mesero</th>
-          <th>Fecha y Hora</th>
-          <th>Estado</th>
-          <th>Tiempo</th>
-          <th>Atraso</th>
-          <th class="ion-text-center">Acciones</th>
-        </tr>
-      </thead>
+<thead>
+
+  <tr>
+    <th (click)="ordenar('mesero')" class="sortable">
+      Mesero
+      <ion-icon
+        *ngIf="sortColumn === 'mesero'"
+        [name]="sortDirection === 'asc' ? 'arrow-up' : 'arrow-down'">
+      </ion-icon>
+    </th>
+
+    <th (click)="ordenar('order_date')" class="sortable">
+      Fecha y Hora
+      <ion-icon
+        *ngIf="sortColumn === 'order_date'"
+        [name]="sortDirection === 'asc' ? 'arrow-up' : 'arrow-down'">
+      </ion-icon>
+    </th>
+
+    <th (click)="ordenar('status')" class="sortable">
+      Estado
+      <ion-icon
+        *ngIf="sortColumn === 'status'"
+        [name]="sortDirection === 'asc' ? 'arrow-up' : 'arrow-down'">
+      </ion-icon>
+    </th>
+
+    <th (click)="ordenar('estimated_time')" class="sortable">
+      Tiempo
+      <ion-icon
+        *ngIf="sortColumn === 'estimated_time'"
+        [name]="sortDirection === 'asc' ? 'arrow-up' : 'arrow-down'">
+      </ion-icon>
+    </th>
+
+    <th (click)="ordenar('delayTime')" class="sortable">
+      Atraso
+      <ion-icon
+        *ngIf="sortColumn === 'delayTime'"
+        [name]="sortDirection === 'asc' ? 'arrow-up' : 'arrow-down'">
+      </ion-icon>
+    </th>
+
+    <th>Acciones</th>
+  </tr>
+
+  <!-- FILTROS POR COLUMNA -->
+
+  <tr class="filter-row">
+
+    <th>
+<input
+  type="text"
+  [(ngModel)]="filtros.mesero"
+  placeholder="Buscar..."
+/>
+    </th>
+
+    <th>
+      <input
+        type="text"
+        [(ngModel)]="filtros.order_date"
+        placeholder="Fecha..."
+      />
+    </th>
+
+    <th>
+      <input
+        type="text"
+        [(ngModel)]="filtros.status"
+        placeholder="Estado..."
+      />
+    </th>
+
+    <th>
+      <input
+        type="text"
+        [(ngModel)]="filtros.estimated_time"
+        placeholder="Tiempo..."
+      />
+    </th>
+
+    <th>
+      <input
+        type="text"
+        [(ngModel)]="filtros.delayTime"
+        placeholder="Atraso..."
+      />
+    </th>
+
+    <th></th>
+
+  </tr>
+
+</thead>
       <tbody>
-        <tr *ngFor="let p of pedidosFiltrados; let i = index" [style.opacity]="p.status === 'closed' ? '0.7' : '1'">
+        <tr *ngFor="let p of pedidosPaginados; let i = index" [style.opacity]="p.status === 'closed' ? '0.7' : '1'">
           <td>
             <div class="user-cell">
               <ion-icon name="person-circle-outline"></ion-icon>
@@ -149,9 +229,58 @@
         </tr>
       </tbody>
     </table>
+    <div class="pagination-container">
+
+  <div class="page-size">
+
+    <span>Mostrar:</span>
+
+    <ion-select
+      [(ngModel)]="itemsPorPagina">
+
+      <ion-select-option
+        *ngFor="let opcion of opcionesPagina"
+        [value]="opcion">
+
+        {{ opcion }}
+
+      </ion-select-option>
+
+    </ion-select>
+
+  </div>
+
+  <div class="page-controls">
+
+    <ion-button
+      fill="clear"
+      (click)="paginaAnterior()"
+      [disabled]="paginaActual === 1">
+
+      ←
+
+    </ion-button>
+
+    <span>
+      Página {{ paginaActual }}
+      de {{ totalPaginas }}
+    </span>
+
+    <ion-button
+      fill="clear"
+      (click)="paginaSiguiente()"
+      [disabled]="paginaActual === totalPaginas">
+
+      →
+
+    </ion-button>
+
+  </div>
+
+</div>
   </div>
 <ion-list class="lista-mobile" lines="none">
-  <ion-item-sliding *ngFor="let p of pedidosFiltrados">
+  <ion-item-sliding *ngFor="let p of pedidosPaginados">
     <ion-item class="mobile-order-item">
       <ion-label>
         <div class="mobile-header">

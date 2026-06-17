@@ -7,7 +7,7 @@ import { Observable } from 'rxjs'; // <--- AÑADE ESTA LÍNEA
 })
 export class ServerContentService {
 
-private urlService = "http://localhost/api/";
+  private urlService = "http://localhost/api/";
 
   constructor(private http: HttpClient) { }
 
@@ -82,18 +82,18 @@ private urlService = "http://localhost/api/";
     return this.http.post(this.urlService + "get_categories.php", body);
   }
   getSubcategories(id_category?: number) {
-  let url = `${this.urlService}get_subcategories.php`;
+    let url = `${this.urlService}get_subcategories.php`;
 
-  if (id_category) {
-    url += `?id_category=${id_category}`;
-  }
-
-  return this.http.get(url, {
-    headers: {
-      system: this.getSystem()
+    if (id_category) {
+      url += `?id_category=${id_category}`;
     }
-  });
-}
+
+    return this.http.get(url, {
+      headers: {
+        system: this.getSystem()
+      }
+    });
+  }
 
   getProductsByCategory(id_category: string) {
     let body = new FormData();
@@ -102,18 +102,18 @@ private urlService = "http://localhost/api/";
 
     return this.http.post(this.urlService + "get_products_by_category.php", body);
   }
-createOrder(id_table: any, id_user: any, products: any[], force: boolean = false) {
-  const formData = new FormData();
-  formData.append('id_table', id_table.toString()); // Aseguramos string para FormData
-  formData.append('id_user', id_user.toString());
-  formData.append('products', JSON.stringify(products));
-  formData.append('system', this.getSystem());
-  
-  // Convertimos el boolean a string para el servidor
-  formData.append('force_order', force ? 'true' : 'false'); 
+  createOrder(id_table: any, id_user: any, products: any[], force: boolean = false) {
+    const formData = new FormData();
+    formData.append('id_table', id_table.toString()); // Aseguramos string para FormData
+    formData.append('id_user', id_user.toString());
+    formData.append('products', JSON.stringify(products));
+    formData.append('system', this.getSystem());
 
-  return this.http.post(`${this.urlService}create_order.php`, formData);
-}
+    // Convertimos el boolean a string para el servidor
+    formData.append('force_order', force ? 'true' : 'false');
+
+    return this.http.post(`${this.urlService}create_order.php`, formData);
+  }
   updateOrderStatus(id_order: string, status: string) {
     let body = new FormData();
     body.append("id_order", id_order);
@@ -148,15 +148,15 @@ createOrder(id_table: any, id_user: any, products: any[], force: boolean = false
 
     return this.http.post(this.urlService + "get_kitchen_orders.php", body);
   }
-  
-updateDetailStatus(detailId: number, status: string = 'ready') {
-  let body = new FormData();
-  body.append("detail_id", detailId.toString());
-  body.append("status", status);
-  body.append("system", this.getSystem());
 
-  return this.http.post(this.urlService + "update_detail_status.php", body);
-}
+  updateDetailStatus(detailId: number, status: string = 'ready') {
+    let body = new FormData();
+    body.append("detail_id", detailId.toString());
+    body.append("status", status);
+    body.append("system", this.getSystem());
+
+    return this.http.post(this.urlService + "update_detail_status.php", body);
+  }
 
   deliverOrder(orderId: number) {
     let body = new FormData();
@@ -174,12 +174,27 @@ updateDetailStatus(detailId: number, status: string = 'ready') {
     return this.http.post(this.urlService + "get_order_details.php", body);
   }
 
-  closeOrder(orderId: number) {
-    let body = new FormData();
-    body.append("order_id", orderId.toString());
-    body.append("system", this.getSystem());
+  closeOrder(orderId: number, userId: any) {
 
-    return this.http.post(this.urlService + "close_order.php", body);
+    let body = new FormData();
+
+    body.append("order_id", orderId.toString());
+
+    body.append(
+      "user_id",
+      userId.toString()
+    );
+
+    body.append(
+      "system",
+      this.getSystem()
+    );
+
+    return this.http.post(
+      this.urlService + "close_order.php",
+      body
+    );
+
   }
   closeOrder_for(orderId: number) {
     let body = new FormData();
@@ -213,633 +228,846 @@ updateDetailStatus(detailId: number, status: string = 'ready') {
 
     return this.http.post(this.urlService + "get_waiters.php", body);
   }
-getIngredients() {
-  let body = new FormData();
-  body.append("system", this.getSystem());
+  getIngredients() {
+    let body = new FormData();
+    body.append("system", this.getSystem());
 
-  return this.http.post(this.urlService + "get_ingredients.php", body);
-}
+    return this.http.post(this.urlService + "get_ingredients.php", body);
+  }
 
-updateStock(data: any) {
-  // Combinamos el ID y el STOCK con el SYSTEM actual
-  const payload = {
-    ...data,
-    system: this.getSystem()
-  };
+  updateStock(data: any) {
+    // Combinamos el ID y el STOCK con el SYSTEM actual
+    const payload = {
+      ...data,
+      system: this.getSystem()
+    };
 
-  return this.http.post(this.urlService + 'update_stock.php', payload);
-}
-addAsset(asset: any) {
-  // Combinamos el asset con el nombre del sistema
-  const payload = { ...asset, system: this.getSystem() }; 
-  return this.http.post(`${this.urlService}add_asset.php`, payload);
-}
+    return this.http.post(this.urlService + 'update_stock.php', payload);
+  }
+  addAsset(asset: any) {
+    // Combinamos el asset con el nombre del sistema
+    const payload = { ...asset, system: this.getSystem() };
+    return this.http.post(`${this.urlService}add_asset.php`, payload);
+  }
 
-getAssets() {
-  return this.http.get(`${this.urlService}get_assets.php?system=${this.getSystem()}`);
-}
-getProducts() {
-  let body = new FormData();
-  body.append("system", this.getSystem());
+  getAssets() {
+    return this.http.get(`${this.urlService}get_assets.php?system=${this.getSystem()}`);
+  }
+  getProducts() {
+    let body = new FormData();
+    body.append("system", this.getSystem());
 
-  return this.http.post(this.urlService + "get_products.php", body);
-}
+    return this.http.post(this.urlService + "get_products.php", body);
+  }
 
-addIngredient(data: any) {
-  // Creamos un nuevo objeto que combina los datos del formulario + el sistema
-  const payload = {
-    ...data,
-    system: this.getSystem()
-  };
+  addIngredient(data: any) {
+    // Creamos un nuevo objeto que combina los datos del formulario + el sistema
+    const payload = {
+      ...data,
+      system: this.getSystem()
+    };
 
-  // Enviamos 'payload' en lugar de 'data'
-  return this.http.post('http://localhost/api/add_ingredient.php', payload, {
-    headers: { 'Content-Type': 'application/json' }
-  });
-}
+    // Enviamos 'payload' en lugar de 'data'
+    return this.http.post('http://localhost/api/add_ingredient.php', payload, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
 
-updateIngredient(data: any) {
-  // Combinamos los datos actuales con el nombre del sistema
-  const payload = {
-    ...data,
-    system: this.getSystem()
-  };
+  updateIngredient(data: any) {
+    // Combinamos los datos actuales con el nombre del sistema
+    const payload = {
+      ...data,
+      system: this.getSystem()
+    };
 
-  return this.http.post('http://localhost/api/update_ingredient.php', payload, {
-    headers: { 'Content-Type': 'application/json' }
-  });
-}
+    return this.http.post('http://localhost/api/update_ingredient.php', payload, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
 
-getProductRecipe(id_product: number) {
-  // Ajusta la ruta a tu archivo PHP (el que hace el JOIN de product_ingredient e ingredients)
-  return this.http.get(`${this.urlService}/get_product_recipe.php?id_product=${id_product}`);
-}
+  getProductRecipe(id_product: number) {
+    // Ajusta la ruta a tu archivo PHP (el que hace el JOIN de product_ingredient e ingredients)
+    return this.http.get(`${this.urlService}/get_product_recipe.php?id_product=${id_product}`);
+  }
 
-// 2. Guardar producto y receta (Todo junto)
-saveFullProduct(payload: any) {
-  // Este apunta al nuevo archivo PHP que te pasé anteriormente
-  return this.http.post(`${this.urlService}/save_product.php`, payload);
-}
-getProductKitchens(id_product: number) {
-  return this.http.get(`${this.urlService}get_product_kitchens.php?id_product=${id_product}`);
-}
-updateProductState(id: number, state: string) {
-  const payload = {
-    id_product: id,
-    state: state,
-    system: this.getSystem()
-  };
-  return this.http.post(`${this.urlService}update_product_state.php`, payload);
-}
-updateAssetFull(payload: any) {
-  return this.http.post(`${this.urlService}update_asset_full.php`, payload);
-}
-updateAssetState(payload: any) {
-  // payload ya contiene: { id_asset, estado, system }
-  return this.http.post(`${this.urlService}update_asset_state.php`, payload);
-}
+  // 2. Guardar producto y receta (Todo junto)
+  saveFullProduct(payload: any) {
+    // Este apunta al nuevo archivo PHP que te pasé anteriormente
+    return this.http.post(`${this.urlService}/save_product.php`, payload);
+  }
+  getProductKitchens(id_product: number) {
+    return this.http.get(`${this.urlService}get_product_kitchens.php?id_product=${id_product}`);
+  }
+  updateProductState(id: number, state: string) {
+    const payload = {
+      id_product: id,
+      state: state,
+      system: this.getSystem()
+    };
+    return this.http.post(`${this.urlService}update_product_state.php`, payload);
+  }
+  updateAssetFull(payload: any) {
+    return this.http.post(`${this.urlService}update_asset_full.php`, payload);
+  }
+  updateAssetState(payload: any) {
+    // payload ya contiene: { id_asset, estado, system }
+    return this.http.post(`${this.urlService}update_asset_state.php`, payload);
+  }
 
-//getInformes(system: string) {
+  //getInformes(system: string) {
   //return this.http.get(`${this.urlService}get_informes_resumen.php?system=${system}`);
-//}
-
- 
- getResumen(tipo: string, fechaInicio: string, fechaFin: string) {
-  return this.http.get(`${this.urlService}/get_informes_resumen.php`, {
-    params: {
-      tipo: tipo,
-      fecha_inicio: fechaInicio,
-      fecha_fin: fechaFin
-    }
-  });
-}
-
- 
-get_datos_ing(system: string, area: string) {
-  return this.http.get(
-    `${this.urlService}validate_ingredients.php`
-  );
-}
-
-addBottle(data: any) {
-  let body = new FormData();
-
-  body.append("ingredient_id", data.ingredient_id);
-  body.append("peso_envase", data.peso_envase);
-  body.append("capacidad_total", data.capacidad_total);
-  body.append("peso_actual", data.peso_actual);
-  body.append("cantidad", data.cantidad);
-  body.append("location_id", data.location_id ?? "");
-  body.append("system", this.getSystem()); // 🔥 SIEMPRE
-
-  return this.http.post(this.urlService + "add_bottle.php", body);
-}
-getBottles(ingredientId: any) {
-  let body = new FormData();
-  body.append("ingredient_id", ingredientId.toString());
-  body.append("system", this.getSystem());
-
-  return this.http.post(this.urlService + "get_bottles.php", body);
-}
-
-updateBottleWeight(data: any) {
-  let body = new FormData();
-  body.append("id_bottle", data.id_bottle.toString());
-  body.append("peso_actual", data.peso_actual.toString());
-  body.append("estado", data.estado);
-  body.append("system", this.getSystem());
-
-  return this.http.post(this.urlService + "update_bottle.php", body);
-}
-
-addCategory(name: string) {
-  let body = new FormData();
-  body.append("name", name);
-  body.append("system", this.getSystem()); // <-- Ahora sí incluimos el sistema
-
-  return this.http.post(`${this.urlService}add_category.php`, body);
-}
-
-updateCategory(cat: any) {
-  let body = new FormData();
-  body.append("id", cat.id.toString());
-  body.append("name", cat.name);
-  body.append("system", this.getSystem()); // <-- Indispensable
-
-  return this.http.post(`${this.urlService}update_category.php`, body);
-}
-
-deleteCategory(id: any) {
-  let body = new FormData();
-  body.append("id", id.toString());
-  body.append("system", this.getSystem()); // <-- Indispensable
-
-  return this.http.post(`${this.urlService}delete_category.php`, body);
-}
-createSubcategory(name: string, categoryId: number) {
-  let body = new FormData();
-  body.append("name", name);
-  body.append("id_category", categoryId.toString());
-  body.append("system", this.getSystem());
-
-  return this.http.post(`${this.urlService}add_subcategory.php`, body);
-}
-
-updateSubcategory(sub: any) {
-  let body = new FormData();
-  body.append("id", sub.id.toString());
-  body.append("name", sub.name);
-  body.append("id_category", sub.id_category.toString());
-  body.append("system", this.getSystem());
-
-  return this.http.post(`${this.urlService}update_subcategory.php`, body);
-}
-
-deleteSubcategory(id: any) {
-  let body = new FormData();
-  body.append("id_subcategory", id.toString()); // 🔥 CORRECTO
-  body.append("system", this.getSystem());
-
-  return this.http.post(`${this.urlService}delete_subcategory.php`, body);
-}
-changeOrderTable(orderId: number, newTableId: number) {
-  let body = new FormData();
-  body.append("order_id", orderId.toString());
-  body.append("new_table_id", newTableId.toString());
-  body.append("system", this.getSystem());
+  //}
+
+
+  getResumen(tipo: string, fechaInicio: string, fechaFin: string) {
+    return this.http.get(`${this.urlService}/get_informes_resumen.php`, {
+      params: {
+        tipo: tipo,
+        fecha_inicio: fechaInicio,
+        fecha_fin: fechaFin
+      }
+    });
+  }
+
+
+  get_datos_ing(system: string, area: string) {
+    return this.http.get(
+      `${this.urlService}validate_ingredients.php`
+    );
+  }
+
+  addBottle(data: any) {
+    let body = new FormData();
+
+    body.append("ingredient_id", data.ingredient_id);
+    body.append("peso_envase", data.peso_envase);
+    body.append("capacidad_total", data.capacidad_total);
+    body.append("peso_actual", data.peso_actual);
+    body.append("cantidad", data.cantidad);
+    body.append("location_id", data.location_id ?? "");
+    body.append("system", this.getSystem()); // 🔥 SIEMPRE
+
+    return this.http.post(this.urlService + "add_bottle.php", body);
+  }
+  getBottles(ingredientId: any) {
+    let body = new FormData();
+    body.append("ingredient_id", ingredientId.toString());
+    body.append("system", this.getSystem());
+
+    return this.http.post(this.urlService + "get_bottles.php", body);
+  }
+
+  updateBottleWeight(data: any) {
+    let body = new FormData();
+    body.append("id_bottle", data.id_bottle.toString());
+    body.append("peso_actual", data.peso_actual.toString());
+    body.append("estado", data.estado);
+    body.append("system", this.getSystem());
+
+    return this.http.post(this.urlService + "update_bottle.php", body);
+  }
+
+  addCategory(name: string) {
+    let body = new FormData();
+    body.append("name", name);
+    body.append("system", this.getSystem()); // <-- Ahora sí incluimos el sistema
+
+    return this.http.post(`${this.urlService}add_category.php`, body);
+  }
+
+  updateCategory(cat: any) {
+    let body = new FormData();
+    body.append("id", cat.id.toString());
+    body.append("name", cat.name);
+    body.append("system", this.getSystem()); // <-- Indispensable
+
+    return this.http.post(`${this.urlService}update_category.php`, body);
+  }
+
+  deleteCategory(id: any) {
+    let body = new FormData();
+    body.append("id", id.toString());
+    body.append("system", this.getSystem()); // <-- Indispensable
+
+    return this.http.post(`${this.urlService}delete_category.php`, body);
+  }
+  createSubcategory(name: string, categoryId: number) {
+    let body = new FormData();
+    body.append("name", name);
+    body.append("id_category", categoryId.toString());
+    body.append("system", this.getSystem());
+
+    return this.http.post(`${this.urlService}add_subcategory.php`, body);
+  }
+
+  updateSubcategory(sub: any) {
+    let body = new FormData();
+    body.append("id", sub.id.toString());
+    body.append("name", sub.name);
+    body.append("id_category", sub.id_category.toString());
+    body.append("system", this.getSystem());
+
+    return this.http.post(`${this.urlService}update_subcategory.php`, body);
+  }
+
+  deleteSubcategory(id: any) {
+    let body = new FormData();
+    body.append("id_subcategory", id.toString()); // 🔥 CORRECTO
+    body.append("system", this.getSystem());
+
+    return this.http.post(`${this.urlService}delete_subcategory.php`, body);
+  }
+  changeOrderTable(orderId: number, newTableId: number) {
+    let body = new FormData();
+    body.append("order_id", orderId.toString());
+    body.append("new_table_id", newTableId.toString());
+    body.append("system", this.getSystem());
 
-  return this.http.post(`${this.urlService}change_order_table.php`, body);
-}
-getFractions(ingredient_id: number) {
+    return this.http.post(`${this.urlService}change_order_table.php`, body);
+  }
+  getFractions(ingredient_id: number) {
 
-  let body = new FormData();
+    let body = new FormData();
 
-  body.append(
-    "system",
-    this.getSystem()
-  );
+    body.append(
+      "system",
+      this.getSystem()
+    );
 
-  body.append(
-    "ingredient_id",
-    ingredient_id.toString()
-  );
+    body.append(
+      "ingredient_id",
+      ingredient_id.toString()
+    );
 
-  return this.http.post(
-    this.urlService + "getFractions.php",
-    body
-  );
+    return this.http.post(
+      this.urlService + "getFractions.php",
+      body
+    );
 
-}
-addFraction(data: any) {
+  }
+  addFraction(data: any) {
 
-  return this.http.post(
-    this.urlService + 'addFraction.php',
-    data
-  );
+    return this.http.post(
+      this.urlService + 'addFraction.php',
+      data
+    );
 
-}
-updateFraction(data: any) {
-  return this.http.post(
-    this.urlService + "updateFraction.php",
-    data
-  );
-}
+  }
+  updateFraction(data: any) {
+    return this.http.post(
+      this.urlService + "updateFraction.php",
+      data
+    );
+  }
 
-deleteFraction(data: any) {
-  return this.http.post(
-    this.urlService + "deleteFraction.php",
-    data
-  );
-}
+  deleteFraction(data: any) {
+    return this.http.post(
+      this.urlService + "deleteFraction.php",
+      data
+    );
+  }
 
 
-updateIngredientOrder(data:any){
+  updateIngredientOrder(data: any) {
 
-  const body = {
-    data: JSON.stringify(data),
-    system: this.getSystem()
-  };
+    const body = {
+      data: JSON.stringify(data),
+      system: this.getSystem()
+    };
 
-  return this.http.post(
-    this.urlService + 'updateIngredientOrder.php',
-    body
-  );
-}
+    return this.http.post(
+      this.urlService + 'updateIngredientOrder.php',
+      body
+    );
+  }
 
-updateBottleOrder(data:any){
+  updateBottleOrder(data: any) {
 
-  const body = {
-    data: JSON.stringify(data),
-    system: this.getSystem()
-  };
+    const body = {
+      data: JSON.stringify(data),
+      system: this.getSystem()
+    };
 
-  return this.http.post(
-    this.urlService + 'updateBottleOrder.php',
-    body
-  );
-}
+    return this.http.post(
+      this.urlService + 'updateBottleOrder.php',
+      body
+    );
+  }
 
-updateProductOrder(data:any){
+  updateProductOrder(data: any) {
 
-  const body = {
-    data: JSON.stringify(data),
-    system: this.getSystem()
-  };
+    const body = {
+      data: JSON.stringify(data),
+      system: this.getSystem()
+    };
 
-  return this.http.post(
-    this.urlService + 'updateProductOrder.php',
-    body
-  );
-}
+    return this.http.post(
+      this.urlService + 'updateProductOrder.php',
+      body
+    );
+  }
 
 
 
-
-
 
 
-
-
-
-
-
-
-
-
- 
- 
- 
- 
- 
-
-// ---------------- GESTIÓN DE PISOS ----------------
-
-getFlatsCom(system: string) {
-  return this.http.get(`${this.urlService}get_flats_complete.php?system=${system}`);
-}
-
-createFlat(body: FormData) {
-  return this.http.post(`${this.urlService}create_flat.php`, body);
-}
-updateFlatState(body: FormData) {
-  return this.http.post(`${this.urlService}toggle_flat_state.php`, body);
-}
-// ---------------- GESTIÓN DE PROVEEDORES ----------------
-
-getProveedor(system: string) {
-  return this.http.get(`${this.urlService}get_proveedor.php?system=${system}`);
-}
-
-createProveedor(body: FormData) {
-  return this.http.post(`${this.urlService}create_proveedor.php`, body);
-}
-updateProveedorState(body: FormData) {
-  return this.http.post(`${this.urlService}toggle_prov_state.php`, body);
-}
-//----------------- GESTION DE COCINAS---------------
-getKitchensCom(system: string) {
-  return this.http.get(`${this.urlService}get_kitchens_complete.php?system=${system}`);
-}
-createKitchen(body: FormData) {
-  return this.http.post(`${this.urlService}create_kitchen.php`, body);
-}
-updateKitchenState(body: FormData) {
-  return this.http.post(`${this.urlService}toggle_kitchen_state.php`, body);
-}
-// ---------------- GESTIÓN DE MESAS ----------------
-
-getTables_complete(system: string) {
-  return this.http.get(`${this.urlService}get_tables_comp.php?system=${system}`);
-}
-
-createTable(body: FormData) {
-  return this.http.post(`${this.urlService}create_table.php`, body);
-}
-
-updateTableState(body: FormData) {
-  return this.http.post(`${this.urlService}toggle_table_state.php`, body);
-}
-
-// ---------------- GESTIÓN DE USUARIOS ----------------
-
-getUsers(system: string) {
-  return this.http.get(`${this.urlService}get_users.php?system=${system}`);
-}
-
-createUser(body: FormData) {
-  return this.http.post(`${this.urlService}create_user.php`, body);
-}
-
-updateUserState(body: FormData) {
-  // Asegúrate de que la ruta apunte al archivo toggle_user_state.php
-  return this.http.post(`${this.urlService}toggle_user_state.php`, body);
-}
-emitirFacturaReal(payload: any) {
-  // Obtenemos el sistema (mixtura o mecapos) desde donde lo tengas guardado
-  const sistemaActivo = sessionStorage.getItem('sistema') || 'mixtura'; 
-  
-  // Añadimos el sistema al objeto que enviamos
-  const data = { ...payload, system: sistemaActivo };
-
-  return this.http.post(`${this.urlService}/emitirFacturaLocal.php`, data);
-}
-getOrdersByUser(userId: string) {
-  let body = new FormData();
-  body.append("user_id", userId);
-  body.append("system", this.getSystem());
-
-  return this.http.post(this.urlService + "getOrdersByUser.php", body);
-}
-getOrderProducts(orderId: any) {
-  // Cambiamos a FormData para que sea igual a tus otras funciones de Órdenes
-  let body = new FormData();
-  body.append("order_id", orderId.toString());
-  body.append("system", this.getSystem());
-
-  // Usamos POST para enviar el FormData completo
-  return this.http.post(`${this.urlService}get_order_products.php`, body);
-}
-triggerAlert(detailId: any) {
-  let body = new FormData();
-  body.append("detail_id", detailId.toString()); // Asegúrate que sea 'detail_id'
-  body.append("system", this.getSystem());
-  return this.http.post(this.urlService + "trigger_alert.php", body);
-}
-silenceAlert(detailId: number) {
-  let body = new FormData();
-  body.append("detail_id", detailId.toString());
-  body.append("system", this.getSystem());
-  return this.http.post(this.urlService + "silence_alert.php", body);
-}
-
-searchProducts(term: string) {
-
-  let body = new FormData();
-  body.append("term", term);
-  body.append("system", this.getSystem());
-
-  return this.http.post(this.urlService + 'search_products.php', body);
-
-}
-getHistorialPagos(orderId: number) {
-  const sistemaActivo = sessionStorage.getItem('sistema') || 'mixtura';
-  // Usamos params de URL porque el PHP espera un GET
-  return this.http.get(`${this.urlService}/getHistorialPagos.php?order_id=${orderId}&system=${sistemaActivo}`);
-}
-
-
-/**
- * Procesa todos los bloques de pago acumulados en la canasta de cobro
- * @param payload Objeto que contiene order_id, el array de pagos y el sistema
- */
-procesarMultiplesPagos(payload: any) {
-  // Aseguramos que el sistema viaje en el cuerpo de la petición
-  const sistemaActivo = sessionStorage.getItem('sistema') || 'mixtura';
-  const data = { ...payload, system: sistemaActivo };
-
-  return this.http.post(`${this.urlService}/procesarMultiplesPagos.php`, data);
-}
-getExistingAdjustments(detailId: number): Observable<any> {
-  // Usamos FormData para que coincida con tu estándar
-  let body = new FormData();
-  body.append("detail_id", detailId.toString());
-  body.append("system", this.getSystem());
-
-  return this.http.post(`${this.urlService}get_adjustments.php`, body);
-}
-
-saveAdjustments(detailId: number, adjustments: any[]): Observable<any> {
-  let body = new FormData();
-  body.append("detail_id", detailId.toString());
-  // Los arrays se deben enviar como string JSON en FormData
-  body.append("adjustments", JSON.stringify(adjustments));
-  body.append("system", this.getSystem());
-
-  return this.http.post(`${this.urlService}save_detail_adjustments.php`, body);
-}
-
-
-
-validateRecipeStock(cart: any[]): Observable<any> {
-  const formData = new FormData();
-  
-  // Usamos el método centralizado getSystem() que ya tienes en tu clase
-  formData.append('products', JSON.stringify(cart));
-  formData.append('system', this.getSystem());
-
-  // Eliminamos el "/" extra si urlService ya termina en "/"
-  return this.http.post(`${this.urlService}validate_ingredients.php`, formData);
-}
-
-// Dentro de ServerContentService
-getDetalleArea(system: string, area: string): Observable<any> {
-  let body = new FormData();
-  body.append("system", system);
-  body.append("area", area);
-
-  return this.http.post(this.urlService + "get_detalle_area.php", body);
-}
-// 1. Obtener Ingredientes de la BD contraria
-getExternalIngredients(targetSystem: string): Observable<any> {
-  let body = new FormData();
-  body.append("system", targetSystem);
-  // Reutilizamos el mismo PHP que ya tienes para listar ingredientes, 
-  // pero pasándole el sistema destino
-  return this.http.post(this.urlService + "get_ingredients.php", body);
-}
-deleteAdjustment(detailId: number, ingredientId: number): Observable<any> {
-  let body = new FormData();
-  body.append("detail_id", detailId.toString());
-  body.append("ingredient_id", ingredientId.toString());
-  body.append("system", this.getSystem());
-
-  return this.http.post(`${this.urlService}delete_adjustment.php`, body);
-}
-// 2. Obtener Productos de la BD contraria (Para que no te de el error 2339)
-getProductsExternal(targetSystem: string): Observable<any> {
-  let body = new FormData();
-  body.append("system", targetSystem);
-  return this.http.post(this.urlService + "get_products.php", body);
-}
-
-// 3. Ejecutar la transferencia por Nombres
-transferStockByNames(data: any): Observable<any> {
-  let body = new FormData();
-  body.append("from_system", data.from_system);
-  body.append("to_system", data.to_system);
-  body.append("type", data.type);
-  body.append("items", JSON.stringify(data.items));
-  
-  return this.http.post(this.urlService + "transfer_inventory.php", body);
-}
-getPagosParciales(orderId: number) {
-  const system = sessionStorage.getItem('sistema') || 'mixtura'; // 🔥 FIX
-
-  return this.http.get(
-    this.urlService + `get_pagos_parciales.php?order_id=${orderId}&system=${system}`
-  );
-}
-deletePago(id_pago: number) {
-  const system = sessionStorage.getItem('sistema') || 'mixtura';
-
-  return this.http.post(
-    this.urlService + 'delete_pago.php',
-    {
-      id_pago,
-      system
-    }
-  );
-}
-updateTableStatus(id_table: number, estado: string) {
-  return this.http.post<any>(this.urlService + 'update_table_status_reservado.php', {
-    id_table,
-    estado,
-    system: sessionStorage.getItem('sistema') || 'mixtura' // 🔥 CLAVE
-  });
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // ---------------- GESTIÓN DE PISOS ----------------
+
+  getFlatsCom(system: string) {
+    return this.http.get(`${this.urlService}get_flats_complete.php?system=${system}`);
+  }
+
+  createFlat(body: FormData) {
+    return this.http.post(`${this.urlService}create_flat.php`, body);
+  }
+  updateFlatState(body: FormData) {
+    return this.http.post(`${this.urlService}toggle_flat_state.php`, body);
+  }
+  // ---------------- GESTIÓN DE PROVEEDORES ----------------
+  deleteFlat(body: FormData) {
+
+    return this.http.post(
+
+      this.urlService +
+
+      "delete_flat.php",
+
+      body
+
+    );
+
+  }
+  getProveedor(system: string) {
+    return this.http.get(`${this.urlService}get_proveedor.php?system=${system}`);
+  }
+
+  createProveedor(body: FormData) {
+    return this.http.post(`${this.urlService}create_proveedor.php`, body);
+  }
+  updateProveedorState(body: FormData) {
+    return this.http.post(`${this.urlService}toggle_prov_state.php`, body);
+  }
+  //----------------- GESTION DE COCINAS---------------
+  getKitchensCom(system: string) {
+    return this.http.get(`${this.urlService}get_kitchens_complete.php?system=${system}`);
+  }
+  createKitchen(body: FormData) {
+    return this.http.post(`${this.urlService}create_kitchen.php`, body);
+  }
+  updateKitchenState(body: FormData) {
+    return this.http.post(`${this.urlService}toggle_kitchen_state.php`, body);
+  }
+  // ---------------- GESTIÓN DE MESAS ----------------
+
+  getTables_complete(system: string) {
+    return this.http.get(`${this.urlService}get_tables_comp.php?system=${system}`);
+  }
+
+  createTable(body: FormData) {
+    return this.http.post(`${this.urlService}create_table.php`, body);
+  }
+
+  updateTableState(body: FormData) {
+    return this.http.post(`${this.urlService}toggle_table_state.php`, body);
+  }
+
+  // ---------------- GESTIÓN DE USUARIOS ----------------
+
+  getUsers(system: string) {
+    return this.http.get(`${this.urlService}get_users.php?system=${system}`);
+  }
+  deleteUser(body: FormData): Observable<any> {
+
+    return this.http.post(
+
+      this.urlService + "delete_user.php",
+
+      body
+
+    );
+
+  }
+  createUser(body: FormData) {
+    return this.http.post(`${this.urlService}create_user.php`, body);
+  }
+
+  updateUserState(body: FormData) {
+    // Asegúrate de que la ruta apunte al archivo toggle_user_state.php
+    return this.http.post(`${this.urlService}toggle_user_state.php`, body);
+  }
+  emitirFacturaReal(payload: any) {
+    // Obtenemos el sistema (mixtura o mecapos) desde donde lo tengas guardado
+    const sistemaActivo = sessionStorage.getItem('sistema') || 'mixtura';
+
+    // Añadimos el sistema al objeto que enviamos
+    const data = { ...payload, system: sistemaActivo };
+
+    return this.http.post(`${this.urlService}/emitirFacturaLocal.php`, data);
+  }
+  getOrdersByUser(userId: string) {
+    let body = new FormData();
+    body.append("user_id", userId);
+    body.append("system", this.getSystem());
+
+    return this.http.post(this.urlService + "getOrdersByUser.php", body);
+  }
+  getOrderProducts(orderId: any) {
+    // Cambiamos a FormData para que sea igual a tus otras funciones de Órdenes
+    let body = new FormData();
+    body.append("order_id", orderId.toString());
+    body.append("system", this.getSystem());
+
+    // Usamos POST para enviar el FormData completo
+    return this.http.post(`${this.urlService}get_order_products.php`, body);
+  }
+  triggerAlert(detailId: any) {
+    let body = new FormData();
+    body.append("detail_id", detailId.toString()); // Asegúrate que sea 'detail_id'
+    body.append("system", this.getSystem());
+    return this.http.post(this.urlService + "trigger_alert.php", body);
+  }
+  silenceAlert(detailId: number) {
+    let body = new FormData();
+    body.append("detail_id", detailId.toString());
+    body.append("system", this.getSystem());
+    return this.http.post(this.urlService + "silence_alert.php", body);
+  }
+
+  searchProducts(term: string) {
+
+    let body = new FormData();
+    body.append("term", term);
+    body.append("system", this.getSystem());
+
+    return this.http.post(this.urlService + 'search_products.php', body);
+
+  }
+  getHistorialPagos(orderId: number) {
+    const sistemaActivo = sessionStorage.getItem('sistema') || 'mixtura';
+    // Usamos params de URL porque el PHP espera un GET
+    return this.http.get(`${this.urlService}/getHistorialPagos.php?order_id=${orderId}&system=${sistemaActivo}`);
+  }
+
+
+  /**
+   * Procesa todos los bloques de pago acumulados en la canasta de cobro
+   * @param payload Objeto que contiene order_id, el array de pagos y el sistema
+   */
+  procesarMultiplesPagos(payload: any) {
+    // Aseguramos que el sistema viaje en el cuerpo de la petición
+    const sistemaActivo = sessionStorage.getItem('sistema') || 'mixtura';
+    const data = { ...payload, system: sistemaActivo };
+
+    return this.http.post(`${this.urlService}/procesarMultiplesPagos.php`, data);
+  }
+  getExistingAdjustments(detailId: number): Observable<any> {
+    // Usamos FormData para que coincida con tu estándar
+    let body = new FormData();
+    body.append("detail_id", detailId.toString());
+    body.append("system", this.getSystem());
+
+    return this.http.post(`${this.urlService}get_adjustments.php`, body);
+  }
+
+  saveAdjustments(detailId: number, adjustments: any[]): Observable<any> {
+    let body = new FormData();
+    body.append("detail_id", detailId.toString());
+    // Los arrays se deben enviar como string JSON en FormData
+    body.append("adjustments", JSON.stringify(adjustments));
+    body.append("system", this.getSystem());
+
+    return this.http.post(`${this.urlService}save_detail_adjustments.php`, body);
+  }
+
+
+
+  validateRecipeStock(cart: any[]): Observable<any> {
+    const formData = new FormData();
+
+    // Usamos el método centralizado getSystem() que ya tienes en tu clase
+    formData.append('products', JSON.stringify(cart));
+    formData.append('system', this.getSystem());
+
+    // Eliminamos el "/" extra si urlService ya termina en "/"
+    return this.http.post(`${this.urlService}validate_ingredients.php`, formData);
+  }
+
+  // Dentro de ServerContentService
+  getDetalleArea(system: string, area: string): Observable<any> {
+    let body = new FormData();
+    body.append("system", system);
+    body.append("area", area);
+
+    return this.http.post(this.urlService + "get_detalle_area.php", body);
+  }
+  // 1. Obtener Ingredientes de la BD contraria
+  getExternalIngredients(targetSystem: string): Observable<any> {
+    let body = new FormData();
+    body.append("system", targetSystem);
+    // Reutilizamos el mismo PHP que ya tienes para listar ingredientes, 
+    // pero pasándole el sistema destino
+    return this.http.post(this.urlService + "get_ingredients.php", body);
+  }
+  deleteAdjustment(detailId: number, ingredientId: number): Observable<any> {
+    let body = new FormData();
+    body.append("detail_id", detailId.toString());
+    body.append("ingredient_id", ingredientId.toString());
+    body.append("system", this.getSystem());
+
+    return this.http.post(`${this.urlService}delete_adjustment.php`, body);
+  }
+  // 2. Obtener Productos de la BD contraria (Para que no te de el error 2339)
+  getProductsExternal(targetSystem: string): Observable<any> {
+    let body = new FormData();
+    body.append("system", targetSystem);
+    return this.http.post(this.urlService + "get_products.php", body);
+  }
+
+  // 3. Ejecutar la transferencia por Nombres
+  transferStockByNames(data: any): Observable<any> {
+    let body = new FormData();
+    body.append("from_system", data.from_system);
+    body.append("to_system", data.to_system);
+    body.append("type", data.type);
+    body.append("items", JSON.stringify(data.items));
+
+    return this.http.post(this.urlService + "transfer_inventory.php", body);
+  }
+  getPagosParciales(orderId: number) {
+    const system = sessionStorage.getItem('sistema') || 'mixtura'; // 🔥 FIX
+
+    return this.http.get(
+      this.urlService + `get_pagos_parciales.php?order_id=${orderId}&system=${system}`
+    );
+  }
+  deletePago(id_pago: number) {
+    const system = sessionStorage.getItem('sistema') || 'mixtura';
+
+    return this.http.post(
+      this.urlService + 'delete_pago.php',
+      {
+        id_pago,
+        system
+      }
+    );
+  }
+  updateTableStatus(id_table: number, estado: string) {
+    return this.http.post<any>(this.urlService + 'update_table_status_reservado.php', {
+      id_table,
+      estado,
+      system: sessionStorage.getItem('sistema') || 'mixtura' // 🔥 CLAVE
+    });
+  }
   // ✅ GET
-getLocations() {
+  getLocations() {
 
-  let body = new FormData();
-  body.append("system", this.getSystem());
+    let body = new FormData();
+    body.append("system", this.getSystem());
 
-  return this.http.post(
-    this.urlService + 'getLocations.php',
-    body
-  );
-}
+    return this.http.post(
+      this.urlService + 'getLocations.php',
+      body
+    );
+  }
 
   // ✅ CREATE + UPDATE
-saveLocation(data:any){
+  saveLocation(data: any) {
 
-  data.system = this.getSystem();
+    data.system = this.getSystem();
 
-  return this.http.post(
-    this.urlService + 'saveLocation.php',
-    data
-  );
-}
+    return this.http.post(
+      this.urlService + 'saveLocation.php',
+      data
+    );
+  }
 
   // ✅ DELETE
-  deleteLocation(id:any){
+  deleteLocation(id: any) {
     return this.http.post(this.urlService + 'delete_location.php', { id });
   }
-updateOrdera(data: any) {
-  const formData = new FormData();
-  formData.append('data', JSON.stringify(data));
+  updateOrdera(data: any) {
+    const formData = new FormData();
+    formData.append('data', JSON.stringify(data));
 
-  return this.http.post(
-    'http://localhost/api/update_locations_order.php',
-    formData
-  );
-}
-updateBottleLocation(data: any) {
-  let body = new FormData();
+    return this.http.post(
+      'http://localhost/api/update_locations_order.php',
+      formData
+    );
+  }
+  updateBottleLocation(data: any) {
+    let body = new FormData();
 
-  body.append("id_bottle", data.id_bottle);
-  body.append("location_id", data.location_id ?? "");
-  body.append("system", this.getSystem()); // 🔥 AQUÍ ESTÁ LA MAGIA
+    body.append("id_bottle", data.id_bottle);
+    body.append("location_id", data.location_id ?? "");
+    body.append("system", this.getSystem()); // 🔥 AQUÍ ESTÁ LA MAGIA
 
-  return this.http.post(this.urlService + "updateBottleLocation.php", body);
-}
+    return this.http.post(this.urlService + "updateBottleLocation.php", body);
+  }
 
-deleteBottle(id: any) {
-  const formData = new FormData();
-  formData.append('id_bottle', id);
+  deleteBottle(id: any) {
+    const formData = new FormData();
+    formData.append('id_bottle', id);
 
-  return this.http.post(this.urlService + 'deleteBottle.php', formData);
-}
-getIngredientsByLocation(id:number, system:string){
-  let body = new FormData();
-  body.append("location_id", id.toString());
-  body.append("system", system);
+    return this.http.post(this.urlService + 'deleteBottle.php', formData);
+  }
+  getIngredientsByLocation(id: number, system: string) {
+    let body = new FormData();
+    body.append("location_id", id.toString());
+    body.append("system", system);
 
-  return this.http.post(this.urlService + "get_ingredients_by_location.php", body);
-}
+    return this.http.post(this.urlService + "get_ingredients_by_location.php", body);
+  }
 
-getBottlesByLocation(id:number, system:string){
-  let body = new FormData();
-  body.append("location_id", id.toString());
-  body.append("system", system);
+  getBottlesByLocation(id: number, system: string) {
+    let body = new FormData();
+    body.append("location_id", id.toString());
+    body.append("system", system);
 
-  return this.http.post(this.urlService + "get_bottles_by_location.php", body);
-}
+    return this.http.post(this.urlService + "get_bottles_by_location.php", body);
+  }
 
-getProductsByLocation(id:number, system:string){
-  let body = new FormData();
-  body.append("location_id", id.toString());
-  body.append("system", system);
+  getProductsByLocation(id: number, system: string) {
+    let body = new FormData();
+    body.append("location_id", id.toString());
+    body.append("system", system);
 
-  return this.http.post(this.urlService + "get_products_by_location.php", body);
-}
-getProductLocations(id: number, system: string) {
-  let body = new FormData();
-  body.append("product_id", id.toString()); // 🔥 importante
-  body.append("system", system);
+    return this.http.post(this.urlService + "get_products_by_location.php", body);
+  }
+  getProductLocations(id: number, system: string) {
+    let body = new FormData();
+    body.append("product_id", id.toString()); // 🔥 importante
+    body.append("system", system);
 
-  return this.http.post(this.urlService + "getProductLocations.php", body);
-}
-getProductsBySubcategory(id_subcategory: number) {
-  const formData = new FormData();
-  formData.append('id_subcategory', id_subcategory.toString());
-  formData.append('system', this.getSystem()); // 👈 AÑADE ESTO
+    return this.http.post(this.urlService + "getProductLocations.php", body);
+  }
+  getProductsBySubcategory(id_subcategory: number) {
+    const formData = new FormData();
+    formData.append('id_subcategory', id_subcategory.toString());
+    formData.append('system', this.getSystem()); // 👈 AÑADE ESTO
 
-  return this.http.post(this.urlService + 'getProductsBySubcategory.php', formData);
-}
+    return this.http.post(this.urlService + 'getProductsBySubcategory.php', formData);
+  }
 
 
-// server-content.service.ts
+  // server-content.service.ts
 
-procesarFacturacionSiat(payload: any): Observable<any> {
+  procesarFacturacionSiat(payload: any): Observable<any> {
     // Definimos los headers para que dbconnect.php funcione
     const headers = new HttpHeaders({
-        'system': this.getSystem() // Envía 'mixtura' o 'mecapos'
+      'system': this.getSystem() // Envía 'mixtura' o 'mecapos'
     });
 
     // Limpiamos la URL (quitamos la doble barra si existiera)
     const url = `${this.urlService}/facturar.php`.replace(/([^:]\/)\/+/g, "$1");
-    
+
     return this.http.post(url, payload, { headers });
+  }
+  deleteKitchen(body: any) {
+
+    return this.http.post(
+
+      this.urlService + "delete_kitchen.php",
+
+      body
+
+    );
+
+  }
+
+  deleteTable(body: any) {
+
+    return this.http.post(
+
+      this.urlService +
+
+      "delete_table.php",
+
+      body
+
+    );
+
+  }
+  deleteIngredient(body: any) {
+
+    return this.http.post(
+
+      this.urlService +
+
+      "delete_ingredient.php",
+
+      body
+
+    );
+
+  }
+
+  deleteProduct(body: any) {
+
+    return this.http.post(
+
+      this.urlService +
+
+      "delete_product_t.php",
+
+      body
+
+    );
+
+  }
+
+  deleteAsset(body: any) {
+
+    return this.http.post(
+
+      this.urlService +
+
+      "delete_asset.php",
+
+      body
+
+    );
+
+  }
+  getProductsCountBySubcategory(
+
+    id_subcategory: number
+
+  ) {
+
+    const fd =
+
+      new FormData();
+
+    fd.append(
+
+      'id_subcategory',
+
+      id_subcategory.toString()
+
+    );
+
+    fd.append(
+
+      'system',
+
+      this.getSystem()
+
+    );
+
+
+
+    return this.http.post(
+
+      this.urlService +
+
+      'get_products_count.php',
+
+      fd
+
+    );
+
+  }
+  getUnits() {
+
+    return this.http.get(
+      `${this.urlService}get_units.php`
+    );
+
+  }
+
+  addUnit(name: string) {
+
+    let body = new FormData();
+
+    body.append("name", name);
+
+    return this.http.post(
+
+      `${this.urlService}add_unit.php`,
+
+      body
+
+    );
+
+  }
+
+  deleteUnit(id: number) {
+
+    let body = new FormData();
+
+    body.append("id_unidad", id.toString());
+
+    return this.http.post(
+
+      `${this.urlService}delete_unit.php`,
+
+      body
+
+    );
+
+  }
+updateProcessStatus(
+detailId:number,
+processStatus:string
+){
+
+const body={
+
+detail_id:detailId,
+
+process_status:processStatus,
+
+system:this.getSystem()
+
+};
+
+return this.http.post(
+
+this.urlService+
+
+'updateProcessStatus.php',
+
+body
+
+);
+
+}
+getReadyOrders(){
+
+const body={
+
+user_id:sessionStorage.getItem("user_id"),
+
+system:this.getSystem()
+
+};
+
+return this.http.post(
+
+this.urlService+
+
+'getReadyOrders.php',
+
+body
+
+);
+
 }
 
 
@@ -867,58 +1095,50 @@ procesarFacturacionSiat(payload: any): Observable<any> {
 
 
 
+  payOrder(orderId: any, method: string) {
+    const formData = new FormData();
+    formData.append("order_id", orderId);
+    formData.append("payment_method", method);
+    return this.http.post(
+      this.urlService + "pay_order.php",
+      formData
+    );
+  }
 
+  //BRIEF------------------------
+  LoadBrief() {
+    return this.http.get(this.urlService + "brief.php");
+  }
+  LoadKitchens() {
+    return this.http.get(this.urlService + "kitchen.php");
+  }
+  AddBrief(description: string) {
+    let bodyLogin = new FormData();
+    bodyLogin.append("id_user", sessionStorage.getItem("id_user") || "");
+    bodyLogin.append("note", description);
+    return this.http.post(this.urlService + "add_brief.php", bodyLogin);
+  }
+  AddBriefProduct(product: string, price: string, kitchen: string) {
+    let bodyLogin = new FormData();
+    bodyLogin.append("name", product);
+    bodyLogin.append("price", price);
+    bodyLogin.append("kitchen", kitchen);
+    return this.http.post(this.urlService + "add_brief_product.php", bodyLogin);
 
+  }
+  DeleteBrief(id: string) {
+    let bodyLogin = new FormData();
+    bodyLogin.append("id", id);
+    return this.http.post(this.urlService + "delete_brief.php", bodyLogin);
+  }
+  DeleteBriefProduct(id: string) {
+    let bodyLogin = new FormData();
+    bodyLogin.append("id", id);
+    return this.http.post(this.urlService + "delete_brief_product.php", bodyLogin);
+  }
 
-
-
-
-
-
-payOrder(orderId: any, method: string) {
-  const formData = new FormData();
-  formData.append("order_id", orderId);
-  formData.append("payment_method", method);
-  return this.http.post(
-    this.urlService + "pay_order.php",
-    formData
-  );
-}
-
-//BRIEF------------------------
- LoadBrief () {
-  return this.http.get(this.urlService + "brief.php");
- }
- LoadKitchens() {
-  return this.http.get(this.urlService + "kitchen.php"); 
- }
- AddBrief (description:string) {
-  let bodyLogin = new FormData();
-  bodyLogin.append("id_user", sessionStorage.getItem("id_user") || "");
-  bodyLogin.append("note", description);
-  return this.http.post(this.urlService + "add_brief.php", bodyLogin);
- }
- AddBriefProduct (product:string, price:string, kitchen:string) {
-  let bodyLogin = new FormData();
-  bodyLogin.append("name", product);
-  bodyLogin.append("price", price);
-  bodyLogin.append("kitchen", kitchen);
-  return this.http.post(this.urlService + "add_brief_product.php", bodyLogin);
- 
- }
- DeleteBrief (id:string) {
-  let bodyLogin = new FormData();
-  bodyLogin.append("id", id);
-  return this.http.post(this.urlService + "delete_brief.php", bodyLogin);
- }
- DeleteBriefProduct (id:string) {
-  let bodyLogin = new FormData();
-  bodyLogin.append("id", id);
-  return this.http.post(this.urlService + "delete_brief_product.php", bodyLogin);
- }
-
-//MESAS------------------------
-  LoadZones () {
+  //MESAS------------------------
+  LoadZones() {
     return this.http.get(this.urlService + "zones.php");
   }
   LoadYourTables() {
@@ -926,93 +1146,93 @@ payOrder(orderId: any, method: string) {
     bodyLogin.append("id_user", sessionStorage.getItem("user_id") || "");
     return this.http.post(this.urlService + "your_tables.php", bodyLogin);
   }
-  LoadTables (zone:string) {
+  LoadTables(zone: string) {
     let bodyLogin = new FormData();
     bodyLogin.append("zone", zone);
     return this.http.post(this.urlService + "tables.php", bodyLogin);
   }
-  LoadTable (table:string) {
+  LoadTable(table: string) {
     let bodyLogin = new FormData();
     bodyLogin.append("table", table);
     return this.http.post(this.urlService + "detail_table.php", bodyLogin);
   }
-  SwitchTable (oldTable:string, table:string) {
+  SwitchTable(oldTable: string, table: string) {
     let bodyLogin = new FormData();
     bodyLogin.append("table", table);
     bodyLogin.append("old_table", oldTable);
     return this.http.post(this.urlService + "switch_table.php", bodyLogin);
   }
-  UpdateTableNotes (pid:string, notes:string) {
+  UpdateTableNotes(pid: string, notes: string) {
     let bodyLogin = new FormData();
     bodyLogin.append("pid", pid);
     bodyLogin.append("notes", notes);
     return this.http.post(this.urlService + "table_notes.php", bodyLogin);
   }
-  ClearTable (table:string) {
+  ClearTable(table: string) {
     let bodyLogin = new FormData();
     bodyLogin.append("table", table);
     return this.http.post(this.urlService + "clear_table.php", bodyLogin);
   }
-  CloseTable (table:string) {
+  CloseTable(table: string) {
     let bodyLogin = new FormData();
     bodyLogin.append("table", table);
     return this.http.post(this.urlService + "close_table.php", bodyLogin);
   }
-  OpenTable (table:string) {
+  OpenTable(table: string) {
     let bodyLogin = new FormData();
     bodyLogin.append("table", table);
     return this.http.post(this.urlService + "open_table.php", bodyLogin);
   }
-  UnassignTable (table:string) {
+  UnassignTable(table: string) {
     let bodyLogin = new FormData();
     bodyLogin.append("table", table);
     return this.http.post(this.urlService + "unassign_table.php", bodyLogin);
   }
-  AssignTable (table:string) {
+  AssignTable(table: string) {
     let bodyLogin = new FormData();
     bodyLogin.append("table", table);
     bodyLogin.append("id_user", sessionStorage.getItem("user_id") || "");
     return this.http.post(this.urlService + "assign_table.php", bodyLogin);
   }
-  IsDeliveryTable (table:string) {
+  IsDeliveryTable(table: string) {
     let bodyLogin = new FormData();
     bodyLogin.append("tid", table);
     return this.http.post(this.urlService + "is_delivery.php", bodyLogin);
   }
-  LoadTableRecord (table:string) {
+  LoadTableRecord(table: string) {
     let bodyLogin = new FormData();
     bodyLogin.append("table", table);
     return this.http.post(this.urlService + "table_record.php", bodyLogin);
   }
   //PRODUCTOS------------------------
-  LoadCategories (table:number) {
+  LoadCategories(table: number) {
     let bodyLogin = new FormData();
     bodyLogin.append("table", table.toString());
     return this.http.post(this.urlService + "categories.php", bodyLogin);
   }
-  LoadProducts (cat:string) {
+  LoadProducts(cat: string) {
     let bodyLogin = new FormData();
     bodyLogin.append("category", cat);
     return this.http.post(this.urlService + "products.php", bodyLogin);
   }
-  LoadProductDetail (pid:string) {
+  LoadProductDetail(pid: string) {
     let bodyLogin = new FormData();
     bodyLogin.append("pid", pid);
     return this.http.post(this.urlService + "detail_product.php", bodyLogin);
   }
-  UpdateProduct (pid:string, quantity:string, notes:string) {
+  UpdateProduct(pid: string, quantity: string, notes: string) {
     let bodyLogin = new FormData();
     bodyLogin.append("pid", pid);
     bodyLogin.append("quantity", quantity);
     bodyLogin.append("notes", notes);
     return this.http.post(this.urlService + "update_product.php", bodyLogin);
   }
-  DeleteProduct (pid:string) {
+  DeleteProduct(pid: string) {
     let bodyLogin = new FormData();
     bodyLogin.append("pid", pid);
     return this.http.post(this.urlService + "delete_product.php", bodyLogin);
   }
-  RegisterProduct (table:string, product:string, quantity:string, notes:string, accompaniment:string, price:string) {
+  RegisterProduct(table: string, product: string, quantity: string, notes: string, accompaniment: string, price: string) {
     let bodyLogin = new FormData();
     bodyLogin.append("table", table);
     bodyLogin.append("product_id", product);
@@ -1023,7 +1243,7 @@ payOrder(orderId: any, method: string) {
     bodyLogin.append("id_user", sessionStorage.getItem("user_id") || "");
     return this.http.post(this.urlService + "add_products.php", bodyLogin);
   }
-  SendProductsToKitchen (pid:string, table:string, people:string) {
+  SendProductsToKitchen(pid: string, table: string, people: string) {
     let bodyLogin = new FormData();
     bodyLogin.append("pid", pid);
     bodyLogin.append("table", table);
@@ -1034,32 +1254,32 @@ payOrder(orderId: any, method: string) {
     let bodyLogin = new FormData();
     bodyLogin.append("pid", pid);
     return this.http.post(this.urlService + "alert_product.php", bodyLogin);
-  
+
   }
   //COCINA----------------------
-  LoadKitchen (kitchen:string) {
+  LoadKitchen(kitchen: string) {
     let bodyLogin = new FormData();
     bodyLogin.append("kitchen", kitchen);
     return this.http.post(this.urlService + "load_pedidos.php", bodyLogin);
   }
-  UpdateProductStatus (pid:string, state:string) {
+  UpdateProductStatus(pid: string, state: string) {
     let bodyLogin = new FormData();
     bodyLogin.append("pid", pid);
     bodyLogin.append("state", state);
     return this.http.post(this.urlService + "update_product_status.php", bodyLogin);
   }
   //FACTURA--------------------
-  CreateInvoice (
-    table:string, 
-    total:string,
-    cash:string,
-    card:string,
-    qr:string,
-    debt:string,
-    tickets:string,
-    quantities:string,
-    subtotals:string,
-    ) {
+  CreateInvoice(
+    table: string,
+    total: string,
+    cash: string,
+    card: string,
+    qr: string,
+    debt: string,
+    tickets: string,
+    quantities: string,
+    subtotals: string,
+  ) {
     let bodyLogin = new FormData();
     bodyLogin.append("table", table);
     bodyLogin.append("total", total);
@@ -1074,7 +1294,7 @@ payOrder(orderId: any, method: string) {
     return this.http.post(this.urlService + "add_invoice.php", bodyLogin);
   }
   //CIERRE DE CAJA--------------------
-  OpenCash(floor:string) {
+  OpenCash(floor: string) {
     let bodyLogin = new FormData();
     bodyLogin.append("user_type", floor);
     bodyLogin.append("user_name", sessionStorage.getItem("user_id") || "");
@@ -1090,7 +1310,7 @@ payOrder(orderId: any, method: string) {
     bodyLogin.append("user_cash", sessionStorage.getItem("cash_id") || "");
     return this.http.post(this.urlService + "close_cash.php", bodyLogin);
   }
-  AddExtraCost(id_table:string, cost:string, description:string) {
+  AddExtraCost(id_table: string, cost: string, description: string) {
     let bodyLogin = new FormData();
     bodyLogin.append("id_table", id_table);
     bodyLogin.append("cost", cost);

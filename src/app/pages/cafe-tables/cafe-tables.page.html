@@ -1,11 +1,7 @@
-<ion-header class="ion-no-border">
-  <ion-toolbar color="light">
+<ion-content class="dashboard-bg" style="--background: #fcfaf8;">
+    <ion-toolbar color="light">
     <ion-title>Gestión de Mesas</ion-title>
   </ion-toolbar>
-</ion-header>
-
-<ion-content class="dashboard-bg" style="--background: #fcfaf8;">
-  <div class="table-container">
 
     <div class="header-actions">
       <ion-searchbar placeholder="Buscar mesa..." [(ngModel)]="filterNombre" class="custom-searchbar" mode="ios">
@@ -19,7 +15,19 @@
           </ion-select-option>
         </ion-select>
       </div>
+<ion-button
+  fill="outline"
+  color="medium"
+  (click)="limpiarTodosFiltros()">
 
+  <ion-icon
+    slot="start"
+    name="refresh-outline">
+  </ion-icon>
+
+  Limpiar
+
+</ion-button>
       <ion-button (click)="openCreateModal()" fill="solid" color="dark" shape="round">
         <ion-icon name="add-outline" slot="start"></ion-icon>
         NUEVA MESA
@@ -27,15 +35,115 @@
     </div>
 
     <ion-grid>
-      <ion-row class="table-header">
-        <ion-col size="3">Mesa</ion-col>
-        <ion-col size="3">Piso / Área</ion-col>
-        <ion-col size="2">Capacidad</ion-col>
-        <ion-col size="2">Estado Administrativo</ion-col>
-        <ion-col size="2" class="ion-text-center">Acciones</ion-col>
-      </ion-row>
+<ion-row class="table-header">
 
-      <ion-row *ngFor="let table of filteredTables" class="align-center table-row"
+  <ion-col
+    size="3"
+    class="sortable"
+    (click)="ordenar('nombre')">
+
+    Mesa
+
+    <ion-icon
+      *ngIf="sortColumn==='nombre'"
+      [name]="sortDirection==='asc'
+      ? 'arrow-up'
+      : 'arrow-down'">
+    </ion-icon>
+
+  </ion-col>
+
+  <ion-col
+    size="3"
+    class="sortable"
+    (click)="ordenar('flat_name')">
+
+    Piso / Área
+
+    <ion-icon
+      *ngIf="sortColumn==='flat_name'"
+      [name]="sortDirection==='asc'
+      ? 'arrow-up'
+      : 'arrow-down'">
+    </ion-icon>
+
+  </ion-col>
+
+  <ion-col
+    size="2"
+    class="sortable"
+    (click)="ordenar('capacidad')">
+
+    Capacidad
+
+    <ion-icon
+      *ngIf="sortColumn==='capacidad'"
+      [name]="sortDirection==='asc'
+      ? 'arrow-up'
+      : 'arrow-down'">
+    </ion-icon>
+
+  </ion-col>
+
+  <ion-col
+    size="2"
+    class="sortable"
+    (click)="ordenar('estado')">
+
+    Estado
+
+    <ion-icon
+      *ngIf="sortColumn==='estado'"
+      [name]="sortDirection==='asc'
+      ? 'arrow-up'
+      : 'arrow-down'">
+    </ion-icon>
+
+  </ion-col>
+
+  <ion-col size="2">
+
+    Acciones
+
+  </ion-col>
+
+</ion-row>
+<ion-row class="filter-row">
+
+  <ion-col size="3">
+    <input
+      type="text"
+      [(ngModel)]="filtros.nombre"
+      placeholder="Buscar mesa">
+  </ion-col>
+
+  <ion-col size="3">
+    <input
+      type="text"
+      [(ngModel)]="filtros.piso"
+      placeholder="Buscar piso">
+  </ion-col>
+
+  <ion-col size="2">
+    <input
+      type="text"
+      [(ngModel)]="filtros.capacidad"
+      placeholder="Capacidad">
+  </ion-col>
+
+  <ion-col size="2">
+    <input
+      type="text"
+      [(ngModel)]="filtros.estado"
+      placeholder="Estado">
+  </ion-col>
+
+  <ion-col size="2"></ion-col>
+
+</ion-row>
+
+
+      <ion-row *ngFor="let table of mesasPaginadas" class="align-center table-row"
         [style.opacity]="table.estado === 'Inactiva' ? '0.6' : '1'">
 
         <ion-col size="3">
@@ -71,17 +179,100 @@
     </div>
         </ion-col>
 
-        <ion-col size="2" class="actions-cell ion-text-center">
-          <ion-button fill="clear" color="primary" (click)="openCreateModal(table)">
-            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
-          </ion-button>
-        </ion-col>
+     <ion-col size="2" class="actions-cell ion-text-center">
+
+  <ion-button
+
+    fill="clear"
+
+    color="primary"
+
+    (click)="openCreateModal(table)">
+
+    <ion-icon
+
+      slot="icon-only"
+
+      name="create-outline">
+
+    </ion-icon>
+
+  </ion-button>
+
+
+  <ion-button
+
+    fill="clear"
+
+    color="danger"
+
+    (click)="confirmarEliminar(table)">
+
+    <ion-icon
+
+      slot="icon-only"
+
+      name="trash-outline">
+
+    </ion-icon>
+
+  </ion-button>
+
+</ion-col>
       </ion-row>
     </ion-grid>
+<div class="pagination-container">
 
+  <div class="page-size">
+
+    <span>Mostrar:</span>
+
+    <ion-select [(ngModel)]="itemsPorPagina">
+
+      <ion-select-option
+        *ngFor="let opcion of opcionesPagina"
+        [value]="opcion">
+
+        {{ opcion }}
+
+      </ion-select-option>
+
+    </ion-select>
+
+  </div>
+
+  <div class="page-controls">
+
+    <ion-button
+      fill="clear"
+      (click)="paginaAnterior()"
+      [disabled]="paginaActual===1">
+
+      ←
+
+    </ion-button>
+
+    <span>
+
+      Página {{ paginaActual }}
+      de {{ totalPaginas }}
+
+    </span>
+
+    <ion-button
+      fill="clear"
+      (click)="paginaSiguiente()"
+      [disabled]="paginaActual===totalPaginas">
+
+      →
+
+    </ion-button>
+
+  </div>
+
+</div>
     <div *ngIf="filteredTables.length === 0" class="ion-text-center ion-padding" style="color: #a4968a;">
       <ion-icon name="search-outline" style="font-size: 32px;"></ion-icon>
       <p><small>No se encontraron mesas configuradas.</small></p>
     </div>
-  </div>
 </ion-content>

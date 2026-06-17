@@ -1,101 +1,449 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="primary">
+
     <ion-title>
       {{ form.id_ingredients ? 'Editar Insumo' : 'Nuevo Insumo' }}
     </ion-title>
+
     <ion-buttons slot="end">
       <ion-button (click)="cerrar()">
         <ion-icon name="close-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
+
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <ion-item class="ion-margin-bottom">
-    <ion-label position="stacked">Nombre del Insumo</ion-label>
-    <ion-input [(ngModel)]="form.nombre" placeholder="Ej. Vodka Smirnoff"></ion-input>
+
+
+<ion-content class="form-content">
+
+<div class="form-container">
+
+  <!-- Nombre -->
+
+  <ion-item class="modern-item">
+
+    <ion-label position="stacked">
+
+      Nombre del Insumo
+
+    </ion-label>
+
+    <ion-input
+
+      [(ngModel)]="form.nombre"
+
+      placeholder="Ej. Vodka Smirnoff">
+
+    </ion-input>
+
   </ion-item>
 
-  <ion-item class="ion-margin-bottom">
-    <ion-label position="stacked">Tipo de Control</ion-label>
-    <ion-select [(ngModel)]="form.tipo" interface="popover" (ionChange)="onTipoChange()">
-      <ion-select-option value="normal">Normal (Sacos, Cajas, Kilos)</ion-select-option>
-      <ion-select-option value="botella">Botella (Control por Pesaje)</ion-select-option>
-    <ion-select-option value="fraccionado">
-  Fraccionado (Porciones, Cortes, Partes)
-</ion-select-option>
+
+
+  <!-- Tipo -->
+
+  <ion-item class="modern-item">
+
+    <ion-label position="stacked">
+
+      Tipo de Control
+
+    </ion-label>
+
+    <ion-select
+
+    [(ngModel)]="form.tipo"
+
+    interface="popover"
+
+    (ionChange)="onTipoChange()">
+
+      <ion-select-option value="normal">
+
+        Normal (Sacos, Cajas, Kilos)
+
+      </ion-select-option>
+
+      <ion-select-option value="botella">
+
+        Botella (Control por Pesaje)
+
+      </ion-select-option>
+
+      <ion-select-option value="fraccionado">
+
+        Fraccionado (Porciones, Cortes, Partes)
+
+      </ion-select-option>
+
     </ion-select>
+
   </ion-item>
 
-<div *ngIf="form.tipo !== 'botella' && form.tipo !== 'fraccionado'">
-    <ion-item class="ion-margin-bottom">
-      <ion-label position="stacked">Stock Actual</ion-label>
-      <ion-input type="number" [(ngModel)]="form.stock_act"></ion-input>
+
+
+  <!-- Stock -->
+
+  <ion-item
+
+  class="modern-item"
+
+  *ngIf="form.tipo !== 'botella' && form.tipo !== 'fraccionado'">
+
+      <ion-label position="stacked">
+
+        Stock Actual
+
+      </ion-label>
+
+      <ion-input
+
+      type="number"
+
+      [(ngModel)]="form.stock_act">
+
+      </ion-input>
+
+  </ion-item>
+
+
+
+  <!-- Avisos -->
+
+  <div class="info-card bottle" *ngIf="form.tipo==='botella'">
+
+    <ion-icon name="wine-outline"></ion-icon>
+
+    <div>
+
+      <h3>Modo Botella</h3>
+
+      <p>
+
+      El stock se calcula automáticamente
+
+      mediante el pesaje de envases.
+
+      </p>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="info-card fraccionado" *ngIf="form.tipo==='fraccionado'">
+
+    <ion-icon name="pizza-outline"></ion-icon>
+
+    <div>
+
+      <h3>Modo Fraccionado</h3>
+
+      <p>
+
+      El stock se controla por partes,
+
+      porciones o cortes.
+
+      </p>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- UNIDADES -->
+
+  <ng-container *ngIf="form.tipo !== 'botella' && form.tipo !== 'fraccionado'">
+
+  <div class="units-card">
+
+    <div class="unit-header">
+
+      <div class="title">
+
+        <ion-icon name="cube-outline"></ion-icon>
+
+        Unidad de Medida
+
+      </div>
+
+      <ion-button
+
+      fill="solid"
+
+      shape="round"
+
+      size="small"
+
+      (click)="showAddUnit=!showAddUnit">
+
+          <ion-icon
+
+          [name]="showAddUnit ?
+
+          'close-outline'
+
+          :
+
+          'add-outline'">
+
+          </ion-icon>
+
+      </ion-button>
+
+    </div>
+
+
+
+    <ion-item class="modern-item">
+
+      <ion-select
+
+      [(ngModel)]="form.unidad_med"
+
+      placeholder="Seleccione una unidad"
+
+      interface="popover">
+
+        <ion-select-option
+
+        *ngFor="let unidad of unidades"
+
+        [value]="unidad.abreviatura">
+
+          {{ unidad.nombre }}
+
+        </ion-select-option>
+
+      </ion-select>
+
     </ion-item>
+
+
+
+    <!-- Agregar -->
+
+    <div
+
+    class="add-unit"
+
+    *ngIf="showAddUnit">
+
+      <ion-item class="modern-item">
+
+        <ion-input
+
+        [(ngModel)]="newUnit"
+
+        placeholder="Ej. Caja">
+
+        </ion-input>
+
+      </ion-item>
+
+      <ion-button
+
+      expand="block"
+
+      shape="round"
+
+      (click)="addUnit()"
+
+      [disabled]="isSavingUnit">
+
+          <ion-spinner
+
+          *ngIf="isSavingUnit">
+
+          </ion-spinner>
+
+          <ion-icon
+
+          *ngIf="!isSavingUnit"
+
+          slot="start"
+
+          name="save-outline">
+
+          </ion-icon>
+
+          Guardar unidad
+
+      </ion-button>
+
+    </div>
+
+
+
+    <!-- Chips -->
+
+    <div class="units-list">
+
+      <div
+
+      class="unit-chip"
+
+      *ngFor="let unidad of unidades">
+
+        <span>
+
+          {{ unidad.abreviatura }}
+
+        </span>
+
+        <ion-button
+
+        fill="clear"
+
+        color="danger"
+
+        size="small"
+
+        (click)="deleteUnit(unidad.id_unidad)">
+
+          <ion-icon name="close-circle"></ion-icon>
+
+        </ion-button>
+
+      </div>
+
+    </div>
+
   </div>
 
-  <div *ngIf="form.tipo === 'botella'" class="ion-padding ion-text-center">
-    <ion-badge color="warning" mode="ios">Modo Botella Activado</ion-badge>
-    <p style="font-size: 0.8rem; color: #666; margin-top: 8px;">
-      El stock se calcula sumando el contenido neto de cada envase registrado.
-    </p>
-  </div>
-<div *ngIf="form.tipo === 'fraccionado'" class="ion-padding ion-text-center">
+  </ng-container>
 
-  <ion-badge color="tertiary" mode="ios">
-    Modo Fraccionado Activado
-  </ion-badge>
 
-  <p style="font-size: 0.8rem; color: #666; margin-top: 8px;">
-    El stock se controla por partes o porciones.
-  </p>
 
-</div>
-  <ion-item *ngIf="form.tipo !== 'botella' && form.tipo !== 'fraccionado'" class="ion-margin-bottom">
-    <ion-label position="stacked">Unidad de Medida</ion-label>
-    <ion-select [(ngModel)]="form.unidad_med" interface="popover" [disabled]="form.tipo === 'botella'">
-      <ion-select-option value="kg">Kilogramos (kg)</ion-select-option>
-      <ion-select-option value="g">Gramos (g)</ion-select-option>
-      <ion-select-option value="l">Litros (L)</ion-select-option>
-      <ion-select-option value="ml">Mililitros (ml)</ion-select-option>
-      <ion-select-option value="unidad">Unidades</ion-select-option>
-    </ion-select>
-    <ion-note slot="error" *ngIf="form.tipo === 'botella'">Obligatorio en gramos para pesaje.</ion-note>
+  <!-- Ubicación -->
+
+  <ion-item
+
+  class="modern-item"
+
+  *ngIf="form.tipo !== 'botella'">
+
+      <ion-label position="stacked">
+
+      Ubicación
+
+      </ion-label>
+
+      <ion-select
+
+      [(ngModel)]="form.location_id"
+
+      interface="popover">
+
+        <ion-select-option [value]="null">
+
+          Sin ubicación
+
+        </ion-select-option>
+
+        <ion-select-option
+
+        *ngFor="let loc of locations"
+
+        [value]="+loc.id_location">
+
+          {{ loc.nombre }}
+
+        </ion-select-option>
+
+      </ion-select>
+
   </ion-item>
 
-<ion-item class="ion-margin-bottom" *ngIf="form.tipo !== 'botella'">
-    <ion-label position="stacked">Ubicación</ion-label>
-  <ion-select [(ngModel)]="form.location_id" interface="popover">
-    <ion-select-option [value]="null">Sin ubicación</ion-select-option>
-    <ion-select-option *ngFor="let loc of locations" [value]="+loc.id_location"> 
-      {{ loc.nombre }}
-    </ion-select-option>
-  </ion-select>
-  </ion-item>
-<ion-item class="ion-margin-bottom">
-  <ion-label position="stacked">Proveedor</ion-label>
 
-  <ion-select [(ngModel)]="form.provider_id" interface="popover">
-    
-    <ion-select-option [value]="null">
-      Sin proveedor
-    </ion-select-option>
 
-    <ion-select-option 
-      *ngFor="let prov of providers" 
+  <!-- Proveedor -->
+
+  <ion-item class="modern-item">
+
+    <ion-label position="stacked">
+
+      Proveedor
+
+    </ion-label>
+
+    <ion-select
+
+    [(ngModel)]="form.provider_id"
+
+    interface="popover">
+
+      <ion-select-option [value]="null">
+
+        Sin proveedor
+
+      </ion-select-option>
+
+      <ion-select-option
+
+      *ngFor="let prov of providers"
+
       [value]="prov.id_proveedor">
 
-      {{ prov.nombre_empresa }}
+        {{ prov.nombre_empresa }}
 
-    </ion-select-option>
+      </ion-select-option>
 
-  </ion-select>
-</ion-item>
+    </ion-select>
 
-  <ion-button expand="block" (click)="guardar()" [disabled]="isSaving" class="ion-margin-top" shape="round">
-    <ion-spinner name="crescent" *ngIf="isSaving"></ion-spinner>
-    <ion-icon name="save-outline" slot="start" *ngIf="!isSaving"></ion-icon>
-    {{ isSaving ? 'Guardando...' : (form.id_ingredients ? 'Actualizar' : 'Crear Insumo') }}
+  </ion-item>
+
+
+
+  <!-- Guardar -->
+
+  <ion-button
+
+  expand="block"
+
+  shape="round"
+
+  class="save-btn"
+
+  (click)="guardar()"
+
+  [disabled]="isSaving">
+
+      <ion-spinner
+
+      *ngIf="isSaving">
+
+      </ion-spinner>
+
+      <ion-icon
+
+      *ngIf="!isSaving"
+
+      slot="start"
+
+      name="save-outline">
+
+      </ion-icon>
+
+      {{ isSaving ?
+
+      'Guardando...' :
+
+      (form.id_ingredients ?
+
+      'Actualizar'
+
+      :
+
+      'Crear Insumo') }}
+
   </ion-button>
+
+</div>
+
 </ion-content>

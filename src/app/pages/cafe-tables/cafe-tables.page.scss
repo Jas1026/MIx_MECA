@@ -300,3 +300,50 @@ $borde-suave: #e8e1d9;
     }
   }
 }
+.filter-row {
+  background: #ffffff;
+  padding: 10px 0;
+  border-bottom: 1px solid #e5e7eb;
+
+  input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    font-size: 13px;
+    background: white;
+  }
+}
+
+.sortable {
+  cursor: pointer;
+  user-select: none;
+
+  ion-icon {
+    margin-left: 6px;
+    font-size: 14px;
+  }
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: white;
+  border-top: 1px solid #ececec;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.page-size {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.page-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}

@@ -1,13 +1,14 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
-
+import { FloatingReadyOrdersComponent } from './components/floating-ready-orders/floating-ready-orders.component';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { KitchenReadyToastModule } from './components/kitchen-ready-toast/kitchen-ready-toast.module';
+import { FloatingReadyOrdersModule } from './components/floating-ready-orders/floating-ready-orders.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -16,7 +17,8 @@ import { KitchenReadyToastModule } from './components/kitchen-ready-toast/kitche
     IonicModule.forRoot(),
     HttpClientModule,
     AppRoutingModule,
-    KitchenReadyToastModule
+    KitchenReadyToastModule,
+    FloatingReadyOrdersModule
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }

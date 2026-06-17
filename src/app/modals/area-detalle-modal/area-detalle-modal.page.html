@@ -75,13 +75,35 @@
                 <ion-item *ngFor="let pedido of mesa.pedidos">
 
                   <ion-label>
-                    <h3>Pedido #{{ pedido.order_id }}</h3>
-                    <p>{{ pedido.order_date | date:'short' }}</p>
+
+                    <h3>
+
+                      Pedido #{{ pedido.order_id }}
+
+                    </h3>
+
+                    <p>
+
+                      {{ pedido.order_date | date:'short' }}
+
+                    </p>
+
                   </ion-label>
 
-                  <ion-badge color="success" slot="end">
+                  <ion-badge color="success">
+
                     Bs. {{ pedido.total_pedido }}
+
                   </ion-badge>
+
+
+                  <ion-button fill="clear" slot="end" (click)="verDetallePedido(pedido.order_id)">
+
+                    <ion-icon name="eye-outline">
+
+                    </ion-icon>
+
+                  </ion-button>
 
                 </ion-item>
 
@@ -118,7 +140,251 @@
         </ion-accordion>
 
       </ion-accordion-group>
+<ion-card
 
+*ngIf="mostrarDetalle && detallePedido"
+
+class="ion-margin-top"
+
+>
+
+<ion-card-header>
+
+<ion-card-title>
+
+📋 Pedido #{{detallePedido.orden.order_id}}
+
+</ion-card-title>
+
+</ion-card-header>
+
+<ion-card-content>
+
+
+<p>
+
+🪑 Mesa:
+
+<b>
+
+{{detallePedido.orden.mesa}}
+
+</b>
+
+</p>
+
+
+<p>
+
+🏢 Piso:
+
+<b>
+
+{{detallePedido.orden.piso}}
+
+</b>
+
+</p>
+
+
+<p>
+
+👤 Creó:
+
+<b>
+
+{{detallePedido.mesero_creador}}
+
+</b>
+
+</p>
+
+
+<p>
+
+💵 Cobró:
+
+<b>
+
+{{detallePedido.mesero_cobro||'---'}}
+
+</b>
+
+</p>
+
+
+<p>
+
+🔒 Cerró:
+
+<b>
+
+{{detallePedido.mesero_cerro||'---'}}
+
+</b>
+
+</p>
+
+
+<p>
+
+🕐
+
+{{detallePedido.orden.order_date|
+
+date:'medium'}}
+
+</p>
+
+
+
+<h2 class="ion-margin-top">
+
+🍔 Productos
+
+</h2>
+
+
+<ion-list>
+
+<ion-item
+
+*ngFor="let p of detallePedido.productos"
+
+>
+
+<ion-label>
+
+<h2>
+
+{{p.producto}}
+
+x
+
+{{p.quantity}}
+
+</h2>
+
+
+<p>
+
+Bs.
+
+{{p.total_price}}
+
+</p>
+
+
+<p>
+
+Estado:
+
+{{p.status}}
+
+</p>
+
+
+<p
+
+*ngIf="p.nombres_cocinas"
+
+>
+
+Cocina:
+
+{{p.nombres_cocinas}}
+
+</p>
+
+
+
+<div
+
+*ngIf="p.extras?.length"
+
+>
+
+<p>
+
+Extras:
+
+</p>
+
+<div
+
+*ngFor="let e of p.extras"
+
+>
+
+➕ {{e.nombre}}
+
+(
+
+{{e.adjustment_qty}}
+
+{{e.unidad_med}}
+
+)
+
+</div>
+
+</div>
+
+
+</ion-label>
+
+</ion-item>
+
+</ion-list>
+
+
+<h2 class="ion-margin-top">
+
+📝 Historial
+
+</h2>
+
+
+<ion-list>
+
+<ion-item
+
+*ngFor="let h of detallePedido.historial"
+
+>
+
+<ion-label>
+
+<h3>
+
+{{h.accion}}
+
+</h3>
+
+<p>
+
+{{h.name}}
+
+</p>
+
+<p>
+
+{{h.created_at|
+
+date:'medium'}}
+
+</p>
+
+</ion-label>
+
+</ion-item>
+
+</ion-list>
+
+
+</ion-card-content>
+
+</ion-card>
     </ion-card-content>
   </ion-card>
 

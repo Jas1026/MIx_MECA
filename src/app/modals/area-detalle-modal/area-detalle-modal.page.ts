@@ -9,7 +9,9 @@ import { ServerContentService } from '../../services/server-content.service';
 export class AreaDetalleModalPage implements OnInit {
 
   @Input() area: any;
+detallePedido:any=null;
 
+mostrarDetalle=false;
   mesas: any[] = [];
   mejorMesa: any = null;
   cargando: boolean = false;
@@ -86,5 +88,60 @@ export class AreaDetalleModalPage implements OnInit {
   close() {
     this.modalCtrl.dismiss();
   }
+  async verDetallePedido(order_id:number){
 
+const loading=
+
+await this.loadingCtrl.create({
+
+message:'Cargando pedido...'
+
+});
+
+await loading.present();
+
+
+const system=
+this.server
+
+.getOrderProducts(
+
+order_id
+
+)
+
+.subscribe({
+
+
+next:async(res:any)=>{
+
+await loading.dismiss();
+
+
+console.log(res);
+
+
+if(res.error===0){
+
+this.detallePedido=res;
+
+this.mostrarDetalle=true;
+
+}
+
+},
+
+
+error:async(err)=>{
+
+await loading.dismiss();
+
+console.log(err);
+
+}
+
+
+});
+
+}
 }

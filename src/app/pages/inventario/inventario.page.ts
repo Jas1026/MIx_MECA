@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import { ServerContentService } from 'src/app/services/server-content.service';
-import { ModalController } from '@ionic/angular';
+import {
+  ModalController,
+  ToastController,
+  AlertController
+} from '@ionic/angular';
 import { CreateIngredientComponent } from 'src/app/modals/create-ingredient/create-ingredient.component';
 import { CreateProductComponent } from 'src/app/modals/create-product/create-product.component';
 import { ViewProductDetailComponent } from 'src/app/modals/view-product-detail/view-product-detail.component';
@@ -15,6 +19,7 @@ import { FractionManagerComponent } from 'src/app/modals/fraction-manager/fracti
 })
 
 export class InventarioPage {
+  
   /* ---------------- FILTRAR INGREDIENTES ---------------- */
 filterLocation: string = '';
 locations: any[] = [];
@@ -28,6 +33,7 @@ unidadesDisponibles: string[] = [];
 subcategories: any[] = [];
 subcategoriesByCategory: any = {};
 expandedCategories: any = {};
+expandedProductGroups:any = {};
 showSubcatManager: boolean = false;
 filterNivelProducto: string = '';
 selectedCategoryForSub: any = null;
@@ -49,7 +55,7 @@ toggleCategory(catId: any) {
 }
 get filteredIngredients() {
 
-  return this.ingredients.filter(ing => {
+  let data = this.ingredients.filter(ing => {
 
     const matchNombre =
       ing.nombre.toLowerCase()
@@ -64,24 +70,48 @@ get filteredIngredients() {
         ? true
         : (ing.location_id == this.filterLocation);
 
-const matchProveedor =
-  this.filterProveedorIng === ''
-    ? true
-    : (ing.nombre_proveedor === this.filterProveedorIng);
+    const matchProveedor =
+      this.filterProveedorIng === ''
+        ? true
+        : (ing.nombre_proveedor === this.filterProveedorIng);
 
-const matchNivel =
-  this.filterNivelStock === ''
-    ? true
-    : this.getStockLevel(ing) === this.filterNivelStock;
+    const matchNivel =
+      this.filterNivelStock === ''
+        ? true
+        : this.getStockLevel(ing) === this.filterNivelStock;
 
-return (
-  matchNombre &&
-  matchUnidad &&
-  matchLocation &&
-  matchProveedor &&
-  matchNivel
-);
+    return (
+      matchNombre &&
+      matchUnidad &&
+      matchLocation &&
+      matchProveedor &&
+      matchNivel
+    );
   });
+
+  if (this.sortField) {
+
+    data.sort((a: any, b: any) => {
+
+      let A = a[this.sortField];
+      let B = b[this.sortField];
+
+      if (typeof A === 'string') {
+        A = A.toLowerCase();
+        B = B.toLowerCase();
+      }
+
+      if (A < B)
+        return this.sortDirection === 'asc' ? -1 : 1;
+
+      if (A > B)
+        return this.sortDirection === 'asc' ? 1 : -1;
+
+      return 0;
+    });
+  }
+
+  return this.paginate(data, this.pageIngredients);
 }
   /* ---------------- FILTRAR PRODUCTOS ---------------- */
 filterProducto: string = '';
@@ -116,7 +146,17 @@ ngOnInit() {
     stock: 0
   };
 
-  constructor(private server: ServerContentService,   private modalCtrl: ModalController) {}
+  constructor(
+
+  private server: ServerContentService,
+
+  private modalCtrl: ModalController,
+
+  private toastCtrl: ToastController,
+
+  private alertCtrl: AlertController
+
+) {}
 
   ionViewWillEnter() {
     this.loadIngredients();
@@ -275,35 +315,70 @@ getCategoryName(id: any) {
 }
 get filteredProducts() {
 
-  return this.products.filter(p => {
+  let data = this.products.filter(p => {
 
     const matchNombre =
-      p.nombre_producto.toLowerCase()
-      .includes(this.filterProducto.toLowerCase());
+      p.nombre_producto
+        .toLowerCase()
+        .includes(this.filterProducto.toLowerCase());
 
     const matchState =
-      (this.filterState === 'todos')
+      this.filterState === 'todos'
         ? true
-        : (p.state === this.filterState);
-const matchProveedor =
-  this.filterProveedorProd === ''
-    ? true
-    : (p.nombre_proveedor === this.filterProveedorProd);
+        : p.state === this.filterState;
 
-const matchNivel =
-  this.filterNivelProducto === ''
-    ? true
-    : this.getStockLevel(p) === this.filterNivelProducto;
+    const matchProveedor =
+      this.filterProveedorProd === ''
+        ? true
+        : p.nombre_proveedor === this.filterProveedorProd;
 
+    const matchNivel =
+      this.filterNivelProducto === ''
+        ? true
+        : this.getStockLevel(p) === this.filterNivelProducto;
+const matchCategoria =
+  this.filterCategoriaProducto === ''
+    ? true
+    : p.id_category == this.filterCategoriaProducto;
+
+const matchPrecio =
+  this.filterPrecio === ''
+    ? true
+    : p.price.toString().includes(this.filterPrecio);
 return (
   matchNombre &&
   matchState &&
   matchProveedor &&
-  matchNivel
+  matchNivel &&
+  matchCategoria &&
+  matchPrecio
 );
   });
-}
 
+  if (this.sortProductsField) {
+
+    data.sort((a: any, b: any) => {
+
+      let A = a[this.sortProductsField];
+      let B = b[this.sortProductsField];
+
+      if (typeof A === 'string') {
+        A = A.toLowerCase();
+        B = B.toLowerCase();
+      }
+
+      if (A < B)
+        return this.sortProductsDirection === 'asc' ? -1 : 1;
+
+      if (A > B)
+        return this.sortProductsDirection === 'asc' ? 1 : -1;
+
+      return 0;
+    });
+  }
+
+  return this.paginate(data, this.pageProducts);
+}
 async openCreateProductModal(product: any = null) {
   const modal = await this.modalCtrl.create({
     component: CreateProductComponent, 
@@ -333,19 +408,54 @@ async toggleProductState(product: any) {
     }
   });
 }
-// --- Getter para filtrar la tabla de Activos ---
 get filteredAssets() {
-  return this.assets.filter(a => {
-    // Filtro por nombre (minúsculas para que no importe si escribes café o Café)
-    const matchNombre = a.nombre.toLowerCase().includes(this.filterAssetNombre.toLowerCase());
-    
-    // Filtro por categoría (si está vacío muestra todo)
-    const matchCat = this.filterAssetCategoria === '' ? true : a.categoria === this.filterAssetCategoria;
-    
-    return matchNombre && matchCat;
-  });
-}
 
+  let data = this.assets.filter(a => {
+const matchEstado =
+  this.filterAssetEstado === ''
+    ? true
+    : a.estado === this.filterAssetEstado;
+
+    const matchNombre =
+      a.nombre.toLowerCase()
+      .includes(this.filterAssetNombre.toLowerCase());
+
+    const matchCat =
+      this.filterAssetCategoria === ''
+        ? true
+        : a.categoria === this.filterAssetCategoria;
+
+   return (
+  matchNombre &&
+  matchCat &&
+  matchEstado
+);
+  });
+
+  if (this.sortAssetsField) {
+
+    data.sort((a: any, b: any) => {
+
+      let A = a[this.sortAssetsField];
+      let B = b[this.sortAssetsField];
+
+      if (typeof A === 'string') {
+        A = A.toLowerCase();
+        B = B.toLowerCase();
+      }
+
+      if (A < B)
+        return this.sortAssetsDirection === 'asc' ? -1 : 1;
+
+      if (A > B)
+        return this.sortAssetsDirection === 'asc' ? 1 : -1;
+
+      return 0;
+    });
+  }
+
+  return this.paginate(data, this.pageAssets);
+}
 // --- Modifica el crearAsset para que limpie el formulario ---
 crearAsset() {
   if (!this.nuevoAsset.nombre || !this.nuevoAsset.categoria) {
@@ -643,6 +753,766 @@ getStockClass(item: any): string {
       return '';
   }
 }
+// ========================================
+// ORDENAMIENTO
+// ========================================
+
+sortField: string = '';
+sortDirection: 'asc' | 'desc' = 'asc';
+
+sortProductsField: string = '';
+sortProductsDirection: 'asc' | 'desc' = 'asc';
+
+sortAssetsField: string = '';
+sortAssetsDirection: 'asc' | 'desc' = 'asc';
+
+sort(field: string) {
+  if (this.sortField === field) {
+    this.sortDirection =
+      this.sortDirection === 'asc' ? 'desc' : 'asc';
+  } else {
+    this.sortField = field;
+    this.sortDirection = 'asc';
+  }
+}
+
+sortProducts(field: string) {
+  if (this.sortProductsField === field) {
+    this.sortProductsDirection =
+      this.sortProductsDirection === 'asc' ? 'desc' : 'asc';
+  } else {
+    this.sortProductsField = field;
+    this.sortProductsDirection = 'asc';
+  }
+}
+
+sortAssets(field: string) {
+  if (this.sortAssetsField === field) {
+    this.sortAssetsDirection =
+      this.sortAssetsDirection === 'asc' ? 'desc' : 'asc';
+  } else {
+    this.sortAssetsField = field;
+    this.sortAssetsDirection = 'asc';
+  }
+}
+// ========================================
+// PAGINACION
+// ========================================
+
+pageIngredients = 1;
+pageProducts = 1;
+pageAssets = 1;
+
+pageSize = 10;
+
+pageSizeOptions = [
+  5,
+  10,
+  20,
+  30,
+  50,
+  100
+];
+changePageSize() {
+
+  this.pageIngredients = 1;
+  this.pageProducts = 1;
+  this.pageAssets = 1;
+
+}
+
+
+paginate(array: any[], page: number) {
+  const start = (page - 1) * this.pageSize;
+  return array.slice(start, start + this.pageSize);
+}
+
+totalPages(array: any[]) {
+  return Math.ceil(array.length / this.pageSize);
+}
+clearIngredientFilters() {
+
+  this.filterNombre = '';
+  this.filterUnidad = '';
+  this.filterLocation = '';
+  this.filterProveedorIng = '';
+  this.filterNivelStock = '';
+
+  this.sortField = '';
+  this.pageIngredients = 1;
+}
+clearProductFilters() {
+
+  this.filterProducto = '';
+
+  this.filterState = 'todos';
+
+  this.filterProveedorProd = '';
+
+  this.filterNivelProducto = '';
+
+  this.filterPrecio = '';
+
+  this.filterCategoriaProducto = '';
+
+  // NUEVO
+
+  this.groupByProduct = 'none';
+
+  this.sortProductsField = '';
+
+  this.pageProducts = 1;
+   this.groupByProduct='none';
+
+}
+get groupedProductsByType() {
+
+  const grupos:any = {};
+
+  this.filteredProducts.forEach((p:any)=>{
+
+    let key = 'Todos';
+
+    switch(this.groupByProduct){
+
+      case 'category':
+
+        key =
+          this.getCategoryName(
+            p.id_category
+          );
+
+      break;
+
+      case 'subcategory':
+
+        key =
+          p.nombre_subcategoria
+          || 'Sin subcategoría';
+
+      break;
+
+    }
+
+    if(!grupos[key]){
+
+      grupos[key] = [];
+
+    }
+
+    grupos[key].push(p);
+
+  });
+
+  return grupos;
+
+}
+groupProductsByName(products:any[]) {
+
+  const grupos:any = {};
+
+  products.forEach((p:any)=>{
+
+    const palabrasIgnorar = [
+
+      'extra',
+
+      'premium',
+
+      'de',
+
+      'con',
+
+      'doble',
+
+      'clasica',
+
+      'especial'
+
+    ];
+
+    const palabras =
+
+      this.normalizeName(
+        p.nombre_producto
+      )
+
+      .split(' ')
+
+      .filter(
+        x=>
+        !palabrasIgnorar.includes(x)
+      );
+
+    const key = palabras[0];
+
+    if(!grupos[key]){
+
+      grupos[key]={
+
+        nombre:
+
+        key.charAt(0)
+        .toUpperCase()
+
+        +
+
+        key.slice(1),
+
+        items:[]
+
+      };
+
+    }
+
+    grupos[key].items.push(p);
+
+  });
+
+  return Object.values(grupos);
+
+}
+
+clearAssetFilters() {
+
+  this.filterAssetNombre = '';
+  this.filterAssetCategoria = '';
+
+  this.sortAssetsField = '';
+  this.pageAssets = 1;
+}
+filterPrecio = '';
+
+filterCategoriaProducto = '';
+
+filterAssetEstado = '';
+groupByProduct: string = 'none';
+getPaginationInfo(total: number, page: number) {
+
+  const start =
+    ((page - 1) * this.pageSize) + 1;
+
+  const end =
+    Math.min(
+      page * this.pageSize,
+      total
+    );
+
+  return {
+    start,
+    end,
+    total
+  };
+}
+async confirmarEliminarIngrediente(ing:any){
+
+const alert=await this.alertCtrl.create({
+
+header:'Eliminar ingrediente',
+
+message:`¿Deseas eliminar "${ing.nombre}"?`,
+
+buttons:[
+
+{
+text:'Cancelar',
+role:'cancel'
+},
+
+{
+text:'Eliminar',
+
+role:'destructive',
+
+handler:()=>{
+
+this.eliminarIngrediente(ing);
+
+}
+
+}
+
+]
+
+});
+
+await alert.present();
+
+}
+async confirmarEliminarProducto(prod:any){
+
+const alert=await this.alertCtrl.create({
+
+header:'Eliminar producto',
+
+message:
+
+`¿Deseas eliminar "${prod.nombre_producto}"?`,
+
+buttons:[
+
+{
+
+text:'Cancelar',
+
+role:'cancel'
+
+},
+
+{
+
+text:'Eliminar',
+
+role:'destructive',
+
+handler:()=>{
+
+this.eliminarProducto(prod);
+
+}
+
+}
+
+]
+
+});
+
+await alert.present();
+
+}
+async confirmarEliminarAsset(asset:any){
+
+const alert=await this.alertCtrl.create({
+
+header:'Eliminar asset',
+
+message:
+
+`¿Deseas eliminar "${asset.nombre}"?`,
+
+buttons:[
+
+{
+
+text:'Cancelar',
+
+role:'cancel'
+
+},
+
+{
+
+text:'Eliminar',
+
+role:'destructive',
+
+handler:()=>{
+
+this.eliminarAsset(asset);
+
+}
+
+}
+
+]
+
+});
+
+await alert.present();
+
+}
+eliminarIngrediente(item:any){
+
+  const body = new FormData();
+
+  body.append(
+    "id_ingredient",
+    item.id_ingredients
+  );
+
+  body.append(
+    "system",
+    this.server.getSystem()
+  );
+
+  this.server
+    .deleteIngredient(body)
+    .subscribe({
+
+      next:(res:any)=>{
+
+        if(res.error == 0){
+
+          this.presentToast(
+            "Ingrediente eliminado",
+            "success"
+          );
+
+          this.loadIngredients();
+
+        }else{
+
+          this.presentToast(
+            res.message,
+            "danger"
+          );
+
+        }
+
+      },
+
+      error:()=>{
+
+        this.presentToast(
+          "Error del servidor",
+          "danger"
+        );
+
+      }
+
+    });
+
+}
+eliminarProducto(item:any){
+
+  const body = new FormData();
+
+  body.append(
+    "id_product",
+    item.id_product
+  );
+
+  body.append(
+    "system",
+    this.server.getSystem()
+  );
+
+  this.server
+    .deleteProduct(body)
+    .subscribe({
+
+      next:(res:any)=>{
+
+        if(res.error == 0){
+
+          this.presentToast(
+            "Producto eliminado",
+            "success"
+          );
+
+          this.loadProducts();
+
+        }else{
+
+          this.presentToast(
+            res.message,
+            "danger"
+          );
+
+        }
+
+      },
+
+      error:()=>{
+
+        this.presentToast(
+          "Error del servidor",
+          "danger"
+        );
+
+      }
+
+    });
+
+}
+eliminarAsset(item:any){
+
+  const body = new FormData();
+
+  body.append(
+    "id_asset",
+    item.id_asset
+  );
+
+  body.append(
+    "system",
+    this.server.getSystem()
+  );
+
+  this.server
+    .deleteAsset(body)
+    .subscribe({
+
+      next:(res:any)=>{
+
+        if(res.error == 0){
+
+          this.presentToast(
+            "Asset eliminado",
+            "success"
+          );
+
+          this.loadAssets();
+
+        }else{
+
+          this.presentToast(
+            res.message,
+            "danger"
+          );
+
+        }
+
+      },
+
+      error:()=>{
+
+        this.presentToast(
+          "Error del servidor",
+          "danger"
+        );
+
+      }
+
+    });
+
+}
+async presentToast(
+  message: string,
+  color: string
+) {
+
+  const toast =
+    await this.toastCtrl.create({
+
+      message,
+
+      color,
+
+      duration: 2000,
+
+      position: 'bottom'
+
+    });
+
+  await toast.present();
+
+}
+get groupedProducts(): any[] {
+
+  const categorias:any = {};
+
+  this.filteredProducts.forEach((p:any)=>{
+
+    // -------------------------
+    // GRUPO PRINCIPAL
+    // -------------------------
+
+    let categoria='Todos';
+
+    if(this.groupByProduct=='category'){
+
+      categoria =
+        this.getCategoryName(
+          p.id_category
+        );
+
+    }
+
+else if (this.groupByProduct == 'subcategory') {
+
+  categoria =
+    p.subcategory_name
+    || 'Sin subcategoría';
+
+}
+
+
+    // -------------------------
+    // GRUPO POR NOMBRE
+    // -------------------------
+
+    const palabrasIgnorar=[
+
+      'extra',
+      'premium',
+      'de',
+      'con',
+      'doble',
+      'clasica',
+      'especial'
+
+    ];
+
+    const palabras=
+
+      this.normalizeName(
+        p.nombre_producto
+      )
+
+      .split(' ')
+
+      .filter(
+
+        x=>
+
+        !palabrasIgnorar.includes(x)
+
+      );
+
+
+    const nombreGrupo =
+
+      palabras[0]
+      || 'Otros';
+
+
+    // -------------------------
+    // CREAR CATEGORIA
+    // -------------------------
+
+    if(!categorias[categoria]){
+
+      categorias[categoria]={
+
+        categoria: categoria,
+
+        grupos:{}
+
+      };
+
+    }
+
+
+    // -------------------------
+    // CREAR SUBGRUPO
+    // -------------------------
+
+    if(
+
+      !categorias[categoria]
+
+      .grupos[nombreGrupo]
+
+    ){
+
+      categorias[categoria]
+
+      .grupos[nombreGrupo]={
+
+        nombre:
+
+        nombreGrupo
+
+          .charAt(0)
+
+          .toUpperCase()
+
+        +
+
+        nombreGrupo.slice(1),
+
+        items:[]
+
+      };
+
+    }
+
+
+    categorias[categoria]
+
+    .grupos[nombreGrupo]
+
+    .items
+
+    .push(p);
+
+  });
+
+
+  return Object.values(categorias)
+
+  .map((cat:any)=>({
+
+    categoria: cat.categoria,
+
+    grupos:
+
+      Object.values(
+
+        cat.grupos
+
+      )
+
+  }));
+
+}
+toggleProductGroup(nombre:string){
+
+  this.expandedProductGroups[nombre]
+    = !this.expandedProductGroups[nombre];
+
+}
+normalizeName(text: string): string {
+
+  return text
+    .toLowerCase()
+
+    // quitar tildes
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+
+    // quitar números
+    .replace(/\d+/g, '')
+
+    // quitar ml, l, kg, gr
+    .replace(/\b(ml|l|lt|kg|gr|g|oz)\b/g, '')
+
+    // quitar símbolos
+    .replace(/[^a-zA-Z\s]/g, '')
+
+    // espacios dobles
+    .replace(/\s+/g, ' ')
+
+    .trim();
+}
+toggleAllProductGroups() {
+
+  const hayCerrados = this.groupedProducts.some(cat =>
+    cat.grupos.some((g:any) =>
+      !this.expandedProductGroups[g.nombre]
+    )
+  );
+
+  this.groupedProducts.forEach(cat => {
+
+    cat.grupos.forEach((g:any) => {
+
+      this.expandedProductGroups[g.nombre] = hayCerrados;
+
+    });
+
+  });
+
+}
+areAllGroupsExpanded(): boolean {
+
+  if (this.groupedProducts.length === 0) {
+    return false;
+  }
+
+  return this.groupedProducts.every(cat =>
+
+    cat.grupos.every((g:any)=>
+
+      this.expandedProductGroups[g.nombre]
+
+    )
+
+  );
+
+}
+
 }
 
 

@@ -4,8 +4,10 @@
 <head>
   <meta charset="utf-8" />
   <title>Mixtura App</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; connect-src * http://localhost:*; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;"> 
-<base href="/MIAPP/" />
+  
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; connect-src * http://localhost:*; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://www.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; media-src *; img-src 'self' data: content: *;"> 
+  
+  <base href="/MIAPP/" />
 
   <meta name="color-scheme" content="dark" />
   <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -14,7 +16,6 @@
 
   <link rel="icon" type="image/png" href="assets/icon/favicon.png" />
 
-  <!-- add to homescreen for ios -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
@@ -23,6 +24,50 @@
 
 <body class="dark">
   <app-root></app-root>
+
+  <script>
+    (function() {
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          // Si Ionic o Angular intentan inyectar un aria-hidden bloqueante
+          if (mutation.type === 'attributes' && mutation.attributeName === 'aria-hidden') {
+            const target = mutation.target;
+            if (target.getAttribute('aria-hidden') === 'true') {
+              
+              const activeEl = document.activeElement;
+              // Si el elemento con foco está atrapado dentro del contenedor oculto
+              if (activeEl && target.contains(activeEl) && activeEl !== document.body) {
+                
+                // 1. Forzamos la liberación del foco al body para revivir los clics
+                activeEl.blur();
+                document.body.focus();
+                
+                // 2. Destruimos el atributo que congela la pantalla en Chromium
+                target.removeAttribute('aria-hidden');
+              }
+            }
+          }
+        });
+      });
+
+      // Escucha y analiza de forma ultra-ligera todo el árbol del DOM
+      observer.observe(document.documentElement, {
+        attributes: true,
+        subtree: true,
+        attributeFilter: ['aria-hidden']
+      });
+
+      // Corrección preventiva extra al hacer clics globales
+      document.addEventListener('click', () => {
+        const structuralContainers = document.querySelectorAll('ion-router-outlet, .ion-page-hidden, #main-panel-container');
+        structuralContainers.forEach(container => {
+          if (container.getAttribute('aria-hidden') === 'true') {
+            container.removeAttribute('aria-hidden');
+          }
+        });
+      }, { passive: true });
+    })();
+  </script>
 </body>
 
 </html>

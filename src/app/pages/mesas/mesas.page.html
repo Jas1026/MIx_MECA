@@ -1,5 +1,69 @@
+<div class="filters-container">
+
+  <!-- Buscar -->
+  <ion-searchbar
+    placeholder="Buscar mesa..."
+    [(ngModel)]="searchName"
+    (ionInput)="applyFilters()">
+  </ion-searchbar>
+
+  <!-- Capacidad -->
+  <ion-item>
+    <ion-label>Capacidad</ion-label>
+
+    <ion-select
+      [(ngModel)]="filterCapacity"
+      (ionChange)="applyFilters()">
+
+      <ion-select-option value="">
+        Todas
+      </ion-select-option>
+
+      <ion-select-option value="2">2</ion-select-option>
+      <ion-select-option value="4">4</ion-select-option>
+      <ion-select-option value="6">6</ion-select-option>
+      <ion-select-option value="8">8</ion-select-option>
+
+    </ion-select>
+
+  </ion-item>
+
+  <!-- Estado -->
+  <ion-item>
+
+    <ion-label>Estado</ion-label>
+
+    <ion-select
+      [(ngModel)]="filterStatus"
+      (ionChange)="applyFilters()">
+
+      <ion-select-option value="">
+        Todos
+      </ion-select-option>
+
+      <ion-select-option value="Libre">
+        Libre
+      </ion-select-option>
+
+      <ion-select-option value="Reservado">
+        Reservado
+      </ion-select-option>
+
+      <ion-select-option value="Pendiente">
+        Pendiente
+      </ion-select-option>
+
+      <ion-select-option value="Ready">
+        Ready
+      </ion-select-option>
+
+    </ion-select>
+
+  </ion-item>
+
+</div>
 <div class="tables-container">
-  <div class="table-card" *ngFor="let mesa of tables" 
+  <div class="table-card" *ngFor="let mesa of filteredTables"
        [ngClass]="{
          'status-libre': mesa.estado === 'Libre',
          'status-ready': mesa.estado === 'Ready',
@@ -37,7 +101,13 @@
         <span>{{ mesa.timeDisplay }} / {{ mesa.estimated_time || 0 }} min</span>
       </p>
 
-      <p class="table-subtitle">Capacidad estándar</p>
+      <p class="table-subtitle">
+
+  <ion-icon name="people-outline"></ion-icon>
+
+  {{ mesa.capacidad }} personas
+
+</p>
     </div>
 
     <div class="table-actions">

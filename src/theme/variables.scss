@@ -38,46 +38,25 @@
   --ion-border-color: #E6DDD2;
 }
 
-
-/* ================== DARK THEME ================== */
-
-@media (prefers-color-scheme: dark) {
-
-  body {
-
-    --ion-color-primary: #C89F7A;
-    --ion-color-primary-rgb: 200,159,122;
-    --ion-color-primary-contrast: #000000;
-
-    --ion-background-color: #1E1A17;
-    --ion-background-color-rgb: 30,26,23;
-
-    --ion-text-color: #F3ECE6;
-    --ion-text-color-rgb: 243,236,230;
-
-    --ion-card-background: #2A2420;
-
-    --ion-item-background: #2A2420;
-
-    --ion-border-color: #3B332D;
-  }
-
-  .ios body {
-    --ion-background-color: #1E1A17;
-    --ion-item-background: #2A2420;
-    --ion-card-background: #2A2420;
-  }
-
-  .md body {
-    --ion-background-color: #1E1A17;
-    --ion-item-background: #2A2420;
-    --ion-card-background: #2A2420;
-  }
+/* 🔴 Forzar que si Ionic mete la clase dark por error, siga usando el modo claro */
+body.dark, html.dark, [data-theme="dark"] {
+  --ion-background-color: #F6F1EB !important;
+  --ion-text-color: #4B3A2F !important;
+  --ion-card-background: #FFFFFF !important;
+  --ion-item-background: #ffffff !important;
+  --ion-border-color: #E6DDD2 !important;
+  
+  // Si tienes más componentes oscuros internos:
+  background-color: #F6F1EB !important;
+  color: #4B3A2F !important;
 }
 
+/* Forzar el contenedor del segmento e inputs en el responsive */
+ion-content {
+  --background: #F6F1EB !important;
+  background: #F6F1EB !important;
+}
 
-/* ================== GLOBAL FONT ================== */
-
-html {
-  --ion-dynamic-font: var(--ion-default-dynamic-font);
+.table-container {
+  background: #fcfaf8 !important; // Tu variable $crema-fondo
 }

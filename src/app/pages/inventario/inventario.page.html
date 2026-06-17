@@ -1,114 +1,172 @@
 <ion-content>
+  <ion-segment [(ngModel)]="segment" (ionChange)="segmentChanged()" mode="md" class="custom-segment">
 
-  <ion-segment [(ngModel)]="segment" (ionChange)="segmentChanged()" mode="md">
     <ion-segment-button value="ingredients">
+      <ion-icon name="flask-outline"></ion-icon>
       <ion-label>Ingredientes</ion-label>
     </ion-segment-button>
 
     <ion-segment-button value="products">
+      <ion-icon name="fast-food-outline"></ion-icon>
       <ion-label>Productos</ion-label>
     </ion-segment-button>
 
     <ion-segment-button value="assets">
+      <ion-icon name="cube-outline"></ion-icon>
       <ion-label>Activos</ion-label>
     </ion-segment-button>
-  </ion-segment>
 
+  </ion-segment>
   <div *ngIf="segment === 'ingredients'" class="table-container">
 
     <div class="header-actions">
-      <ion-searchbar placeholder="Buscar nombre..." [(ngModel)]="filterNombre" class="custom-searchbar">
-      </ion-searchbar>
-
-      <ion-select interface="popover" placeholder="Unidad" [(ngModel)]="filterUnidad" class="custom-select">
-        <ion-select-option value="">Todas las medidas</ion-select-option>
-        <ion-select-option *ngFor="let uni of unidadesDisponibles" [value]="uni">
-          {{ uni }}
-        </ion-select-option>
-      </ion-select>
       <ion-select interface="popover" placeholder="Ubicación" [(ngModel)]="filterLocation" class="custom-select">
 
-        <ion-select-option value="">Todas las ubicaciones</ion-select-option>
+        <ion-select-option value="">ubicaciones</ion-select-option>
 
         <ion-select-option *ngFor="let loc of locations" [value]="loc.id_location">
           {{ loc.nombre }}
         </ion-select-option>
 
       </ion-select>
-<ion-select
-  interface="popover"
-  placeholder="Proveedor"
-  [(ngModel)]="filterProveedorIng"
-  class="custom-select">
-  
-  <ion-select-option value="">
-    Todos los proveedores
-  </ion-select-option>
+      <ion-select interface="popover" placeholder="Nivel stock" [(ngModel)]="filterNivelStock" class="custom-select">
 
-<ion-select-option
-  *ngFor="let prov of proveedores"
-  [value]="prov.nombre_empresa">
+        <ion-select-option value="">
+          Niveles
+        </ion-select-option>
 
-  {{ prov.nombre_empresa }}
+        <ion-select-option value="lleno">
+          Lleno
+        </ion-select-option>
 
-</ion-select-option>
+        <ion-select-option value="medio">
+          Medio
+        </ion-select-option>
 
-</ion-select>
+        <ion-select-option value="muy_poco">
+          Muy poco
+        </ion-select-option>
 
-<ion-select
-  interface="popover"
-  placeholder="Nivel stock"
-  [(ngModel)]="filterNivelStock"
-  class="custom-select">
+        <ion-select-option value="inexistente">
+          Sin stock
+        </ion-select-option>
 
-  <ion-select-option value="">
-    Todos los niveles
-  </ion-select-option>
+      </ion-select>
+      <ion-button fill="outline" color="medium" (click)="clearIngredientFilters()">
 
-  <ion-select-option value="lleno">
-    Lleno
-  </ion-select-option>
+        <ion-icon slot="start" name="refresh-outline">
+        </ion-icon>
 
-  <ion-select-option value="medio">
-    Medio
-  </ion-select-option>
+        Limpiar
 
-  <ion-select-option value="muy_poco">
-    Muy poco
-  </ion-select-option>
-
-  <ion-select-option value="inexistente">
-    Sin stock
-  </ion-select-option>
-
-</ion-select>
+      </ion-button>
       <ion-button (click)="openCreateModal()" fill="solid" color="dark">
         <ion-icon name="add-outline" slot="start"></ion-icon>
         Añadir Nuevo
       </ion-button>
-      <ion-button (click)="openLoanModal()" fill="outline" >
+      <ion-button (click)="openLoanModal()" fill="outline">
         <ion-icon name="swap-horizontal-outline" slot="start"></ion-icon>
         Gestionar Préstamo
       </ion-button>
     </div>
     <ion-grid>
       <ion-row class="table-header">
-        <ion-col size="3">Nombre</ion-col>
-        <ion-col size="2">Stock / Gestión</ion-col>
-<ion-col size="2">Unidad</ion-col>
-<ion-col size="2">Proveedor</ion-col>
-<ion-col size="1">Acciones</ion-col>
-      </ion-row>
+        <ion-col size="3" class="sortable" (click)="sort('nombre')">
 
-    <ion-row
-  *ngFor="let ing of filteredIngredients"
-  class="align-center"
-  [ngClass]="getStockClass(ing)">
+          Nombre
+
+          <ion-icon name="swap-vertical-outline">
+          </ion-icon>
+
+        </ion-col>
+        <ion-col size="2" class="sortable" (click)="sort('unidad_med')">
+          Unidad
+          <ion-icon name="swap-vertical-outline"></ion-icon>
+        </ion-col><ion-col size="2">Unidad</ion-col>
+        <ion-col size="2" class="sortable" (click)="sort('nombre_proveedor')">
+          Proveedor
+          <ion-icon name="swap-vertical-outline"></ion-icon>
+        </ion-col>
+        <ion-col size="1">Acciones</ion-col>
+      </ion-row>
+      <ion-row class="filter-row">
+
+        <ion-col size="3">
+          <ion-input placeholder="Buscar nombre..." [(ngModel)]="filterNombre">
+          </ion-input>
+        </ion-col>
+
+        <ion-col size="2">
+
+          <ion-select [(ngModel)]="filterNivelStock">
+
+            <ion-select-option value="">
+              Todos
+            </ion-select-option>
+
+            <ion-select-option value="lleno">
+              Lleno
+            </ion-select-option>
+
+            <ion-select-option value="medio">
+              Medio
+            </ion-select-option>
+
+            <ion-select-option value="muy_poco">
+              Muy poco
+            </ion-select-option>
+
+            <ion-select-option value="inexistente">
+              Sin stock
+            </ion-select-option>
+
+          </ion-select>
+
+        </ion-col>
+
+        <ion-col size="2">
+
+          <ion-select [(ngModel)]="filterUnidad">
+
+            <ion-select-option value="">
+              Todas
+            </ion-select-option>
+
+            <ion-select-option *ngFor="let uni of unidadesDisponibles" [value]="uni">
+
+              {{uni}}
+
+            </ion-select-option>
+
+          </ion-select>
+
+        </ion-col>
+
+        <ion-col size="2">
+
+          <ion-select [(ngModel)]="filterProveedorIng">
+
+            <ion-select-option value="">
+              Todos
+            </ion-select-option>
+
+            <ion-select-option *ngFor="let prov of proveedores" [value]="prov.nombre_empresa">
+
+              {{prov.nombre_empresa}}
+
+            </ion-select-option>
+
+          </ion-select>
+
+        </ion-col>
+
+        <ion-col size="1"></ion-col>
+
+      </ion-row>
+      <ion-row *ngFor="let ing of filteredIngredients" class="align-center" [ngClass]="getStockClass(ing)">
         <ion-col size="3">
           <span class="ing-name">{{ ing.nombre }}</span>
-          <ion-badge
-  style="margin-left:8px;"
-  [color]="
+          <ion-badge style="margin-left:8px;" [color]="
     getStockLevel(ing) === 'lleno'
       ? 'success'
       : getStockLevel(ing) === 'medio'
@@ -116,9 +174,9 @@
       : 'danger'
   ">
 
-  {{ getStockLabel(ing) }}
+            {{ getStockLabel(ing) }}
 
-</ion-badge>
+          </ion-badge>
           <ion-badge *ngIf="ing.tipo === 'botella'" color="warning"
             style="font-size: 0.6rem; display: block; width: fit-content;">BOTELLA</ion-badge>
         </ion-col>
@@ -140,7 +198,7 @@
               </ion-button>
             </div>
           </ng-container>
-           <ng-container *ngIf="ing.tipo === 'fraccionado'">
+          <ng-container *ngIf="ing.tipo === 'fraccionado'">
             <div style="display: flex; align-items: center; gap: 10px;">
               <strong style="color: #2dc0d3;">{{ ing.stock_act }}</strong>
               <ion-button size="small" (click)="gestionarfracciones(ing)" color="secondary" fill="outline">
@@ -151,33 +209,97 @@
           </ng-container>
         </ion-col>
 
-     <ion-col size="2">
-  <ion-badge color="light" mode="ios">
-    {{ ing.unidad_med }}
-  </ion-badge>
-</ion-col>
+        <ion-col size="2">
+          <ion-badge color="light" mode="ios">
+            {{ ing.unidad_med }}
+          </ion-badge>
+        </ion-col>
 
-<ion-col size="2">
+        <ion-col size="2">
 
-  <small
-    style="
+          <small style="
       font-weight: 600;
       color: #444;
     ">
 
-    {{ ing.nombre_proveedor || '—' }}
+            {{ ing.nombre_proveedor || '—' }}
 
-  </small>
+          </small>
 
-</ion-col>
+        </ion-col>
 
-<ion-col size="1" class="actions-cell">
+        <ion-col size="1" class="actions-cell">
           <ion-button fill="clear" color="primary" (click)="showIngredientModal(ing)">
             <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" color="danger" (click)="confirmarEliminarIngrediente(ing)">
+
+            <ion-icon slot="icon-only" name="trash-outline">
+            </ion-icon>
+
           </ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
+    <div class="pagination">
+
+      <ion-button fill="clear" [disabled]="pageIngredients === 1" (click)="pageIngredients = pageIngredients - 1">
+
+        Anterior
+
+      </ion-button>
+
+      <span>
+
+        {{
+        getPaginationInfo(
+        ingredients.length,
+        pageIngredients
+        ).start
+        }}
+
+        -
+
+        {{
+        getPaginationInfo(
+        ingredients.length,
+        pageIngredients
+        ).end
+        }}
+
+        de
+
+        {{ ingredients.length }}
+
+      </span>
+
+      <ion-button fill="clear" [disabled]="filteredIngredients.length < pageSize"
+        (click)="pageIngredients = pageIngredients + 1">
+
+        Siguiente
+
+      </ion-button>
+
+    </div>
+    <div class="pagination-controls">
+
+      <ion-item lines="none">
+
+        <ion-label>Mostrar</ion-label>
+
+        <ion-select [(ngModel)]="pageSize" (ionChange)="changePageSize()" interface="popover">
+
+          <ion-select-option *ngFor="let size of pageSizeOptions" [value]="size">
+
+            {{ size }}
+
+          </ion-select-option>
+
+        </ion-select>
+
+      </ion-item>
+
+    </div>
   </div>
 
   <div *ngIf="segment === 'products'" class="table-container">
@@ -196,7 +318,7 @@
           </ion-col>
           <ion-col size="12" size-md="5" class="ion-text-right">
             <div class="category-buttons">
-              <ion-button expand="block" [color]="catForm.id ? 'warning' : 'dark'" (click)="saveCategory()">
+              <ion-button expand="block" [color]="catForm.id ? 'warning' : 'white'" (click)="saveCategory()">
                 <ion-icon name="save-outline" slot="start"></ion-icon>
                 {{ catForm.id ? 'Actualizar' : 'Añadir' }}
               </ion-button>
@@ -245,7 +367,7 @@
         <!-- BOTONES -->
         <ion-row>
           <ion-col size="12" class="ion-text-right">
-            <ion-button expand="block" [color]="subcatForm.id ? 'warning' : 'dark'" (click)="saveSubcategory()">
+            <ion-button expand="block" [color]="subcatForm.id ? 'warning' : 'white'" (click)="saveSubcategory()">
               <ion-icon name="save-outline" slot="start"></ion-icon>
               {{ subcatForm.id ? 'Actualizar' : 'Añadir' }}
             </ion-button>
@@ -257,101 +379,118 @@
         </ion-row>
 
         <!-- CHIPS -->
-<div class="subcategory-tree">
+        <div class="subcategory-tree">
 
-  <div *ngFor="let cat of categories" class="category-block">
+          <div *ngFor="let cat of categories" class="category-block">
 
-    <!-- HEADER CATEGORÍA -->
-    <div class="category-header" (click)="toggleCategory(cat.id)">
-      
-      <ion-icon 
-        [name]="expandedCategories[cat.id] ? 'chevron-down' : 'chevron-forward'">
-      </ion-icon>
+            <!-- HEADER CATEGORÍA -->
+            <div class="category-header" (click)="toggleCategory(cat.id)">
 
-      <span class="category-name">{{ cat.name }}</span>
+              <ion-icon [name]="expandedCategories[cat.id] ? 'chevron-down' : 'chevron-forward'">
+              </ion-icon>
 
-    </div>
+              <span class="category-name">{{ cat.name }}</span>
 
-    <!-- SUBCATEGORÍAS -->
-    <div *ngIf="expandedCategories[cat.id]" class="subcategory-list">
+            </div>
 
-      <div *ngFor="let sub of subcategoriesByCategory[cat.id]" class="subcategory-item">
+            <!-- SUBCATEGORÍAS -->
+            <div *ngIf="expandedCategories[cat.id]" class="subcategory-list">
 
-        <span (click)="editSubcategory(sub)">
-          {{ sub.name }}
-        </span>
+              <div *ngFor="let sub of subcategoriesByCategory[cat.id]" class="subcategory-item">
 
-        <ion-icon 
-          name="close-circle" 
-          color="danger"
-          (click)="deleteSubcategory(sub.id_subcategory)">
-        </ion-icon>
+                <span (click)="editSubcategory(sub)">
+                  {{ sub.name }}
+                </span>
 
-      </div>
+                <ion-icon name="close-circle" color="danger" (click)="deleteSubcategory(sub.id_subcategory)">
+                </ion-icon>
 
-    </div>
+              </div>
 
-  </div>
+            </div>
 
-</div>
+          </div>
+
+        </div>
 
       </ion-card-content>
     </ion-card>
     <div class="header-actions">
-      <ion-searchbar placeholder="Buscar producto..." [(ngModel)]="filterProducto"
-        class="custom-searchbar"></ion-searchbar>
+      <!-- FILTRO NIVEL STOCK -->
+      <ion-select [(ngModel)]="filterNivelProducto" interface="popover" class="custom-select" placeholder="Nivel stock">
 
-      <ion-select [(ngModel)]="filterState" interface="popover" class="custom-select">
-        <ion-select-option value="todos">Todos los Estados</ion-select-option>
-        <ion-select-option value="active">Solo Activos</ion-select-option>
-        <ion-select-option value="inactive">Solo Inactivos</ion-select-option>
+        <ion-select-option value="">
+          Todos los niveles
+        </ion-select-option>
+
+        <ion-select-option value="lleno">
+          Lleno
+        </ion-select-option>
+
+        <ion-select-option value="medio">
+          Medio
+        </ion-select-option>
+
+        <ion-select-option value="muy_poco">
+          Muy poco
+        </ion-select-option>
+
+        <ion-select-option value="inexistente">
+          Sin stock
+        </ion-select-option>
+
       </ion-select>
-<ion-select
-  [(ngModel)]="filterProveedorProd"
-  interface="popover"
-  class="custom-select"
-  placeholder="Proveedor">
+      <ion-select [(ngModel)]="groupByProduct" interface="popover" class="custom-select" placeholder="Agrupar por"
+        style="max-width:200px;">
 
-  <ion-select-option value="">
-    Todos los proveedores
-  </ion-select-option>
+        <ion-select-option value="none">
 
-<ion-select-option
-  *ngFor="let prov of proveedores"
-  [value]="prov.nombre_empresa">
+          Ninguno
 
-  {{ prov.nombre_empresa }}
+        </ion-select-option>
 
-</ion-select-option>
-</ion-select>
-<!-- FILTRO NIVEL STOCK -->
-<ion-select
-  [(ngModel)]="filterNivelProducto"
-  interface="popover"
-  class="custom-select"
-  placeholder="Nivel stock">
+        <ion-select-option value="category">
 
-  <ion-select-option value="">
-    Todos los niveles
-  </ion-select-option>
+          Categoría
 
-  <ion-select-option value="lleno">
-    Lleno
-  </ion-select-option>
+        </ion-select-option>
 
-  <ion-select-option value="medio">
-    Medio
-  </ion-select-option>
+        <ion-select-option value="subcategory">
 
-  <ion-select-option value="muy_poco">
-    Muy poco
-  </ion-select-option>
+          Subcategoría
 
-  <ion-select-option value="inexistente">
-    Sin stock
-  </ion-select-option>
+        </ion-select-option>
 
-</ion-select>
+      </ion-select>
+      <ion-button fill="outline" color="medium" (click)="toggleAllProductGroups()">
+
+        <ion-icon slot="start" [name]="
+      areAllGroupsExpanded()
+      ? 'contract-outline'
+      : 'expand-outline'
+    ">
+        </ion-icon>
+
+        {{
+
+        areAllGroupsExpanded()
+
+        ? 'Contraer'
+
+        : 'Expandir'
+
+        }}
+
+      </ion-button>
+      <ion-button fill="outline" color="medium" (click)="clearProductFilters()">
+
+        <ion-icon slot="start" name="refresh-outline">
+        </ion-icon>
+
+        Limpiar
+
+      </ion-button>
+
       <ion-button (click)="openCreateProductModal()" fill="solid" color="dark">
         <ion-icon name="add-outline" slot="start"></ion-icon>
         Nuevo Producto
@@ -364,88 +503,351 @@
 
     <ion-grid>
       <ion-row class="table-header">
-        <ion-col size="2">Nombre</ion-col>
-        <ion-col size="2">Precio</ion-col>
-        <ion-col size="2">Categoría</ion-col>
-        <ion-col size="2">Proveedor</ion-col>
-        <ion-col size="2">Estado</ion-col> 
+        <ion-col size="1.5" class="sortable" (click)="sortProducts('nombre_producto')">
+          Nombre
+          <ion-icon name="swap-vertical-outline">
+          </ion-icon>
+        </ion-col>
+        <ion-col size="1" class="sortable" (click)="sortProducts('price')">
+          Precio
+          <ion-icon name="swap-vertical-outline"></ion-icon>
+        </ion-col>
+        <ion-col size="2" class="sortable" (click)="sortProducts('id_category')">
+          Categoría
+          <ion-icon name="swap-vertical-outline"></ion-icon>
+        </ion-col>
+        <ion-col size="1.5">Cocina
+          <ion-icon name="swap-vertical-outline"></ion-icon>
+        </ion-col>
+        <ion-col size="2" class="sortable" (click)="sortProducts('nombre_proveedor')">
+          Proveedor
+          <ion-icon name="swap-vertical-outline"></ion-icon>
+        </ion-col>
+        <ion-col size="1.5" class="sortable" (click)="sortProducts('state')">
+          Estado
+          <ion-icon name="swap-vertical-outline"></ion-icon>
+        </ion-col>
         <ion-col size="1">Acciones</ion-col>
       </ion-row>
+      <ion-row class="filter-row">
 
-      <ion-row
-  *ngFor="let p of filteredProducts"
-  class="align-center"
-  [ngClass]="getStockClass(p)"
-  [style.opacity]="p.state === 'inactive' ? '0.5' : '1'">
-  
-       <ion-col size="2">
+        <ion-col size="1.5">
+          <ion-input placeholder="Nombre" [(ngModel)]="filterProducto">
+          </ion-input>
+        </ion-col>
 
-  <strong class="ing-name">
-    {{ p.nombre_producto }}
-  </strong>
-
-  <ion-badge
-    style="margin-left:8px;"
-    [color]="
-      getStockLevel(p) === 'lleno'
-        ? 'success'
-        : getStockLevel(p) === 'medio'
-        ? 'warning'
-        : 'danger'
-    ">
-
-    {{ getStockLabel(p) }}
-
-  </ion-badge>
-
-</ion-col>
-        <ion-col size="2">{{ p.price }} Bs</ion-col>
-       <ion-col size="2">
-  {{ getCategoryName(p.id_category) }}
-</ion-col>
-
-<ion-col size="2">
-
-  <small
-    style="
-      font-weight: 600;
-      color: #444;
-    ">
-
-    {{ p.nombre_proveedor || '—' }}
-
-  </small>
-
-</ion-col>
+        <ion-col size="1">
+          <ion-input placeholder="Precio" [(ngModel)]="filterPrecio">
+          </ion-input>
+        </ion-col>
 
         <ion-col size="2">
-          <ion-button fill="clear" [color]="p.state === 'active' ? 'success' : 'danger'"
-            (click)="toggleProductState(p)">
-            <ion-icon slot="start" [name]="p.state === 'active' ? 'checkmark-circle' : 'close-circle'"></ion-icon>
-            <small>{{ p.state === 'active' ? 'Activo' : 'Inactivo' }}</small>
-          </ion-button>
+
+          <ion-select [(ngModel)]="filterCategoriaProducto">
+
+            <ion-select-option value="">
+              Todas
+            </ion-select-option>
+
+            <ion-select-option *ngFor="let cat of categories" [value]="cat.id">
+
+              {{cat.name}}
+
+            </ion-select-option>
+
+          </ion-select>
+
         </ion-col>
 
-        <ion-col size="1" class="actions-cell">
-          <ion-button fill="clear" color="primary" (click)="openCreateProductModal(p)">
-            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
-          </ion-button>
-          <ion-button fill="clear" color="medium" (click)="verDetalle(p)">
-            <ion-icon slot="icon-only" name="eye-outline"></ion-icon>
-          </ion-button>
+        <ion-col size="1.5">
         </ion-col>
+
+        <ion-col size="2">
+
+          <ion-select [(ngModel)]="filterProveedorProd">
+
+            <ion-select-option value="">
+              Todos
+            </ion-select-option>
+
+            <ion-select-option *ngFor="let prov of proveedores" [value]="prov.nombre_empresa">
+
+              {{prov.nombre_empresa}}
+
+            </ion-select-option>
+
+          </ion-select>
+
+        </ion-col>
+
+        <ion-col size="1.5">
+
+          <ion-select [(ngModel)]="filterState">
+
+            <ion-select-option value="todos">
+              Todos
+            </ion-select-option>
+
+            <ion-select-option value="active">
+              Activos
+            </ion-select-option>
+
+            <ion-select-option value="inactive">
+              Inactivos
+            </ion-select-option>
+
+          </ion-select>
+
+        </ion-col>
+        <ion-col size="1"></ion-col>
       </ion-row>
+
+
+      <ng-container *ngFor="let categoria of groupedProducts">
+
+  <!-- MOSTRAR CATEGORIA -->
+
+  <ion-row
+
+    *ngIf="groupByProduct!='none'"
+
+    class="group-header"
+
+    style="background:#ececec;">
+
+    <ion-col size="12">
+
+      <strong>
+
+        {{ categoria.categoria }}
+
+      </strong>
+
+    </ion-col>
+
+  </ion-row>
+
+
+  <!-- SUBGRUPOS -->
+
+  <ng-container
+
+    *ngFor="let grupo of categoria.grupos">
+
+
+        <!-- HEADER DEL GRUPO -->
+
+        <ion-row class="group-header" (click)="toggleProductGroup(grupo.nombre)">
+
+          <ion-col size="12">
+
+            <ion-icon [name]="
+          expandedProductGroups[grupo.nombre]
+          ? 'chevron-down-outline'
+          : 'chevron-forward-outline'
+        ">
+
+            </ion-icon>
+
+            <strong style="margin-left:10px">
+
+              {{ grupo.nombre }}
+
+            </strong>
+
+            <ion-badge color="medium" style="margin-left:10px">
+
+              {{ grupo.items.length }}
+
+            </ion-badge>
+
+          </ion-col>
+
+        </ion-row>
+
+
+        <!-- PRODUCTOS DEL GRUPO -->
+
+        <ng-container *ngIf="expandedProductGroups[grupo.nombre]">
+
+          <ion-row *ngFor="let p of grupo.items" class="align-center" [ngClass]="getStockClass(p)" [style.opacity]="
+        p.state === 'inactive'
+        ? '0.5'
+        : '1'
+      ">
+
+            <ion-col size="1.5">
+
+              {{ p.nombre_producto }}
+
+            </ion-col>
+
+            <ion-col size="1">
+
+              {{ p.price }} Bs
+
+            </ion-col>
+
+            <ion-col size="2">
+
+              {{ getCategoryName(p.id_category) }}
+
+            </ion-col>
+
+            <ion-col size="1.5">
+
+              <ion-badge color="light">
+
+                {{ p.nombre_cocina }}
+
+              </ion-badge>
+
+            </ion-col>
+
+            <ion-col size="2">
+
+              {{ p.nombre_proveedor || '—' }}
+
+            </ion-col>
+
+            <ion-col size="2">
+
+              <ion-button fill="clear" [color]="
+            p.state==='active'
+            ? 'success'
+            : 'danger'
+          " (click)="toggleProductState(p)">
+
+                <ion-icon slot="start" [name]="
+              p.state==='active'
+              ? 'checkmark-circle'
+              : 'close-circle'
+            ">
+
+                </ion-icon>
+
+                <small>
+
+                  {{
+
+                  p.state==='active'
+
+                  ? 'Activo'
+
+                  : 'Inactivo'
+
+                  }}
+
+                </small>
+
+              </ion-button>
+
+            </ion-col>
+
+
+
+            <!-- Tus botones -->
+            <ion-col size="1" class="actions-cell">
+
+              <ion-button fill="clear" color="primary" (click)="openCreateProductModal(p)">
+
+                <ion-icon slot="icon-only" name="create-outline">
+
+                </ion-icon>
+
+              </ion-button>
+
+              <ion-button fill="clear" color="danger" (click)="confirmarEliminarProducto(p)">
+
+                <ion-icon slot="icon-only" name="trash-outline">
+
+                </ion-icon>
+
+              </ion-button>
+
+            </ion-col>
+
+
+          </ion-row>
+
+        </ng-container>
+
+      </ng-container>
+      </ng-container>
+
     </ion-grid>
+    <div class="pagination">
+
+      <ion-button fill="clear" [disabled]="pageProducts === 1" (click)="pageProducts = pageProducts - 1">
+
+        Anterior
+
+      </ion-button>
+
+      <span>
+        {{
+        getPaginationInfo(
+        products.length,
+        pageProducts
+        ).start
+        }}
+        -
+        {{
+        getPaginationInfo(
+        products.length,
+        pageProducts
+        ).end
+        }}
+        de
+        {{ products.length }}
+      </span>
+
+      <ion-button fill="clear" [disabled]="filteredProducts.length < pageSize"
+        (click)="pageProducts = pageProducts + 1">
+
+        Siguiente
+
+      </ion-button>
+
+    </div>
+    <div class="pagination-controls">
+
+      <ion-item lines="none">
+
+        <ion-label>Mostrar</ion-label>
+
+        <ion-select [(ngModel)]="pageSize" (ionChange)="changePageSize()">
+
+          <ion-select-option *ngFor="let size of pageSizeOptions" [value]="size">
+
+            {{ size }}
+
+          </ion-select-option>
+
+        </ion-select>
+
+      </ion-item>
+
+    </div>
   </div>
 
   <div *ngIf="segment === 'assets'" class="table-container">
     <div class="header-actions">
       <ion-searchbar placeholder="Buscar activo..." [(ngModel)]="filterAssetNombre"
         class="custom-searchbar"></ion-searchbar>
+
       <ion-select interface="popover" placeholder="Categoría" [(ngModel)]="filterAssetCategoria" class="custom-select">
         <ion-select-option value="">Todas</ion-select-option>
         <ion-select-option *ngFor="let cat of assetCategories" [value]="cat">{{ cat }}</ion-select-option>
       </ion-select>
+      <ion-button fill="outline" color="medium" (click)="clearAssetFilters()">
+
+        <ion-icon slot="start" name="refresh-outline">
+        </ion-icon>
+
+        Limpiar
+
+      </ion-button>
     </div>
 
     <ion-card class="ion-no-margin ion-margin-bottom" style="box-shadow: none; border: 1px solid #e8e1d9;">
@@ -467,7 +869,7 @@
           <ion-col size="2"><ion-input type="number" placeholder="Stock" [(ngModel)]="nuevoAsset.stock"
               class="stock-input" style="max-width: 100%"></ion-input></ion-col>
           <ion-col size="3">
-            <ion-button expand="block" (click)="guardarAsset()" [color]="editingAssetId ? 'warning' : 'dark'"
+            <ion-button expand="block" (click)="guardarAsset()" [color]="editingAssetId ? 'warning' : 'white'"
               style="margin: 0;">
               {{ editingAssetId ? 'Actualizar' : 'Guardar' }}
             </ion-button>
@@ -482,11 +884,77 @@
 
     <ion-grid>
       <ion-row class="table-header">
-        <ion-col size="3">Nombre</ion-col>
-        <ion-col size="3">Categoría</ion-col>
-        <ion-col size="2">Stock</ion-col>
-        <ion-col size="2">Estado</ion-col>
+        <ion-col size="3" class="sortable" (click)="sortAssets('nombre')">
+
+          Nombre
+
+          <ion-icon name="swap-vertical-outline">
+          </ion-icon>
+
+        </ion-col>
+        <ion-col size="3" class="sortable" (click)="sortAssets('categoria')">
+          Categoría
+          <ion-icon name="swap-vertical-outline"></ion-icon>
+        </ion-col>
+        <ion-col size="2" class="sortable" (click)="sortAssets('stock')">
+          Stock
+          <ion-icon name="swap-vertical-outline"></ion-icon>
+        </ion-col>
+        <ion-col size="2" class="sortable" (click)="sortAssets('estado')">
+          Estado
+          <ion-icon name="swap-vertical-outline"></ion-icon>
+        </ion-col>
         <ion-col size="2">Acciones</ion-col>
+      </ion-row>
+      <ion-row class="filter-row">
+
+        <ion-col size="3">
+          <ion-input placeholder="Nombre" [(ngModel)]="filterAssetNombre">
+          </ion-input>
+        </ion-col>
+
+        <ion-col size="3">
+
+          <ion-select [(ngModel)]="filterAssetCategoria">
+
+            <ion-select-option value="">
+              Todas
+            </ion-select-option>
+
+            <ion-select-option *ngFor="let cat of assetCategories" [value]="cat">
+
+              {{cat}}
+
+            </ion-select-option>
+
+          </ion-select>
+
+        </ion-col>
+
+        <ion-col size="2"></ion-col>
+
+        <ion-col size="2">
+
+          <ion-select [(ngModel)]="filterAssetEstado">
+
+            <ion-select-option value="">
+              Todos
+            </ion-select-option>
+
+            <ion-select-option value="Activo">
+              Activo
+            </ion-select-option>
+
+            <ion-select-option value="Inactivo">
+              Inactivo
+            </ion-select-option>
+
+          </ion-select>
+
+        </ion-col>
+
+        <ion-col size="2"></ion-col>
+
       </ion-row>
       <ion-row *ngFor="let a of filteredAssets" class="align-center"
         [style.opacity]="a.estado === 'Inactivo' ? '0.5' : '1'">
@@ -509,9 +977,67 @@
           <ion-button fill="clear" color="primary" (click)="prepararEditarAsset(a)">
             <ion-icon slot="icon-only" name="create-outline"></ion-icon>
           </ion-button>
+          <ion-button fill="clear" color="danger" (click)="confirmarEliminarAsset(a)">
+
+            <ion-icon slot="icon-only" name="trash-outline">
+            </ion-icon>
+
+          </ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
+    <div class="pagination">
+
+      <ion-button fill="clear" [disabled]="pageAssets === 1" (click)="pageAssets = pageAssets - 1">
+
+        Anterior
+
+      </ion-button>
+
+      <span>
+        {{
+        getPaginationInfo(
+        assets.length,
+        pageAssets
+        ).start
+        }}
+        -
+        {{
+        getPaginationInfo(
+        assets.length,
+        pageAssets
+        ).end
+        }}
+        de
+        {{ assets.length }}
+      </span>
+
+      <ion-button fill="clear" [disabled]="filteredAssets.length < pageSize" (click)="pageAssets = pageAssets + 1">
+
+        Siguiente
+
+      </ion-button>
+
+    </div>
+    <div class="pagination-controls">
+
+      <ion-item lines="none">
+
+        <ion-label>Mostrar</ion-label>
+
+        <ion-select [(ngModel)]="pageSize" (ionChange)="changePageSize()">
+
+          <ion-select-option *ngFor="let size of pageSizeOptions" [value]="size">
+
+            {{ size }}
+
+          </ion-select-option>
+
+        </ion-select>
+
+      </ion-item>
+
+    </div>
   </div>
 
 </ion-content>

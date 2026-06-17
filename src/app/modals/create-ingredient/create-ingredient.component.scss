@@ -1,107 +1,289 @@
-/* Paleta de colores clara y orgánica */
-$marron-cafe: #4a3f35;
-$verde-liquido: linear-gradient(180deg, #a5d6a7 0%, #81c784 100%);
-$vidrio-borde: #f1f1f1;
+$form-bg:#faf8f5;
+$item-bg:#ffffff;
 
-.bottle-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: clamp(15px, 5vw, 30px);
-  background: #ffffff;
+$marron:#4a3f35;
+
+$borde:#ece5dd;
+
+$form-shadow:0 6px 18px rgba(0,0,0,.05);
+
+
+
+.form-content{
+
+--background:#f7f4f1;
+
 }
 
-.bottle {
-  width: min(90px, 22vw); 
-  height: 220px;
-  background: rgba(245, 245, 245, 0.7);
-  border: 4px solid $vidrio-borde;
-  border-radius: 20px 20px 12px 12px;
-  position: relative;
-  margin: 10px auto;
-  overflow: hidden;
-  box-shadow: 
-    inset 6px 0 12px rgba(0,0,0,0.03),
-    0 8px 20px rgba(0,0,0,0.06);
-  backdrop-filter: blur(5px);
 
-  /* Reflejo de cristal vertical */
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 12%;
-    width: 12%;
-    height: 100%;
-    background: rgba(255,255,255,0.5);
-    z-index: 2;
-  }
+.form-container{
+
+padding:18px;
+
+max-width:700px;
+
+margin:auto;
+
 }
 
-.liquid {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  background: $verde-liquido;
-  /* Animación suave al cambiar el nivel */
-  transition: height 1s cubic-bezier(0.23, 1, 0.32, 1);
-  z-index: 1;
 
-  /* Efecto de burbujas en la superficie */
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.3);
-  }
+.modern-item{
+
+--background:#fff;
+
+--border-radius:18px;
+
+margin-bottom:16px;
+
+border:1px solid $borde;
+
+border-radius:18px;
+
+overflow:hidden;
+
+box-shadow:$form-shadow;
+
 }
 
-.percentage-text {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: $marron-cafe;
-  margin-top: 15px;
-  letter-spacing: -0.5px;
+
+.modern-item ion-label{
+
+font-weight:600;
+
+color:$marron;
+
+margin-bottom:8px;
+
 }
 
-/* Estilo para los inputs dentro del modal */
-ion-item {
-  --background: #fdfcfb;
-  --border-radius: 12px;
-  margin-bottom: 8px;
-  border: 1px solid #efeae4;
-}
-.bottle {
-  width: 80px;
-  height: 200px;
-  background: rgba(255, 255, 255, 0.4); // Fondo de la botella vacío
-  border: 3px solid #e0d7ce; // Borde color café clarito
-  border-radius: 15px 15px 8px 8px;
-  position: relative;
-  margin: 0 auto;
-  overflow: hidden; // Importante para que el líquido no se salga de las esquinas
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+
+.info-card{
+
+display:flex;
+
+align-items:center;
+
+gap:18px;
+
+padding:18px;
+
+border-radius:20px;
+
+margin-bottom:18px;
+
+box-shadow:$form-shadow;
+
+
+
+ion-icon{
+
+font-size:2rem;
+
 }
 
-.liquid {
-  position: absolute;
-  bottom: 0; // Se llena desde abajo
-  left: 0;
-  width: 100%;
-  background: linear-gradient(to top, #8da290, #a8bcab); // Verde salvia suave
-  transition: height 0.6s ease-in-out; // Animación suave al cambiar
-  
-  // Efecto de brillo sobre el líquido
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 5px;
-    background: rgba(255,255,255,0.2);
-  }
+
+
+h3{
+
+margin:0;
+
+font-weight:700;
+
+}
+
+
+
+p{
+
+margin-top:5px;
+
+font-size:.9rem;
+
+opacity:.8;
+
+}
+
+}
+
+
+.bottle{
+
+background:#fff7e8;
+
+color:#9b6b00;
+
+}
+
+
+.fraccionado{
+
+background:#f1ecff;
+
+color:#5b46a8;
+
+}
+
+
+
+.units-card{
+
+background:$item-bg;
+
+padding:18px;
+
+border-radius:22px;
+
+border:1px solid $borde;
+
+box-shadow:$form-shadow;
+
+margin-bottom:20px;
+
+}
+
+
+.unit-header{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:15px;
+
+}
+
+
+.title{
+
+display:flex;
+
+align-items:center;
+
+gap:10px;
+
+font-weight:700;
+
+font-size:1rem;
+
+color:$marron;
+
+}
+
+
+.add-unit{
+
+margin-top:15px;
+
+}
+
+
+.units-list{
+
+display:flex;
+
+flex-wrap:wrap;
+
+gap:12px;
+
+margin-top:18px;
+
+}
+
+
+.unit-chip{
+
+display:flex;
+
+align-items:center;
+
+gap:8px;
+
+background:#f7f4f1;
+
+padding:7px 12px;
+
+border-radius:30px;
+
+border:1px solid $borde;
+
+transition:.2s;
+
+
+
+span{
+
+font-weight:600;
+
+color:$marron;
+
+}
+
+
+
+&:hover{
+
+transform:translateY(-2px);
+
+box-shadow:0 4px 12px rgba(0,0,0,.08);
+
+}
+
+}
+
+
+
+.save-btn{
+
+margin-top:25px;
+
+height:52px;
+
+font-size:1rem;
+
+font-weight:700;
+
+--border-radius:20px;
+
+}
+
+
+
+@media(max-width:600px){
+
+.form-container{
+
+padding:14px;
+
+}
+
+
+
+.info-card{
+
+padding:14px;
+
+gap:12px;
+
+}
+
+
+
+.units-card{
+
+padding:14px;
+
+}
+
+
+
+.unit-chip{
+
+font-size:.9rem;
+
+padding:6px 10px;
+
+}
+
 }

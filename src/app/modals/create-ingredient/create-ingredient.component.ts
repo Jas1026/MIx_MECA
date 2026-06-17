@@ -11,8 +11,12 @@ export class CreateIngredientComponent implements OnInit {
 
   @Input() ingredient: any;
   isSaving: boolean = false;
+  unidades:any[]=[];
 locations: any[] = [];
 providers: any[] = [];
+showAddUnit = false;
+newUnit = '';
+isSavingUnit = false;
   form: any = {
     id_ingredients: null,
     nombre: '',
@@ -32,6 +36,8 @@ providers: any[] = [];
   ngOnInit() {
     this.loadLocations();
       this.loadProviders();
+        this.loadUnits();
+
   }
   loadLocations() {
   this.server.getLocations().subscribe((res: any) => {
@@ -153,4 +159,86 @@ if (this.form.tipo === 'fraccionado') {
   cerrar() {
     this.modalCtrl.dismiss();
   }
+  loadUnits(){
+
+  this.server.getUnits()
+
+  .subscribe((res:any)=>{
+
+    this.unidades=res.data;
+
+  });
+
+}
+async addUnit() {
+
+  if(!this.newUnit.trim()){
+
+    this.presentToast("Ingresa una unidad");
+
+    return;
+
+  }
+
+  this.isSavingUnit=true;
+
+  this.server.addUnit(this.newUnit)
+
+  .subscribe({
+
+    next:()=>{
+
+      this.newUnit='';
+
+      this.showAddUnit=false;
+
+      this.loadUnits();
+
+      this.presentToast("Unidad creada");
+
+      this.isSavingUnit=false;
+
+    },
+
+    error:()=>{
+
+      this.presentToast("Error");
+
+      this.isSavingUnit=false;
+
+    }
+
+  });
+
+}
+deleteUnit(id:number){
+
+  this.server.deleteUnit(id)
+
+  .subscribe({
+
+    next:()=>{
+
+      this.loadUnits();
+
+      if(this.form.unidad_med==id){
+
+        this.form.unidad_med='';
+
+      }
+
+      this.presentToast("Unidad eliminada");
+
+    },
+
+    error:()=>{
+
+      this.presentToast("No se pudo eliminar");
+
+    }
+
+  });
+
+}
+
 }

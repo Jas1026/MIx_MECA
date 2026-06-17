@@ -38,7 +38,7 @@ export class ResumenPedidoComponent implements OnInit {
 cargarDatosIniciales() {
 
   // 🔥 1. cargar items pendientes
-  this.server.getOrderDetails(this.orderId).subscribe((res: any) => {
+  this.server.getOrderProducts(this.orderId).subscribe((res: any) => {
     const data = res.data || [];
     this.itemsPendientes = [];
 
@@ -185,14 +185,19 @@ cargarDatosIniciales() {
   async confirmarTodo() {
 
   const loading = await this.loader.create({
+
     message: 'Facturando en SIAT...'
+
   });
 
   await loading.present();
 
   const payload = {
+
     order_id: this.orderId,
- formato: this.formatoImpresion,
+
+    formato: this.formatoImpresion,
+
     pagos: this.pagosTemporales.map(p => ({
 
       nit: p.nit,
@@ -202,92 +207,154 @@ cargarDatosIniciales() {
       montoTotal: p.monto,
 
       metodoPago:
-        p.metodo_pago === 'efectivo'
-          ? 1
-          : 2,
 
-      detalles: p.items_referencia.map((item: any) => ({
+      p.metodo_pago === 'efectivo'
 
-        descripcion: item.nombre_producto,
+      ? 1
 
-        precio: item.unit_val,
+      : 2,
 
-        cantidad: 1
+      detalles:
+
+      p.items_referencia.map(
+
+      (item:any)=>({
+
+        descripcion:
+
+        item.nombre_producto,
+
+        precio:
+
+        item.unit_val,
+
+        cantidad:1
 
       }))
 
     }))
+
   };
 
-  this.server.procesarFacturacionSiat(payload)
-    .subscribe({
+  this.server
 
-      next: async (res: any) => {
+  .procesarFacturacionSiat(payload)
 
-        await loading.dismiss();
+  .subscribe({
 
-        if (res.success) {
+    next: async(res:any)=>{
 
-          // 🔥 ABRIR TODAS LAS FACTURAS
-          if (res.facturas) {
+      await loading.dismiss();
 
-            res.facturas.forEach((f: any) => {
+      if(res.success){
 
-              window.open(f.pdf, '_blank');
+        if(res.facturas){
 
-            });
+          res.facturas.forEach(
 
-          }
+          (f:any)=>{
 
-          // 🔥 CERRAR MESA
-          this.server.closeOrder(this.orderId)
+            window.open(
+
+              f.pdf,
+
+              '_blank'
+
+            );
+
+          });
+
+        }
+
+        // 🔥 GUARDAR PAGO FINAL
+
+        this.guardarPagoFinalBD()
+
+        .subscribe({
+
+          next:()=>{
+
+            // 🔥 CERRAR
+
+            this.server.closeOrder(
+
+              this.orderId,
+
+              sessionStorage.getItem(
+
+                'user_id'
+
+              )
+
+            )
+
             .subscribe({
 
-              next: () => {
+              next:()=>{
 
                 this.toast.create({
-                  message: 'Mesa cerrada correctamente ✅',
-                  duration: 2000,
-                  color: 'success'
-                }).then(t => t.present());
 
-                // 🔥 CERRAR MODAL
+                  message:
+
+                  'Mesa cerrada correctamente ✅',
+
+                  duration:2000,
+
+                  color:'success'
+
+                })
+
+                .then(
+
+                t=>t.present()
+
+                );
+
                 this.modalCtrl.dismiss(true);
 
-                // 🔥 VOLVER AL PANEL
-                this.router.navigate(['/panel']);
+                this.router.navigate(
 
-              },
+                  ['/panel']
 
-              error: () => {
-
-                this.toast.create({
-                  message: 'Facturado pero no se pudo cerrar mesa ⚠️',
-                  duration: 2500,
-                  color: 'warning'
-                }).then(t => t.present());
+                );
 
               }
 
             });
 
-        }
+          }
 
-      },
-
-      error: async () => {
-
-        await loading.dismiss();
-
-        this.toast.create({
-          message: 'Error al facturar ❌',
-          duration: 2500,
-          color: 'danger'
-        }).then(t => t.present());
+        });
 
       }
 
-    });
+    },
+
+    error:async()=>{
+
+      await loading.dismiss();
+
+      this.toast.create({
+
+        message:
+
+        'Error al facturar ❌',
+
+        duration:2500,
+
+        color:'danger'
+
+      })
+
+      .then(
+
+      t=>t.present()
+
+      );
+
+    }
+
+  });
 
 }
 
@@ -302,6 +369,7 @@ guardarParcialBD() {
   const payload = {
     order_id: this.orderId,
     pagos: this.pagosTemporales.map(p => ({
+      user_id: sessionStorage.getItem('user_id'),
       nit: p.nit,
       razonSocial: p.razonSocial,
       metodo_pago: p.metodo_pago,
@@ -339,7 +407,10 @@ guardarParcialBD() {
 
 cerrarSoloMesa() {
 
-  this.server.closeOrder(this.orderId)
+  this.server.closeOrder(
+  this.orderId,
+  sessionStorage.getItem('user_id')
+)
     .subscribe({
 
       next: async () => {
@@ -376,55 +447,147 @@ cerrarSoloMesa() {
 async confirmarConRecibo() {
 
   const loading = await this.loader.create({
-    message: 'Cerrando mesa...'
+
+    message:'Cerrando mesa...'
+
   });
 
   await loading.present();
 
-  this.server.closeOrder(this.orderId)
-    .subscribe({
+  this.guardarPagoFinalBD()
 
-      next: async () => {
+  .subscribe({
 
-        await loading.dismiss();
+    next:()=>{
 
-        const toast = await this.toast.create({
-          message: 'Mesa cerrada ✅',
-          duration: 1800,
-          color: 'success'
-        });
+      this.server.closeOrder(
 
-        toast.present();
+        this.orderId,
 
-        // 🔥 cerrar modal
-        this.modalCtrl.dismiss();
+        sessionStorage.getItem(
 
-        // 🔥 abrir página de recibo bonito
-        this.router.navigate([
-          '/facturacion',
-          this.orderId
-        ]);
+          'user_id'
 
-      },
+        )
 
-      error: async () => {
+      )
 
-        await loading.dismiss();
+      .subscribe({
 
-        const toast = await this.toast.create({
-          message: 'No se pudo cerrar mesa ❌',
-          duration: 2000,
-          color: 'danger'
-        });
+        next:async()=>{
 
-        toast.present();
+          await loading.dismiss();
 
-      }
+          const toast =
 
-    });
+          await this.toast.create({
+
+            message:
+
+            'Mesa cerrada ✅',
+
+            duration:1800,
+
+            color:'success'
+
+          });
+
+          toast.present();
+
+          this.modalCtrl.dismiss();
+
+          this.router.navigate([
+
+            '/facturacion',
+
+            this.orderId
+
+          ]);
+
+        },
+
+        error:async()=>{
+
+          await loading.dismiss();
+
+          const toast =
+
+          await this.toast.create({
+
+            message:
+
+            'No se pudo cerrar mesa ❌',
+
+            duration:2000,
+
+            color:'danger'
+
+          });
+
+          toast.present();
+
+        }
+
+      });
+
+    }
+
+  });
 
 }
   cerrar() { this.modalCtrl.dismiss(); }
-  
+  guardarPagoFinalBD() {
+
+  const payload = {
+
+    order_id: this.orderId,
+
+    pagos: this.pagosTemporales.map(p => ({
+
+      user_id: sessionStorage.getItem('user_id'),
+
+      nit: p.nit,
+
+      razonSocial: p.razonSocial,
+
+      metodo_pago: p.metodo_pago,
+
+      voucher: p.voucher || '',
+
+      monto: p.monto,
+
+      detalle_ids: p.items_referencia.reduce(
+        (acc: any, item: any) => {
+
+          const id = item.detail_id;
+
+          if (!id) return acc;
+
+          acc[id] = (acc[id] || 0) + 1;
+
+          return acc;
+
+        },
+
+        {}
+      )
+
+    })),
+
+    system:
+
+      sessionStorage.getItem('sistema')
+
+      ||
+
+      'mixtura',
+
+    parcial: 0
+
+  };
+
+  return this.server.procesarMultiplesPagos(payload);
+
+}
 formatoImpresion = '80';
 }

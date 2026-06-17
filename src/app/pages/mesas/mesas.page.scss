@@ -208,3 +208,99 @@
     animation: pulse 1.5s infinite;
   }
 }
+@media (max-width: 767px) {
+
+  .tables-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); // 3 columnas fijas
+    gap: 6px;
+    padding: 6px;
+  }
+
+  .table-card {
+    aspect-ratio: 1 / 1; // 👈 Hace que sean cuadrados
+    min-height: auto !important;
+    padding: 6px !important;
+
+    border-radius: 14px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    overflow: hidden;
+
+    &:hover {
+      transform: none;
+    }
+  }
+
+  /* Ocultar botón de reservar de arriba */
+  .table-card > ion-button {
+    display: none !important;
+  }
+
+  .status-badge {
+    top: 3px;
+    right: 3px;
+
+    padding: 1px 4px;
+    font-size: 6px;
+  }
+
+  .table-icon-wrapper {
+    width: 26px;
+    height: 26px;
+    margin: 2px;
+
+    ion-icon {
+      font-size: 15px;
+    }
+  }
+
+  .table-info {
+
+    h2 {
+      font-size: 11px;
+      margin: 0;
+    }
+
+    .table-subtitle {
+      font-size: 8px;
+      margin: 0;
+    }
+  }
+
+  .timer-text {
+    font-size: 8px;
+    padding: 1px 3px;
+
+    ion-icon {
+      font-size: 9px;
+    }
+  }
+
+  .table-actions {
+
+    ion-button {
+      height: 22px !important;
+
+      font-size: 7px !important;
+
+      --padding-start: 2px;
+      --padding-end: 2px;
+
+      ion-icon {
+        font-size: 10px;
+        margin-inline-end: 1px;
+      }
+    }
+
+    .msg-ocupada {
+      font-size: 7px;
+      margin-top: 2px;
+    }
+  }
+
+}

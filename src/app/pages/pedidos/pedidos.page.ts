@@ -61,6 +61,50 @@ export class PedidosPage implements OnInit {
 get pedidosFiltrados() {
 
   let filtrados = this.pedidos.filter(p => {
+    // FILTRO BUSQUEDA MESERO
+if (
+  this.filtros.mesero &&
+  !p.mesero?.toLowerCase()
+      .includes(this.filtros.mesero.toLowerCase())
+) {
+  return false;
+}
+
+// FILTRO FECHA
+if (
+  this.filtros.order_date &&
+  !p.order_date?.toLowerCase()
+      .includes(this.filtros.order_date.toLowerCase())
+) {
+  return false;
+}
+
+// FILTRO ESTADO
+if (
+  this.filtros.status &&
+  !p.status?.toLowerCase()
+      .includes(this.filtros.status.toLowerCase())
+) {
+  return false;
+}
+
+// FILTRO TIEMPO
+if (
+  this.filtros.estimated_time &&
+  !String(p.estimated_time)
+      .includes(this.filtros.estimated_time)
+) {
+  return false;
+}
+
+// FILTRO ATRASO
+if (
+  this.filtros.delayTime &&
+  !String(p.delayTime)
+      .includes(this.filtros.delayTime)
+) {
+  return false;
+}
 
     // ===============================
     // 1️⃣ FILTRO POR MESERO
@@ -142,7 +186,33 @@ get pedidosFiltrados() {
       return delayB - delayA;
     });
   }
+if (this.sortColumn) {
 
+  filtrados.sort((a: any, b: any) => {
+
+    let valorA = a[this.sortColumn];
+    let valorB = b[this.sortColumn];
+
+    if (valorA == null) valorA = '';
+    if (valorB == null) valorB = '';
+
+    if (typeof valorA === 'string') {
+      valorA = valorA.toLowerCase();
+      valorB = valorB.toLowerCase();
+    }
+
+    if (valorA < valorB) {
+      return this.sortDirection === 'asc' ? -1 : 1;
+    }
+
+    if (valorA > valorB) {
+      return this.sortDirection === 'asc' ? 1 : -1;
+    }
+
+    return 0;
+  });
+
+}
   return filtrados;
 }
 convertDelayToSeconds(delay: string): number {
@@ -157,10 +227,29 @@ convertDelayToSeconds(delay: string): number {
   return (mins * 60) + secs;
 }
 
-  limpiarFecha() {
-    this.fechaFiltro = '';
-    this.fechaMostrada = '';
-  }
+limpiarFecha() {
+this.paginaActual = 1;
+  // filtros superiores
+  this.fechaFiltro = '';
+  this.fechaMostrada = '';
+  this.meseroSeleccionado = '';
+  this.estadoSeleccionado = '';
+  this.soloAtrasados = false;
+  this.soloMasRetrasadosPrimero = false;
+
+  // filtros excel
+  this.filtros = {
+    mesero: '',
+    order_date: '',
+    status: '',
+    estimated_time: '',
+    delayTime: ''
+  };
+
+  // ordenamiento
+  this.sortColumn = '';
+  this.sortDirection = 'asc';
+}
 
   fechaSeleccionada(event: any, modal: any) {
     const fecha = event.detail.value;
@@ -343,4 +432,71 @@ convertDelayToSeconds(delay: string): number {
 
     return actualRole === requiredRole;
   }
+  sortColumn: string = '';
+sortDirection: 'asc' | 'desc' = 'asc';
+
+filtros = {
+  mesero: '',
+  order_date: '',
+  status: '',
+  estimated_time: '',
+  delayTime: ''
+};
+ordenar(columna: string) {
+
+  if (this.sortColumn === columna) {
+
+    this.sortDirection =
+      this.sortDirection === 'asc'
+      ? 'desc'
+      : 'asc';
+
+  } else {
+
+    this.sortColumn = columna;
+    this.sortDirection = 'asc';
+
+  }
+
+}
+paginaActual = 1;
+
+itemsPorPagina = 10;
+
+opcionesPagina = [10, 25, 50, 100];
+get pedidosPaginados() {
+
+  const inicio =
+    (this.paginaActual - 1) * this.itemsPorPagina;
+
+  const fin =
+    inicio + this.itemsPorPagina;
+
+  return this.pedidosFiltrados.slice(inicio, fin);
+}
+get totalPaginas(): number {
+
+  return Math.ceil(
+    this.pedidosFiltrados.length /
+    this.itemsPorPagina
+  );
+
+}
+
+paginaAnterior() {
+
+  if (this.paginaActual > 1) {
+    this.paginaActual--;
+  }
+
+}
+
+paginaSiguiente() {
+
+  if (this.paginaActual < this.totalPaginas) {
+    this.paginaActual++;
+  }
+
+}
+
 }

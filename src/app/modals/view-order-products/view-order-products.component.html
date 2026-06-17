@@ -1,67 +1,383 @@
-<ion-header class="ion-no-border">
-  <ion-toolbar color="primary">
-    <ion-title>Pedido #{{ order_id }}</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="cerrar()">
-        <ion-icon name="close"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content class="ion-padding">
-  <div class="product-list">
-    <ion-card *ngFor="let prod of productos" [class.product-ready]="prod.status === 'ready'">
-  <ion-item lines="none">
-    <ion-badge slot="start" [color]="prod.status === 'ready' ? 'success' : 'light'">
-      {{ prod.quantity }}x
-    </ion-badge>
-    <ion-label>
-  <h2>{{ prod.producto }}</h2>
-  <p style="color: #666; font-size: 0.85em; font-weight: normal;">
-    <ion-icon name="restaurant-outline"></ion-icon> 
-    {{ prod.nombres_cocinas || 'Sin cocina asignada' }}
-  </p>
-<p *ngIf="prod.status === 'pending' || prod.status === 'preparing'" class="running">
-  <ion-icon name="time-outline"></ion-icon> {{ prod.timeDisplay }}
-</p>
-</ion-label>
-<ion-button 
-  *ngIf="prod.status !== 'ready' && prod.status !== 'canceled' && prod.status !== 'cancel'"
-  slot="end"
-  fill="clear"
-  color="warning"
-  (click)="llamarMesero(prod)"
-  [class.blink-alert]="prod.alert_status == 1">
 
-  <ion-icon name="megaphone-outline" slot="icon-only"></ion-icon>
-</ion-button>
-  </ion-item>
-  <div *ngIf="prod.pagos?.length > 0" class="pagos-producto">
+  <!-- INFO GENERAL -->
 
-  <div *ngFor="let pago of prod.pagos" 
-       class="pago-card"
-       [ngClass]="{
-         'pago-efectivo': pago.metodo_pago === 'efectivo',
-         'pago-qr': pago.metodo_pago === 'qr',
-         'pago-tarjeta': pago.metodo_pago === 'tarjeta'
-       }">
+  <ion-card class="info-card">
 
-    <div class="pago-header">
-      <span class="nombre">👤 {{ pago.razonSocial }}</span>
-      <span class="monto">Bs {{ pago.monto | number:'1.2-2' }}</span>
-    </div>
+    <ion-card-header>
 
-    <div class="pago-body">
-      <span class="nit">🪪 {{ pago.nit }}</span>
-      <span class="metodo">💳 {{ pago.metodo_pago | uppercase }}</span>
-    </div>
+      <ion-card-title>
 
-  </div>
+        📋 Pedido #{{orden.order_id}}
+
+      </ion-card-title>
+
+    </ion-card-header>
+
+    <ion-card-content>
+
+      <div class="info-grid">
+
+        <div>
+
+          <b>🪑 Mesa</b>
+
+          <p>{{orden.mesa}}</p>
+
+        </div>
+
+        <div>
+
+          <b>🏢 Piso</b>
+
+          <p>{{orden.piso}}</p>
+
+        </div>
+
+        <div>
+
+          <b>👤 Creó</b>
+
+          <p>{{orden.mesero_creador}}</p>
+
+        </div>
+
+        <div>
+
+          <b>💵 Cobró</b>
+
+          <p>{{orden.mesero_cobro || 'Sin registro'}}</p>
+
+        </div>
+
+        <div>
+
+          <b>🔒 Cerró</b>
+
+          <p>{{orden.mesero_cerro || 'Sin registro'}}</p>
+
+        </div>
+
+        <div>
+
+          <b>🕐 Fecha</b>
+
+          <p>
+
+            {{orden.order_date | date:'medium'}}
+
+          </p>
+
+        </div>
+
+      </div>
+
+    </ion-card-content>
+
+  </ion-card>
+
+
+
+  <!-- PRODUCTOS -->
+
+  <ion-card>
+
+    <ion-card-header>
+
+      <ion-card-title>
+
+        🍔 Productos
+
+      </ion-card-title>
+
+    </ion-card-header>
+
+    <ion-card-content>
+
+      <ion-card
+
+      *ngFor="let prod of productos"
+
+      class="product-card"
+
+      [class.product-ready]="prod.status==='ready'">
+
+        <ion-item lines="none">
+
+          <ion-badge
+
+          slot="start"
+
+          [color]="prod.status==='ready' ? 'success' : 'warning'">
+
+            {{prod.quantity}}x
+
+          </ion-badge>
+
+          <ion-label>
+
+            <h2>
+
+              {{prod.producto}}
+
+            </h2>
+
+            <p>
+
+              💰 Bs {{prod.total_price}}
+
+            </p>
+
+            <p>
+
+              🍳 {{prod.nombres_cocinas}}
+
+            </p>
+
+            <p>
+
+              Estado:
+
+              {{prod.status}}
+
+            </p>
+
+            <p>
+
+              Pago:
+
+              {{prod.estado_pago}}
+
+            </p>
+
+            <p *ngIf="prod.notes">
+
+              📝 {{prod.notes}}
+
+            </p>
+
+          </ion-label>
+
+        </ion-item>
+
+
+
+        <!-- EXTRAS -->
+
+        <div
+
+        *ngIf="prod.extras?.length"
+
+        class="extras">
+
+          <h4>
+
+            ➕ Extras
+
+          </h4>
+
+          <div
+
+          *ngFor="let e of prod.extras"
+
+          class="extra-item">
+
+            {{e.nombre}}
+
+            (+{{e.adjustment_qty}}
+
+            {{e.unidad_med}})
+
+          </div>
+
+        </div>
+
+
+
+        <!-- PAGOS DEL PRODUCTO -->
+
+        <div
+
+        *ngIf="prod.pagos?.length"
+
+        class="pagos-producto">
+
+          <div
+
+          *ngFor="let pago of prod.pagos"
+
+          class="pago-card"
+
+          [ngClass]="{
+
+          'pago-efectivo':
+
+          pago.metodo_pago==='efectivo',
+
+          'pago-qr':
+
+          pago.metodo_pago==='qr',
+
+          'pago-tarjeta':
+
+          pago.metodo_pago==='tarjeta'
+
+          }">
+
+            <div class="pago-header">
+
+              <span>
+
+                👤
+
+                {{pago.razon_social ||
+
+                pago.razonSocial}}
+
+              </span>
+
+              <span>
+
+                Bs
+
+                {{
+
+                pago.monto ||
+
+                pago.monto_total
+
+                }}
+
+              </span>
+
+            </div>
+
+            <div class="pago-body">
+
+              <span>
+
+                🪪
+
+                {{
+
+                pago.nit ||
+
+                pago.nit_cliente
+
+                }}
+
+              </span>
+
+              <span>
+
+                💳
+
+                {{pago.metodo_pago}}
+
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </ion-card>
+
+    </ion-card-content>
+
+  </ion-card>
+
+
+
+  <!-- HISTORIAL -->
+
+  <ion-card>
+
+    <ion-card-header>
+
+      <ion-card-title>
+
+        📝 Historial
+
+      </ion-card-title>
+
+    </ion-card-header>
+
+    <ion-card-content>
+
+      <div
+
+      *ngFor="let h of historial"
+
+      class="historial-item">
+
+        <div class="accion">
+
+          {{h.accion | uppercase}}
+
+        </div>
+
+        <div>
+
+          👤 {{h.name}}
+
+        </div>
+
+        <div>
+
+          💰 {{h.monto}}
+
+        </div>
+
+        <div>
+
+          💳 {{h.metodo_pago || '-'}}
+
+        </div>
+
+        <div>
+
+          🕐
+
+          {{h.created_at |
+
+          date:'medium'}}
+
+        </div>
+
+      </div>
+
+    </ion-card-content>
+
+  </ion-card>
+<div class="footer-actions">
+
+  <ion-button
+
+    expand="block"
+
+    color="medium"
+
+    fill="outline"
+
+    (click)="cerrar()"
+
+  >
+
+    <ion-icon
+
+      name="close-outline"
+
+      slot="start"
+
+    >
+
+    </ion-icon>
+
+    Cerrar
+
+  </ion-button>
 
 </div>
-</ion-card>
-
-  </div>
-  
 </ion-content>

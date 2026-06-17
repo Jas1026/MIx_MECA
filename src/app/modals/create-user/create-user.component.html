@@ -30,10 +30,28 @@
         <ion-input [(ngModel)]="newUser.code" type="text" placeholder="Ej: jperez01"></ion-input>
       </ion-item>
 
-      <ion-item>
-        <ion-label position="stacked">Contraseña {{ user ? '(Dejar vacío para no cambiar)' : '' }}</ion-label>
-        <ion-input [(ngModel)]="newUser.password" type="password" placeholder="****"></ion-input>
-      </ion-item>
+<ion-item>
+  <ion-label position="stacked">
+    Contraseña
+  </ion-label>
+
+  <ion-input
+    [(ngModel)]="newUser.password"
+    [type]="showPassword ? 'text' : 'password'"
+    placeholder="****">
+  </ion-input>
+
+  <ion-button
+    fill="clear"
+    slot="end"
+    (click)="togglePassword()">
+
+    <ion-icon
+      [name]="showPassword ? 'eye-off-outline' : 'eye-outline'">
+    </ion-icon>
+
+  </ion-button>
+</ion-item>
     </ion-list>
   </ion-card>
 

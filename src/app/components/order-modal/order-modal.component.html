@@ -1,214 +1,630 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="dark">
+
     <ion-title>
+
       Mesa {{ table?.nombre }}
+
     </ion-title>
+
     <ion-buttons slot="end">
+
       <ion-button (click)="close()" fill="clear">
-        <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+
+        <ion-icon name="close-outline" slot="icon-only">
+
+        </ion-icon>
+
       </ion-button>
+
     </ion-buttons>
+
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <div class="modal-container">
 
-    <div class="left-panel">
+<ion-content fullscreen>
 
-      <ng-container *ngIf="viewMode === 'categories'">
+  <!-- TABS MOVIL -->
 
-        <!-- BUSCADOR -->
-        <ion-searchbar placeholder="Buscar producto..." [(ngModel)]="searchTerm" (ionInput)="searchProducts()"
-          debounce="400">
-        </ion-searchbar>
+  <ion-segment [(ngModel)]="mobileTab" class="mobile-tabs">
 
-        <!-- RESULTADOS DE BUSQUEDA -->
-        <ion-list *ngIf="searchResults.length > 0">
-          <ion-item button *ngFor="let product of searchResults" (click)="addProduct(product)">
-            <ion-label>
-              <h3>{{ product.name }}</h3>
+    <ion-segment-button value="order">
 
-              <p>Producto encontrado</p>
-            </ion-label>
+      <ion-icon name="restaurant-outline">
 
-            <ion-badge slot="end" color="light">
-              Bs/ {{ product.price }}
-            </ion-badge>
-
-            <ion-icon name="add-circle-outline" slot="end" color="success"></ion-icon>
-          </ion-item>
-        </ion-list>
-
-        <!-- CATEGORIAS (solo si no hay busqueda) -->
-        <ng-container *ngIf="searchTerm === ''">
-
-          <ion-list-header>
-            <ion-label>Seleccione Categoría</ion-label>
-          </ion-list-header>
-
-          <ion-list class="custom-list">
-            <ion-item button detail="true" *ngFor="let cat of categories" (click)="selectCategory(cat)"
-              class="category-item">
-
-              <ion-icon name="folder-open-outline" slot="start" color="primary"></ion-icon>
-
-              <ion-label>
-                <h2>{{ cat.name }}</h2>
-              </ion-label>
-
-            </ion-item>
-          </ion-list>
-
-        </ng-container>
-
-      </ng-container>
-      <ng-container *ngIf="viewMode === 'subcategories'">
-
-  <div class="product-header">
-    <ion-button fill="clear" (click)="goBack()" size="small">
-      <ion-icon name="chevron-back-outline" slot="start"></ion-icon>
-      Volver
-    </ion-button>
-    <h2 class="category-title">{{ currentCategoryName }}</h2>
-  </div>
-
-  <ion-list class="custom-list">
-
-    <ion-item button *ngFor="let sub of subcategories" (click)="selectSubcategory(sub)">
-      
-      <ion-icon name="albums-outline" slot="start" color="secondary"></ion-icon>
+      </ion-icon>
 
       <ion-label>
-        <h2>{{ sub.name }}</h2>
+
+        Orden
+
       </ion-label>
 
-      <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+    </ion-segment-button>
 
-    </ion-item>
 
-  </ion-list>
+    <ion-segment-button value="cart">
 
-</ng-container>
-      <ng-container *ngIf="viewMode === 'products'">
-        <div class="product-header">
-          <ion-button fill="clear" (click)="goBack()" size="small">
-            <ion-icon name="chevron-back-outline" slot="start"></ion-icon>
-            Volver
-          </ion-button>
-          <h2 class="category-title">{{ currentCategoryName }}</h2>
-        </div>
+      <ion-icon name="cart-outline">
 
-        <ion-list class="custom-list">
-          <ion-item button *ngFor="let product of products" (click)="addProduct(product)">
-            <ion-label>
-              <h3>{{ product.name }}</h3>
-              <p>Precio unitario</p>
-              <p [style.color]="product.stock_disponible <= 0 ? 'red' : 'inherit'">
-                Disponible: {{ product.stock_disponible }}
-              </p>
-            </ion-label>
-            <ion-badge slot="end" color="light">
-              Bs/ {{ product.price }}
-            </ion-badge>
-            <ion-icon name="add-circle" slot="end" color="success"></ion-icon>
-          </ion-item>
-        </ion-list>
-      </ng-container>
-    </div>
+      </ion-icon>
 
-    <div class="right-panel">
-      <div class="cart-header">
-        <ion-icon name="cart-outline"></ion-icon>
-        <span>Resumen del Pedido</span>
-      </div>
+      <ion-label>
 
-      <div class="cart-items-container">
-        <ion-list *ngIf="cart.length > 0" lines="full">
-          <ion-item-sliding *ngFor="let item of cart; let i = index">
-            <ion-item>
-              <ion-label>
-                <h2 class="item-name">{{ item.name }}</h2>
+        Resumen
 
-                <div style="margin-top: 5px;">
-                  <ion-item lines="none"
-                    style="--min-height: 30px; font-size: 0.8em; --background: #f9f9f9; border-radius: 5px; margin-bottom: 3px;">
-                    <ion-icon name="create-outline" slot="start" style="font-size: 14px;"></ion-icon>
-                    <ion-input [(ngModel)]="item.notes" placeholder="Notas (ej: Sin cebolla)"></ion-input>
-                  </ion-item>
-                  <ion-item lines="none"
-                    style="--min-height: 30px; font-size: 0.8em; --background: #f9f9f9; border-radius: 5px;">
-                    <ion-icon name="restaurant-outline" slot="start" style="font-size: 14px;"></ion-icon>
-                    <ion-input [(ngModel)]="item.sides" placeholder="Acompañamiento (ej: Papas)"></ion-input>
-                  </ion-item>
-                </div>
+      </ion-label>
 
-                <p style="margin-top: 8px;">Cantidad: <strong>{{ item.quantity }}</strong></p>
-              </ion-label>
+    </ion-segment-button>
+
+  </ion-segment>
 
 
 
+  <div class="modal-container">
+
+    <!-- IZQUIERDA -->
+
+    <div class="left-panel" [class.hidden-mobile]="mobileTab=='cart'">
 
 
-            </ion-item>
 
-            <!-- PRECIO + TOGGLE -->
-            <div slot="end" style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+      <!-- CATEGORIAS -->
 
-              <!-- Precio editable -->
-              <div style="display:flex; align-items:center; gap:4px;">
-                <span style="font-size:0.8rem; color:#666;">Bs/</span>
+      <ng-container *ngIf="viewMode=='categories'">
 
-                <ion-input type="number" [(ngModel)]="item.price" [readonly]="!item.isPriceEditable"
-                  style="width:80px; text-align:right; font-weight:bold;">
-                </ion-input>
+
+        <!-- BUSCADOR -->
+
+        <ion-searchbar placeholder="Buscar producto..." [(ngModel)]="searchTerm" (ionInput)="searchProducts()"
+          debounce="400">
+
+        </ion-searchbar>
+
+        <!-- RESULTADOS SUBCATEGORIAS -->
+
+        <div *ngIf="subcategoryResults.length>0" class="search-section">
+
+          <h5>
+
+            Subcategorías
+
+          </h5>
+
+
+
+          <div class="subcategory-grid">
+
+
+
+            <div class="sub-box" *ngFor="let sub of subcategoryResults" (click)="selectSubcategory(sub)">
+
+
+
+              <div class="sub-name">
+
+                {{sub.name}}
+
               </div>
 
-              <!-- Toggle pequeño -->
-              <div style="display:flex; align-items:center; gap:4px;">
-                <ion-icon name="cash-outline" size="small" [color]="item.isPriceEditable ? 'warning' : 'medium'">
+
+
+              <div class="sub-badge">
+
+                {{sub.totalProducts || 0}}
+
+              </div>
+
+
+
+            </div>
+
+
+
+          </div>
+
+        </div>
+
+        <!-- RESULTADOS -->
+<!-- RESULTADOS PRODUCTOS -->
+
+<div
+*ngIf="searchResults.length>0"
+class="search-section">
+
+  <h5>
+
+    Productos
+
+  </h5>
+
+  <div class="products-grid">
+
+    <div
+
+    class="product-card"
+
+    *ngFor="let product of searchResults"
+
+    (click)="addProduct(product)">
+
+      <div class="product-info">
+
+        <h3>
+
+          {{product.name}}
+
+        </h3>
+
+        <p
+
+        class="stock"
+
+        [ngClass]="{
+
+        'low-stock':
+
+        product.stock_disponible<=3
+
+        }">
+
+          📦
+
+          {{product.stock_disponible}}
+
+        </p>
+
+      </div>
+
+
+      <div class="product-right">
+
+        <div class="product-price">
+
+          Bs {{product.price}}
+
+        </div>
+
+        <ion-button
+
+        fill="solid"
+
+        size="small"
+
+        color="success">
+
+          <ion-icon
+
+          name="add-outline">
+
+          </ion-icon>
+
+        </ion-button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+        <!-- CATEGORIAS -->
+
+        <ng-container *ngIf="searchTerm==''">
+
+          <div class="categories-container">
+
+
+            <div class="category-card" *ngFor="let cat of categories">
+
+
+              <div class="category-header">
+
+                <div>
+
+                  <h2>
+
+                    {{cat.name}}
+
+                  </h2>
+
+                  <small>
+
+                    {{cat.subcategories?.length || 0}}
+
+                    subcategorías
+
+                  </small>
+
+                </div>
+
+
+                <ion-icon name="folder-open-outline">
+
                 </ion-icon>
 
-                <ion-toggle [(ngModel)]="item.isPriceEditable" color="warning" style="transform: scale(0.6);">
-                </ion-toggle>
+              </div>
+
+
+
+              <div class="subcategory-grid">
+
+
+                <div class="sub-box" *ngFor="let sub of cat.subcategories" (click)="selectSubcategory(sub)">
+
+
+
+                  <div class="sub-name">
+
+                    {{sub.name}}
+
+                  </div>
+
+
+
+                  <div class="sub-count">
+
+                    {{sub.totalProducts || 0}}
+
+                  </div>
+
+
+                </div>
+
               </div>
 
             </div>
-            <ion-buttons slot="end">
-              <ion-button color="danger" (click)="removeProduct(item)">
-                <ion-icon name="remove-circle-outline"></ion-icon>
-              </ion-button>
-              <ion-badge color="light">{{ item.quantity }}</ion-badge>
-              <ion-button color="success" (click)="addProduct(item)">
-                <ion-icon name="add-circle-outline"></ion-icon>
-              </ion-button>
-            </ion-buttons>
-            <ion-item-options side="end">
-              <ion-item-option color="danger" (click)="deleteFromCart(item)">
-                <ion-icon name="trash" slot="icon-only"></ion-icon>
-              </ion-item-option>
-            </ion-item-options>
-          </ion-item-sliding>
-        </ion-list>
 
-        <div *ngIf="cart.length === 0" class="empty-cart">
-          <ion-icon name="basket-outline"></ion-icon>
-          <p>Aún no has añadido productos</p>
+          </div>
+
+        </ng-container>
+
+
+      </ng-container>
+
+
+
+
+
+      <!-- PRODUCTOS -->
+
+
+      <ng-container *ngIf="viewMode=='products'">
+
+
+        <div class="product-header">
+
+
+          <ion-button fill="clear" (click)="goBack()">
+
+            <ion-icon name="chevron-back-outline" slot="start">
+
+            </ion-icon>
+
+            Volver
+
+          </ion-button>
+
+
+          <h2>
+
+            {{currentCategoryName}}
+
+          </h2>
+
         </div>
-      </div>
 
-      <div class="cart-footer">
-        <div class="total-row">
-          <span>Total a pagar</span>
-          <span class="total-amount">Bs/ {{ getTotal() }}</span>
+
+
+
+        <div class="products-grid">
+
+
+          <div class="product-card" *ngFor="let product of products" (click)="addProduct(product)">
+
+
+
+            <div class="product-info">
+
+              <h3>
+
+                {{product.name}}
+
+              </h3>
+
+
+              <p class="stock" [ngClass]="{
+
+'low-stock':
+
+product.stock_disponible<=3
+
+}">
+
+                📦
+
+                {{product.stock_disponible}}
+
+                disponibles
+
+              </p>
+
+            </div>
+
+
+            <div class="product-right">
+
+
+              <div class="product-price">
+
+                Bs {{product.price}}
+
+              </div>
+
+
+              <ion-button fill="solid" size="small" color="success">
+
+                <ion-icon name="add-outline">
+
+                </ion-icon>
+
+              </ion-button>
+
+            </div>
+
+
+          </div>
+
         </div>
 
-        <ion-button expand="block" color="success" shape="round" [disabled]="cart.length === 0" (click)="confirmOrder()"
-          class="confirm-btn">
-          Confirmar Pedido
-        </ion-button>
-      </div>
+      </ng-container>
+
+
     </div>
 
+
+
+
+
+
+    <!-- DERECHA -->
+
+
+
+    <div class="right-panel" [class.hidden-mobile]="mobileTab=='order'">
+
+
+      <div class="cart-header">
+
+        <ion-icon name="cart-outline">
+
+        </ion-icon>
+
+        Resumen del pedido
+
+      </div>
+
+
+
+
+
+      <div class="cart-items-container">
+
+
+        <ng-container *ngIf="cart.length>0">
+
+
+
+          <div class="cart-card" *ngFor="let item of cart">
+
+
+
+            <div class="cart-top">
+
+              <div>
+
+                <h3>
+
+                  {{item.name}}
+
+                </h3>
+
+                <small>
+
+                  Bs {{item.price}}
+
+                </small>
+
+              </div>
+
+
+
+              <div class="price-edit">
+
+
+                <ion-icon name="cash-outline" [color]="
+
+                  item.isPriceEditable
+
+                  ?
+
+                  'warning'
+
+                  :
+
+                  'medium'
+
+                  ">
+
+                </ion-icon>
+
+
+
+                <ion-toggle [(ngModel)]="item.isPriceEditable" color="warning">
+
+                </ion-toggle>
+
+              </div>
+
+            </div>
+
+
+
+            <ion-textarea class="cart-textarea" autoGrow="true" rows="2" placeholder="Notas" [(ngModel)]="item.notes">
+
+            </ion-textarea>
+
+
+            <ion-textarea class="cart-textarea" autoGrow="true" rows="2" placeholder="Acompañamiento"
+              [(ngModel)]="item.sides">
+
+            </ion-textarea>
+
+
+
+
+            <div class="price-input">
+
+              Bs
+
+              <ion-input type="number" [(ngModel)]="item.price" [readonly]="!item.isPriceEditable">
+
+              </ion-input>
+
+            </div>
+
+
+
+
+
+            <div class="quantity-controls">
+
+
+
+              <ion-button fill="clear" color="danger" (click)="removeProduct(item)">
+
+                <ion-icon name="remove-circle-outline">
+
+                </ion-icon>
+
+              </ion-button>
+
+
+
+              <span>
+
+                {{item.quantity}}
+
+              </span>
+
+
+
+              <ion-button fill="clear" color="success" (click)="addProduct(item)">
+
+                <ion-icon name="add-circle-outline">
+
+                </ion-icon>
+
+              </ion-button>
+
+
+
+
+              <ion-button fill="clear" color="danger" (click)="deleteFromCart(item)">
+
+
+                <ion-icon name="trash-outline">
+
+                </ion-icon>
+
+              </ion-button>
+
+            </div>
+
+
+
+          </div>
+
+        </ng-container>
+
+
+
+
+
+
+        <div *ngIf="cart.length===0" class="empty-cart">
+
+
+          <ion-icon name="basket-outline">
+
+          </ion-icon>
+
+
+          <h3>
+
+            Aún no hay productos
+
+          </h3>
+
+
+          <p>
+
+            Agrega productos para comenzar
+
+          </p>
+
+        </div>
+
+      </div>
+
+
+
+
+
+
+      <div class="cart-footer">
+
+
+        <div class="total-row">
+
+
+          <span>
+
+            Total
+
+          </span>
+
+
+          <span class="total-amount">
+
+            Bs {{getTotal()}}
+
+          </span>
+
+        </div>
+
+
+
+        <ion-button expand="block" color="success" shape="round" class="confirm-btn" [disabled]="cart.length===0"
+          (click)="confirmOrder()">
+
+
+          Confirmar Pedido
+
+        </ion-button>
+
+      </div>
+
+
+
+    </div>
+
+
+
   </div>
+
 </ion-content>

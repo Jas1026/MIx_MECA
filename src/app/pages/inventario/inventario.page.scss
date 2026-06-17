@@ -380,3 +380,233 @@ ion-chip {
   background: rgba(52, 199, 89, 0.10);
   border-left: 4px solid #34c759;
 }
+.custom-segment {
+  background: #f8f5f1;
+  border-radius: 18px;
+  padding: 6px;
+  margin: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+
+  ion-segment-button {
+    --background: transparent;
+    --background-checked: #ffffff;
+    --color: #8b7d6b;
+    --color-checked: #4a3f35;
+
+    --border-radius: 14px;
+
+    min-height: 58px;
+
+    font-weight: 600;
+    letter-spacing: 0.2px;
+
+    transition: all 0.25s ease;
+
+    ion-icon {
+      font-size: 1.1rem;
+      margin-bottom: 3px;
+    }
+
+    ion-label {
+      font-size: 0.9rem;
+    }
+
+    &::part(indicator) {
+      display: none;
+    }
+  }
+
+  .segment-button-checked {
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+    transform: translateY(-1px);
+  }
+}
+.sortable {
+  cursor: pointer;
+  user-select: none;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  ion-icon {
+    font-size: 14px;
+  }
+
+  &:hover {
+    color: #8d7a6b;
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+
+  margin-top: 20px;
+
+  span {
+    font-weight: 600;
+    color: #4a3f35;
+  }
+}
+.filter-row {
+  background: #fafafa;
+  border-bottom: 1px solid #ddd;
+}
+
+.filter-row ion-input,
+.filter-row ion-select {
+  font-size: 13px;
+  width: 100%;
+}
+
+.table-header {
+  font-weight: 500;
+  background: #f4f4f4;
+  border-bottom: 2px solid #ddd;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-top: 15px;
+  padding: 12px;
+
+  background: white;
+
+  border-top: 1px solid #ddd;
+}
+/* --- RESPONSIVE DESIGN FORZADO A MODO CLARO --- */
+
+@media (max-width: 768px) {
+  .header-actions {
+    flex-direction: column;
+    align-items: stretch;
+
+    .custom-searchbar, .filter-wrapper, ion-button {
+      flex: none;
+      width: 100%;
+    }
+  }
+
+  // Ocultamos el encabezado original en móvil
+  .table-header {
+    display: none;
+  }
+
+  .table-container {
+    padding: 10px;
+    border: none;
+    background: transparent; // Deja ver el fondo crema o blanco asignado
+    box-shadow: none;
+  }
+
+  // Transformamos cada fila en una tarjeta limpia
+  .align-center {
+    flex-direction: column;
+    align-items: flex-start;
+    background: #ffffff !important; // Forzamos fondo blanco puro para la tarjeta
+    color: $marron-texto !important; // Forzamos texto marrón oscuro
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid $borde-suave;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+    position: relative;
+
+    ion-col {
+      width: 100% !important;
+      max-width: 100% !important;
+      padding: 6px 0;
+      justify-content: flex-start;
+      color: $marron-texto !important; // Asegura que los textos internos no se vuelvan blancos
+    }
+
+    .ing-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: $marron-texto;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    // Esquina superior derecha para los botones
+    .actions-cell {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: auto !important;
+      background: transparent !important;
+      border: none !important;
+    }
+
+    // Corregimos los textos "Login: " o indicadores para móviles
+    ion-col[size="2"]:not(.actions-cell):before {
+      content: attr(data-label) " "; // Es mejor usar atributos dinámicos o un texto gris claro
+      font-size: 0.8rem;
+      color: #8b7d6b; // Un tono café suave en lugar de gris genérico
+      font-weight: bold;
+      margin-right: 5px;
+    }
+  }
+}
+/* --- AJUSTES EXCLUSIVOS PARA LA TABLA DE PRODUCTOS --- */
+
+// Reducir la cabecera de la tabla de productos
+.table-header.headers-productos {
+  ion-col {
+    font-size: 0.70rem; // Un poco más pequeña y sutil que la estándar (0.75rem)
+    padding: 10px 6px;  // Reducimos el padding para compactarla
+    letter-spacing: 0.3px;
+  }
+}
+
+// Reducir y estilizar el contenido de las filas de productos (Modo Computadora)
+.row-producto {
+  ion-col {
+    font-size: 0.82rem !important; // Letra de los datos más compacta y elegante
+    padding: 8px 6px !important;   // Celdas menos altas para ver más registros de un vistazo
+  }
+
+  // Nombre principal del producto
+  .ing-name {
+    font-size: 0.95rem !important; // Más pequeño que el original (1.1rem)
+    font-weight: 600 !important;
+  }
+  
+  // El texto del Alias o subtítulo gris
+  small {
+    font-size: 0.72rem !important;
+  }
+
+  // El badge o etiqueta donde sale la Cocina asignada
+  ion-badge {
+    font-size: 0.72rem !important;
+    padding: 4px 8px !important;
+  }
+
+  // Hacer las cajas de los inputs de stock un poco más estilizadas acorde al tamaño
+  .stock-cell {
+    .stock-input {
+      font-size: 0.8rem !important;
+      height: 34px !important; // Bajó de 38px
+      max-width: 65px !important;
+    }
+    .btn-save {
+      height: 34px !important; // Bajó de 38px
+      width: 34px !important;
+    }
+  }
+
+  // Reducir el tamaño de los botones de acción (Editar / Eliminar)
+  .actions-cell {
+    ion-button {
+      height: 34px !important; // Bajó de 38px
+      font-size: 1rem !important; // Icono sutilmente menor
+    }
+  }
+}

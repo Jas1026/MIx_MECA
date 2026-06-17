@@ -192,3 +192,143 @@ ion-button {
     }
   }
 }
+.sortable {
+  cursor: pointer;
+  user-select: none;
+
+  ion-icon {
+    margin-left: 5px;
+    vertical-align: middle;
+  }
+}
+
+.filter-row {
+
+  th {
+    background: white;
+    padding: 8px;
+  }
+
+  input {
+
+    width: 100%;
+    border: 1px solid #dbeafe;
+    border-radius: 8px;
+
+    padding: 8px;
+
+    font-size: 12px;
+
+    outline: none;
+
+    &:focus {
+      border-color: #3b82f6;
+    }
+  }
+}
+.mixtura-table {
+
+  thead {
+
+    tr:first-child th {
+
+      background: #f8fafc;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+
+      font-weight: 700;
+
+      transition: .2s;
+
+      &:hover {
+        background: #e2e8f0;
+      }
+    }
+  }
+
+  tbody tr {
+
+    transition: .2s;
+
+    &:hover {
+
+      background: #f8fafc;
+
+      transform: scale(1.002);
+    }
+  }
+}
+.filter-row {
+
+  th {
+    background: #f8fafc;
+    padding: 10px;
+  }
+
+  input {
+
+    width: 100%;
+
+    padding: 10px 12px;
+
+    border-radius: 10px;
+
+    border: 1px solid #cbd5e1;
+
+    background: white;
+
+    transition: .2s;
+
+    font-size: 12px;
+
+    &:focus {
+
+      border-color: #0ea5e9;
+
+      box-shadow: 0 0 0 3px rgba(14,165,233,.15);
+
+      outline: none;
+    }
+  }
+}
+.pagination-container {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: 15px 20px;
+
+  border-top: 1px solid #e2e8f0;
+
+  background: #fafafa;
+
+  flex-wrap: wrap;
+
+  gap: 15px;
+}
+
+.page-size {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  font-size: 13px;
+}
+
+.page-controls {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  font-weight: 600;
+}

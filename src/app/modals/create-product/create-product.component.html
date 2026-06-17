@@ -1,241 +1,244 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar color="primary">
+  <ion-toolbar color="primary" class="custom-toolbar">
     <ion-title>{{ product ? 'Editar' : 'Nuevo' }} Producto</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="dismiss()">
-        <ion-icon name="close"></ion-icon>
+      <ion-button (click)="dismiss()" class="close-btn">
+        <ion-icon name="close-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding" style="--background: #f8f9fa;">
-  <ion-card class="ion-no-margin" style="border-radius: 12px; box-shadow: none; border: 1px solid #e0e0e0;">
-    <ion-list lines="full">
+<ion-content class="main-content">
+  <div class="form-container">
+    
+    <ion-card class="main-card">
+      <ion-card-header>
+        <ion-card-title>Información General</ion-card-title>
+      </ion-card-header>
 
-      <ion-row>
-        <ion-col size="12" size-md="7">
-          <ion-item>
-            <ion-label position="stacked">Nombre del Producto</ion-label>
-
-            <ion-input [(ngModel)]="newProduct.nombre_producto" type="text"
-              placeholder="Ej: Hamburguesa Especial"></ion-input>
-          </ion-item>
-        </ion-col>
-        <ion-col size="12" size-md="4">
-          <ion-item>
-            <ion-label position="stacked">
-              Tipo de Producto
-            </ion-label>
-            <ion-select [(ngModel)]="newProduct.tipo_producto" (ionChange)="onTipoProductoChange()">
-              <ion-select-option value="elaborado">
-                🍳 Elaborado
-              </ion-select-option>
-
-              <ion-select-option value="final">
-                🥤 Final
-              </ion-select-option>
-
-            </ion-select>
-          </ion-item>
-      
-        </ion-col>
-            
-            <ion-col size="10" *ngIf="newProduct.tipo_producto === 'final'">
-
-              <ion-item>
-
-                <ion-label position="stacked">
-                  Crear desde ingrediente
-                </ion-label>
-
-                <ion-select placeholder="Elegir ingrediente" (ionChange)="onIngredientBaseSelected($event)">
-
-                  <ion-select-option *ngFor="let ing of allIngredients" [value]="ing">
-
-                    {{ ing.nombre }}
-
-                  </ion-select-option>
-
-                </ion-select>
-
+      <ion-card-content>
+        <ion-grid class="ion-no-padding">
+          <ion-row>
+            <ion-col size="12" size-md="7">
+              <ion-item lines="none" class="custom-item">
+                <ion-label position="stacked">Nombre del Producto</ion-label>
+                <ion-input [(ngModel)]="newProduct.nombre_producto" type="text" placeholder="Ej: Hamburguesa Especial"></ion-input>
               </ion-item>
-
             </ion-col>
-        
-        <ion-col size="12" size-md="5" *ngIf="newProduct.tipo_producto === 'elaborado'">
-          <ion-item>
-            <ion-label position="stacked">Alias (Cocina)</ion-label>
-            <ion-input [(ngModel)]="newProduct.alias" type="text" placeholder="Ej: HB Especial"></ion-input>
-          </ion-item>
-        </ion-col>
-      </ion-row>
 
-      <ion-row>
-        <ion-col size="4">
-          <ion-item>
-            <ion-label position="stacked">Precio (Bs)</ion-label>
-            <ion-input [(ngModel)]="newProduct.price" type="number" placeholder="0.00"></ion-input>
-          </ion-item>
-        </ion-col>
-        <ion-col size="4" *ngIf="newProduct.tipo_producto === 'elaborado'">
-          <ion-item>
-            <ion-label position="stacked">Categoría</ion-label>
-            <ion-select [(ngModel)]="newProduct.id_category" (ionChange)="onCategoryChange()" placeholder="Elegir"
-              interface="action-sheet" header="Seleccionar Categoría">
-              <ion-select-option *ngFor="let cat of categories" [value]="cat.id">
-                {{cat.name}}
-              </ion-select-option>
-            </ion-select>
-          </ion-item>
-        </ion-col>
-        <ion-col size="12" size-md="6">
-          <ion-item>
-            <ion-label position="stacked">Proveedor</ion-label>
+            <ion-col size="12" size-md="5">
+              <ion-item lines="none" class="custom-item">
+                <ion-label position="stacked">Tipo de Producto</ion-label>
+                <ion-select [(ngModel)]="newProduct.tipo_producto" (ionChange)="onTipoProductoChange()" interface="popover">
+                  <ion-select-option value="elaborado">🍳 Elaborado</ion-select-option>
+                  <ion-select-option value="final">🥤 Final</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+          </ion-row>
 
-            <ion-select [(ngModel)]="newProduct.proveedor_id" placeholder="Seleccionar proveedor">
+          <ion-row>
+            <ion-col size="12" *ngIf="newProduct.tipo_producto === 'final'">
+              <ion-item lines="none" class="custom-item highlight-item">
+                <ion-label position="stacked">Crear desde ingrediente</ion-label>
+                <ion-select placeholder="Elegir ingrediente" (ionChange)="onIngredientBaseSelected($event)" interface="floating">
+                  <ion-select-option *ngFor="let ing of allIngredients" [value]="ing">
+                    {{ ing.nombre }}
+                  </ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
 
-              <ion-select-option [value]="null">
-                Sin proveedor
-              </ion-select-option>
+          <ion-col size="12">
+  <ion-item lines="none" class="custom-item alias-item mega-alias">
+    <ion-label position="stacked">Alias (Pantalla de Cocina) 🍳</ion-label>
+    <ion-input [(ngModel)]="newProduct.alias" type="text" placeholder="EJ: HB ESPECIAL CON QUESO Y TOCINO"></ion-input>
+  </ion-item>
+</ion-col>
+          </ion-row>
 
-              <ion-select-option *ngFor="let prov of providers" [value]="prov.id_proveedor">
+          <ion-row>
+            <ion-col size="12" size-sm="4">
+              <ion-item lines="none" class="custom-item">
+                <ion-label position="stacked">Precio (Bs)</ion-label>
+                <ion-input [(ngModel)]="newProduct.price" type="number" placeholder="0.00"></ion-input>
+              </ion-item>
+            </ion-col>
 
-                {{ prov.nombre_empresa }}
+            <ion-col size="12" size-sm="4" *ngIf="newProduct.tipo_producto === 'elaborado'">
+              <ion-item lines="none" class="custom-item">
+                <ion-label position="stacked">Categoría</ion-label>
+                <ion-select [(ngModel)]="newProduct.id_category" (ionChange)="onCategoryChange()" placeholder="Elegir" interface="action-sheet" header="Seleccionar Categoría">
+                  <ion-select-option *ngFor="let cat of categories" [value]="cat.id">{{cat.name}}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
 
-              </ion-select-option>
+            <ion-col size="12" size-sm="4" *ngIf="newProduct.tipo_producto === 'elaborado'">
+              <ion-item lines="none" class="custom-item">
+                <ion-label position="stacked">Subcategoría</ion-label>
+                <ion-select [(ngModel)]="newProduct.id_subcategory" placeholder="Elegir" interface="popover">
+                  <ion-select-option *ngFor="let sub of subcategories" [value]="sub.id_subcategory">{{sub.name}}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+          </ion-row>
 
-            </ion-select>
-          </ion-item>
-        </ion-col>
-        <ion-col size="4" *ngIf="newProduct.tipo_producto === 'elaborado'">
-          <ion-item>
-            <ion-label position="stacked">Subcategoría</ion-label>
-            <ion-select [(ngModel)]="newProduct.id_subcategory" placeholder="Elegir">
+          <ion-row>
+            <ion-col size="12" size-md="8">
+              <ion-item lines="none" class="custom-item">
+                <ion-label position="stacked">Proveedor</ion-label>
+                <ion-select [(ngModel)]="newProduct.proveedor_id" placeholder="Seleccionar proveedor" interface="popover">
+                  <ion-select-option [value]="null">Sin proveedor</ion-select-option>
+                  <ion-select-option *ngFor="let prov of providers" [value]="prov.id_proveedor">
+                    {{ prov.nombre_empresa }}
+                  </ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
 
-              <ion-select-option *ngFor="let sub of subcategories" [value]="sub.id_subcategory">
-                {{sub.name}}
-              </ion-select-option>
+            <ion-col size="12" size-md="4" *ngIf="newProduct.tipo_producto === 'elaborado'">
+              <ion-item lines="none" class="custom-item">
+                <ion-label position="stacked">Min. Prep</ion-label>
+                <ion-input [(ngModel)]="newProduct.time_prep" type="number" placeholder="Minutos"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
 
-            </ion-select>
-          </ion-item>
-        </ion-col>
-        <ion-col size="12" size-md="6">
-        </ion-col>
-        <ion-row>
-          <ion-col size="4" *ngIf="newProduct.tipo_producto === 'elaborado'">
-            <ion-item>
-              <ion-label position="stacked">Congelado</ion-label>
-              <ion-input [(ngModel)]="newProduct.stock_congelado" type="number"></ion-input>
-            </ion-item>
-          </ion-col>
-          <ion-col size="4">
-            <ion-item>
-              <ion-label position="stacked">Disponible</ion-label>
-              <ion-input [(ngModel)]="newProduct.stock_disponible" type="number"></ion-input>
-            </ion-item>
-          </ion-col>
-          <ion-col size="4">
-            <ion-item>
-              <ion-label position="stacked">Mínimo 🚨</ion-label>
-              <ion-input [(ngModel)]="newProduct.stock_minimo" type="number" placeholder="Alerta"></ion-input>
-            </ion-item>
-          </ion-col>
-        </ion-row>
-        <ion-col size="4" *ngIf="newProduct.tipo_producto === 'elaborado'">
-          <ion-item>
-            <ion-label position="stacked">Min. Prep</ion-label>
-            <ion-input [(ngModel)]="newProduct.time_prep" type="number"></ion-input>
-          </ion-item>
-        </ion-col>
-      </ion-row>
+          <ion-row class="stock-base-row">
+            <ion-col size="4" *ngIf="newProduct.tipo_producto === 'elaborado'">
+              <ion-item lines="none" class="custom-item stock-input">
+                <ion-label position="stacked">Congelado</ion-label>
+                <ion-input [(ngModel)]="newProduct.stock_congelado" type="number" placeholder="0"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="4">
+              <ion-item lines="none" class="custom-item stock-input">
+                <ion-label position="stacked">Disponible</ion-label>
+                <ion-input [(ngModel)]="newProduct.stock_disponible" type="number" placeholder="0"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="4">
+              <ion-item lines="none" class="custom-item stock-input danger-stock">
+                <ion-label position="stacked">Mínimo 🚨</ion-label>
+                <ion-input [(ngModel)]="newProduct.stock_minimo" type="number" placeholder="Alerta"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
 
-      <ion-item *ngIf="newProduct.tipo_producto === 'elaborado'">
-        <ion-label position="stacked">
-          Cocina(s) Destino <span style="color: red;">*</span>
-        </ion-label>
-        <ion-select [(ngModel)]="cocinasSeleccionadas" multiple="true" placeholder="Seleccionar áreas">
-          <ion-select-option *ngFor="let k of allKitchens" [value]="k.id">{{k.nombre || k.name}}</ion-select-option>
-        </ion-select>
-      </ion-item>
-    </ion-list>
-  </ion-card>
-  <h3>Stock por Ubicación</h3>
+          <ion-row *ngIf="newProduct.tipo_producto === 'elaborado'">
+            <ion-col size="12">
+              <ion-item lines="none" class="custom-item instruction-item">
+                <ion-label position="stacked">
+                  Cocina(s) Destino <span class="required">*</span>
+                </ion-label>
+                <ion-select [(ngModel)]="cocinasSeleccionadas" multiple="true" placeholder="Seleccionar áreas a donde se enviará el pedido" interface="action-sheet">
+                  <ion-select-option *ngFor="let k of allKitchens" [value]="k.id">{{k.nombre || k.name}}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+          </ion-row>
 
-  <div *ngFor="let s of stocks; let i = index">
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
 
-    <ion-item>
-      <ion-select [(ngModel)]="s.location_id" placeholder="Ubicación">
-        <ion-select-option *ngFor="let loc of locations" [value]="loc.id_location">
-          {{ loc.nombre }}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
+    <div class="section-header">
+      <h3>📍 Stock por Ubicación</h3>
+      <ion-button fill="clear" size="small" class="add-section-btn" (click)="addStock()">
+        <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+        Agregar ubicación
+      </ion-button>
+    </div>
 
-    <ion-item>
-      <ion-input type="number" [(ngModel)]="s.stock_disponible" placeholder="Disponible">Disponible:</ion-input>
-    </ion-item>
+    <div class="dynamic-list">
+      <div class="empty-state" *ngIf="stocks.length === 0">
+        <p>No hay ubicaciones específicas asignadas todavía.</p>
+      </div>
 
-    <ion-item>
-      <ion-input type="number" [(ngModel)]="s.stock_congelado" placeholder="Congelado">Congelado:</ion-input>
-    </ion-item>
+      <div class="location-card" *ngFor="let s of stocks; let i = index">
+        <ion-grid class="ion-no-padding">
+          <ion-row class="ion-align-items-center">
+            <ion-col size="12" size-md="4">
+              <ion-item lines="none" class="custom-item item-inner-list">
+                <ion-select [(ngModel)]="s.location_id" placeholder="Seleccionar Ubicación" interface="popover">
+                  <ion-select-option *ngFor="let loc of locations" [value]="loc.id_location">
+                    {{ loc.nombre }}
+                  </ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col size="4" size-md="2">
+              <ion-item lines="none" class="custom-item item-inner-list">
+                <ion-input type="number" [(ngModel)]="s.stock_disponible" placeholder="Disp."></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="4" size-md="2">
+              <ion-item lines="none" class="custom-item item-inner-list">
+                <ion-input type="number" [(ngModel)]="s.stock_congelado" placeholder="Cong."></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="4" size-md="2">
+              <ion-item lines="none" class="custom-item item-inner-list">
+                <ion-input type="number" [(ngModel)]="s.stock_minimo" placeholder="Mín."></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-md="2" class="ion-text-right">
+              <ion-button color="danger" fill="clear" class="delete-row-btn" (click)="removeStock(i)">
+                <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+    </div>
 
-    <ion-item>
-      <ion-input type="number" [(ngModel)]="s.stock_minimo" placeholder="Mínimo">Minimo:</ion-input>
-    </ion-item>
+    <div *ngIf="allIngredients.length > 0 && newProduct.tipo_producto === 'elaborado'" class="recipe-section-wrapper">
+      <div class="section-header">
+        <h3>🍔 Receta / Insumos</h3>
+        <ion-button fill="clear" size="small" class="add-section-btn recipe-btn" (click)="addIngredientRow()">
+          <ion-icon name="pizza-outline" slot="start"></ion-icon>
+          + Insumo
+        </ion-button>
+      </div>
 
-    <ion-button color="danger" (click)="removeStock(i)">Eliminar</ion-button>
+      <div class="dynamic-list">
+        <div class="recipe-card" *ngFor="let item of receta; let i = index">
+          <ion-grid class="ion-no-padding">
+            <ion-row class="ion-align-items-center">
+              <ion-col size="12" size-sm="6">
+                <ion-item lines="none" class="custom-item item-inner-list">
+                  <ion-select [(ngModel)]="item.id_ingredient" placeholder="Elegir Insumo" interface="popover">
+                    <ion-select-option *ngFor="let ing of allIngredients" [value]="Number(ing.id_ingredients)">
+                      {{ing.nombre}}
+                    </ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+
+              <ion-col size="9" size-sm="4">
+                <div class="quantity-badge-container">
+                  <ion-input [(ngModel)]="item.cant_us" type="number" placeholder="0.00"></ion-input>
+                  <span class="unit-label">{{ getIngredientUnit(item.id_ingredient) || 'unid' }}</span>
+                </div>
+              </ion-col>
+
+              <ion-col size="3" size-sm="2" class="ion-text-right">
+                <ion-button (click)="removeIngredient(i)" fill="clear" color="danger" class="delete-row-btn">
+                  <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </div>
+      </div>
+    </div>
+
+    <ion-button (click)="saveProduct()" expand="block" color="dark" class="save-main-button">
+      <ion-icon name="save-outline" slot="start"></ion-icon>
+      GUARDAR PRODUCTO COMPLETO
+    </ion-button>
 
   </div>
-
-  <ion-button (click)="addStock()">+ Agregar ubicación</ion-button>
-
-
-
-  <div *ngIf="
-  allIngredients.length > 0 &&
-  newProduct.tipo_producto === 'elaborado'
-">
-    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
-      <h3 style="font-weight: bold; color: #444;">Receta / Insumos</h3>
-      <button (click)="addIngredientRow()"
-        style="background: #3dc2ff; color: white; border: none; padding: 5px 10px; border-radius: 4px;">
-        + Insumo
-      </button>
-    </div>
-    <div *ngFor="let item of receta; let i = index"
-      style="background: white; border-radius: 8px; margin-bottom: 8px; border: 1px solid #eee; padding: 8px;">
-      <ion-row class="ion-align-items-center">
-        <ion-col size="6">
-          <ion-select [(ngModel)]="item.id_ingredient" placeholder="Elegir Insumo" interface="popover"
-            style="font-size: 0.9rem; --padding-start: 0;">
-            <ion-select-option *ngFor="let ing of allIngredients" [value]="Number(ing.id_ingredients)">
-              {{ing.nombre}}
-            </ion-select-option>
-          </ion-select>
-        </ion-col>
-
-        <ion-col size="4">
-          <div style="display: flex; align-items: center; background: #f4f4f4; border-radius: 6px; padding: 0 8px;">
-            <ion-input [(ngModel)]="item.cant_us" type="number" placeholder="0.00"
-              style="text-align: right; font-weight: bold; --padding-end: 5px;"></ion-input>
-            <span style="font-size: 0.7rem; color: #666; min-width: 30px; text-transform: lowercase;">
-              {{ getIngredientUnit(item.id_ingredient) }}
-            </span>
-          </div>
-        </ion-col>
-
-        <ion-col size="2" class="ion-text-right">
-          <ion-button (click)="removeIngredient(i)" fill="clear" color="danger" style="--padding-end: 0;">
-            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
-          </ion-button>
-        </ion-col>
-      </ion-row>
-    </div>
-  </div>
-  <ion-button (click)="saveProduct()" expand="block" color="dark" class="ion-margin-top"
-    style="height: 40px; font-weight: bold; font-size: 15px;">
-    <ion-icon name="save-outline" slot="start"></ion-icon>
-    GUARDAR PRODUCTO COMPLETO
-  </ion-button>
 </ion-content>
