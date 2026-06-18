@@ -46,7 +46,7 @@ export class OrderModalComponent implements OnInit {
 
   searchResults: any[] = [];
 
-subcategoryResults:any[]=[];
+  subcategoryResults: any[] = [];
 
   // NAV
 
@@ -151,30 +151,30 @@ subcategoryResults:any[]=[];
                 cat.subcategories =
 
                   sub.data || sub;
-                cat.subcategories.forEach((subcat:any)=>{
+                cat.subcategories.forEach((subcat: any) => {
 
 
-                    this.server
+                  this.server
 
-                      .getProductsCountBySubcategory(
+                    .getProductsCountBySubcategory(
 
-                        subcat.id_subcategory
+                      subcat.id_subcategory
 
-                      )
+                    )
 
-                      .subscribe((r: any) => {
-
-
-                        subcat.totalProducts =
+                    .subscribe((r: any) => {
 
 
-                          r.data.total;
+                      subcat.totalProducts =
 
 
-                      });
+                        r.data.total;
 
 
-                  });
+                    });
+
+
+                });
 
               });
 
@@ -248,68 +248,68 @@ subcategoryResults:any[]=[];
 
   // =====================
 
-searchProducts() {
+  searchProducts() {
 
-  if(this.searchTerm.trim()==''){
+    if (this.searchTerm.trim() == '') {
 
-    this.searchResults=[];
+      this.searchResults = [];
 
-    this.subcategoryResults=[];
+      this.subcategoryResults = [];
 
-    return;
+      return;
 
-  }
+    }
 
-  // Productos
-  this.server.searchProducts(this.searchTerm)
+    // Productos
+    this.server.searchProducts(this.searchTerm)
 
-  .subscribe((res:any)=>{
+      .subscribe((res: any) => {
 
-      this.searchResults=res.data || res;
+        this.searchResults = res.data || res;
 
-  });
-
-
-
-  // Subcategorias locales
-
-  const term=
-
-  this.searchTerm.toLowerCase();
+      });
 
 
 
-  this.subcategoryResults=
+    // Subcategorias locales
 
-  [];
+    const term =
+
+      this.searchTerm.toLowerCase();
 
 
 
-  this.categories.forEach((cat:any)=>{
+    this.subcategoryResults =
+
+      [];
+
+
+
+    this.categories.forEach((cat: any) => {
 
       (cat.subcategories || [])
 
-      .forEach((sub:any)=>{
+        .forEach((sub: any) => {
 
-          if(
+          if (
 
             sub.name
 
-            .toLowerCase()
+              .toLowerCase()
 
-            .includes(term)
+              .includes(term)
 
-          ){
+          ) {
 
             this.subcategoryResults.push(sub);
 
           }
 
-      });
+        });
 
-  });
+    });
 
-}
+  }
 
 
 
@@ -531,94 +531,32 @@ searchProducts() {
   // =====================
 
 
+loadOrderDetails() {
+  this.server
+    .getOrderProducts_unit(this.order_id)
+    .subscribe((res: any) => {
+      // Validamos que la respuesta sea correcta (error === 0) y traiga datos
+      if (res && res.error === 0 && res.data) {
+        
+        this.cart = res.data.map((item: any) => ({
+          id_product: item.product_id,
+          name: item.nombre_producto,
+          price: parseFloat(item.unit_price),
+          quantity: parseInt(item.quantity, 10),
+          notes: item.notes || '',
+          sides: item.sides || '',
+          isPriceEditable: false
+        }));
 
-  loadOrderDetails() {
-
-
-    this.server
-
-      .getOrderProducts(
-
-        this.order_id
-
-      )
-
-      .subscribe((res: any) => {
-
-
-        if (
-
-
-          res.error === 0
-
-
-        ) {
-
-
-          this.cart =
-
-
-            res.data.map(
-
-
-              (item: any) =>
-
-              ({
-
-
-                id_product:
-
-
-                  item.product_id,
-
-
-                name:
-
-
-                  item.nombre_producto,
-
-
-                price:
-
-
-                  item.unit_price,
-
-
-                quantity:
-
-
-                  item.quantity,
-
-
-                notes:
-
-
-                  item.notes || '',
-
-
-                sides:
-
-
-                  item.sides || '',
-
-
-                isPriceEditable: false
-
-
-              })
-
-
-            );
-
-
-        }
-
-
-      });
-
-
-  }
-
+        // Si estás en móvil, esto fuerza a que se pueda ver el listado o resumen correctamente actualizado
+        console.log('Carrito cargado en edición:', this.cart);
+      } else {
+        console.warn('No se pudieron obtener los productos del pedido o el pedido está vacío.');
+      }
+    }, error => {
+      console.error('Error cargando detalles del pedido:', error);
+    });
+}
 
 
 
@@ -627,134 +565,66 @@ searchProducts() {
   // CONFIRMAR
 
   // =====================
+confirmOrder() {
+  const id_user = sessionStorage.getItem('user_id') || '';
 
-
-
-  confirmOrder() {
-
-
-    const id_user =
-
-
-      sessionStorage
-
-        .getItem('user_id')
-
-      ||
-
-      '';
-
-
-
+  if (this.editMode) {
+    // ==========================================
+    // MODO EDICIÓN: LLAMAR A UPDATE
+    // ==========================================
     this.server
-
-      .createOrder(
-
-        this.table.id_table,
-
+      .updateOrder_a(
+        this.order_id,
         id_user,
-
         this.cart,
-
         false
-
       )
-
       .subscribe({
-
-
         next: (res: any) => {
-
-
-          if (
-
-
-            res.error === 0
-
-          ) {
-
-
-            alert(
-
-              '✅ '
-
-              +
-
-              res.message
-
-            );
-
-
-            this.modalCtrl
-
-              .dismiss(true);
-
-
+          if (res.error === 0) {
+            alert('✅ ' + res.message);
+            this.modalCtrl.dismiss(true); // Retorna true para refrescar la lista de pedidos
+          } else if (res.error === 2) {
+            alert('🚫 STOCK INSUFICIENTE\n\n' + res.message);
+          } else {
+            alert('❌ ' + res.message);
           }
-
-
-          else if (
-
-
-            res.error === 2
-
-          ) {
-
-
-            alert(
-
-              '🚫 STOCK INSUFICIENTE\n\n'
-
-              +
-
-              res.message
-
-            );
-
-
-          }
-
-
-          else {
-
-
-            alert(
-
-              '❌ '
-
-              +
-
-              res.message
-
-            );
-
-
-          }
-
-
         },
-
-
         error: (err) => {
-
-
           console.error(err);
-
-
-          alert(
-
-            'Error de conexión'
-
-          );
-
-
+          alert('Error de conexión al actualizar');
         }
-
-
       });
 
-
+  } else {
+    // ==========================================
+    // MODO NUEVO PEDIDO: LLAMAR A CREATE
+    // ==========================================
+    this.server
+      .createOrder(
+        this.table.id_table,
+        id_user,
+        this.cart,
+        false
+      )
+      .subscribe({
+        next: (res: any) => {
+          if (res.error === 0) {
+            alert('✅ ' + res.message);
+            this.modalCtrl.dismiss(true);
+          } else if (res.error === 2) {
+            alert('🚫 STOCK INSUFICIENTE\n\n' + res.message);
+          } else {
+            alert('❌ ' + res.message);
+          }
+        },
+        error: (err) => {
+          console.error(err);
+          alert('Error de conexión');
+        }
+      });
   }
+}
 
 
 

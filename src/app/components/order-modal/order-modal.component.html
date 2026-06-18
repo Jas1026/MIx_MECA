@@ -1,11 +1,8 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="dark">
-
-    <ion-title>
-
-      Mesa {{ table?.nombre }}
-
-    </ion-title>
+<ion-title>
+  {{ editMode ? 'Editar Pedido #' + order_id : 'Mesa ' + table?.nombre }}
+</ion-title>
 
     <ion-buttons slot="end">
 
@@ -127,41 +124,29 @@
         </div>
 
         <!-- RESULTADOS -->
-<!-- RESULTADOS PRODUCTOS -->
+        <!-- RESULTADOS PRODUCTOS -->
 
-<div
-*ngIf="searchResults.length>0"
-class="search-section">
+        <div *ngIf="searchResults.length>0" class="search-section">
 
-  <h5>
+          <h5>
 
-    Productos
+            Productos
 
-  </h5>
+          </h5>
 
-  <div class="products-grid">
+          <div class="products-grid">
 
-    <div
+            <div class="product-card" *ngFor="let product of searchResults" (click)="addProduct(product)">
 
-    class="product-card"
+              <div class="product-info">
 
-    *ngFor="let product of searchResults"
+                <h3>
 
-    (click)="addProduct(product)">
+                  {{product.name}}
 
-      <div class="product-info">
+                </h3>
 
-        <h3>
-
-          {{product.name}}
-
-        </h3>
-
-        <p
-
-        class="stock"
-
-        [ngClass]="{
+                <p class="stock" [ngClass]="{
 
         'low-stock':
 
@@ -169,46 +154,38 @@ class="search-section">
 
         }">
 
-          📦
+                  📦
 
-          {{product.stock_disponible}}
+                  {{product.stock_disponible}}
 
-        </p>
+                </p>
 
-      </div>
+              </div>
 
 
-      <div class="product-right">
+              <div class="product-right">
 
-        <div class="product-price">
+                <div class="product-price">
 
-          Bs {{product.price}}
+                  Bs {{product.price}}
+
+                </div>
+
+                <ion-button fill="solid" size="small" color="success">
+
+                  <ion-icon name="add-outline">
+
+                  </ion-icon>
+
+                </ion-button>
+
+              </div>
+
+            </div>
+
+          </div>
 
         </div>
-
-        <ion-button
-
-        fill="solid"
-
-        size="small"
-
-        color="success">
-
-          <ion-icon
-
-          name="add-outline">
-
-          </ion-icon>
-
-        </ion-button>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
 
 
 
@@ -609,14 +586,12 @@ product.stock_disponible<=3
 
 
 
-        <ion-button expand="block" color="success" shape="round" class="confirm-btn" [disabled]="cart.length===0"
-          (click)="confirmOrder()">
+<ion-button expand="block" color="success" shape="round" class="confirm-btn" [disabled]="cart.length===0"
+  (click)="confirmOrder()">
 
+  {{ editMode ? 'Guardar Cambios' : 'Confirmar Pedido' }}
 
-          Confirmar Pedido
-
-        </ion-button>
-
+</ion-button>
       </div>
 
 

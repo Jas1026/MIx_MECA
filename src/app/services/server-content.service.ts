@@ -114,6 +114,16 @@ export class ServerContentService {
 
     return this.http.post(`${this.urlService}create_order.php`, formData);
   }
+  updateOrder_a(order_id: any, id_user: any, products: any[], force: boolean = false) {
+  const formData = new FormData();
+  formData.append('order_id', order_id.toString());
+  formData.append('id_user', id_user.toString());
+  formData.append('products', JSON.stringify(products));
+  formData.append('system', this.getSystem());
+  formData.append('force_order', force ? 'true' : 'false');
+
+  return this.http.post(`${this.urlService}update_ordera.php`, formData);
+}
   updateOrderStatus(id_order: string, status: string) {
     let body = new FormData();
     body.append("id_order", id_order);
@@ -507,7 +517,10 @@ export class ServerContentService {
     );
   }
 
-
+getOrderProducts_unit(order_id: any) {
+  // Pasamos el order_id y el sistema actual
+  return this.http.get(`${this.urlService}get_order_products_unit.php?order_id=${order_id}&system=${this.getSystem()}`);
+}
 
 
 

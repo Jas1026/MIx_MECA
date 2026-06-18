@@ -214,7 +214,7 @@
     <ion-button size="small" color="medium" shape="round" (click)="View_Order(p)">
       <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
     </ion-button>
-<ion-button *ngIf="p.status?.toLowerCase() === 'open' && (userRole === 'admin' || userRole === 'jefe_mesero')" 
+<ion-button *ngIf="p.status?.toLowerCase() === 'open' && (userRole === 'admin' || userRole === 'jefe_mesero') && p.es_editable == 1" 
             size="small" color="warning" shape="round" (click)="editarPedido(p)">
   <ion-icon name="create-outline" slot="icon-only"></ion-icon>
 </ion-button>
@@ -309,7 +309,7 @@
   <ion-button fill="clear" color="medium" (click)="View_Order(p)">
     <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
   </ion-button>
-<ion-button *ngIf="p.status?.toLowerCase() === 'open' && (userRole === 'admin' || userRole === 'jefe_mesero')" 
+<ion-button *ngIf="p.status?.toLowerCase() === 'open' && (userRole === 'admin' || userRole === 'jefe_mesero') && p.es_editable == 1" 
             size="small" color="warning" shape="round" (click)="editarPedido(p)">
   <ion-icon name="create-outline" slot="icon-only"></ion-icon>
 </ion-button>
