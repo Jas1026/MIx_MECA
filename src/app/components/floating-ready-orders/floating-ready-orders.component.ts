@@ -13,26 +13,34 @@ export class FloatingReadyOrdersComponent implements OnInit, OnDestroy {
   interval: any;
   
   private alertaActiva = false;
-  private reproduciendoSonido = false; // Flag crítico para que el setInterval no asfixie el audio
+  private reproduciendoSonido = false; 
 
-  // Sonidos mapeados de forma segura
+  // --- MAPEO DE AUDIO ---
+  // Sonido 1: Alerta continua cuando cocina molesta al mesero (Zumbido/Alarma)
   private audioSonido1 = new Audio('assets/sounds/sonidodeprueba.mp3');
+  
+  // NUEVO SONIDO: Campana corta exclusiva para cuando un producto pasa a estar "Listo para recoger"
+  private audioNuevoReady = new Audio('assets/sounds/notificacion.mp3'); 
+  
+  // Notificación opcional por si la usas en otra parte (se mantiene por compatibilidad)
   private audioReady = new Audio('assets/sounds/notificacion.mp3');
   
   private previousReadyIds: number[] = [];
   private audioUnlocked = false;
 
   constructor(private server: ServerContentService) {
-    // Inicialización explícita de propiedades de audio estándar de la API de HTML5
     this.audioSonido1.loop = true;
     this.audioSonido1.volume = 1.0;
+    
+    this.audioNuevoReady.loop = false;
+    this.audioNuevoReady.volume = 1.0;
+
     this.audioReady.loop = false;
     this.audioReady.volume = 1.0;
   }
 
   ngOnInit() {
     this.load();
-    // Polling cada 2 segundos
     this.interval = setInterval(() => {
       this.load();
     }, 2000);
@@ -43,28 +51,31 @@ export class FloatingReadyOrdersComponent implements OnInit, OnDestroy {
     this.stopSonido1();
   }
 
-  // Desbloqueo nativo interactivo definitivo (Cualquier click en la app lo activa)
+  // Desbloqueo nativo interactivo (Agregado el nuevo sonido al combo de inicialización)
   @HostListener('document:click')
   async unlockAudio() {
     if (this.audioUnlocked) return;
 
     try {
-      // Reproducciones cortas para otorgar los permisos de contexto de audio al navegador
+      // Calentamos los tres audios simultáneamente con un micro-play
       await this.audioSonido1.play();
       this.audioSonido1.pause();
       this.audioSonido1.currentTime = 0;
+
+      await this.audioNuevoReady.play();
+      this.audioNuevoReady.pause();
+      this.audioNuevoReady.currentTime = 0;
 
       await this.audioReady.play();
       this.audioReady.pause();
       this.audioReady.currentTime = 0;
 
       this.audioUnlocked = true;
-      console.log('🔊 [Panel Meseros] Permisos de audio obtenidos con éxito');
+      console.log('🔊 [Panel Meseros] Todos los hilos de audio desbloqueados');
       
-      // Comprobación inmediata tras desbloquear
       this.checkAlerts();
     } catch (e) {
-      console.warn('❌ [Panel Meseros] Audio bloqueado temporalmente por política del navegador', e);
+      console.warn('❌ [Panel Meseros] Permiso de audio denegado temporalmente', e);
     }
   }
 
@@ -73,7 +84,6 @@ export class FloatingReadyOrdersComponent implements OnInit, OnDestroy {
   }
 
   load() {
-    // CONTROL GLOBAL: Si el usuario es de cocina, no tiene sentido consultar ni hacer sonar este panel
     const role = sessionStorage.getItem('role');
     if (role === 'cocina') {
       if (this.reproduciendoSonido) this.stopSonido1();
@@ -84,23 +94,24 @@ export class FloatingReadyOrdersComponent implements OnInit, OnDestroy {
       next: (res: any) => {
         if (res && res.error == 0 && Array.isArray(res.data)) {
           
-          // 1. Filtrar nuevos pedidos listos para entrega inmediata
+          // DETECTOR CRÍTICO: Filtra productos que acaban de cambiar a 'ready_pickup' y no estaban guardados en el ciclo anterior
           const nuevosReady = res.data.filter(
             (x: any) => x.process_status == 'ready_pickup' && !this.previousReadyIds.includes(Number(x.detail_id))
           );
 
+          // Si detecta un cambio de estado a listo, dispara el nuevo sonido condicionado al desbloqueo
           if (nuevosReady.length > 0 && this.audioUnlocked) {
-            this.sonarNuevoReady();
+            this.sonarCampanaDespacho();
           }
 
           this.orders = res.data;
 
-          // 2. Mapear IDs para evitar duplicidad de campana corta en el siguiente ciclo
+          // Guardamos el estado actual de IDs listos para que en 2 segundos no vuelva a sonar el mismo pedido
           this.previousReadyIds = res.data
             .filter((x: any) => x.process_status == 'ready_pickup')
             .map((x: any) => Number(x.detail_id));
 
-          // 3. Agrupación limpia para el HTML por order_id
+          // Agrupación para la vista de tarjetas
           const grupos: any = {};
           this.orders.forEach((x: any) => {
             if (!grupos[x.order_id]) {
@@ -116,34 +127,29 @@ export class FloatingReadyOrdersComponent implements OnInit, OnDestroy {
           });
 
           this.groupedOrders = Object.values(grupos);
-          
-          // 4. Analizar el estado de alertas concurrentes
           this.checkAlerts();
         }
       },
-      error: (err) => console.error("Error en HTTP Polling del panel flotante:", err)
+      error: (err) => console.error("Error Polling:", err)
     });
   }
 
   checkAlerts() {
-    // Buscamos si existe al menos un producto con estatus de alarma enviado por la cocina (status 1)
     const hayAlerta = this.orders.some(o => Number(o.alert_status) === 1);
 
     if (hayAlerta) {
-      // Si el audio está desbloqueado y NO está sonando actualmente, le damos Play
       if (this.audioUnlocked && !this.reproduciendoSonido) {
         this.reproduciendoSonido = true;
         this.alertaActiva = true;
         
         this.audioSonido1.play()
-          .then(() => console.log('🔊 -> ALERTA EMITIENDO SONIDO EN MESERO'))
+          .then(() => console.log('🔊 -> Alerta persistente sonando...'))
           .catch(err => {
-            console.error('❌ Falló la reproducción directa del Sonido 1:', err);
-            this.reproduciendoSonido = false; // Reajuste por si falla el hilo
+            console.error('❌ Error Sonido 1:', err);
+            this.reproduciendoSonido = false;
           });
       }
     } else {
-      // Si el servidor ya limpió la alerta, apagamos el reproductor de forma reactiva instantánea
       if (this.reproduciendoSonido || this.alertaActiva) {
         this.stopSonido1();
       }
@@ -155,14 +161,15 @@ export class FloatingReadyOrdersComponent implements OnInit, OnDestroy {
     this.reproduciendoSonido = false;
     this.audioSonido1.pause();
     this.audioSonido1.currentTime = 0;
-    console.log('🔇 Sonido de alerta detenido de manera limpia.');
   }
 
-  sonarNuevoReady() {
-    // Detiene e inicia la notificación corta para evitar solapamientos raros
-    this.audioReady.pause();
-    this.audioReady.currentTime = 0;
-    this.audioReady.play().catch(err => console.warn("No se pudo reproducir campana corta:", err));
+  // EJECUCIÓN DEL NUEVO SONIDO INDEPENDIENTE
+  sonarCampanaDespacho() {
+    this.audioNuevoReady.pause();
+    this.audioNuevoReady.currentTime = 0;
+    this.audioNuevoReady.play()
+      .then(() => console.log('🔔 -> ¡Pedido nuevo listo para recoger! Sonando campana.'))
+      .catch(err => console.warn("No se pudo reproducir la campana de despacho:", err));
   }
 
   alertarAlCocina(detailId: any, event: Event) {

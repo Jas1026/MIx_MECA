@@ -15,11 +15,11 @@ export class MesasPage implements OnInit, OnDestroy {
   flatId: string = '';
   private dataInterval: any;
   private clockInterval: any;
-filteredTables: any[] = [];
+  filteredTables: any[] = [];
 
-searchName = '';
-filterCapacity = '';
-filterStatus = '';
+  searchName = '';
+  filterCapacity = '';
+  filterStatus = '';
   constructor(
     private route: ActivatedRoute,
     private server: ServerContentService,
@@ -29,14 +29,14 @@ filterStatus = '';
   ) { }
 
   ngOnInit() {
-  this.route.paramMap.subscribe(params => {
-    this.flatId = params.get('id') || '';
-    this.loadTables();
-  });
+    this.route.paramMap.subscribe(params => {
+      this.flatId = params.get('id') || '';
+      this.loadTables();
+    });
 
-  // 👇 INICIAMOS EL RELOJ AQUÍ
-  this.startClock();
-}
+    // 👇 INICIAMOS EL RELOJ AQUÍ
+    this.startClock();
+  }
 
   ionViewWillEnter() {
     this.loadTables();
@@ -58,39 +58,43 @@ filterStatus = '';
     if (this.clockInterval) clearInterval(this.clockInterval);
   }
 
+
+  startClock() {
+    if (this.clockInterval) {
+      clearInterval(this.clockInterval);
+    }
+
+    this.clockInterval = setInterval(() => {
+      console.log('⏱ tick'); // 👈 verifica en la consola que corre cada segundo
+
+      this.ngZone.run(() => {
+        this.updateAllClocks();
+      });
+
+    }, 1000);
+  }
   loadTables() {
     this.server.getTables(this.flatId).subscribe((res: any) => {
       if (res.error === 0) {
-        // Al recibir las mesas, inicializamos el campo 'timeDisplay'
-        this.tables = res.data.map((m: any) => ({
-  ...m,
-  timeDisplay: '0.00'
-}));
+        this.tables = res.data.map((m: any) => {
+          const mesaExistente = this.tables.find(t => t.id_table === m.id_table);
+          return {
+            ...m,
+            timeDisplay: mesaExistente ? mesaExistente.timeDisplay : '0:00'
+          };
+        });
 
-this.applyFilters();
-this.updateAllClocks();
+        // Primero filtramos los nuevos datos, luego dejamos que el reloj los pinte
+        this.applyFilters();
+        this.updateAllClocks();
       }
     });
   }
-
-startClock() {
-  if (this.clockInterval) {
-    clearInterval(this.clockInterval);
-  }
-
-  this.clockInterval = setInterval(() => {
-    console.log('⏱ tick'); // 👈 verifica en la consola que corre cada segundo
-
-    this.ngZone.run(() => {
-      this.updateAllClocks();
-    });
-
-  }, 1000);
-}
-  private updateAllClocks() {
+private updateAllClocks() {
     const now = new Date().getTime();
 
-    this.tables = this.tables.map(mesa => {
+    // 1. Actualizamos el array principal en memoria
+    this.tables.forEach(mesa => {
       if (mesa.order_date && mesa.estado !== 'Libre') {
         const dateStr = mesa.order_date.replace(' ', 'T');
         const startTime = new Date(dateStr).getTime();
@@ -100,22 +104,29 @@ startClock() {
           const totalSeconds = Math.floor(diffMs / 1000);
           const mins = Math.floor(totalSeconds / 60);
           const secs = totalSeconds % 60;
-
-          
-          return {
-            ...mesa,
-            timeDisplay: `${mins}.${secs.toString().padStart(2, '0')}`
-          };
+          mesa.timeDisplay = `${mins}:${secs.toString().padStart(2, '0')}`;
         }
       }
+    });
 
-      return mesa;
+    // 2. Actualizamos el array que se muestra en el HTML sin romper referencias
+    this.filteredTables.forEach(filteredMesa => {
+      const originalMesa = this.tables.find(t => t.id_table === filteredMesa.id_table);
+      if (originalMesa) {
+        filteredMesa.timeDisplay = originalMesa.timeDisplay;
+        // Sincronizamos el estado por si cambió en el loadTables de fondo
+        filteredMesa.estado = originalMesa.estado; 
+      }
     });
   }
-  getTimerClass(mesa: any): string {
-    const transcurrido = parseFloat(mesa.timeDisplay || '0');
+getTimerClass(mesa: any): string {
+    if (!mesa.timeDisplay) return 'timer-text normal';
+    
+    // Obtenemos solo los minutos antes de los dos puntos ":"
+    const minutosTranscurridos = parseInt(mesa.timeDisplay.split(':')[0]) || 0;
     const estimado = parseInt(mesa.estimated_time) || 0;
-    return (estimado > 0 && transcurrido >= estimado) ? 'timer-text delayed' : 'timer-text normal';
+    
+    return (estimado > 0 && minutosTranscurridos >= estimado) ? 'timer-text delayed' : 'timer-text normal';
   }
 
   // --- Funciones de Modales (Mantenlas igual) ---
@@ -130,82 +141,82 @@ startClock() {
     if (data) this.loadTables();
   }
 
-async abrirResumen(orderId: number) {
-  const modal = await this.modalCtrl.create({
-    component: ResumenPedidoComponent,
-    componentProps: { 
-      orderId,
-      modo: 'final' // 🔥 explícito
-    }
-  });
-  await modal.present();
-}
-  async abrir_pago_parc(orderId: number) {
-  const modal = await this.modalCtrl.create({
-    component: ResumenPedidoComponent,
-    componentProps: { 
-      orderId: orderId,
-      modo: 'parcial' // opcional pero recomendado
-    }
-  });
-
-  await modal.present();
-
-  const { data } = await modal.onDidDismiss();
-
-  // 🔄 refresca mesas si hubo cambios
-  if (data) {
-    this.loadTables();
-  }
-}
-cambiarEstadoMesa(mesa: any) {
-
-  let nuevoEstado = '';
-
-  if (mesa.estado === 'Libre') {
-    nuevoEstado = 'Reservado';
-  } else if (mesa.estado === 'Reservado') {
-    nuevoEstado = 'Libre';
-  } else {
-    return; // 🔥 no tocar mesas ocupadas
-  }
-
-  this.server.updateTableStatus(mesa.id_table, nuevoEstado)
-    .subscribe((res: any) => {
-
-      if (res.error === 0) {
-
-        mesa.estado = res.nuevo_estado; // 🔥 actualización instantánea
-
-      } else {
-        console.error(res.message);
+  async abrirResumen(orderId: number) {
+    const modal = await this.modalCtrl.create({
+      component: ResumenPedidoComponent,
+      componentProps: {
+        orderId,
+        modo: 'final' // 🔥 explícito
       }
-
-    }, err => {
-      console.error('Error servidor', err);
     });
-}
-applyFilters() {
+    await modal.present();
+  }
+  async abrir_pago_parc(orderId: number) {
+    const modal = await this.modalCtrl.create({
+      component: ResumenPedidoComponent,
+      componentProps: {
+        orderId: orderId,
+        modo: 'parcial' // opcional pero recomendado
+      }
+    });
 
-  this.filteredTables = this.tables.filter(mesa => {
+    await modal.present();
 
-    const matchName =
-      !this.searchName ||
-      mesa.nombre.toLowerCase()
-      .includes(this.searchName.toLowerCase());
+    const { data } = await modal.onDidDismiss();
 
-    const matchCapacity =
-      !this.filterCapacity ||
-      mesa.capacidad == this.filterCapacity;
+    // 🔄 refresca mesas si hubo cambios
+    if (data) {
+      this.loadTables();
+    }
+  }
+  cambiarEstadoMesa(mesa: any) {
 
-    const matchStatus =
-      !this.filterStatus ||
-      mesa.estado == this.filterStatus;
+    let nuevoEstado = '';
 
-    return matchName && matchCapacity && matchStatus;
+    if (mesa.estado === 'Libre') {
+      nuevoEstado = 'Reservado';
+    } else if (mesa.estado === 'Reservado') {
+      nuevoEstado = 'Libre';
+    } else {
+      return; // 🔥 no tocar mesas ocupadas
+    }
 
-  });
+    this.server.updateTableStatus(mesa.id_table, nuevoEstado)
+      .subscribe((res: any) => {
 
-}
+        if (res.error === 0) {
+
+          mesa.estado = res.nuevo_estado; // 🔥 actualización instantánea
+
+        } else {
+          console.error(res.message);
+        }
+
+      }, err => {
+        console.error('Error servidor', err);
+      });
+  }
+  applyFilters() {
+
+    this.filteredTables = this.tables.filter(mesa => {
+
+      const matchName =
+        !this.searchName ||
+        mesa.nombre.toLowerCase()
+          .includes(this.searchName.toLowerCase());
+
+      const matchCapacity =
+        !this.filterCapacity ||
+        mesa.capacidad == this.filterCapacity;
+
+      const matchStatus =
+        !this.filterStatus ||
+        mesa.estado == this.filterStatus;
+
+      return matchName && matchCapacity && matchStatus;
+
+    });
+
+  }
 
 }
