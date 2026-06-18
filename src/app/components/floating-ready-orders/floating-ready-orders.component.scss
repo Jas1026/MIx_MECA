@@ -1,109 +1,296 @@
-.floating-btn{
+// Variables de diseño moderno (Se mantienen iguales)
+$primary-color: #ff7043; 
+$text-dark: #2c3e50;
+$text-muted: #7f8c8d;
+$bg-light: #f8f9fa;
+$border-color: #edf2f7;
+$shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
+$shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.15);
 
-position:fixed;
+// BOTÓN FLOTANTE (Se mantiene igual)
+.floating-btn {
+  position: fixed;
+  right: 25px;
+  bottom: 25px;
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  background: $primary-color;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 28px;
+  color: white;
+  z-index: 999999;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba($primary-color, 0.4);
+  transition: transform 0.2s ease;
 
-right:25px;
+  &:active {
+    transform: scale(0.92);
+  }
 
-bottom:25px;
-
-width:65px;
-
-height:65px;
-
-border-radius:50%;
-
-background:#ff7043;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-font-size:30px;
-
-color:white;
-
-z-index:999999;
-
-cursor:pointer;
-
-box-shadow:
-
-0 10px 30px rgba(0,0,0,.25);
-
+  ion-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    border: 2px solid white;
+    border-radius: 10px;
+    padding: 4px 7px;
+    font-size: 11px;
+    font-weight: bold;
+  }
 }
 
-.floating-btn ion-badge{
-
-position:absolute;
-
-top:-5px;
-
-right:-5px;
-
+// VENTANA FLOTANTE PRINCIPAL (Modificada)
+.floating-window {
+  position: fixed;
+  right: 25px;
+  bottom: 102px;
+  width: 340px;          // Reducido ligeramente el ancho para que sea más estilizado
+  height: 420px;         // CAMBIO: Forzamos una altura FIJA para que no crezca más de ahí
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 16px;
+  z-index: 999999;
+  box-shadow: $shadow-lg;
+  overflow: hidden; 
+  border: 1px solid rgba(0,0,0,0.04);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
+// HEADER DE LA VENTANA (Se mantiene igual)
+.window-header {
+  padding: 14px 18px;    // Reducido sutilmente el padding
+  background: white;
+  border-bottom: 1px solid $border-color;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
 
-.floating-window{
+  .header-title {
+    font-weight: 700;
+    font-size: 15px;     // Reducido de 16px a 15px
+    color: $text-dark;
+    display: flex;
+    align-items: center;
 
-position:fixed;
+    ion-icon {
+      margin-right: 6px;
+      font-size: 18px;
+      color: $primary-color;
+    }
+  }
 
-right:25px;
-
-bottom:100px;
-
-width:320px;
-
-max-height:450px;
-
-overflow:auto;
-
-background:white;
-
-border-radius:20px;
-
-z-index:999999;
-
-box-shadow:
-
-0 20px 50px rgba(0,0,0,.2);
-
+  .header-badge {
+    background: rgba($primary-color, 0.1);
+    color: $primary-color;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+  }
 }
 
+// CONTENEDOR CON SCROLL GENERAL DE TARJETAS (Optimizado)
+.window-content {
+  flex-grow: 1;
+  overflow-y: auto;      // Mantiene el scroll principal aquí
+  padding: 10px;         // Menos padding para ganar espacio
+  background: #f4f6f8; 
 
-.header{
-
-padding:15px;
-
-font-weight:bold;
-
-font-size:18px;
-
-border-bottom:
-
-1px solid #eee;
-
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 3px;
+  }
 }
 
+// TARJETA DE CADA PEDIDO (Modificada)
+.pedido-card {
+  background: white;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  padding: 12px;         // Más compacto
+  box-shadow: $shadow-sm;
+  border: 1px solid rgba(0, 0, 0, 0.01);
+  
+  display: flex;
+  flex-direction: column;
+  // CAMBIO: Quitamos el max-height y el scroll interno para que la tarjeta se adapte a sus productos
+  // y sea el contenedor general (.window-content) el que haga scroll.
 
-.pedido{
-
-padding:15px;
-
-border-bottom:
-
-1px solid #f2f2f2;
-
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
+// HEADER INTERNO DEL CARD (Se mantiene igual)
+.pedido-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  flex-shrink: 0;
 
-.empty{
+  .ubicacion {
+    .tag-piso, .tag-mesa {
+      display: inline-block;
+      font-size: 10px;   // Textos ligeramente más pequeños
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 5px;
+      margin-right: 4px;
+      text-transform: uppercase;
 
-padding:30px;
+      ion-icon {
+        font-size: 10px;
+        vertical-align: middle;
+        margin-top: -2px;
+      }
+    }
 
-text-align:center;
+    .tag-piso {
+      background: #efebe9; 
+      color: #5d4037;
+    }
 
-color:gray;
+    .tag-mesa {
+      background: #e3f2fd;
+      color: #1565c0;
+    }
+  }
 
+  .hora {
+    font-size: 11px;
+    color: $text-muted;
+    font-weight: 500;
+  }
+}
+
+// RESUMEN INFORMATIVO DEL CARD (Más compacto)
+.pedido-summary {
+  font-size: 11px;
+  color: #616161;
+  background: $bg-light;
+  padding: 4px 8px;
+  border-radius: 5px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+
+  ion-icon {
+    font-size: 13px;
+    margin-right: 4px;
+    color: #757575;
+  }
+}
+
+// LISTA DE PRODUCTOS (Simplificada sin scroll interno)
+.productos-list {
+  // CAMBIO: Quitamos el scroll interno (overflow-y) para obligar a que todo se maneje en el scroll principal
+  padding-right: 0;
+
+  .producto-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    padding: 6px 0;      // Más compacto
+    border-bottom: 1px dashed $border-color;
+    min-height: 38px;    // Reducido el tamaño de fila
+
+    &:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    &:first-child {
+      padding-top: 0;
+    }
+
+    .producto-details {
+      display: flex;
+      align-items: center; // Alineado al centro para evitar desajustes
+      max-width: calc(100% - 90px); 
+    }
+
+    .cantidad-badge {
+      font-weight: 800;
+      color: $primary-color;
+      font-size: 12px;
+      margin-right: 6px;
+    }
+
+    .nombres-wrapper {
+      .alias-text {
+        font-size: 12px; // Reducido de 13px a 12px
+        font-weight: 600;
+        color: $text-dark;
+        line-height: 1.2;
+        text-transform: capitalize;
+      }
+
+      .real-name {
+        display: block;
+        font-size: 10px;
+        color: $text-muted;
+        font-style: italic;
+        margin-top: 1px;
+      }
+    }
+
+    // Ajuste directo al botón para forzar tamaño compacto en Ionic
+    .btn-recoger {
+      margin: 0;
+      --box-shadow: none;
+      --border-radius: 6px;
+      --padding-start: 8px;
+      --padding-end: 8px;
+      font-size: 10px;
+      font-weight: 600;
+      height: 26px;      // Forzamos altura mini
+      flex-shrink: 0;
+    }
+  }
+}
+
+// ESTADO VACÍO (Se mantiene igual)
+.empty-state {
+  padding: 40px 20px;
+  text-align: center;
+  background: white;
+
+  .empty-icon {
+    font-size: 44px;
+    margin-bottom: 12px;
+    opacity: 0.8;
+  }
+
+  h3 {
+    margin: 0 0 6px 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: $text-dark;
+  }
+
+  p {
+    margin: 0;
+    font-size: 12px;
+    color: $text-muted;
+  }
+}
+.blink-alert {
+  animation: alertBlinker 1.5s linear infinite;
+  border: 2px solid #ef5350 !important;
+}
+
+@keyframes alertBlinker {
+  50% {
+    background-color: rgba(239, 83, 80, 0.15);
+  }
 }

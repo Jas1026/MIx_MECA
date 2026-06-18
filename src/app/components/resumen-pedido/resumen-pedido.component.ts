@@ -11,11 +11,11 @@ import autoTable from 'jspdf-autotable';
 })
 export class ResumenPedidoComponent implements OnInit {
   @Input() orderId!: number;
-@Input() modo: 'parcial' | 'final' = 'final';
+  @Input() modo: 'parcial' | 'final' = 'final';
   segmento = 'items';
-  itemsPendientes: any[] = []; 
-  pagosTemporales: any[] = []; 
-  
+  itemsPendientes: any[] = [];
+  pagosTemporales: any[] = [];
+
   metodoPagoActual = 'efectivo';
   numPartes = 2;
   montoManual = 0;
@@ -25,57 +25,78 @@ export class ResumenPedidoComponent implements OnInit {
   datosFactura = { nit: '0', razonSocial: 'SIN NOMBRE', voucher: '' };
 
   constructor(
-    private server: ServerContentService, 
-    private modalCtrl: ModalController, 
+    private server: ServerContentService,
+    private modalCtrl: ModalController,
     private router: Router,
     private toast: ToastController,
-      private loader: LoadingController
-  ) {}
+    private loader: LoadingController
+  ) { }
 
   ngOnInit() {
     this.cargarDatosIniciales();
   }
-cargarDatosIniciales() {
+  cargarDatosIniciales() {
+this.server.getOrderProducts(this.orderId).subscribe((res:any)=>{
 
-  // 🔥 1. cargar items pendientes
-  this.server.getOrderProducts(this.orderId).subscribe((res: any) => {
-    const data = res.data || [];
-    this.itemsPendientes = [];
+const data = res.productos || []; // 🔥 AQUÍ
 
-    data.filter((item: any) => item.estado_pago !== 'pagado')
-      .forEach((item: any) => {
-        for (let i = 0; i < Number(item.quantity); i++) {
-          this.itemsPendientes.push({ 
-            ...item, 
-            detail_id: item.detail_id,
-            nombre_producto: item.nombre_producto,
-            selected: false,
-            unit_val: Number(item.unit_price)
-          });
-        }
-      });
-  });
+this.itemsPendientes=[];
 
-  // 🔥 2. cargar pagos parciales (LA CLAVE)
-  this.server.getPagosParciales(this.orderId).subscribe((res: any) => {
-    if (res.error === 0) {
+data
+.filter((item:any)=>
+item.estado_pago !== 'pagado'
+)
+.forEach((item:any)=>{
 
-      this.pagosTemporales = res.data.map((p: any) => ({
-         id_pago: p.id_pago,
-        nit: p.nit_cliente,
-        razonSocial: p.razon_social,
-        metodo_pago: p.metodo_pago,
-        voucher: p.voucher,
-        monto: Number(p.monto_total),
-        monto_extra: 0,
-        motivo_extra: '',
-        tipo: 'parcial_bd',
-        items_referencia: [] // 🔥 luego lo mejoramos si quieres
-      }));
+for(
+let i=0;
+i<Number(item.quantity);
+i++
+){
 
-    }
-  });
+this.itemsPendientes.push({
+
+...item,
+
+detail_id:item.detail_id,
+
+nombre_producto:
+item.producto, // 🔥 porque tu PHP devuelve "producto"
+
+selected:false,
+
+unit_val:Number(
+item.unit_price
+)
+
+});
+
 }
+
+});
+
+});
+
+    // 🔥 2. cargar pagos parciales (LA CLAVE)
+    this.server.getPagosParciales(this.orderId).subscribe((res: any) => {
+      if (res.error === 0) {
+
+        this.pagosTemporales = res.data.map((p: any) => ({
+          id_pago: p.id_pago,
+          nit: p.nit_cliente,
+          razonSocial: p.razon_social,
+          metodo_pago: p.metodo_pago,
+          voucher: p.voucher,
+          monto: Number(p.monto_total),
+          monto_extra: 0,
+          motivo_extra: '',
+          tipo: 'parcial_bd',
+          items_referencia: [] // 🔥 luego lo mejoramos si quieres
+        }));
+
+      }
+    });
+  }
   get totalRestanteEnMesa(): number {
     return this.itemsPendientes.reduce((sum, i) => sum + i.unit_val, 0);
   }
@@ -101,7 +122,7 @@ cargarDatosIniciales() {
 
   agregarPago() {
     const extra = Number(this.cargoExtra || 0);
-    
+
     if (this.segmento === 'partes') {
       const montoPorCadaParte = this.totalRestanteEnMesa / this.numPartes;
       for (let i = 1; i <= this.numPartes; i++) {
@@ -111,14 +132,14 @@ cargarDatosIniciales() {
           metodo_pago: this.metodoPagoActual,
           voucher: this.metodoPagoActual === 'tarjeta' ? this.datosFactura.voucher : '',
           monto_items: montoPorCadaParte,
-          monto_extra: i === 1 ? extra : 0, 
+          monto_extra: i === 1 ? extra : 0,
           motivo_extra: i === 1 ? this.motivoExtra : '',
           monto: montoPorCadaParte + (i === 1 ? extra : 0),
           tipo: 'partes',
           items_referencia: [...this.itemsPendientes]
         });
       }
-      this.itemsPendientes = []; 
+      this.itemsPendientes = [];
     } else {
       const montoBase = this.montoSegunModo;
       const itemsSeleccionados = this.itemsPendientes.filter(i => i.selected);
@@ -143,38 +164,38 @@ cargarDatosIniciales() {
   }
   quitarPago(pago: any, index: number) {
 
-  if (pago.tipo === 'parcial_bd') {
+    if (pago.tipo === 'parcial_bd') {
 
-    this.server.deletePago(pago.id_pago).subscribe((res: any) => {
+      this.server.deletePago(pago.id_pago).subscribe((res: any) => {
 
-      if (res.error === 0) {
+        if (res.error === 0) {
 
-        this.toast.create({
-          message: 'Pago eliminado 🗑️',
-          duration: 1500,
-          color: 'warning'
-        }).then(t => t.present());
+          this.toast.create({
+            message: 'Pago eliminado 🗑️',
+            duration: 1500,
+            color: 'warning'
+          }).then(t => t.present());
 
-        // 🔥 LA MAGIA REAL
-        this.cargarDatosIniciales(); // ← recarga TODO desde BD
+          // 🔥 LA MAGIA REAL
+          this.cargarDatosIniciales(); // ← recarga TODO desde BD
 
-      }
+        }
 
-    });
+      });
 
-    return;
+      return;
+    }
+
+    // comportamiento local normal
+    if (pago.tipo === 'items' || pago.tipo === 'partes') {
+      pago.items_referencia.forEach((item: any) => {
+        item.selected = false;
+        this.itemsPendientes.push(item);
+      });
+    }
+
+    this.pagosTemporales.splice(index, 1);
   }
-
-  // comportamiento local normal
-  if (pago.tipo === 'items' || pago.tipo === 'partes') {
-    pago.items_referencia.forEach((item: any) => {
-      item.selected = false;
-      this.itemsPendientes.push(item);
-    });
-  }
-
-  this.pagosTemporales.splice(index, 1);
-}
 
   resetFormulario() {
     this.cargoExtra = 0;
@@ -184,179 +205,179 @@ cargarDatosIniciales() {
   }
   async confirmarTodo() {
 
-  const loading = await this.loader.create({
+    const loading = await this.loader.create({
 
-    message: 'Facturando en SIAT...'
+      message: 'Facturando en SIAT...'
 
-  });
+    });
 
-  await loading.present();
+    await loading.present();
 
-  const payload = {
+    const payload = {
 
-    order_id: this.orderId,
+      order_id: this.orderId,
 
-    formato: this.formatoImpresion,
+      formato: this.formatoImpresion,
 
-    pagos: this.pagosTemporales.map(p => ({
+      pagos: this.pagosTemporales.map(p => ({
 
-      nit: p.nit,
+        nit: p.nit,
 
-      razonSocial: p.razonSocial,
+        razonSocial: p.razonSocial,
 
-      montoTotal: p.monto,
+        montoTotal: p.monto,
 
-      metodoPago:
+        metodoPago:
 
-      p.metodo_pago === 'efectivo'
+          p.metodo_pago === 'efectivo'
 
-      ? 1
+            ? 1
 
-      : 2,
+            : 2,
 
-      detalles:
+        detalles:
 
-      p.items_referencia.map(
+          p.items_referencia.map(
 
-      (item:any)=>({
+            (item: any) => ({
 
-        descripcion:
+              descripcion:
 
-        item.nombre_producto,
+                item.nombre_producto,
 
-        precio:
+              precio:
 
-        item.unit_val,
+                item.unit_val,
 
-        cantidad:1
+              cantidad: 1
+
+            }))
 
       }))
 
-    }))
+    };
 
-  };
+    this.server
 
-  this.server
+      .procesarFacturacionSiat(payload)
 
-  .procesarFacturacionSiat(payload)
+      .subscribe({
 
-  .subscribe({
+        next: async (res: any) => {
 
-    next: async(res:any)=>{
+          await loading.dismiss();
 
-      await loading.dismiss();
+          if (res.success) {
 
-      if(res.success){
+            if (res.facturas) {
 
-        if(res.facturas){
+              res.facturas.forEach(
 
-          res.facturas.forEach(
+                (f: any) => {
 
-          (f:any)=>{
+                  window.open(
 
-            window.open(
+                    f.pdf,
 
-              f.pdf,
+                    '_blank'
 
-              '_blank'
+                  );
 
-            );
+                });
 
-          });
+            }
 
-        }
+            // 🔥 GUARDAR PAGO FINAL
 
-        // 🔥 GUARDAR PAGO FINAL
+            this.guardarPagoFinalBD()
 
-        this.guardarPagoFinalBD()
+              .subscribe({
 
-        .subscribe({
+                next: () => {
 
-          next:()=>{
+                  // 🔥 CERRAR
 
-            // 🔥 CERRAR
+                  this.server.closeOrder(
 
-            this.server.closeOrder(
+                    this.orderId,
 
-              this.orderId,
+                    sessionStorage.getItem(
 
-              sessionStorage.getItem(
+                      'user_id'
 
-                'user_id'
+                    )
 
-              )
+                  )
 
-            )
+                    .subscribe({
 
-            .subscribe({
+                      next: () => {
 
-              next:()=>{
+                        this.toast.create({
 
-                this.toast.create({
+                          message:
 
-                  message:
+                            'Mesa cerrada correctamente ✅',
 
-                  'Mesa cerrada correctamente ✅',
+                          duration: 2000,
 
-                  duration:2000,
+                          color: 'success'
 
-                  color:'success'
+                        })
 
-                })
+                          .then(
 
-                .then(
+                            t => t.present()
 
-                t=>t.present()
+                          );
 
-                );
+                        this.modalCtrl.dismiss(true);
 
-                this.modalCtrl.dismiss(true);
+                        this.router.navigate(
 
-                this.router.navigate(
+                          ['/panel']
 
-                  ['/panel']
+                        );
 
-                );
+                      }
 
-              }
+                    });
 
-            });
+                }
+
+              });
 
           }
 
-        });
+        },
 
-      }
+        error: async () => {
 
-    },
+          await loading.dismiss();
 
-    error:async()=>{
+          this.toast.create({
 
-      await loading.dismiss();
+            message:
 
-      this.toast.create({
+              'Error al facturar ❌',
 
-        message:
+            duration: 2500,
 
-        'Error al facturar ❌',
+            color: 'danger'
 
-        duration:2500,
+          })
 
-        color:'danger'
+            .then(
 
-      })
+              t => t.present()
 
-      .then(
+            );
 
-      t=>t.present()
+        }
 
-      );
+      });
 
-    }
-
-  });
-
-}
+  }
 
   seleccionarTexto(input: any) {
     setTimeout(() => {
@@ -365,229 +386,229 @@ cargarDatosIniciales() {
       });
     }, 50);
   }
-guardarParcialBD() {
-  const payload = {
-    order_id: this.orderId,
-    pagos: this.pagosTemporales.map(p => ({
-      user_id: sessionStorage.getItem('user_id'),
-      nit: p.nit,
-      razonSocial: p.razonSocial,
-      metodo_pago: p.metodo_pago,
-      voucher: p.voucher || '',
-      monto: p.monto,
-      monto_extra: p.monto_extra,
-      motivo_extra: p.motivo_extra,
-      detalle_ids: p.items_referencia.reduce((acc: any, item: any) => {
-        const id = item.detail_id;
-        if (!id) return acc; // 🔥 evita undefined
-        acc[id] = (acc[id] || 0) + 1;
-        return acc;
-      }, {})
-    })),
-    system: sessionStorage.getItem('sistema') || 'mixtura',
-    parcial: 1 // 🔥 IMPORTANTE
-  };
+  guardarParcialBD() {
+    const payload = {
+      order_id: this.orderId,
+      pagos: this.pagosTemporales.map(p => ({
+        user_id: sessionStorage.getItem('user_id'),
+        nit: p.nit,
+        razonSocial: p.razonSocial,
+        metodo_pago: p.metodo_pago,
+        voucher: p.voucher || '',
+        monto: p.monto,
+        monto_extra: p.monto_extra,
+        motivo_extra: p.motivo_extra,
+        detalle_ids: p.items_referencia.reduce((acc: any, item: any) => {
+          const id = item.detail_id;
+          if (!id) return acc; // 🔥 evita undefined
+          acc[id] = (acc[id] || 0) + 1;
+          return acc;
+        }, {})
+      })),
+      system: sessionStorage.getItem('sistema') || 'mixtura',
+      parcial: 1 // 🔥 IMPORTANTE
+    };
 
-  this.server.procesarMultiplesPagos(payload).subscribe((res: any) => {
-    if (res.error === 0) {
-      this.toast.create({
-        message: 'Pago parcial guardado 💾',
-        duration: 1500,
-        color: 'success'
-      }).then(t => t.present());
-
-      this.pagosTemporales = []; // limpiar canasta
-      this.cargarDatosIniciales(); // recargar items
-    }
-  });
-}
-// ======================================
-// CERRAR SOLO MESA
-// ======================================
-
-cerrarSoloMesa() {
-
-  this.server.closeOrder(
-  this.orderId,
-  sessionStorage.getItem('user_id')
-)
-    .subscribe({
-
-      next: async () => {
-
-        const toast = await this.toast.create({
-          message: 'Mesa cerrada ✅',
-          duration: 2000,
+    this.server.procesarMultiplesPagos(payload).subscribe((res: any) => {
+      if (res.error === 0) {
+        this.toast.create({
+          message: 'Pago parcial guardado 💾',
+          duration: 1500,
           color: 'success'
-        });
+        }).then(t => t.present());
 
-        toast.present();
-
-        this.modalCtrl.dismiss(true);
-
-        this.router.navigate(['/panel']);
-      },
-
-      error: async () => {
-
-        const toast = await this.toast.create({
-          message: 'No se pudo cerrar mesa ❌',
-          duration: 2000,
-          color: 'danger'
-        });
-
-        toast.present();
+        this.pagosTemporales = []; // limpiar canasta
+        this.cargarDatosIniciales(); // recargar items
       }
+    });
+  }
+  // ======================================
+  // CERRAR SOLO MESA
+  // ======================================
+
+  cerrarSoloMesa() {
+
+    this.server.closeOrder(
+      this.orderId,
+      sessionStorage.getItem('user_id')
+    )
+      .subscribe({
+
+        next: async () => {
+
+          const toast = await this.toast.create({
+            message: 'Mesa cerrada ✅',
+            duration: 2000,
+            color: 'success'
+          });
+
+          toast.present();
+
+          this.modalCtrl.dismiss(true);
+
+          this.router.navigate(['/panel']);
+        },
+
+        error: async () => {
+
+          const toast = await this.toast.create({
+            message: 'No se pudo cerrar mesa ❌',
+            duration: 2000,
+            color: 'danger'
+          });
+
+          toast.present();
+        }
+
+      });
+
+  }// ======================================
+  // RECIBO SIMPLE
+  // ======================================
+  async confirmarConRecibo() {
+
+    const loading = await this.loader.create({
+
+      message: 'Cerrando mesa...'
 
     });
 
-}// ======================================
-// RECIBO SIMPLE
-// ======================================
-async confirmarConRecibo() {
+    await loading.present();
 
-  const loading = await this.loader.create({
-
-    message:'Cerrando mesa...'
-
-  });
-
-  await loading.present();
-
-  this.guardarPagoFinalBD()
-
-  .subscribe({
-
-    next:()=>{
-
-      this.server.closeOrder(
-
-        this.orderId,
-
-        sessionStorage.getItem(
-
-          'user_id'
-
-        )
-
-      )
+    this.guardarPagoFinalBD()
 
       .subscribe({
 
-        next:async()=>{
+        next: () => {
 
-          await loading.dismiss();
+          this.server.closeOrder(
 
-          const toast =
+            this.orderId,
 
-          await this.toast.create({
+            sessionStorage.getItem(
 
-            message:
+              'user_id'
 
-            'Mesa cerrada ✅',
+            )
 
-            duration:1800,
+          )
 
-            color:'success'
+            .subscribe({
 
-          });
+              next: async () => {
 
-          toast.present();
+                await loading.dismiss();
 
-          this.modalCtrl.dismiss();
+                const toast =
 
-          this.router.navigate([
+                  await this.toast.create({
 
-            '/facturacion',
+                    message:
 
-            this.orderId
+                      'Mesa cerrada ✅',
 
-          ]);
+                    duration: 1800,
 
-        },
+                    color: 'success'
 
-        error:async()=>{
+                  });
 
-          await loading.dismiss();
+                toast.present();
 
-          const toast =
+                this.modalCtrl.dismiss();
 
-          await this.toast.create({
+                this.router.navigate([
 
-            message:
+                  '/facturacion',
 
-            'No se pudo cerrar mesa ❌',
+                  this.orderId
 
-            duration:2000,
+                ]);
 
-            color:'danger'
+              },
 
-          });
+              error: async () => {
 
-          toast.present();
+                await loading.dismiss();
+
+                const toast =
+
+                  await this.toast.create({
+
+                    message:
+
+                      'No se pudo cerrar mesa ❌',
+
+                    duration: 2000,
+
+                    color: 'danger'
+
+                  });
+
+                toast.present();
+
+              }
+
+            });
 
         }
 
       });
 
-    }
-
-  });
-
-}
+  }
   cerrar() { this.modalCtrl.dismiss(); }
   guardarPagoFinalBD() {
 
-  const payload = {
+    const payload = {
 
-    order_id: this.orderId,
+      order_id: this.orderId,
 
-    pagos: this.pagosTemporales.map(p => ({
+      pagos: this.pagosTemporales.map(p => ({
 
-      user_id: sessionStorage.getItem('user_id'),
+        user_id: sessionStorage.getItem('user_id'),
 
-      nit: p.nit,
+        nit: p.nit,
 
-      razonSocial: p.razonSocial,
+        razonSocial: p.razonSocial,
 
-      metodo_pago: p.metodo_pago,
+        metodo_pago: p.metodo_pago,
 
-      voucher: p.voucher || '',
+        voucher: p.voucher || '',
 
-      monto: p.monto,
+        monto: p.monto,
 
-      detalle_ids: p.items_referencia.reduce(
-        (acc: any, item: any) => {
+        detalle_ids: p.items_referencia.reduce(
+          (acc: any, item: any) => {
 
-          const id = item.detail_id;
+            const id = item.detail_id;
 
-          if (!id) return acc;
+            if (!id) return acc;
 
-          acc[id] = (acc[id] || 0) + 1;
+            acc[id] = (acc[id] || 0) + 1;
 
-          return acc;
+            return acc;
 
-        },
+          },
 
-        {}
-      )
+          {}
+        )
 
-    })),
+      })),
 
-    system:
+      system:
 
-      sessionStorage.getItem('sistema')
+        sessionStorage.getItem('sistema')
 
-      ||
+        ||
 
-      'mixtura',
+        'mixtura',
 
-    parcial: 0
+      parcial: 0
 
-  };
+    };
 
-  return this.server.procesarMultiplesPagos(payload);
+    return this.server.procesarMultiplesPagos(payload);
 
-}
-formatoImpresion = '80';
+  }
+  formatoImpresion = '80';
 }

@@ -636,18 +636,20 @@ export class ServerContentService {
     // Usamos POST para enviar el FormData completo
     return this.http.post(`${this.urlService}get_order_products.php`, body);
   }
-  triggerAlert(detailId: any) {
-    let body = new FormData();
-    body.append("detail_id", detailId.toString()); // Asegúrate que sea 'detail_id'
-    body.append("system", this.getSystem());
-    return this.http.post(this.urlService + "trigger_alert.php", body);
-  }
-  silenceAlert(detailId: number) {
-    let body = new FormData();
-    body.append("detail_id", detailId.toString());
-    body.append("system", this.getSystem());
-    return this.http.post(this.urlService + "silence_alert.php", body);
-  }
+triggerAlert(detailId: any, from: 'kitchen' | 'waiter' = 'kitchen') {
+  let body = new FormData();
+  body.append("detail_id", detailId.toString());
+  body.append("from", from);
+  body.append("system", this.getSystem());
+  return this.http.post(this.urlService + "trigger_alert.php", body);
+}
+
+silenceAlert(detailId: number) {
+  let body = new FormData();
+  body.append("detail_id", detailId.toString());
+  body.append("system", this.getSystem());
+  return this.http.post(this.urlService + "silence_alert.php", body);
+}
 
   searchProducts(term: string) {
 
@@ -1070,9 +1072,47 @@ body
 
 }
 
+deliverOrder_mesero(order_id:any){
 
+const body={
 
+order_id,
 
+system:this.getSystem()
+
+};
+
+return this.http.post(
+
+this.urlService+
+
+'deliverOrder.php',
+
+body
+
+);
+
+}
+
+pickProduct_mesero(
+detail_id:number
+){
+
+return this.http.post(
+
+this.urlService+"recoger_producto_mesero.php",
+
+{
+
+detail_id:detail_id,
+
+system:sessionStorage.getItem("system")
+
+}
+
+);
+
+}
 
 
 

@@ -1,78 +1,155 @@
-<!-- BOTON -->
+<div class="floating-btn" (click)="toggle()">
+  <ion-icon name="restaurant"></ion-icon>
+  <ion-badge *ngIf="groupedOrders.length" color="danger">
+    {{groupedOrders.length}}
+  </ion-badge>
+</div>
 
-<div class="floating-btn"
+<div class="floating-window" *ngIf="expanded">
 
-(click)="toggle()">
+  <div class="window-header">
+    <div class="header-title">
+      <ion-icon name="restaurant-outline"></ion-icon>
+      <span>Pedidos Listos</span>
+    </div>
+    <span class="header-badge">{{groupedOrders.length}}</span>
+  </div>
+
+  <div class="window-content" *ngIf="groupedOrders.length > 0">
+
+    <div class="pedido-card" *ngFor="let p of groupedOrders">
+
+      <div class="pedido-header">
+        <div class="ubicacion">
+          <span class="tag-piso">
+            <ion-icon name="location"></ion-icon> {{p.piso}}
+          </span>
+          <span class="tag-mesa">
+            <ion-icon name="pin"></ion-icon> {{p.mesa}}
+          </span>
+        </div>
+        <div class="hora">
+          {{p.order_date | date:'HH:mm'}}
+        </div>
+      </div>
+      <div class="pedido-summary" [ngClass]="{
+
+'ready':hasReadyPickup(p),
+
+'pending':!hasReadyPickup(p)
+
+}">
+<ion-icon
+
+[name]="
+
+hasReadyPickup(p)
+
+?
+
+'notifications-circle'
+
+:
+
+'time-outline'
+
+">
+
+        </ion-icon>
+
+        <span>
+{{
+
+hasReadyPickup(p)
+
+?
+
+'Listo para recoger'
+
+:
+
+'En preparación'
+
+}}
+
+        </span>
+
+      </div>
+
+      <div class="productos-list">
+        <div class="producto-item" *ngFor="let prod of p.items" [class.blink-alert]="prod.alert_status == 1">
+
+          <div class="producto-details">
+            <span class="cantidad-badge">{{prod.quantity}}x</span>
+            <div class="nombres-wrapper">
+              <div class="alias-text">
+                {{prod.alias || prod.product_name}}
+              </div>
+              <small class="real-name" *ngIf="prod.alias">
+                {{prod.product_name}}
+              </small>
+            </div>
+          </div>
+
+          <div class="alert-actions" style="display: flex; gap: 4px;">
+            <ion-button *ngIf="prod.alert_status == 1" size="small" color="danger"
+              (click)="callarAlertaCocina(prod.detail_id, $event)">
+              <ion-icon name="volume-mute-outline"></ion-icon>
+            </ion-button>
+
+            <ion-button *ngIf="prod.alert_status != 3 && prod.alert_status != 1" size="small" color="warning"
+              fill="clear" (click)="alertarAlCocina(prod.detail_id, $event)">
+              <ion-icon name="volume-high-outline"></ion-icon>
+            </ion-button>
+
+            <span *ngIf="prod.alert_status == 3"
+              style="font-size: 10px; color:#ff7043; align-self: center; font-weight: bold;">
+              Zumbando...
+            </span>
+
+<ion-button
+
+*ngIf="
+
+prod.process_status
+
+==
+
+'ready_pickup'
+
+"
+
+size="small"
+
+color="success"
+
+class="btn-recoger"
+
+(click)="recogerProducto(prod.detail_id)">
 
 <ion-icon
 
-name="restaurant">
+slot="start"
+
+name="checkmark-circle">
 
 </ion-icon>
 
-<ion-badge
+Recoger
 
-*ngIf="orders.length>0">
+</ion-button>
+          </div>
 
-{{orders.length}}
+        </div>
+      </div>
 
-</ion-badge>
+    </div>
+  </div>
 
-</div>
-
-
-<!-- VENTANA -->
-
-<div
-
-class="floating-window"
-
-*ngIf="expanded">
-
-<div class="header">
-
-Pedidos listos
-
-</div>
-
-
-<div
-
-class="pedido"
-
-*ngFor="let p of orders">
-
-<div>
-
-<b>
-
-Mesa {{p.table_id}}
-
-</b>
-
-</div>
-
-<div>
-
-{{p.quantity}}x
-
-{{p.alias ||
-
-p.product_name}}
-
-</div>
-
-</div>
-
-
-<div
-
-*ngIf="orders.length==0"
-
-class="empty">
-
-No hay pedidos listos
-
-</div>
+  <div *ngIf="groupedOrders.length == 0" class="empty-state">
+    <div class="empty-icon">🍽</div>
+    <h3>¡Todo al día!</h3>
+    <p>No hay productos pendientes de entrega.</p>
+  </div>
 
 </div>

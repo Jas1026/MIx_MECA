@@ -80,11 +80,19 @@ export class DashboardPage {
       this.UpdateContent();      
     }, 8000);
   }
-  LogOut() {
-    localStorage.setItem("nombre", "");
-    localStorage.setItem("tipo", "");
-    this.router.navigate(['home']);
-  }
+LogOut(){
+
+sessionStorage.clear();
+
+localStorage.removeItem("nombre");
+
+localStorage.removeItem("tipo");
+
+this.router.navigateByUrl(
+'/selector-login'
+);
+
+}
   async CloseCash() {
     let popover = await this.popoverController.create({
       component: CloseCashPage,

@@ -1,9 +1,8 @@
 import { Component, OnInit, OnDestroy, NgZone, ChangeDetectorRef, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ServerContentService } from 'src/app/services/server-content.service';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import { KitchenNotifyService } from 'src/app/services/kitchen-notify.service';
-import { ModalController } from '@ionic/angular';
 import { IngredientAdjustModalComponent } from '../../ingredient-adjust-modal/ingredient-adjust-modal.component';
 
 @Component({
@@ -18,9 +17,14 @@ export class CocinaPage implements OnInit, OnDestroy {
   private dataInterval: any;
   private clockInterval: any;
   private previousOrderIds: number[] = [];
-  // Sonido de alerta
-  private audioAlarma = new Audio('assets/sounds/alarma.mp3');
-private audioNuevoPedido = new Audio('assets/sounds/notificacion.mp3');
+
+  // Sonidos de Cocina
+  private audioNuevoPedido = new Audio('assets/sounds/notificacion.mp3');
+  // Sonido 2: Alerta que recibe cocina cuando el mesero la molesta
+  private audioSonido2 = new Audio('assets/sounds/sonidodeprueba.mp3');
+private audioUnlocked = false;
+private isPlayingNuevo = false;
+private isPlayingAlerta = false;
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -31,160 +35,134 @@ private audioNuevoPedido = new Audio('assets/sounds/notificacion.mp3');
     private notify: KitchenNotifyService,
     private modalCtrl: ModalController,
   ) {
-    this.audioAlarma.loop = true;
-     this.audioNuevoPedido.loop = false;
+    this.audioNuevoPedido.loop = false;
+    this.audioSonido2.loop = true;
   }
-ngOnInit() {
-  
-  this.kitchenId = this.route.snapshot.paramMap.get('id');
 
-  // 🔓 Desbloquear audio
-document.body.addEventListener('click', () => {
+  ngOnInit() {
+    this.kitchenId = this.route.snapshot.paramMap.get('id');
 
-  // Desbloquear alarma
-  this.audioAlarma.play()
-    .then(() => {
+    this.loadOrders(); 
 
-      this.audioAlarma.pause();
+    // Polling de peticiones
+    this.dataInterval = setInterval(() => {
+      this.loadOrders();
+    }, 1000);
 
-      this.audioAlarma.currentTime = 0;
+    this.startClock();
+  }
 
-    })
-    .catch(() => {});
-
-
-  // Desbloquear sonido nuevo pedido
-  this.audioNuevoPedido.play()
-    .then(() => {
-
-      this.audioNuevoPedido.pause();
-
-      this.audioNuevoPedido.currentTime = 0;
-
-    })
-    .catch(() => {});
-
-}, { once: true });
-
-  this.loadOrders(); // 🔥 cargar inmediato
-
-  // 🔥 POLLING REAL
-  this.dataInterval = setInterval(() => {
-    this.loadOrders();
-  }, 1000);
-
-  this.startClock();
-}
-ingredients:any[] = [];
-adjustList:any[] = [];
-selectedIngredient:any = null;
-adjustQty:number = 0;
-ngOnDestroy() {
-  if (this.dataInterval) clearInterval(this.dataInterval);
-  if (this.clockInterval) clearInterval(this.clockInterval);
-  this.stopAlarma();
-}
-
-  private stopIntervals() {
+  ngOnDestroy() {
     if (this.dataInterval) clearInterval(this.dataInterval);
     if (this.clockInterval) clearInterval(this.clockInterval);
+    this.stopSonido2();
   }
+@HostListener('document:click')
+unlockAudio() {
+  if (this.audioUnlocked) return;
+
+  const unlock = async () => {
+    try {
+      // “calentamos” los audios sin bloquearlos
+      await this.audioNuevoPedido.play();
+      this.audioNuevoPedido.pause();
+      this.audioNuevoPedido.currentTime = 0;
+
+      await this.audioSonido2.play();
+      this.audioSonido2.pause();
+      this.audioSonido2.currentTime = 0;
+
+      this.audioUnlocked = true;
+
+      console.log("🔊 Audio desbloqueado correctamente");
+    } catch (e) {
+      console.warn("Audio aún bloqueado:", e);
+    }
+  };
+
+  unlock();
+}
+  @HostListener('click')
+  resumeAudioContext() {
+    if (this.audioSonido2) {
+      this.audioSonido2.play().then(() => {
+        this.audioSonido2.pause();
+        this.audioSonido2.currentTime = 0;
+      }).catch(() => {});
+    }
+    if (this.audioNuevoPedido) {
+      this.audioNuevoPedido.play().then(() => {
+        this.audioNuevoPedido.pause();
+        this.audioNuevoPedido.currentTime = 0;
+      }).catch(() => {});
+    }
+  }
+
   loadOrders() {
-
-  this.server.getKitchenOrders(this.kitchenId)
-    .subscribe((res: any) => {
-
+    this.server.getKitchenOrders(this.kitchenId).subscribe((res: any) => {
       if (res.error === 0) {
-
         const nuevasOrdenes: any[] = res.data.map((item: any) => ({
-
           ...item,
-
           alert_status: parseInt(item.alert_status)
-
         }));
 
+        const oldIds = new Set<number>(this.previousOrderIds);
+        const nuevosPedidos = nuevasOrdenes.filter((o: any) => !oldIds.has(Number(o.detail_id)));
 
-        // Convertimos los IDs antiguos a Set
-        const oldIds = new Set<number>(
-          this.previousOrderIds
-        );
+        if (nuevosPedidos.length > 0) {
+          nuevosPedidos.forEach((_: any, index: number) => {
+            setTimeout(() => { this.sonarNuevoPedido(); }, index * 1200);
+          });
+        }
 
-
-        // Buscamos cuáles son nuevos
-        const nuevosPedidos = nuevasOrdenes.filter(
-          (o: any) => !oldIds.has(
-            Number(o.detail_id)
-          )
-        );
-
-
-if (nuevosPedidos.length > 0) {
-
-  nuevosPedidos.forEach((_: any, index: number) => {
-
-    setTimeout(() => {
-
-      this.sonarNuevoPedido();
-
-    }, index * 1200);
-
-  });
-
-}
-
-
-        // Guardamos IDs actuales
-        this.previousOrderIds =
-          nuevasOrdenes.map(
-            (o: any) => Number(o.detail_id)
-          );
-
-
+        this.previousOrderIds = nuevasOrdenes.map((o: any) => Number(o.detail_id));
         this.orders = nuevasOrdenes;
-
+        
         this.checkAlerts();
-
         this.updateCountdowns();
-
       }
-
     });
-
-}
-
-
+  }
+  
 checkAlerts() {
-  const hayAlertaActiva = this.orders.some(o => o.alert_status == 1);
+  const hayAlerta = this.orders.some(o => o.alert_status === 3);
 
-  if (hayAlertaActiva) {
+  if (!this.audioUnlocked) return;
 
-    if (this.audioAlarma.paused) {
-
-      this.audioAlarma.currentTime = 0;
-
-      this.audioAlarma.play().then(() => {
-        console.log("🔔 Alarma sonando");
-      }).catch(err => {
-        console.warn("Autoplay bloqueado, esperando interacción...");
-      });
-
+  if (hayAlerta) {
+    if (this.audioSonido2.paused) {
+      this.audioSonido2.play().catch(err =>
+        console.warn("Autoplay bloqueado:", err)
+      );
     }
-
   } else {
-    this.stopAlarma();
+    this.stopSonido2();
   }
 }
 
-  playAlarma() {
-    this.audioAlarma.play().catch(err => {
-      console.warn("El navegador bloqueó el sonido hasta que hagas clic en la pantalla.");
+stopSonido2() {
+  this.audioSonido2.pause();
+  this.audioSonido2.currentTime = 0;
+}
+
+  // Cocina molesta al mesero (Envía alerta con status 1)
+  alertarAlMesero(detailId: number) {
+    this.server.triggerAlert(detailId, 'kitchen').subscribe((res: any) => {
+      if (res.error === 0) this.loadOrders();
     });
   }
 
-  stopAlarma() {
-    this.audioAlarma.pause();
-    this.audioAlarma.currentTime = 0;
+  // Cocina apaga la alerta que le mandó el mesero (Apaga el status 3)
+  callarAlertaMesero(detailId: number) {
+    this.server.silenceAlert(detailId).subscribe((res: any) => {
+      if (res.error === 0) this.loadOrders();
+    });
+  }
+
+  sonarNuevoPedido() {
+    this.audioNuevoPedido.pause();
+    this.audioNuevoPedido.currentTime = 0;
+    this.audioNuevoPedido.play().catch(err => console.warn("No se pudo reproducir:", err));
   }
 
   startClock() {
@@ -195,204 +173,47 @@ checkAlerts() {
       });
     }, 1000);
   }
-private updateCountdowns() {
 
-  const now = new Date().getTime();
+  private updateCountdowns() {
+    const now = new Date().getTime();
+    this.orders.forEach((item: any) => {
+      if (!item.order_date) return;
+      const start = new Date(item.order_date.replace(' ', 'T')).getTime();
+      const limitMinutes = parseInt(item.time_prep) || 0;
+      const elapsedMs = now - start;
+      const elapsedMinutes = Math.floor(elapsedMs / 60000);
+      const elapsedSeconds = Math.floor((elapsedMs % 60000) / 1000);
 
-  this.orders.forEach((item:any) => {
-
-    if (!item.order_date) return;
-
-    const start = new Date(
-      item.order_date.replace(' ', 'T')
-    ).getTime();
-
-    const limitMinutes = parseInt(item.time_prep) || 0;
-
-    // Tiempo transcurrido desde que llegó el pedido
-    const elapsedMs = now - start;
-
-    const elapsedMinutes = Math.floor(
-      elapsedMs / 60000
-    );
-
-    const elapsedSeconds = Math.floor(
-      (elapsedMs % 60000) / 1000
-    );
-
-    // Mostrar 0:00, 0:01, 0:02...
-    item.timeLeft =
-      `${elapsedMinutes}:${elapsedSeconds
-        .toString()
-        .padStart(2, '0')}`;
-
-    // Pasó el tiempo estimado?
-    item.isLate =
-      elapsedMinutes >= limitMinutes;
-
-  });
-
-}
+      item.timeLeft = `${elapsedMinutes}:${elapsedSeconds.toString().padStart(2, '0')}`;
+      item.isLate = elapsedMinutes >= limitMinutes;
+    });
+  }
 
   getTimerClass(item: any) {
     return item.isLate ? 'time-badge late' : 'time-badge on-time';
   }
 
-// markReady(detailId: number) {
-//   // Ya no pasamos 'force' porque el stock se validó al crear el pedido
-//   this.server.updateDetailStatus(detailId, 'ready').subscribe((res: any) => {
-//     if (res.error === 0) {
-//       const item = this.orders.find(o => o.detail_id == detailId);
+  async openIngredientAdjust(item: any) {
+    const modal = await this.modalCtrl.create({
+      component: IngredientAdjustModalComponent,
+      componentProps: { detailId: item.detail_id }
+    });
+    await modal.present();
+  }
 
-//       if (item) {
-//         this.notify.pushNotification({
-//           product: item.name,
-//           table: item.table_id,
-//           order: item.order_id
-//         });
-//       }
-
-//       this.loadOrders(); // Refrescar la lista de cocina
-//     } else {
-//       // Solo errores genéricos de conexión o base de datos
-//       alert("Error al actualizar: " + res.message);
-//     }
-//   });
-// }
-
-  silenciarAlerta(detailId: number) {
-    // Llamamos al servicio para poner alert_status = 2
-    this.server.silenceAlert(detailId).subscribe((res: any) => {
-      this.loadOrders();
+  startPreparing(item: any) {
+    this.server.updateProcessStatus(item.detail_id, 'preparing').subscribe(() => {
+      item.process_status = 'preparing';
     });
   }
-  // En cocina.page.ts, añade este método
-@HostListener('click')
-resumeAudioContext() {
-  // Al hacer el primer clic en la pantalla de cocina, 
-  // el navegador permitirá que suene la alarma.
-  if (this.audioAlarma) {
-    this.audioAlarma.play().then(() => {
-      this.audioAlarma.pause(); // Lo activamos y pausamos de inmediato
-      this.audioAlarma.currentTime = 0;
-    }).catch(() => {});
-  }
-}
-async openIngredientAdjust(item:any){
 
-  const modal = await this.modalCtrl.create({
-    component: IngredientAdjustModalComponent,
-    componentProps:{
-      detailId:item.detail_id
-    }
-  });
-
-  await modal.present();
-
-}
-
-
-initIngredientEvents(){
-
-  const addBtn:any = document.getElementById("addIngredientBtn");
-
-  addBtn.onclick = ()=>{
-
-    const select:any = document.getElementById("ingredientSelect");
-    const qty:any = document.getElementById("qtyInput");
-
-    const ingId = Number(select.value);
-    const cantidad = Number(qty.value);
-
-    if(!ingId || !cantidad) return;
-
-    const ing = this.ingredients.find(i=>i.id_ingredients==ingId);
-
-    const ajuste = {
-      ingredient_id: ingId,
-      qty: cantidad
-    };
-
-    this.adjustList.push(ajuste);
-
-    const list:any = document.getElementById("ingredientList");
-
-    list.innerHTML += `
-      <div style="display:flex;justify-content:space-between;margin-top:5px">
-        <span>${ing.nombre}</span>
-        <b>${cantidad > 0 ? '+' : ''}${cantidad} ${ing.unidad_med}</b>
-      </div>
-    `;
-
-    qty.value="";
-
-  };
-
-}
-sonarNuevoPedido() {
-
-  this.audioNuevoPedido.pause();
-
-  this.audioNuevoPedido.currentTime = 0;
-
-  this.audioNuevoPedido.play()
-    .then(() => {
-
-      console.log("🛎️ Nuevo pedido");
-
-    })
-    .catch(err => {
-
-      console.warn("No se pudo reproducir:", err);
-
+  readyPickup(item: any) {
+    this.server.updateProcessStatus(item.detail_id, 'ready_pickup').subscribe(() => {
+      item.process_status = 'ready_pickup';
     });
+  }
 
-}
-startPreparing(item:any){
-
-this.server
-
-.updateProcessStatus(
-
-item.detail_id,
-
-'preparing'
-
-)
-
-.subscribe(()=>{
-
-item.process_status='preparing';
-
-});
-
-}
-readyPickup(item:any){
-
-this.server
-
-.updateProcessStatus(
-
-item.detail_id,
-
-'ready_pickup'
-
-)
-
-.subscribe(()=>{
-
-item.process_status='ready_pickup';
-
-});
-
-}
-countProducts(orderId:number){
-
-return this.orders.filter(
-
-x=>x.order_id==orderId
-
-).length;
-
-}
+  countProducts(orderId: number) {
+    return this.orders.filter(x => x.order_id == orderId).length;
+  }
 }

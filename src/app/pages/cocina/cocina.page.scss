@@ -320,3 +320,13 @@ color:#777;
 margin-top:4px;
 
 }
+.blink-alert {
+  animation: alertBlinker 1.5s linear infinite;
+  border: 2px solid #ef5350 !important;
+}
+
+@keyframes alertBlinker {
+  50% {
+    background-color: rgba(239, 83, 80, 0.15);
+  }
+}
