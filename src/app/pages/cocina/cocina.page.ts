@@ -97,32 +97,37 @@ unlockAudio() {
       }).catch(() => {});
     }
   }
-
   loadOrders() {
-    this.server.getKitchenOrders(this.kitchenId).subscribe((res: any) => {
-      if (res.error === 0) {
-        const nuevasOrdenes: any[] = res.data.map((item: any) => ({
-          ...item,
-          alert_status: parseInt(item.alert_status)
-        }));
 
-        const oldIds = new Set<number>(this.previousOrderIds);
-        const nuevosPedidos = nuevasOrdenes.filter((o: any) => !oldIds.has(Number(o.detail_id)));
+  this.server
+  .getKitchenOrders(this.kitchenId)
+  .subscribe((res:any)=>{
 
-        if (nuevosPedidos.length > 0) {
-          nuevosPedidos.forEach((_: any, index: number) => {
-            setTimeout(() => { this.sonarNuevoPedido(); }, index * 1200);
-          });
-        }
+    console.log(res);
 
-        this.previousOrderIds = nuevasOrdenes.map((o: any) => Number(o.detail_id));
-        this.orders = nuevasOrdenes;
-        
-        this.checkAlerts();
-        this.updateCountdowns();
-      }
-    });
-  }
+    if(res.error===0){
+
+      const nuevasOrdenes = res.data.map((item:any)=>({
+
+        ...item,
+
+        alert_status: parseInt(item.alert_status),
+
+        quantity: parseInt(item.quantity)
+
+      }));
+
+      this.orders = nuevasOrdenes;
+
+      this.checkAlerts();
+
+      this.updateCountdowns();
+
+    }
+
+  });
+
+}
   
 checkAlerts() {
   const hayAlerta = this.orders.some(o => o.alert_status === 3);
@@ -216,4 +221,9 @@ stopSonido2() {
   countProducts(orderId: number) {
     return this.orders.filter(x => x.order_id == orderId).length;
   }
+  trackByDetail(index:number,item:any){
+
+  return item.detail_id;
+
+}
 }

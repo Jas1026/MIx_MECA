@@ -7,7 +7,7 @@
   </ion-toolbar>
 
   <div class="orders-grid">
-    <div class="order-ticket" *ngFor="let item of orders" [class.blink-alert]="item.alert_status == 3">
+    <div class="order-ticket" *ngFor="let item of orders; trackBy: trackByDetail" [class.blink-alert]="item.alert_status == 3">
 
       <div class="order-badge">
         Pedido #{{item.order_id}}
@@ -25,7 +25,8 @@
       </div>
 
       <div class="process-bar">
-        <div class="step" [class.active]="item.process_status=='new' || item.process_status=='preparing' || item.process_status=='ready_pickup'">
+        <div class="step"
+          [class.active]="item.process_status=='new' || item.process_status=='preparing' || item.process_status=='ready_pickup'">
           <div class="circle"></div><span>Nuevo</span>
         </div>
         <div class="line"></div>
@@ -39,10 +40,13 @@
       </div>
 
       <div class="ticket-body">
-        <h2 class="product-name">
-          <span class="quantity">{{item.quantity}}x</span> {{item.alias || item.name}}
-        </h2>
-        <small class="product-real" *ngIf="item.alias">{{item.name}}</small>
+<h2 class="product-name">
+  {{item.alias || item.name} }
+</h2>
+
+<small *ngIf="item.itemIndex">
+  Unidad {{item.itemIndex}}
+</small>
 
         <div class="order-extra" *ngIf="item.notes || item.sides">
           <div class="extra-note" *ngIf="item.notes">
@@ -61,19 +65,22 @@
       </ion-button>
 
       <div class="ticket-footer">
-        
+
         <div class="alert-zone" style="margin-bottom: 8px;">
-          <ion-button *ngIf="item.alert_status == 3" color="danger" expand="block" (click)="callarAlertaMesero(item.detail_id)">
+          <ion-button *ngIf="item.alert_status == 3" color="danger" expand="block"
+            (click)="callarAlertaMesero(item.detail_id)">
             <ion-icon name="volume-mute-outline" slot="start"></ion-icon>
             SILENCIAR AL MESERO
           </ion-button>
 
-          <ion-button *ngIf="item.alert_status != 1 && item.alert_status != 3" color="warning" fill="outline" expand="block" (click)="alertarAlMesero(item.detail_id)">
+          <ion-button *ngIf="item.alert_status != 1 && item.alert_status != 3" color="warning" fill="outline"
+            expand="block" (click)="alertarAlMesero(item.detail_id)">
             <ion-icon name="volume-high-outline" slot="start"></ion-icon>
             ZUMBAR MESERO
           </ion-button>
 
-          <div *ngIf="item.alert_status == 1" style="text-align: center; font-size: 11px; color: #ff7043; font-weight: bold; padding: 4px;">
+          <div *ngIf="item.alert_status == 1"
+            style="text-align: center; font-size: 11px; color: #ff7043; font-weight: bold; padding: 4px;">
             ⚠️ Avisado al mesero (Sonando...)
           </div>
         </div>
@@ -82,7 +89,8 @@
           <ion-icon name="play" slot="start"></ion-icon> EMPEZAR
         </ion-button>
 
-        <ion-button *ngIf="item.process_status=='preparing'" expand="block" class="btn-ready" (click)="readyPickup(item)">
+        <ion-button *ngIf="item.process_status=='preparing'" expand="block" class="btn-ready"
+          (click)="readyPickup(item)">
           <ion-icon name="checkmark" slot="start"></ion-icon> LISTO PARA RECOGER
         </ion-button>
 

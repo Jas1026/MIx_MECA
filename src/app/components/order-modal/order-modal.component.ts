@@ -319,75 +319,27 @@ export class OrderModalComponent implements OnInit {
 
   // =====================
 
+addProduct(product:any){
 
-  addProduct(product: any) {
+  this.cart.push({
 
+    id_product: product.id_product,
 
-    const found =
+    name: product.name,
 
+    price: product.price,
 
-      this.cart.find(
+    quantity:1,
 
+    notes:'',
 
-        p =>
+    sides:'',
 
-          p.id_product ===
+    isPriceEditable:false
 
-          product.id_product
+  });
 
-      );
-
-
-
-    if (found) {
-
-
-      found.quantity++;
-
-
-    }
-
-    else {
-
-
-      this.cart.push({
-
-
-        id_product:
-
-          product.id_product,
-
-
-        name:
-
-          product.name,
-
-
-        price:
-
-          product.price,
-
-
-        quantity: 1,
-
-
-        notes: '',
-
-
-        sides: '',
-
-
-        isPriceEditable: false
-
-
-      });
-
-
-    }
-
-
-  }
-
+}
 
 
 
@@ -531,32 +483,32 @@ export class OrderModalComponent implements OnInit {
   // =====================
 
 
-loadOrderDetails() {
-  this.server
-    .getOrderProducts_unit(this.order_id)
-    .subscribe((res: any) => {
-      // Validamos que la respuesta sea correcta (error === 0) y traiga datos
-      if (res && res.error === 0 && res.data) {
-        
-        this.cart = res.data.map((item: any) => ({
-          id_product: item.product_id,
-          name: item.nombre_producto,
-          price: parseFloat(item.unit_price),
-          quantity: parseInt(item.quantity, 10),
-          notes: item.notes || '',
-          sides: item.sides || '',
-          isPriceEditable: false
-        }));
+  loadOrderDetails() {
+    this.server
+      .getOrderProducts_unit(this.order_id)
+      .subscribe((res: any) => {
+        // Validamos que la respuesta sea correcta (error === 0) y traiga datos
+        if (res && res.error === 0 && res.data) {
 
-        // Si estás en móvil, esto fuerza a que se pueda ver el listado o resumen correctamente actualizado
-        console.log('Carrito cargado en edición:', this.cart);
-      } else {
-        console.warn('No se pudieron obtener los productos del pedido o el pedido está vacío.');
-      }
-    }, error => {
-      console.error('Error cargando detalles del pedido:', error);
-    });
-}
+          this.cart = res.data.map((item: any) => ({
+            id_product: item.product_id,
+            name: item.nombre_producto,
+            price: parseFloat(item.unit_price),
+            quantity: parseInt(item.quantity, 10),
+            notes: item.notes || '',
+            sides: item.sides || '',
+            isPriceEditable: false
+          }));
+
+          // Si estás en móvil, esto fuerza a que se pueda ver el listado o resumen correctamente actualizado
+          console.log('Carrito cargado en edición:', this.cart);
+        } else {
+          console.warn('No se pudieron obtener los productos del pedido o el pedido está vacío.');
+        }
+      }, error => {
+        console.error('Error cargando detalles del pedido:', error);
+      });
+  }
 
 
 
@@ -565,66 +517,66 @@ loadOrderDetails() {
   // CONFIRMAR
 
   // =====================
-confirmOrder() {
-  const id_user = sessionStorage.getItem('user_id') || '';
+  confirmOrder() {
+    const id_user = sessionStorage.getItem('user_id') || '';
 
-  if (this.editMode) {
-    // ==========================================
-    // MODO EDICIÓN: LLAMAR A UPDATE
-    // ==========================================
-    this.server
-      .updateOrder_a(
-        this.order_id,
-        id_user,
-        this.cart,
-        false
-      )
-      .subscribe({
-        next: (res: any) => {
-          if (res.error === 0) {
-            alert('✅ ' + res.message);
-            this.modalCtrl.dismiss(true); // Retorna true para refrescar la lista de pedidos
-          } else if (res.error === 2) {
-            alert('🚫 STOCK INSUFICIENTE\n\n' + res.message);
-          } else {
-            alert('❌ ' + res.message);
+    if (this.editMode) {
+      // ==========================================
+      // MODO EDICIÓN: LLAMAR A UPDATE
+      // ==========================================
+      this.server
+        .updateOrder_a(
+          this.order_id,
+          id_user,
+          this.cart,
+          false
+        )
+        .subscribe({
+          next: (res: any) => {
+            if (res.error === 0) {
+              alert('✅ ' + res.message);
+              this.modalCtrl.dismiss(true); // Retorna true para refrescar la lista de pedidos
+            } else if (res.error === 2) {
+              alert('🚫 STOCK INSUFICIENTE\n\n' + res.message);
+            } else {
+              alert('❌ ' + res.message);
+            }
+          },
+          error: (err) => {
+            console.error(err);
+            alert('Error de conexión al actualizar');
           }
-        },
-        error: (err) => {
-          console.error(err);
-          alert('Error de conexión al actualizar');
-        }
-      });
+        });
 
-  } else {
-    // ==========================================
-    // MODO NUEVO PEDIDO: LLAMAR A CREATE
-    // ==========================================
-    this.server
-      .createOrder(
-        this.table.id_table,
-        id_user,
-        this.cart,
-        false
-      )
-      .subscribe({
-        next: (res: any) => {
-          if (res.error === 0) {
-            alert('✅ ' + res.message);
-            this.modalCtrl.dismiss(true);
-          } else if (res.error === 2) {
-            alert('🚫 STOCK INSUFICIENTE\n\n' + res.message);
-          } else {
-            alert('❌ ' + res.message);
+    } else {
+      // ==========================================
+      // MODO NUEVO PEDIDO: LLAMAR A CREATE
+      // ==========================================
+      this.server
+        .createOrder(
+          this.table.id_table,
+          id_user,
+          this.cart,
+          false
+        )
+        .subscribe({
+          next: (res: any) => {
+            if (res.error === 0) {
+              alert('✅ ' + res.message);
+              this.modalCtrl.dismiss(true);
+            } else if (res.error === 2) {
+              alert('🚫 STOCK INSUFICIENTE\n\n' + res.message);
+            } else {
+              alert('❌ ' + res.message);
+            }
+          },
+          error: (err) => {
+            console.error(err);
+            alert('Error de conexión');
           }
-        },
-        error: (err) => {
-          console.error(err);
-          alert('Error de conexión');
-        }
-      });
+        });
+    }
   }
-}
 
 
 

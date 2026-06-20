@@ -384,11 +384,6 @@ product.stock_disponible<=3
         Resumen del pedido
 
       </div>
-
-
-
-
-
       <div class="cart-items-container">
 
 
@@ -483,7 +478,7 @@ product.stock_disponible<=3
 
 
               <ion-button fill="clear" color="danger" (click)="removeProduct(item)">
-
+eliminar
                 <ion-icon name="remove-circle-outline">
 
                 </ion-icon>
@@ -492,33 +487,16 @@ product.stock_disponible<=3
 
 
 
-              <span>
-
-                {{item.quantity}}
-
-              </span>
 
 
-
-              <ion-button fill="clear" color="success" (click)="addProduct(item)">
-
-                <ion-icon name="add-circle-outline">
-
-                </ion-icon>
-
-              </ion-button>
-
-
-
-
-              <ion-button fill="clear" color="danger" (click)="deleteFromCart(item)">
+              <!-- <ion-button fill="clear" color="danger" (click)="deleteFromCart(item)">
 
 
                 <ion-icon name="trash-outline">
 
                 </ion-icon>
 
-              </ion-button>
+              </ion-button> -->
 
             </div>
 
