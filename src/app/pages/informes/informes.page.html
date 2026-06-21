@@ -1,657 +1,737 @@
+<ion-content class="ion-padding advanced-dashboard">
+  <div class="dashboard-filters">
+    <ion-grid class="ion-no-padding">
+      <ion-row class="ion-align-items-center">
+        <ion-col size="12" size-md="6">
+          <div class="filter-glass-card" id="open-date">
+            <div class="icon-container">
+              <ion-icon name="calendar-number-outline" color="primary"></ion-icon>
+            </div>
+            <div class="text-container">
+              <span class="filter-label">Rango de Consulta</span>
+              <h2 class="filter-value">{{ fechaMostrada ? fechaMostrada : 'Hoy' }}</h2>
+            </div>
+            <ion-button fill="clear" color="medium" class="clean-btn"
+              (click)="limpiarFiltros(); $event.stopPropagation()">
+              <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-button>
+          </div>
+        </ion-col>
 
-<ion-content class="ion-padding">
- 
-   <ion-toolbar color="light">
-    <ion-title>Panel de Informes Avanzado</ion-title>
-  </ion-toolbar>
-<div class="dashboard-filters ion-padding">
-  
-  <div class="filter-glass-card" id="open-date">
-    <div class="icon-container">
-      <ion-icon name="calendar" color="primary"></ion-icon>
-    </div>
-    
-    <div class="text-container">
-      <p>Rango de Consulta</p>
-      <h2>{{ fechaMostrada ? fechaMostrada : 'Hoy' }}</h2>
-    </div>
-
-    <ion-button fill="clear" color="medium" class="clean-btn" (click)="limpiarFiltros(); $event.stopPropagation()">
-      <ion-icon name="trash-outline"></ion-icon>
-    </ion-button>
+        <ion-col size="12" size-md="5">
+          <ion-button expand="block" color="dark" class="btn-analytics" (click)="modalGraficos.present()">
+            <ion-icon name="analytics-outline" slot="start"></ion-icon>
+            Análisis
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </div>
 
-  <!-- BOTÓN ANÁLISIS -->
-  <ion-button expand="block" color="dark" (click)="modalGraficos.present()" class="ion-margin-bottom">
-    <ion-icon name="analytics-outline" slot="start"></ion-icon>
-    Ver Análisis Completo
-  </ion-button>
-
-</div>
-
-<ion-modal trigger="open-date" [keepContentsMounted]="true" class="modal-moderno">
-  <ng-template>
-    <div class="datetime-wrapper">
-      <ion-datetime
-        presentation="date"
-        locale="es-ES"
-        [showDefaultButtons]="true"
-        doneText="Listo"
-        cancelText="Cerrar"
-        (ionChange)="fechaSeleccionada($event)">
-        <span slot="title">Seleccionar Día</span>
-      </ion-datetime>
-    </div>
-  </ng-template>
-</ion-modal>
-
-
-
-  <!-- TARJETAS PRINCIPALES -->
-  <ion-row class="ion-margin-top">
-    <ion-col size="6">
-      <ion-card>
-        <ion-card-content>
-          <ion-item lines="none">
-            <ion-icon name="cash-outline" color="success" slot="start"></ion-icon>
-            <ion-label>
-              <h2>Bs. {{ resumen.total_dinero }}</h2>
-              <p>Ventas Totales</p>
-            </ion-label>
-          </ion-item>
-        </ion-card-content>
-      </ion-card>
-    </ion-col>
- 
-<ion-col size="6">
-  <ion-card class="analytics-card profit-gradient">
-    <ion-card-content>
-      <ion-item lines="none" class="transparent-item">
-        <div class="icon-container" slot="start">
-          <ion-icon name="cash-outline" color="success"></ion-icon>
-        </div>
-        
-        <ion-label>
-          <p class="label-title">GANANCIA REAL</p>
-          <h2 class="amount-text">
-            <span class="currency">Bs.</span> 
-            {{ resumen.ganancia_total | number:'1.2-2' }}
-          </h2>
-          <ion-badge color="success" mode="ios" class="margin-badge">
-            Neto
-          </ion-badge>
-        </ion-label>
-      </ion-item>
-    </ion-card-content>
-  </ion-card>
-</ion-col>
- 
-  </ion-row>
- 
- 
- 
-  <!-- MEJOR MESA Y MESERO -->
-  <ion-row>
- 
-    <ion-col size="6">
-      <ion-card>
-        <ion-card-header>
-          <ion-card-title>
-            <ion-icon name="trophy-outline" color="warning"></ion-icon>
-            Mesa Más Activa
-          </ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <h2>{{ resumen.mesa_top?.nombre }}</h2>
-          <ion-badge color="success">
-            {{ resumen.mesa_top?.total_pedidos }} pedidos
-          </ion-badge>
-        </ion-card-content>
-      </ion-card>
-    </ion-col>
- 
-    <ion-col size="6">
-      <ion-card>
-        <ion-card-header>
-          <ion-card-title>
-            <ion-icon name="person-outline" color="primary"></ion-icon>
-            Mejor Mesero
-          </ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <h2>{{ resumen.mesero_top?.name }}</h2>
-          <ion-badge color="success">
-            Bs. {{ resumen.mesero_top?.total_ventas }}
-          </ion-badge>
-        </ion-card-content>
-      </ion-card>
-    </ion-col>
- 
-  </ion-row>
-
-  <!-- ÁREAS QUE MÁS GENERAN -->
- 
-  <ion-card class="ion-margin-top">
-    <ion-card-header>
-      <ion-card-title>Áreas que más generan</ion-card-title>
-    </ion-card-header>
- 
-    <ion-card-content>
-      <ion-list>
- 
-        <ion-item *ngFor="let area of resumen.areas_top">
- 
-          <ion-label>
-            <h2>{{ area.area }}</h2>
-            <p>Total generado</p>
-          </ion-label>
- 
-          <ion-badge color="success" slot="end">
-            Bs. {{ area.total_area }}
-          </ion-badge>
- 
-          <ion-button fill="clear" size="small" color="primary" (click)="verDetalleArea(area)">
-            Ver detalle
-          </ion-button>
- 
-        </ion-item>
- 
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
- 
- 
- 
- 
- 
- 
-
-  <!-- PAGOS POR EMPLEADO -->
-<ion-row>
-
-  <ion-col size="12" size-md="6" size-lg="4" *ngFor="let e of resumen.empleados_pagos">
-
-    <ion-card class="card-empleado">
-
-      <ion-card-header>
-
-        <ion-card-title class="titulo-empleado">
-          <ion-icon name="person-circle-outline" color="primary"></ion-icon>
-          {{ e.name }}
-        </ion-card-title>
-
-      </ion-card-header>
-
-      <ion-card-content>
-
-        <div class="pagos-grid">
-
-          <div class="metodo efectivo">
-            <ion-icon name="cash-outline"></ion-icon>
-            <span>Efectivo</span>
-            <strong>Bs {{ e.efectivo }}</strong>
-          </div>
-
-          <div class="metodo qr">
-            <ion-icon name="phone-portrait-outline"></ion-icon>
-            <span>QR</span>
-            <strong>Bs {{ e.qr }}</strong>
-          </div>
-
-          <div class="metodo tarjeta">
-            <ion-icon name="card-outline"></ion-icon>
-            <span>Tarjeta</span>
-            <strong>Bs {{ e.tarjeta }}</strong>
-          </div>
-
-        </div>
-
-        <div class="total-empleado">
-
-          <span>Total vendido</span>
-
-          <h2>
-            Bs {{ e.total_ventas }}
-          </h2>
-
-        </div>
-
-      </ion-card-content>
-
-    </ion-card>
-
-  </ion-col>
-
-</ion-row>
- 
- 
- <ion-card class="analytics-card">
-
-  <ion-card-header>
-    <ion-card-title>
-      <ion-icon name="stats-chart-outline"></ion-icon>
-      Ventas por Categoría
-    </ion-card-title>
-  </ion-card-header>
-
-  <ion-card-content>
-
-    <div class="ventas-grid">
-
-      <div 
-        class="venta-box categoria"
-        *ngFor="let c of resumen.ventas_categorias">
-
-        <h3>
-          {{ c.categoria }}
-        </h3>
-
-        <h2>
-          Bs {{ c.total_ventas | number:'1.2-2' }}
-        </h2>
-
+  <ion-modal trigger="open-date" [keepContentsMounted]="true" class="modal-moderno">
+    <ng-template>
+      <div class="datetime-wrapper">
+        <ion-datetime presentation="date" locale="es-ES" [showDefaultButtons]="true" doneText="Listo"
+          cancelText="Cerrar" (ionChange)="fechaSeleccionada($event)">
+          <span slot="title">Seleccionar Día</span>
+        </ion-datetime>
       </div>
+    </ng-template>
+  </ion-modal>
 
-    </div>
+  <ion-grid class="ion-no-padding ion-margin-top">
 
-  </ion-card-content>
+    <ion-row>
+      <ion-col size="12" size-md="6">
+        <ion-card class="dashboard-card sales-card">
+          <ion-card-content>
+            <div class="card-header">
+              <div class="header-icon-box bg-success-light">
+                <ion-icon name="wallet-outline" color="success"></ion-icon>
+              </div>
+              <span class="card-title">GANANCIA REAL</span>
+            </div>
+            <div class="card-amount">
+              <span class="currency">Bs.</span> {{ resumen.ganancia_total | number:'1.2-2' }}
+            </div>
+            <ion-badge color="success" class="card-badge">Neto Acumulado</ion-badge>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
 
-</ion-card>
- 
- 
-<ion-card class="analytics-card shadow-soft">
-  <ion-card-header>
-    <ion-card-title class="d-flex align-center">
-      <ion-icon name="trophy" color="warning" class="ion-margin-end"></ion-icon>
-      Ranking de Ventas (Top 5)
-    </ion-card-title>
-    <ion-card-subtitle>Los productos más pedidos por los clientes</ion-card-subtitle>
-  </ion-card-header>
+      <ion-col size="12" size-md="6">
+        <ion-card class="dashboard-card year-card">
+          <ion-card-content>
+            <div class="year-controls-wrapper">
+              <div class="card-header">
+                <div class="header-icon-box bg-primary-light">
+                  <ion-icon name="trending-up-outline" color="primary"></ion-icon>
+                </div>
+                <span class="card-title">GANANCIA ANUAL</span>
+              </div>
+              <div class="year-navigation">
+                <ion-button fill="clear" size="small" (click)="anioAnterior()">
+                  <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+                </ion-button>
+                <span class="current-year">{{ anioSeleccionado }}</span>
+                <ion-button fill="clear" size="small" (click)="anioSiguiente()">
+                  <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
+                </ion-button>
+              </div>
+            </div>
+            <div class="card-amount">
+              <span class="currency">Bs.</span> {{ resumen.ganancia_anual | number:'1.2-2' }}
+            </div>
+            <ion-badge color="primary" class="card-badge">Año Activo</ion-badge>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
 
-  <ion-list lines="inset">
-    <ion-item *ngFor="let p of resumen.top_alcohol_productos; let i = index" class="animate__animated animate__fadeInUp">
-      
-      <ion-badge slot="start" [color]="i === 0 ? 'warning' : 'light'" class="rank-badge">
-        {{ i + 1 }}
-      </ion-badge>
-      
-      <ion-label>
-        <h3 style="font-weight: 700; color: var(--ion-color-dark);">
-          {{ p.nombre_producto }}
-        </h3>
-        <p style="font-size: 0.85rem; color: var(--ion-color-medium);">
-          Total despachados en el periodo
-        </p>
-      </ion-label>
+    <ion-row>
+      <ion-col size="12" size-md="6">
+        <ion-card class="dashboard-card highlight-card">
+          <ion-card-content>
+            <div class="item-top-header">
+              <div class="icon-avatar bg-amber">
+                <ion-icon name="restaurant-outline"></ion-icon>
+              </div>
+              <div class="item-headline">
+                <span class="meta-label">🏆 MESA MÁS ACTIVA</span>
+                <h1 class="main-title">{{ resumen.mesa_top?.nombre || 'N/A' }}</h1>
+                <p class="sub-text">
+                  <ion-icon name="business-outline" class="v-align"></ion-icon> {{ resumen.mesa_top?.piso || 'Sin Piso'
+                  }}
+                </p>
+              </div>
+            </div>
 
-      <ion-note slot="end" color="primary" class="font-bold" style="font-size: 1.2rem;">
-        {{ p.cantidad }}
-      </ion-note>
-    </ion-item>
-  </ion-list>
-</ion-card>
- 
- 
-  <ion-card class="categoria-card">
- 
-    <ion-card-header>
-      <ion-card-title>
-        <ion-icon name="trophy-outline"></ion-icon>
-        Categoría Más Rentable
-      </ion-card-title>
-    </ion-card-header>
- 
-    <ion-card-content *ngIf="resumen?.categoria_top">
- 
-      <div class="categoria-nombre">
-        {{ resumen.categoria_top.nombre }}
-      </div>
- 
-      <div class="categoria-grid">
- 
-        <div class="stat-box">
-          <span class="stat-label">Ganancia Total</span>
-          <span class="stat-value">
-            Bs. {{ resumen.categoria_top.ganancia_total | number:'1.2-2' }}
-          </span>
+            <div class="stats-horizontal-grid">
+              <div class="stat-box-mini">
+                <ion-icon name="receipt-outline" color="medium"></ion-icon>
+                <h3>{{ resumen.mesa_top?.total_pedidos || 0 }}</h3>
+                <span>Pedidos</span>
+              </div>
+              <div class="stat-box-mini">
+                <ion-icon name="people-outline" color="medium"></ion-icon>
+                <h3>{{ resumen.mesa_top?.capacity || 0 }}</h3>
+                <span>Capacidad</span>
+              </div>
+              <div class="stat-box-mini">
+                <ion-icon name="cash-outline" color="success"></ion-icon>
+                <h3>Bs. {{ resumen.mesa_top?.total_ventas | number:'1.0-0' }}</h3>
+                <span>Ventas</span>
+              </div>
+            </div>
+
+            <div class="card-footer-chips">
+              <ion-chip color="light">
+                <ion-icon name="person-circle-outline"></ion-icon>
+                <ion-label>{{ resumen.mesa_top?.persons || 0 }} personas</ion-label>
+              </ion-chip>
+              <ion-chip color="success" *ngIf="resumen.mesa_top?.state">
+                <ion-icon name="checkmark-circle-outline"></ion-icon>
+                <ion-label>{{ resumen.mesa_top?.state }}</ion-label>
+              </ion-chip>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="12" size-md="6">
+        <ion-card class="dashboard-card highlight-card">
+          <ion-card-content>
+            <div class="item-top-header">
+              <div class="icon-avatar bg-purple">
+                <ion-icon name="ribbon-outline"></ion-icon>
+              </div>
+              <div class="item-headline">
+                <span class="meta-label">🏆 MEJOR MESERO</span>
+                <h1 class="main-title">{{ resumen.mesero_top?.name || 'N/A' }}</h1>
+                <ion-badge color="warning" class="ranking-badge">Ranking #1</ion-badge>
+              </div>
+              <div class="score-badge-wrapper" *ngIf="resumen.mesero_top?.score">
+                <span class="score-title">Puntaje</span>
+                <span class="score-value">{{ resumen.mesero_top?.score | number:'1.0-0' }}</span>
+              </div>
+            </div>
+
+            <div class="stats-horizontal-grid">
+              <div class="stat-box-mini">
+                <span>Pedidos</span>
+                <strong>{{ resumen.mesero_top?.pedidos_atendidos || 0 }}</strong>
+              </div>
+              <div class="stat-box-mini">
+                <span>Items</span>
+                <strong>{{ resumen.mesero_top?.items_vendidos || 0 }}</strong>
+              </div>
+              <div class="stat-box-mini">
+                <span>Ventas</span>
+                <strong class="color-success">Bs. {{ resumen.mesero_top?.total_ventas | number:'1.0-0' }}</strong>
+              </div>
+            </div>
+
+            <div class="summary-footer-bar">
+              <div class="footer-indicator">
+                <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+                <span>{{ resumen.mesero_top?.pedidos_atendidos || 0 }} atendidos</span>
+              </div>
+              <div class="footer-indicator">
+                <ion-icon name="cash-outline" color="primary"></ion-icon>
+                <span>{{ resumen.mesero_top?.total_ventas | number:'1.0-0' }} Bs generados</span>
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="12">
+        <ion-card class="dashboard-card list-card">
+          <ion-card-header>
+            <ion-card-title class="card-title-with-icon">
+              <ion-icon name="business-outline" color="primary"></ion-icon>
+              📊 Áreas que más generan
+            </ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content class="areas-card-content">
+            <ion-list lines="inset" class="modern-list">
+              <ion-item *ngFor="let area of resumen.areas_top" class="modern-item">
+                <ion-icon name="location-outline" slot="start" color="medium"></ion-icon>
+                <ion-label>
+                  <h2 class="item-main-title">{{ area.area }}</h2>
+                  <p class="item-sub-title">Ingreso total acumulado en zona</p>
+                </ion-label>
+                <div slot="end" class="item-actions-wrapper">
+                  <ion-badge color="success" class="list-numeric-badge">
+                    Bs. {{ area.total_area | number:'1.0-0' }}
+                  </ion-badge>
+                  <ion-button fill="clear" size="small" (click)="verDetalleArea(area)">
+                    Ver
+                    <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+                  </ion-button>
+                </div>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+
+          
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="12">
+        <h3 class="section-divider-title">💳 Gestión de Ventas por Personal</h3>
+      </ion-col>
+      <ion-col size="12" size-md="6" size-lg="4" *ngFor="let e of resumen.empleados_pagos">
+        <ion-card class="dashboard-card employee-card">
+          <ion-card-header>
+            <ion-card-title class="employee-title">
+              <ion-icon name="person-circle-outline" color="primary"></ion-icon>
+              {{ e.name }}
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="payment-methods-grid">
+              <div class="method-row">
+                <div class="method-tag"><ion-icon name="cash-outline" color="success"></ion-icon> Efectivo</div>
+                <span class="method-amount">Bs {{ e.efectivo }}</span>
+              </div>
+              <div class="method-row">
+                <div class="method-tag"><ion-icon name="phone-portrait-outline" color="secondary"></ion-icon> QR</div>
+                <span class="method-amount">Bs {{ e.qr }}</span>
+              </div>
+              <div class="method-row">
+                <div class="method-tag"><ion-icon name="card-outline" color="warning"></ion-icon> Tarjeta</div>
+                <span class="method-amount">Bs {{ e.tarjeta }}</span>
+              </div>
+            </div>
+            <div class="employee-total-footer">
+              <span class="footer-label">Total vendido</span>
+              <h2 class="footer-amount">Bs {{ e.total_ventas }}</h2>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="12" size-md="6">
+        <ion-card class="dashboard-card analytics-card">
+          <ion-card-header>
+            <ion-card-title class="card-title-with-icon">
+              <ion-icon name="stats-chart-outline" color="tertiary"></ion-icon>
+              Ventas por Categoría
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="grid-boxes">
+              <div class="data-box-item" *ngFor="let c of resumen.ventas_categorias">
+                <span class="box-label">{{ c.categoria }}</span>
+                <h2 class="box-value">Bs {{ c.total_ventas | number:'1.2-2' }}</h2>
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="12" size-md="6">
+        <ion-card class="dashboard-card analytics-card">
+          <ion-card-header>
+            <ion-card-title class="card-title-with-icon">
+              <ion-icon name="layers-outline" color="secondary"></ion-icon>
+              Ventas por Subcategoría
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="subcat-list-wrapper">
+              <div class="subcat-row-item" *ngFor="let c of resumen.ventas_subcategorias">
+                <div class="subcat-info-line">
+                  <span class="subcat-name"><ion-icon name="pricetag-outline"></ion-icon> {{ c.subcategoria }}</span>
+                  <span class="subcat-price">Bs {{ c.total_ventas | number:'1.0-0' }}</span>
+                </div>
+                <div class="progress-bar-container">
+                  <div class="progress-bar-fill" style="width: 75%;"></div>
+                </div>
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="12" size-md="7">
+        <ion-card class="dashboard-card premium-showcase-card" *ngIf="resumen?.categoria_top">
+          <ion-card-content>
+            <div class="item-top-header">
+              <div class="icon-avatar bg-gold">
+                <ion-icon name="trophy"></ion-icon>
+              </div>
+              <div class="item-headline">
+                <span class="meta-label">CATEGORÍA MÁS RENTABLE</span>
+                <h1 class="main-title">{{ resumen.categoria_top.nombre }}</h1>
+              </div>
+            </div>
+
+            <div class="showcase-amount-box">
+              <span class="box-subtitle">Total Rentabilizado</span>
+              <h2 class="box-amount">Bs. {{ resumen.categoria_top.ganancia_total | number:'1.0-0' }}</h2>
+            </div>
+
+            <div class="stats-horizontal-grid ion-margin-vertical">
+              <div class="stat-box-mini">
+                <ion-icon name="cube-outline" color="primary"></ion-icon>
+                <strong>{{ resumen.categoria_top.productos_vendidos }}</strong>
+                <span>Vendidos</span>
+              </div>
+              <div class="stat-box-mini">
+                <ion-icon name="layers-outline" color="medium"></ion-icon>
+                <strong>{{ resumen.categoria_top.productos_en_categoria }}</strong>
+                <span>Registrados</span>
+              </div>
+            </div>
+
+            <div class="star-product-banner">
+              <div class="star-badge">⭐</div>
+              <div class="star-product-info">
+                <span class="star-label">PRODUCTO ESTRELLA</span>
+                <h3 class="star-name">{{ resumen.categoria_top.producto_mas_vendido }}</h3>
+                <p class="star-count">{{ resumen.categoria_top.cantidad_vendida }} unidades liquidadas</p>
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="12" size-md="5">
+        <ion-card class="dashboard-card list-card">
+          <ion-card-header>
+            <ion-card-title class="card-title-with-icon">
+              <ion-icon name="nutrition-outline" color="tertiary"></ion-icon>
+              Ingredientes más usados
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content class="ion-no-padding">
+            <ion-list lines="full" class="modern-list">
+              <ion-item *ngFor="let ing of resumen.ingredientes_top" class="modern-item mini-item">
+                <ion-label>
+                  <h3>{{ ing.nombre }}</h3>
+                </ion-label>
+                <ion-badge color="warning" slot="end" class="list-numeric-badge">{{ ing.total_usado }}</ion-badge>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="12">
+        <ion-card class="dashboard-card table-like-card">
+          <ion-card-header>
+            <ion-card-title class="card-title-with-icon">
+              <ion-icon name="flame" color="danger"></ion-icon>
+              Análisis de Horas Pico
+            </ion-card-title>
+            <p class="card-subtitle-text">Intervalos horarios ordenados por volumen de flujo operativo</p>
+          </ion-card-header>
+          <ion-card-content class="ion-no-padding">
+            <div class="responsive-table-grid">
+              <div class="table-row header-row">
+                <div class="cell position">Rk</div>
+                <div class="cell time-range">Intervalo de Hora</div>
+                <div class="cell metrics-data">Pedidos</div>
+                <div class="cell metrics-data">Ventas</div>
+                <div class="cell metrics-data">Ticket Promedio</div>
+              </div>
+              <div class="table-row body-row" *ngFor="let hora of resumen.horas_pico; let i = index">
+                <div class="cell position">
+                  <span class="rank-indicator" [class.rank-1]="i === 0" [class.rank-2]="i === 1">#{{ i + 1 }}</span>
+                </div>
+                <div class="cell time-range bold-text">
+                  {{ hora.hora | number:'2.0' }}:00 - {{ ((+hora.hora + 1) % 24) | number:'2.0' }}:00
+                </div>
+                <div class="cell metrics-data font-medium">{{ hora.total_pedidos }} ops</div>
+                <div class="cell metrics-data bold-text color-success">Bs {{ hora.total_ventas | number:'1.0-0' }}</div>
+                <div class="cell metrics-data font-medium">Bs {{ hora.ticket_promedio | number:'1.0-0' }}</div>
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="12" size-lg="7">
+        <ion-card class="dashboard-card list-card">
+          <ion-card-header>
+            <ion-card-title class="card-title-with-icon">
+              <ion-icon name="podium-outline" color="primary"></ion-icon>
+              Top 5 Productos Más Vendidos
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content class="ion-no-padding">
+            <ion-list lines="inset" class="modern-list">
+              <div class="producto-ranking-row" *ngFor="let p of resumen.top_productos; let i = index">
+                <div class="ranking-index" [class.first-place]="i === 0">{{ i + 1 }}</div>
+                <div class="ranking-details">
+                  <h3 class="prod-title">{{ p.nombre_producto }}</h3>
+                  <span class="prod-tag">Producto de Alta Rotación</span>
+                </div>
+                <ion-badge [color]="i === 0 ? 'warning' : 'primary'" class="ranking-qty-badge">
+                  {{ p.cantidad }} vendidos
+                </ion-badge>
+              </div>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="12" size-lg="5">
+        <div class="cards-stack-vertical">
+          <ion-card class="dashboard-card mini-status-card border-left-success">
+            <ion-card-content class="status-content-wrapper">
+              <div class="status-icon-box text-success"><ion-icon name="trending-up"></ion-icon></div>
+              <div class="status-info-box">
+                <span class="status-label">PRODUCTO TOP GLOBAL</span>
+                <h2 class="status-title-text">{{ resumen.producto_top?.nombre_producto || 'N/A' }}</h2>
+                <ion-chip color="success" size="small"><ion-label>{{ resumen.producto_top?.total_vendido || 0 }}
+                    ventas</ion-label></ion-chip>
+              </div>
+            </ion-card-content>
+          </ion-card>
+
+          <ion-card class="dashboard-card mini-status-card border-left-danger">
+            <ion-card-content class="status-content-wrapper">
+              <div class="status-icon-box text-danger"><ion-icon name="trending-down"></ion-icon></div>
+              <div class="status-info-box">
+                <span class="status-label">PRODUCTO CON MENOR DEMANDA</span>
+                <h2 class="status-title-text">{{ resumen.producto_low?.nombre_producto || 'N/A' }}</h2>
+                <ion-chip color="danger" size="small"><ion-label>{{ resumen.producto_low?.total_vendido || 0 }}
+                    ventas</ion-label></ion-chip>
+              </div>
+            </ion-card-content>
+          </ion-card>
         </div>
- 
-        <div class="stat-box">
-          <span class="stat-label">Productos Vendidos</span>
-          <span class="stat-value">
-            {{ resumen.categoria_top.productos_vendidos }}
-          </span>
-        </div>
- 
-        <div class="stat-box">
-          <span class="stat-label">Productos en Categoría</span>
-          <span class="stat-value">
-            {{ resumen.categoria_top.productos_en_categoria }}
-          </span>
-        </div>
- 
-      </div>
- 
-      <div class="producto-top">
- 
-        <ion-icon name="star"></ion-icon>
- 
-        <div>
-          <strong>Producto más vendido</strong><br>
-          {{ resumen.categoria_top.producto_mas_vendido }}
-          ({{ resumen.categoria_top.cantidad_vendida }} vendidos)
-        </div>
- 
-      </div>
- 
-    </ion-card-content>
- 
-  </ion-card>
- 
-  <ion-card class="analytics-card">
- 
-    <ion-card-header>
-      <ion-card-title>
-        <ion-icon name="flame-outline"></ion-icon>
-        Productos con Mayor Tiempo de Preparación
-      </ion-card-title>
-    </ion-card-header>
- 
-    <ion-list>
- 
-      <ion-item *ngFor="let p of resumen.productos_lentos">
- 
-        <ion-label>
-          <h3>{{ p.nombre_producto }}</h3>
-          <p>{{ p.veces_pedido }} pedidos</p>
-        </ion-label>
- 
-        <ion-badge color="warning" slot="end">
-          {{ p.tiempo_promedio }} min
-        </ion-badge>
- 
-      </ion-item>
- 
-    </ion-list>
- 
-  </ion-card>
- 
- 
-  <!-- INGREDIENTES MÁS USADOS -->
-  <ion-card class="ion-margin-top">
- 
-    <ion-card-header>
-      <ion-card-title>
-        <ion-icon name="nutrition-outline" color="tertiary"></ion-icon>
-        Ingredientes Más Usados
-      </ion-card-title>
-    </ion-card-header>
- 
-    <ion-list lines="none">
-      <ion-item *ngFor="let ing of resumen.ingredientes_top">
-        <ion-label>
-          <h3>{{ ing.nombre }}</h3>
-        </ion-label>
-        <ion-badge color="warning" slot="end">
-          {{ ing.total_usado }}
-        </ion-badge>
-      </ion-item>
-    </ion-list>
- 
-  </ion-card>
- 
-  <!-- HORAS PICO -->
-  <ion-card class="ion-margin-top">
- 
-    <ion-card-header>
-      <ion-card-title>
-        <ion-icon name="flame-outline" color="danger"></ion-icon>
-        Horas Pico del Restaurante
-      </ion-card-title>
-      <ion-card-subtitle>
-        Momentos con mayor actividad de pedidos
-      </ion-card-subtitle>
-    </ion-card-header>
- 
-    <ion-list lines="full">
- 
-      <ion-item *ngFor="let hora of resumen.horas_pico">
- 
-        <ion-label>
- 
-          <h2>
-            {{ hora.hora | number:'2.0' }}:00 -
-            {{ (+hora.hora + 1) | number:'2.0' }}:00
-          </h2>
-          <p>
-            Ventas: Bs {{ hora.total_ventas | number:'1.2-2' }}
-          </p>
- 
-          <p>
-            Ticket promedio: Bs {{ hora.ticket_promedio | number:'1.2-2' }}
-          </p>
- 
-        </ion-label>
- 
-        <ion-badge color="danger" slot="end">
-          {{ hora.total_pedidos }}
-        </ion-badge>
- 
-      </ion-item>
- 
-    </ion-list>
- 
-  </ion-card>
+      </ion-col>
+    </ion-row>
 
- 
-  <ion-row class="ion-margin-top">
- 
-    <ion-col size="6">
- <ion-card class="analytics-card">
-  <ion-card-header>
-    <ion-card-title>Top 5 Productos más Vendidos</ion-card-title>
-  </ion-card-header>
-  <ion-list>
-    <ion-item *ngFor="let p of resumen.top_productos">
-      <ion-label>
-        <h3>{{ p.nombre_producto }}</h3>
-      </ion-label>
-      <ion-badge color="primary" slot="end">
-        {{ p.cantidad }} vendidos
-      </ion-badge>
-    </ion-item>
-  </ion-list>
-</ion-card>
-    </ion-col>
- 
-    <ion-col size="6">
-    <ion-row class="ion-margin-top">
-  <ion-col size="6">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>
-          <ion-icon name="star-outline" color="success"></ion-icon>
-          Más Vendido
-        </ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <h2>{{ resumen.producto_top?.nombre_producto }}</h2>
-        <ion-badge color="success">
-          {{ resumen.producto_top?.total_vendido }} ventas
-        </ion-badge>
-      </ion-card-content>
-    </ion-card>
-  </ion-col>
+    <ion-row>
+      <ion-col size="12" size-md="6">
+        <ion-card class="dashboard-card alert-showcase-card">
+          <ion-card-content>
+            <div class="alert-banner-header">
+              <div class="alert-bell animated-pulse"><ion-icon name="warning-outline"></ion-icon></div>
+              <div>
+                <span class="alert-meta-label">INVENTARIO CRÍTICO</span>
+                <h2 class="alert-section-title">Producto con Menor Stock</h2>
+              </div>
+            </div>
+            <div class="critical-product-info-box">
+              <h1 class="critical-title">{{ resumen.stock_minimo?.nombre || 'N/A' }}</h1>
+              <ion-chip color="danger" class="critical-chip">Stock Bajo</ion-chip>
+            </div>
+            <div class="critical-metrics-footer-grid">
+              <div class="metric-footer-box">
+                <span>Disponible</span>
+                <strong>{{ resumen.stock_minimo?.stock_act || 0 }} {{ resumen.stock_minimo?.unidad_med }}</strong>
+              </div>
+              <div class="metric-footer-box">
+                <span>Estado de Alerta</span>
+                <strong class="color-danger text-uppercase">Crítico</strong>
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
 
-  <ion-col size="6">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>
-          <ion-icon name="remove-circle-outline" color="danger"></ion-icon>
-          Menos Vendido
-        </ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <h2>{{ resumen.producto_low?.nombre_producto }}</h2>
-        <ion-badge color="danger">
-          {{ resumen.producto_low?.total_vendido }} ventas
-        </ion-badge>
-      </ion-card-content>
-    </ion-card>
-  </ion-col>
-</ion-row>
-    </ion-col>
- 
-  </ion-row>
- 
-  <ion-card class="ion-margin-top">
- 
-    <ion-card-header>
-      <ion-card-title>
-        <ion-icon name="alert-circle-outline" color="danger"></ion-icon>
-        Producto / Ingrediente con Menor Stock
-      </ion-card-title>
-    </ion-card-header>
- 
-    <ion-card-content>
- 
-      <ion-item lines="none">
-        <ion-label>
-          <h2>{{ resumen.stock_minimo?.nombre }}</h2>
-          <p>Stock disponible</p>
-        </ion-label>
- 
-        <ion-badge color="danger" slot="end">
-          {{ resumen.stock_minimo?.stock_act }}
-          {{ resumen.stock_minimo?.unidad_med }}
-        </ion-badge>
-      </ion-item>
- 
-    </ion-card-content>
- 
-  </ion-card>
- 
- 
-  <ion-card class="analytics-card">
- 
-    <ion-card-header>
-      <ion-card-title>
-        <ion-icon name="analytics-outline"></ion-icon>
-        Rendimiento de Órdenes
-      </ion-card-title>
-    </ion-card-header>
- 
-    <ion-card-content>
- 
-      <div class="analytics-grid">
- 
-        <div class="metric success">
-          <h2>{{ resumen.ordenes_tiempo?.a_tiempo }}</h2>
-          <p>Órdenes a tiempo</p>
-        </div>
- 
-        <div class="metric danger">
-          <h2>{{ resumen.ordenes_tiempo?.retrasadas }}</h2>
-          <p>Órdenes retrasadas</p>
-        </div>
- 
-      </div>
- 
-    </ion-card-content>
- 
-  </ion-card>
- 
- 
-  <ion-row>
-    <ion-col size="6">
-      <ion-card class="ion-margin-top mesa-low-card">
- 
-        <ion-card-header>
-          <ion-card-title class="card-title">
-            <ion-icon name="trending-down-outline" color="medium"></ion-icon>
-            Mesa Menos Activa
-          </ion-card-title>
-        </ion-card-header>
- 
-        <ion-card-content class="ion-text-center">
- 
-          <h2 class="mesa-nombre">
-            {{ resumen.mesa_low?.nombre || 'Sin datos' }}
-          </h2>
- 
-          <ion-badge color="medium">
-            {{ resumen.mesa_low?.total_pedidos || 0 }} pedidos
-          </ion-badge>
- 
-          <p class="descripcion">
-            Mesa con menor actividad en el periodo seleccionado
-          </p>
- 
-        </ion-card-content>
- 
-      </ion-card>
-    </ion-col>
- 
- 
-    <ion-col size="6">
- 
-      <ion-card>
- 
-        <ion-card-header>
-          <ion-card-title>
-            <ion-icon name="trending-down-outline" color="medium"></ion-icon>
-            Meseros con Menor Venta
-          </ion-card-title>
-        </ion-card-header>
- 
-        <ion-card-content>
- 
-          <ion-list lines="none">
- 
-            <ion-item *ngFor="let m of (resumen.meseros || []).slice(1)">
-              <ion-label>
-                <h3>{{ m.name }}</h3>
-                <p>Ventas acumuladas</p>
-              </ion-label>
- 
-              <ion-badge color="medium" slot="end">
-                Bs. {{ m.total_ventas }}
+      <ion-col size="12" size-md="6">
+        <ion-card class="dashboard-card analytics-card">
+          <ion-card-header>
+            <ion-card-title class="card-title-with-icon">
+              <ion-icon name="stopwatch-outline" color="primary"></ion-icon>
+              Rendimiento de Órdenes
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="split-metrics-container">
+              <div class="metric-progress-panel panel-success">
+                <span class="panel-counter">{{ resumen.ordenes_tiempo?.a_tiempo || 0 }}</span>
+                <p class="panel-desc">Órdenes entregadas a tiempo</p>
+              </div>
+              <div class="metric-progress-panel panel-danger">
+                <span class="panel-counter">{{ resumen.ordenes_tiempo?.retrasadas || 0 }}</span>
+                <p class="panel-desc">Órdenes con retraso crítico</p>
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="12" size-md="6">
+        <ion-card class="dashboard-card low-performance-card">
+          <ion-card-content>
+            <div class="low-performance-header">
+              <div class="perf-icon bg-light-gray"><ion-icon name="analytics-outline" color="medium"></ion-icon></div>
+              <div class="perf-headline">
+                <span class="perf-label">Mesa Menos Activa</span>
+                <h2 class="perf-title">{{ resumen.mesa_low?.nombre || 'Sin datos' }}</h2>
+              </div>
+              <ion-badge color="medium" class="perf-badge-counter">
+                {{ resumen.mesa_low?.total_pedidos || 0 }} ped.
               </ion-badge>
-            </ion-item>
- 
-          </ion-list>
- 
-        </ion-card-content>
- 
-      </ion-card>
- 
-    </ion-col>
- 
-  </ion-row>
- 
-  <!-- MODAL DE GRÁFICOS -->
-  <ion-modal #modalGraficos (ionModalDidPresent)="dibujarGraficos()"> <ng-template>
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>Estadísticas Visuales</ion-title>
+            </div>
+            <div class="perf-metrics-strip">
+              <div class="strip-item">
+                <span>Pedidos Totales</span>
+                <strong>{{ resumen.mesa_low?.total_pedidos || 0 }}</strong>
+              </div>
+              <div class="strip-divider"></div>
+              <div class="strip-item">
+                <span>Nivel de Tráfico</span>
+                <strong class="color-danger">Bajo</strong>
+              </div>
+            </div>
+            <p class="perf-footer-note">📉 Menor flujo transaccional durante el marco de tiempo seleccionado</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="12" size-md="6">
+        <ion-card class="dashboard-card list-card">
+          <ion-card-header>
+            <ion-card-title class="card-title-with-icon">
+              <ion-icon name="trending-down-outline" color="medium"></ion-icon>
+              Meseros con Menor Venta
+            </ion-card-title>
+            <p class="card-subtitle-text">Bajo rendimiento comercial registrado en el periodo</p>
+          </ion-card-header>
+          <ion-card-content class="ion-no-padding">
+            <ion-list lines="inset" class="modern-list">
+              <ion-item *ngFor="let m of (resumen.meseros || []).slice(1); let i = index" class="modern-item mini-item">
+                <div slot="start" class="list-avatar-index">#{{ i + 2 }}</div>
+                <ion-label>
+                  <h3 class="item-main-title">{{ m.name }}</h3>
+                  <p class="item-sub-title">Ventas acumuladas del periodo</p>
+                </ion-label>
+                <div slot="end" class="item-numeric-right">
+                  <span class="currency-prefix">Bs.</span>
+                  <strong class="numeric-val-bold">{{ m.total_ventas | number:'1.0-0' }}</strong>
+                </div>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+  </ion-grid>
+
+  <ion-modal #modalGraficos (ionModalDidPresent)="dibujarGraficos()">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar color="light">
+          <ion-title>📊 Centro de Analítica Avanzada</ion-title>
           <ion-buttons slot="end">
-            <ion-button (click)="cerrarModal()">Cerrar</ion-button>
+            <ion-button color="danger" fill="solid" size="small" class="ion-margin-horizontal" (click)="cerrarModal()">
+              Cerrar Panel
+            </ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
- 
-      <ion-content class="ion-padding">
- 
-        <div id="chartAlcohol" style="height: 300px;"></div>
-        <div id="chartAreas" style="height: 300px;"></div>
-        <div id="chartHoras" style="height: 300px;"></div>
-        <div id="chartGananciasArea" style="height: 300px;"></div>
-        <div id="chartAlcoholVs" style="height: 300px;"></div>
-        <div id="chartAtrasados" style="height: 300px;"></div>
- 
+
+      <ion-content class="ion-padding modal-dashboard-content">
+
+        <ion-card class="dashboard-card modal-summary-card">
+          <ion-card-content>
+            <h2 class="summary-card-title">Resumen de Métricas Operativas</h2>
+            <div class="modal-summary-grid">
+              <div class="summary-metric-item">
+                <span>Ventas Totales</span>
+                <strong>Bs. {{ resumen.total_ventas | number:'1.0-0' }}</strong>
+              </div>
+              <div class="summary-metric-item">
+                <span>Pedidos Totales</span>
+                <strong>{{ resumen.total_pedidos || 0 }} ops</strong>
+              </div>
+              <div class="summary-metric-item">
+                <span>Mesero de Turno Top</span>
+                <strong>{{ resumen.mesero_top?.name || 'N/A' }}</strong>
+              </div>
+              <div class="summary-metric-item">
+                <span>Área Más Rentable</span>
+                <strong>{{ resumen.area_top?.area || 'N/A' }}</strong>
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-grid class="ion-no-padding">
+          <ion-row>
+            <ion-col size="12" size-lg="6">
+              <ion-card class="dashboard-card chart-container-card">
+                <ion-card-header>
+                  <ion-card-title>🍺 Consumo de Alcohol</ion-card-title>
+                  <p class="chart-subtitle">Comparación de ventas con y sin bebidas alcohólicas.</p>
+                </ion-card-header>
+                <ion-card-content>
+                  <div id="chartAlcohol"></div>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+
+            <ion-col size="12" size-lg="6">
+              <ion-card class="dashboard-card chart-container-card">
+                <ion-card-header>
+                  <ion-card-title>🏢 Rendimiento por Área</ion-card-title>
+                  <p class="chart-subtitle">Distribución de ventas según el área del restaurante.</p>
+                </ion-card-header>
+                <ion-card-content>
+                  <div id="chartAreas"></div>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+
+            <ion-col size="12" size-lg="6">
+              <ion-card class="dashboard-card chart-container-card">
+                <ion-card-header>
+                  <ion-card-title>🔥 Flujo de Horas Pico</ion-card-title>
+                  <p class="chart-subtitle">Horarios con mayor movimiento de pedidos.</p>
+                </ion-card-header>
+                <ion-card-content>
+                  <div id="chartHoras"></div>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+
+            <ion-col size="12" size-lg="6">
+              <ion-card class="dashboard-card chart-container-card">
+                <ion-card-header>
+                  <ion-card-title>💰 Ganancias por Área</ion-card-title>
+                  <p class="chart-subtitle">Comparación de ingresos generados por cada área.</p>
+                </ion-card-header>
+                <ion-card-content>
+                  <div id="chartGananciasArea"></div>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+
+            <ion-col size="12" size-lg="6">
+              <ion-card class="dashboard-card chart-container-card">
+                <ion-card-header>
+                  <ion-card-title>⚖️ Alcohol vs No Alcohol</ion-card-title>
+                  <p class="chart-subtitle">Participación porcentual en las ventas.</p>
+                </ion-card-header>
+                <ion-card-content>
+                  <div id="chartAlcoholVs"></div>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+
+            <ion-col size="12" size-lg="6">
+              <ion-card class="dashboard-card chart-container-card">
+                <ion-card-header>
+                  <ion-card-title>⏱ Cumplimiento y Pedidos Atrasados</ion-card-title>
+                  <p class="chart-subtitle">Seguimiento del cumplimiento de tiempos de atención.</p>
+                </ion-card-header>
+                <ion-card-content>
+                  <div id="chartAtrasados"></div>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
       </ion-content>
     </ng-template>
   </ion-modal>
- 
+<div class="ia-chatbot-floating-wrapper" [class.chat-is-active]="isChatOpen">
+  <!-- AL ESTAR ARRIBA, LA VENTANA SE RENDERIZA PRIMERO -->
+  <div class="chat-window-box" *ngIf="isChatOpen">
+    <div class="chat-header-premium">
+      <div class="avatar-status-box">
+        <div class="bot-avatar">🤖</div>
+        <div class="bot-info-meta">
+          <h4>Auditor Inteligente</h4>
+          <span>Mixtura Datos Conectados</span>
+        </div>
+      </div>
+      <ion-button fill="clear" color="dark" (click)="toggleChat()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </div>
+
+    <div class="chat-conversation-body">
+      <div *ngFor="let msg of chatHistory" class="message-bubble-row" [ngClass]="msg.sender">
+        <div class="bubble-content">
+          <p>{{ msg.text }}</p>
+          <span class="bubble-time">{{ msg.timestamp | date:'HH:mm' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-input-bar">
+      <ion-input 
+        placeholder="Escribe tu consulta aquí..." 
+        [(ngModel)]="chatMessage"
+        (keyup.enter)="procesarPreguntaIA()"
+        class="custom-chat-input">
+      </ion-input>
+      <ion-button fill="clear" (click)="procesarPreguntaIA()" [disabled]="!chatMessage.trim()">
+        <ion-icon name="send-outline"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- BOTÓN DISPARADOR QUEDA ABAJO DE LA VENTANA CHAT -->
+  <button class="ia-trigger-fab-btn" (click)="toggleChat()">
+    <ion-icon name="sparkles"></ion-icon>
+    <span>{{ isChatOpen ? 'Cerrar Panel' : 'BOT' }}</span>
+  </button>
+</div>
 </ion-content>
- 

@@ -1,397 +1,74 @@
-/* ================================
-CARDS DE ESTADÍSTICAS
-================================ */
- 
-.stat-card {
-  margin: 0;
-  border-radius: 15px;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-  border: 1px solid #f0f0f0;
-  height: 100%;
- 
-  ion-card-content {
-    padding: 15px 10px;
- 
-    ion-icon {
-      font-size: 2.2rem;
-      margin-bottom: 8px;
-    }
- 
-    h3 {
-      font-size: 1.1rem;
-      font-weight: bold;
-      margin: 0;
-      color: #333;
-    }
- 
-    p {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: 5px;
-      opacity: 0.7;
-    }
+/* ==========================================================================
+   VARIABLES DE DISEÑO PREMIUM (UI/UX MODERN)
+   ========================================================================== */
+:host {
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-blur: blur(14px);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --shadow-premium: 0 10px 30px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
+  --shadow-interactive: 0 16px 36px rgba(0, 0, 0, 0.12);
+  --font-smoothing: antialiased;
+}
+
+ion-content {
+  --background: #f4f7fa; // Fondo general limpio y ejecutivo
+}
+
+/* ==========================================================================
+   ESTILOS GENERALES Y CONTENEDORES CONTÍNUOS (SIN ESPACIOS BLANCOS)
+   ========================================================================== */
+ion-card {
+  margin: 0 0 16px 0 !important;
+  border-radius: 20px !important;
+  box-shadow: var(--shadow-premium) !important;
+  border: 1px solid var(--glass-border) !important;
+  background: white;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
+
+  &[button]:active {
+    transform: scale(0.98);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
   }
 }
- 
-/* COLORES */
-.total-ventas {
-  background: #f0fdf4;
-  ion-icon { color: #2dd36f; }
-}
- 
-.total-activos {
-  background: #fdf2f2;
-  ion-icon { color: #eb445a; }
-}
- 
-/* ================================
-CARD LISTAS
-================================ */
- 
-.list-card {
-  box-shadow: none;
-  border: 1px solid #eee;
-  border-radius: 15px;
- 
+
+ion-card-header {
+  padding: 18px 20px 8px 20px;
+  
   ion-card-title {
     display: flex;
     align-items: center;
-    font-size: 1rem;
-    font-weight: bold;
- 
+    gap: 10px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1e293b;
+    
     ion-icon {
-      margin-right: 10px;
-      font-size: 1.2rem;
-    }
-  }
-}
- 
-/* ================================
-MODAL
-================================ */
- 
-ion-modal {
-  --height: 80%;
-  --border-radius: 20px 20px 0 0;
-}
- 
-/* ================================
-GRAFICO DONUT
-================================ */
- 
-#donutchart {
-  width: 100%;
-  height: 300px;
-  margin-top: 20px;
-}
- 
-/* ================================
-RESPONSIVE
-================================ */
- 
-/* MOVIL */
-@media (max-width: 576px) {
- 
-  .stat-card ion-card-content {
- 
-    ion-icon {
-      font-size: 1.8rem;
-    }
- 
-    h3 {
-      font-size: 1rem;
-    }
- 
-    p {
-      font-size: 0.65rem;
-    }
-  }
- 
-  #donutchart {
-    height: 250px;
-  }
- 
-}
- 
-/* TABLET */
-@media (min-width: 577px) and (max-width: 992px) {
- 
-  .stat-card ion-card-content {
- 
-    ion-icon {
-      font-size: 2rem;
-    }
- 
-    h3 {
-      font-size: 1.1rem;
-    }
- 
-    p {
-      font-size: 0.7rem;
-    }
-  }
- 
-  #donutchart {
-    height: 280px;
-  }
- 
-}
- 
-/* DESKTOP */
-@media (min-width: 993px) {
- 
-  .stat-card ion-card-content {
- 
-    ion-icon {
-      font-size: 2.5rem;
-    }
- 
-    h3 {
       font-size: 1.4rem;
-    }
- 
-    p {
-      font-size: 0.8rem;
+      color: var(--ion-color-primary);
     }
   }
- 
-  #donutchart {
-    height: 350px;
-  }
- 
-}
- 
- 
-.categoria-card {
- 
-  border-radius: 16px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
- 
-}
- 
-ion-card-title {
- 
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
- 
-}
- 
-.categoria-nombre {
- 
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 15px;
-  color: #6f4e37;
- 
-}
- 
-/* GRID RESPONSIVE */
- 
-.categoria-grid {
- 
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 12px;
- 
-}
- 
-/* TARJETAS DE DATOS */
- 
-.stat-box {
- 
-  background: #f9fbfd;
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid #e2e8f0;
-  text-align: center;
- 
-}
- 
-.stat-label {
- 
-  font-size: 13px;
-  color: #64748b;
-  display: block;
- 
-}
- 
-.stat-value {
- 
-  font-size: 18px;
-  font-weight: 600;
-  color: #334155;
- 
-}
- 
-/* PRODUCTO TOP */
- 
-.producto-top {
- 
-  margin-top: 18px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
- 
-  background: #fff7ed;
-  padding: 12px;
-  border-radius: 10px;
- 
-}
- 
-.producto-top ion-icon {
- 
-  font-size: 24px;
-  color: #f59e0b;
- 
-}
- 
-/* RESPONSIVE MOVIL */
- 
-@media (max-width: 600px) {
- 
-  .categoria-nombre{
-    font-size: 18px;
-  }
- 
-  .stat-value{
-    font-size: 16px;
-  }
- 
-}
- 
- 
-.analytics-card{
- 
-border-radius:16px;
-box-shadow:0 6px 16px rgba(0,0,0,0.08);
- 
-}
- 
-.analytics-grid{
- 
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-gap:12px;
- 
-}
- 
-.metric{
- 
-padding:14px;
-border-radius:10px;
-text-align:center;
- 
-}
- 
-.metric h2{
- 
-font-size:26px;
-font-weight:700;
-margin:0;
- 
-}
- 
-.metric p{
- 
-font-size:13px;
-margin-top:4px;
-color:#64748b;
- 
-}
- 
-.metric.success{
- 
-background:#ecfdf5;
-color:#047857;
- 
-}
- 
-.metric.danger{
- 
-background:#fef2f2;
-color:#b91c1c;
- 
-}
- 
-@media(max-width:600px){
- 
-.metric h2{
-font-size:20px;
-}
- 
-}
- 
- 
-.analytics-card{
- 
-border-radius:16px;
-box-shadow:0 6px 18px rgba(0,0,0,0.08);
- 
-}
- 
-.ventas-grid{
- 
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-gap:14px;
- 
-}
- 
-.venta-box{
- 
-padding:16px;
-border-radius:12px;
-text-align:center;
- 
-}
- 
-.venta-box h2{
- 
-font-size:24px;
-font-weight:700;
-margin-top:6px;
- 
-}
- 
-.alcohol{
- 
-background:#fef3c7;
-color:#92400e;
- 
-}
- 
-.no-alcohol{
- 
-background:#e0f2fe;
-color:#075985;
- 
-}
- 
-@media(max-width:600px){
- 
-.venta-box h2{
-font-size:18px;
-}
- 
 }
 
+/* ==========================================================================
+   FILTROS Y RANGOS OPERATIVOS (GLASSMORPHISM EFFECT)
+   ========================================================================== */
 .dashboard-filters {
-  background: var(--ion-background-color);
-  
-  // La tarjeta de fecha con efecto cristal
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
   .filter-glass-card {
     display: flex;
     align-items: center;
     padding: 16px;
-    background: rgba(var(--ion-color-primary-rgb), 0.05);
-    border: 1px solid rgba(var(--ion-color-primary-rgb), 0.1);
+    background: rgba(var(--ion-color-primary-rgb), 0.06);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid rgba(var(--ion-color-primary-rgb), 0.12);
     border-radius: 20px;
-    margin-bottom: 16px;
     position: relative;
+    cursor: pointer;
     transition: all 0.3s ease;
 
     &:active {
@@ -401,146 +78,1130 @@ font-size:18px;
 
     .icon-container {
       background: white;
-      padding: 10px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      margin-right: 15px;
+      padding: 12px;
+      border-radius: 14px;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.04);
+      margin-right: 16px;
       display: flex;
-      ion-icon { font-size: 1.4rem; }
+      ion-icon { font-size: 1.5rem; }
     }
 
     .text-container {
       flex-grow: 1;
-      p { margin: 0; font-size: 0.75rem; color: var(--ion-color-medium); text-transform: uppercase; letter-spacing: 1px; }
-      h2 { margin: 2px 0 0 0; font-size: 1.1rem; font-weight: 700; color: var(--ion-color-dark); }
+      p { margin: 0; font-size: 0.72rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }
+      h2 { margin: 3px 0 0 0; font-size: 1.15rem; font-weight: 800; color: #0f172a; }
     }
 
     .clean-btn {
-      --padding-start: 8px;
-      --padding-end: 8px;
       margin: 0;
-      height: 35px;
+      height: 38px;
+      --color: #94a3b8;
     }
-  }
-
-  .apply-btn {
-    --box-shadow: 0 8px 16px rgba(var(--ion-color-primary-rgb), 0.3);
-    height: 50px;
-    font-weight: 600;
-    margin-top: 5px;
   }
 }
 
-// Estilo del Modal tipo "iOS Moderno"
+/* ==========================================================================
+   CARDS DE IMPACTO DIRECTO (KIPs / HERO METRICS)
+   ========================================================================== */
+.sales-card {
+  background: linear-gradient(135deg, #059669, #10b981) !important;
+  color: white !important;
+}
+
+.year-card {
+  background: linear-gradient(135deg, #4f46e5, #6366f1) !important;
+  color: white !important;
+}
+
+.card-header-premium {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  opacity: 0.95;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  
+  ion-icon { font-size: 1.8rem; }
+}
+
+.card-amount {
+  font-size: 2.3rem;
+  font-weight: 800;
+  margin: 14px 0;
+  letter-spacing: -1px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.year-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 5px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  padding: 4px;
+
+  ion-button {
+    --color: white;
+    font-weight: bold;
+    margin: 0;
+  }
+  .year-center {
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+  }
+}
+
+/* ==========================================================================
+   TARJETAS COMPUESTAS DE RENDIMIENTO (MESA TOP / MESERO TOP)
+   ========================================================================== */
+.table-card { background: linear-gradient(135deg, #06b6d4, #3b82f6) !important; color: white !important; }
+.waiter-card { background: linear-gradient(135deg, #f97316, #ef4444) !important; color: white !important; }
+
+.card-icon {
+  text-align: center;
+  font-size: 3.2rem;
+  margin: 8px 0;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+}
+.card-title {
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+.dashboard-card h1 {
+  text-align: center;
+  font-size: 1.9rem;
+  margin: 8px 0 16px 0;
+  font-weight: 800;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  
+  div {
+    background: rgba(255, 255, 255, 0.16);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 10px 6px;
+    text-align: center;
+    
+    span { display: block; font-size: 0.68rem; opacity: 0.85; font-weight: 600; text-transform: uppercase; }
+    strong { display: block; margin-top: 4px; font-size: 0.95rem; font-weight: 800; }
+  }
+}
+
+/* ==========================================================================
+   MESA CRÍTICA O DETALLES PREMIUM (MESA LOW)
+   ========================================================================== */
+.mesa-card {
+  background: linear-gradient(135deg, #0f172a, #1e293b) !important;
+  color: white !important;
+
+  .mesa-top-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .icon-box {
+    width: 60px; height: 60px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    ion-icon { font-size: 1.8rem; color: #f59e0b; }
+  }
+  .mesa-name { font-size: 1.8rem; font-weight: 800; margin: 2px 0; letter-spacing: -0.5px; }
+  .mesa-piso { font-size: 0.8rem; margin: 0; opacity: 0.75; display: flex; align-items: center; gap: 4px; }
+  
+  .stats-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 18px;
+  }
+  .stat-item {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 14px;
+    padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+
+    ion-icon { font-size: 1.4rem; margin-bottom: 4px; opacity: 0.9; }
+    h3 { margin: 0; font-size: 1.05rem; font-weight: 700; }
+    span { display: block; font-size: 0.7rem; opacity: 0.7; margin-top: 2px; }
+  }
+}
+
+/* ==========================================================================
+   AREAS, SECCIONES Y GRIDS COMPACTOS REUTILIZABLES (ZONA INTERMEDIOS)
+   ========================================================================== */
+.area-item {
+  border-radius: 14px;
+  margin-bottom: 8px;
+  --background: #f8fafc;
+  --border-color: #e2e8f0;
+  --border-style: solid;
+  --border-width: 1px;
+  padding: 4px;
+
+  .area-title { font-weight: 700; color: #334155; font-size: 0.95rem; }
+  .area-subtitle { font-size: 0.75rem; color: #64748b; }
+  .area-badge { font-weight: 700; border-radius: 10px; padding: 6px 12px; font-size: 0.75rem; }
+}
+
+// Subcategorías
+.subcat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+.subcat-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px;
+  
+  .subcat-header { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 700; color: #475569; }
+  .subcat-total { margin: 8px 0 4px 0; font-size: 1.2rem; font-weight: 800; color: #10b981; }
+  
+  .bar {
+    height: 6px; background: #e2e8f0; border-radius: 10px; margin-top: 8px; overflow: hidden;
+    .bar-fill { height: 100%; width: 65%; background: linear-gradient(90deg, #10b981, #34d399); border-radius: 10px; }
+  }
+}
+
+/* ==========================================================================
+   CATEGORÍAS ESPECÍFICAS (ALCOHOL / INGREDIESTES / SECCIONES COMPLEJAS)
+   ========================================================================== */
+.categoria-card {
+  .categoria-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .icon-container {
+    width: 54px; height: 54px; border-radius: 16px;
+    display: flex; justify-content: center; align-items: center;
+    background: rgba(var(--ion-color-warning-rgb), .12);
+    ion-icon { font-size: 1.7rem; color: var(--ion-color-warning); }
+  }
+  .categoria-nombre { margin: 0; font-size: 1.4rem; font-weight: 800; color: #0f172a; }
+  .categoria-subtitle { font-size: 0.78rem; color: #64748b; font-weight: 500; }
+
+  .ganancia-principal {
+    text-align: center;
+    padding: 16px;
+    border-radius: 16px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 14px;
+    
+    span { font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    h2 { margin: 4px 0 0 0; font-size: 1.8rem; font-weight: 800; color: #10b981; }
+  }
+
+  .categoria-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .stat-box {
+    text-align: center;
+    padding: 12px;
+    border-radius: 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    
+    ion-icon { font-size: 1.3rem; margin-bottom: 4px; color: var(--ion-color-primary); }
+    .stat-label { display: block; font-size: 0.72rem; color: #64748b; margin-bottom: 2px; }
+    strong { font-size: 1.15rem; font-weight: 800; color: #1e293b; }
+  }
+
+  .producto-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(var(--ion-color-warning-rgb), .08);
+    border: 1px solid rgba(var(--ion-color-warning-rgb), .15);
+    padding: 12px 14px;
+    border-radius: 16px;
+    
+    .producto-icon { font-size: 1.8rem; color: var(--ion-color-warning); }
+    .producto-label { font-size: 0.7rem; color: #7c2d12; font-weight: 600; text-transform: uppercase; }
+    .producto-name { font-size: 0.95rem; font-weight: 700; color: #1e293b; }
+    .producto-cantidad { font-size: 0.8rem; color: #64748b; margin-left: auto; font-weight: 600; }
+  }
+}
+
+/* ==========================================================================
+   ALCOHOL VS NO ALCOHOL - RENDIMIENTO GRÁFICO RESUMIDO
+   ========================================================================== */
+.ventas-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  
+  .venta-box {
+    padding: 16px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+    
+    h3 { font-size: 0.8rem; font-weight: 700; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 0.5px; }
+    h2 { font-size: 1.45rem; font-weight: 800; margin: 0; }
+    
+    &.alcohol { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+    &.no-alcohol { background: #e0f2fe; color: #075985; border: 1px solid #bae6fd; }
+  }
+}
+
+/* ==========================================================================
+   EMPLEADOS Y PAGOS (MÉTODOS EFECTIVO / QR / TARJETA)
+   ========================================================================== */
+.card-empleado {
+  .pagos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .metodo {
+    text-align: center;
+    padding: 10px 4px;
+    border-radius: 14px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+    
+    ion-icon { font-size: 1.4rem; display: block; margin: 0 auto 4px auto; }
+    strong { display: block; font-size: 0.95rem; font-weight: 800; margin-top: 2px; }
+    
+    &.efectivo { background: #f0fdf4; color: #166534; border-color: #dcfce7; }
+    &.qr { background: #f0f9ff; color: #075985; border-color: #e0f2fe; }
+    &.tarjeta { background: #fff7ed; color: #9a3412; border-color: #ffedd5; }
+  }
+  .total-empleado {
+    margin-top: 14px;
+    text-align: center;
+    background: #f8fafc;
+    padding: 10px;
+    border-radius: 12px;
+    span { font-size: 0.72rem; color: #64748b; font-weight: 600; text-transform: uppercase; }
+    h2 { margin: 2px 0 0 0; color: #0f172a; font-weight: 800; font-size: 1.3rem; }
+  }
+}
+
+/* ==========================================================================
+   RANKINGS, COMPORTAMIENTOS Y HORAS PICO
+   ========================================================================== */
+.horas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+.hora-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px;
+  
+  .hora-rango { font-size: 1.1rem; font-weight: 800; color: #0f172a; margin-bottom: 12px; }
+  .metric {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;
+    &:last-child { margin-bottom: 0; }
+    span { color: #64748b; font-size: 0.78rem; font-weight: 500; }
+    strong { font-size: 0.9rem; color: #1e293b; font-weight: 700; }
+  }
+}
+
+// Listados de Productos (Top / Low Rankings)
+.producto-ranking {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  &:last-child { margin-bottom: 0; }
+
+  .ranking-number {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--ion-color-primary); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.85rem;
+  }
+  .producto-info {
+    flex: 1;
+    .producto-name { font-weight: 700; font-size: 0.9rem; color: #1e293b; }
+    .producto-subtitle { font-size: 0.75rem; color: #64748b; }
+  }
+}
+
+.producto-top-card { border-left: 5px solid #10b981 !important; }
+.producto-low-card { border-left: 5px solid #ef4444 !important; }
+
+.producto-icon {
+  width: 48px; height: 48px; border-radius: 14px;
+  display: flex; justify-content: center; align-items: center;
+  margin-bottom: 10px;
+  ion-icon { font-size: 1.6rem; }
+  
+  &.success { background: rgba(16, 185, 129, 0.12); color: #10b981; }
+  &.danger { background: rgba(239, 68, 68, 0.12); color: #ef4444; }
+}
+
+.card-label { font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase; }
+.producto-top-card h2, .producto-low-card h2 { margin: 6px 0; font-size: 1.25rem; font-weight: 800; color: #0f172a; }
+
+/* ==========================================================================
+   CONTROL DE STOCK MÍNIMO / CRÍTICO
+   ========================================================================== */
+.stock-alert-card {
+  border-left: 6px solid #ef4444 !important;
+  
+  .stock-header {
+    display: flex; align-items: center; gap: 14px; margin-bottom: 14px;
+  }
+  .stock-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    background: rgba(239, 68, 68, 0.1);
+    display: flex; align-items: center; justify-content: center;
+    ion-icon { font-size: 1.6rem; color: #ef4444; }
+  }
+  .stock-subtitle { font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase; }
+  .stock-title { margin: 2px 0 0; font-size: 1.2rem; font-weight: 800; color: #0f172a; }
+
+  .stock-producto {
+    text-align: center; margin: 12px 0;
+    h1 { font-size: 1.6rem; font-weight: 800; color: #b91c1c; letter-spacing: -0.5px; }
+  }
+  .stock-info {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
+  }
+  .stock-box {
+    background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; text-align: center;
+    span { display: block; font-size: 0.72rem; color: #64748b; margin-bottom: 4px; }
+    strong { font-size: 1.1rem; font-weight: 800; }
+  }
+}
+
+/* ==========================================================================
+   PERSONAL BAJO RENDIMIENTO (LISTADOS EFICIENTES)
+   ========================================================================== */
+.mesero-item {
+  display: flex; align-items: center; gap: 12px; padding: 12px;
+  border-radius: 14px; background: #f8fafc; border: 1px solid #e2e8f0; margin-bottom: 8px;
+  &:last-child { margin-bottom: 0; }
+
+  .mesero-rank {
+    min-width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(148, 163, 184, 0.15); color: #475569;
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem;
+  }
+  .mesero-info {
+    flex: 1;
+    h3 { margin: 0; font-size: 0.9rem; font-weight: 700; color: #1e293b; }
+    span { font-size: 0.75rem; color: #64748b; }
+  }
+  .mesero-venta {
+    text-align: right;
+    span { display: block; font-size: 0.68rem; color: #64748b; font-weight: 500; }
+    strong { font-size: 1rem; font-weight: 800; color: #0f172a; }
+  }
+}
+
+/* ==========================================================================
+   MODAL DE GRÁFICOS ANALÍTICOS (MODERNO E HIGIENIZADO)
+   ========================================================================== */
 .modal-moderno {
   --height: auto;
   --width: 90%;
-  --max-width: 340px;
-  --border-radius: 25px;
-  --box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  --max-width: 360px;
+  --border-radius: 24px;
+  --box-shadow: var(--shadow-interactive);
 
-  .datetime-wrapper {
+  .datetime-wrapper { padding: 12px; background: white; }
+  ion-datetime { --background: transparent; border-radius: 18px; }
+}
+
+#grafico-modal {
+  --border-radius: 24px 24px 0 0;
+  --height: 85%;
+}
+
+.grafico-card {
+  margin-bottom: 14px;
+  div[id^="chart"] {
+    height: 320px;
+    width: 100%;
+  }
+}
+
+.resumen-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  
+  .resumen-box {
+    padding: 14px 10px; border-radius: 16px; background: #f8fafc; border: 1px solid #e2e8f0; text-align: center;
+    span { display: block; font-size: 0.72rem; color: #64748b; font-weight: 600; text-transform: uppercase; }
+    strong { display: block; margin-top: 4px; font-size: 1.15rem; font-weight: 800; color: #0f172a; }
+  }
+}
+
+/* ==========================================================================
+   SISTEMA DE RESPONSIVE SEAMLESS (PROPORCIONAL TOTAL)
+   ========================================================================== */
+@media (max-width: 576px) {
+  .categoria-grid, .resumen-grid {
+    grid-template-columns: repeat(2, 1fr); // Mantiene 2 columnas ordenadas en móvil para evitar saltos toscos
+  }
+  .stats-grid {
+    grid-template-columns: 1fr; // En móviles muy pequeños, las estadísticas internas se apilan de forma elegante
+    gap: 6px;
+  }
+  .card-amount { font-size: 1.9rem; }
+  .dashboard-card h1 { font-size: 1.5rem; }
+  .subcat-grid { grid-template-columns: 1fr; }
+}
+
+@media (min-width: 577px) and (max-width: 992px) {
+  .categoria-grid, .resumen-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .grafico-card div[id^="chart"] { height: 340px; }
+}
+
+@media (min-width: 993px) {
+  .categoria-grid, .resumen-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  ion-card {
+    margin-bottom: 20px !important;
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-interactive) !important;
+    }
+  }
+  .grafico-card div[id^="chart"] { height: 38px; height: 360px; }
+}
+:host {
+  /* Paleta Executiva y Minimalista */
+  --bg-main: #f6f8fa;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  
+  /* Forzamos una tipografía limpia y estilizada para contrarrestar el grosor actual */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+ion-content {
+  --background: var(--bg-main);
+}
+
+/* Forzar títulos estilizados y delgados (Limpieza de fuentes pesadas) */
+h1, h2, h3, h4, .main-title, .card-amount, ion-card-title {
+  font-family: 'Inter', -apple-system, sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.03em !important;
+}
+
+/* ==========================================================================
+   REDISEÑO DE FILTROS (GLASSMORPHISM ESTILIZADO)
+   ========================================================================== */
+.filter-glass-card {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  padding: 14px 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  margin-bottom: 16px;
+
+  .icon-container {
+    background: #f1f5f9;
     padding: 10px;
-    background: white;
+    border-radius: 12px;
+    display: flex;
+    margin-right: 16px;
+    ion-icon { font-size: 1.4rem; color: var(--ion-color-primary); }
   }
 
-  ion-datetime {
-    --background: transparent;
-    border-radius: 20px;
+  .text-container {
+    flex: 1;
+    .filter-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .filter-value {
+      margin-top: 2px;
+      font-size: 1.15rem;
+      color: var(--text-main);
+    }
+  }
+}
+
+/* ==========================================================================
+   TARJETAS PRINCIPALES (Adiós a los bloques de color sobresaturados)
+   ========================================================================== */
+.dashboard-card {
+  background: #ffffff !important;
+  border-radius: 20px !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02) !important;
+  margin: 12px 8px !important;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.06), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+  }
+
+  ion-card-content {
+    padding: 24px !important;
+  }
+}
+
+/* Indicadores de acento lateral en lugar de fondos chillones */
+.sales-card {
+  border-left: 5px solid #10b981 !important; /* Verde Esmeralda Elegante */
+  .header-icon-box { background: #ecfdf5; color: #10b981; padding: 8px; border-radius: 10px; }
+}
+
+.year-card {
+  border-left: 5px solid #6366f1 !important; /* Indigo Moderno */
+  .header-icon-box { background: #e0e7ff; color: #6366f1; padding: 8px; border-radius: 10px; }
+}
+
+/* Estilo interno de los montos económicos */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  
+  .card-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+  }
+}
+
+.card-amount {
+  font-size: 2.2rem !important;
+  color: var(--text-main);
+  margin: 12px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+
+  .currency {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+}
+
+/* Controles de Año Limpios */
+.year-controls-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+
+  .year-navigation {
+    display: flex;
+    align-items: center;
+    background: #f1f5f9;
+    border-radius: 30px;
+    padding: 4px 8px;
+
+    .current-year {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      padding: 0 10px;
+    }
+    ion-button { --padding-start: 4px; --padding-end: 4px; height: 28px; }
+  }
+}
+
+/* ==========================================================================
+   TARJETAS DE EMPLEADOS Y SECCIONES INTERMEDIAS (`image_0a9b7b.png`)
+   ========================================================================== */
+.employee-card {
+  .employee-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem !important;
+    color: var(--text-main);
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+    ion-icon { font-size: 1.4rem; }
+  }
+}
+
+.payment-methods-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .method-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 0.9rem;
+
+    .method-tag {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+      ion-icon { font-size: 1.1rem; }
+    }
+    .method-amount {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+  }
+}
+
+.employee-total-footer {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .footer-label { font-size: 0.85rem; color: var(--text-muted); }
+  .footer-amount { font-size: 1.2rem !important; color: #10b981 !important; margin: 0; }
+}
+
+/* ==========================================================================
+   ANÁLISIS DE HORAS PICO (DISEÑO HORIZONTAL FLUIDO)
+   ========================================================================== */
+.table-like-card {
+  .responsive-table-grid {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .table-row {
+    display: flex;
+    align-items: center;
+    padding: 14px 20px;
+    border-bottom: 1px solid #f1f5f9;
+
+    &.header-row {
+      background: #f8fafc;
+      border-bottom: 2px solid var(--border-color);
+      .cell { font-weight: 600; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; }
+    }
+    &.body-row:hover { background: #f8fafc; }
+    &.body-row:last-child { border-bottom: none; }
+  }
+
+  .cell {
+    font-size: 0.9rem;
+    color: var(--text-main);
+    
+    &.position { width: 10%; justify-content: center; display: flex; }
+    &.time-range { width: 30%; font-weight: 600; }
+    &.metrics-data { width: 20%; text-align: right; justify-content: flex-end; display: flex; }
+  }
+
+  .rank-indicator {
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: #e2e8f0;
+    color: #475569;
+    &.rank-1 { background: #fef3c7; color: #d97706; }
+    &.rank-2 { background: #f1f5f9; color: #64748b; }
+  }
+}
+
+/* SECCIONES Y BLOQUES MINI (Ventas por categoría / subcategoría) */
+.grid-boxes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+
+  .data-box-item {
+    background: #f8fafc;
+    border: 1px solid var(--border-color);
+    padding: 14px;
+    border-radius: 12px;
+    transition: background 0.2s;
+
+    &:hover { background: #f1f5f9; }
+    .box-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+    .box-value { margin-top: 4px; font-size: 1.05rem !important; color: var(--text-main); margin-bottom: 0; }
+  }
+}
+
+.subcat-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .subcat-row-item {
+    padding: 4px 0;
+    
+    .subcat-info-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      
+      .subcat-name { display: flex; align-items: center; gap: 6px; font-weight: 500; }
+      .subcat-price { font-weight: 700; }
+    }
+  }
+}
+
+.progress-bar-container {
+  background: #e2e8f0;
+  border-radius: 6px;
+  height: 6px;
+  width: 100%;
+  overflow: hidden;
+
+  .progress-bar-fill {
+    background: linear-gradient(90deg, #6366f1, #3b82f6);
+    height: 100%;
+    border-radius: 6px;
+  }
+}
+
+/* Badges y Chips Estilizados */
+ion-badge {
+  --padding-start: 8px;
+  --padding-end: 8px;
+  --padding-top: 4px;
+  --padding-bottom: 4px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+/* ==========================================================================
+   HEADER PRINCIPAL IMPONENTE (Solución para image_0a93dc.png)
+   ========================================================================== */
+.advanced-dashboard {
+  .dashboard-header {
+    padding: 32px 24px 20px 24px;
+    background: linear-gradient(180deg, rgba(241,245,249,0.6) 0%, rgba(248,250,252,0) 100%);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    margin-bottom: 24px;
+
+    .main-title {
+      font-size: 2.4rem !important; /* Más grande, majestuoso e imponente */
+      font-weight: 800 !important;
+      color: #1e293b;
+      letter-spacing: -0.04em !important;
+      margin: 0 0 6px 0;
+      background: linear-gradient(270deg, #1e293b, #475569);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .dashboard-subtitle {
+      font-size: 1rem;
+      color: #64748b;
+      font-weight: 400;
+      margin: 0;
+    }
+  }
+}
+
+/* Arreglo para el contenedor de rango e histórico amontonado */
+.header-actions-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap; /* Evita que los botones colisionen o se encimen */
+  margin-top: 16px;
+  padding: 0 24px;
+
+  .filter-glass-card {
+    margin-bottom: 0; /* Quitamos márgenes viejos */
+    flex: 1;
+    min-width: 280px;
+  }
+
+  /* Botón "Ver análisis completo" estilizado */
+  .action-btn-premium {
+    --background: #1e293b !important;
+    --color: #ffffff !important;
+    --border-radius: 12px;
+    --box-shadow: 0 4px 12px rgba(30, 41, 59, 0.2);
+    font-weight: 600;
+    font-size: 0.9rem;
+    height: 48px;
+    margin: 0;
+  }
+}
+
+/* ==========================================================================
+   REDISEÑO DE "ÁREAS QUE MÁS GENERAN" (Solución para image_0a9117.png)
+   ========================================================================== */
+.areas-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px !important;
+}
+
+.area-row-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 16px;
+  gap: 12px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+  }
+
+  /* Contenedor izquierdo: Icono de mapa */
+  .area-icon-box {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6366f1;
+    
+    ion-icon { font-size: 1.4rem; }
+  }
+
+  /* Información central obligada a mantenerse en una sola línea horizontal */
+  .area-info-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0; /* Truco CSS clave para que el texto respete los límites y no se rompa */
+
+    .area-name {
+      font-size: 1.1rem !important;
+      font-weight: 700 !important;
+      color: #1e293b;
+      white-space: nowrap; /* Evita que "PISO 01" se parta en dos líneas */
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 2px;
+    }
+
+    .area-description {
+      font-size: 0.8rem;
+      color: #64748b;
+      white-space: nowrap; /* Fuerza al texto largo a quedarse en una sola línea */
+      overflow: hidden;
+      text-overflow: ellipsis; /* Si no cabe, añade "..." elegantemente en vez de amontonarse */
+    }
+  }
+
+  /* Contenedor derecho: Precio y botón de acción */
+  .area-meta-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0; /* Evita que esta sección se comprima */
+
+    .area-badge-amount {
+      --background: #10b981;
+      --color: #ffffff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 8px;
+    }
+
+    .area-action-link {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #6366f1;
+      text-transform: uppercase;
+      text-decoration: none;
+      
+      ion-icon { font-size: 0.9rem; }
+    }
   }
 }
 
 
-.card-empleado{
-  border-radius:14px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+
+
+
+
+
+
+
+
+
+/* ==========================================================================
+   REDISEÑO EXECUTIVE CHATBOT (UBICACIÓN SUPERIOR DERECHA)
+   ========================================================================== */
+.ia-chatbot-floating-wrapper {
+  position: fixed;
+  top: 150px; /* Reubicado arriba, libre de obstrucciones de botones de menú */
+  right: 30px;
+  bottom: auto; /* Cancelamos fijación inferior */
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  
+  /* Forzamos que los textos internos del chat sean ultra estilizados y legibles */
+  * {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  }
+
+  .ia-trigger-fab-btn {
+    background: #2b1d16; /* Color complementario corporativo Mixtura */
+    color: #ffffff;
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 10px 18px;
+    border-radius: 12px; /* Layout rectangular ejecutivo */
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: all 0.25s ease;
+
+    ion-icon { font-size: 1.1rem; color: #fbbf24; }
+    &:hover { transform: scale(1.03); background: #3d2b21; }
+  }
+
+  .chat-window-box {
+    width: 360px;
+    max-width: calc(100vw - 48px);
+    height: 300px;
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: fadeInDown 0.2s ease-out;
+
+    /* Cabecera estilizada */
+    .chat-header-premium {
+      background: #f8fafc;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #e2e8f0;
+
+      .avatar-status-box {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        .bot-avatar { font-size: 1.3rem; }
+        .bot-info-meta {
+          h4 { margin: 0; font-size: 0.9rem; font-weight: 700; color: #1e293b; text-transform: none; }
+          span { font-size: 0.7rem; color: #10b981; font-weight: 600; }
+        }
+      }
+    }
+
+    /* burbujas con fuentes delgadas e hiper legibles */
+    .chat-conversation-body {
+      flex: 1;
+      padding: 14px;
+      overflow-y: auto;
+      background: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      .message-bubble-row {
+        display: flex;
+        width: 100%;
+        &.ia { justify-content: flex-start; .bubble-content { background: #ffffff; color: #334155; border: 1px solid #e2e8f0; } }
+        &.user { justify-content: flex-end; .bubble-content { background: #2b1d16; color: #ffffff; } }
+
+        .bubble-content {
+          padding: 10px 14px;
+          border-radius: 12px;
+          max-width: 85%;
+          
+          p { margin: 0; font-size: 0.85rem !important; font-weight: 400 !important; line-height: 1.45; text-transform: none; }
+          .bubble-time { display: block; text-align: right; font-size: 0.6rem; opacity: 0.5; margin-top: 4px; }
+        }
+      }
+    }
+
+    .chat-input-bar {
+      padding: 8px 12px;
+      background: #ffffff;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+
+      .custom-chat-input {
+        --background: #f1f5f9;
+        --padding-start: 12px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        height: 38px;
+      }
+    }
+  }
 }
 
-.titulo-empleado{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-weight:600;
-}
-
-.pagos-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:10px;
-  margin-top:10px;
-}
-
-.metodo{
-  text-align:center;
-  padding:10px;
-  border-radius:10px;
-  font-size:13px;
-}
-
-.metodo ion-icon{
-  font-size:20px;
-  display:block;
-  margin-bottom:4px;
-}
-
-.metodo strong{
-  display:block;
-  font-size:15px;
-}
-
-.efectivo{
-  background:#e8f5e9;
-  color:#2e7d32;
-}
-
-.qr{
-  background:#e3f2fd;
-  color:#1565c0;
-}
-
-.tarjeta{
-  background:#fff3e0;
-  color:#ef6c00;
-}
-
-.total-empleado{
-  margin-top:15px;
-  text-align:center;
-}
-
-.total-empleado span{
-  font-size:12px;
-  color:#888;
-}
-
-.total-empleado h2{
-  margin:0;
-  color:#2c3e50;
-  font-weight:700;
-}
-
-.ventas-grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-gap:12px;
-}
-
-.venta-box{
-background:#f8f9fb;
-border-radius:12px;
-padding:14px;
-text-align:center;
-box-shadow:0 2px 6px rgba(0,0,0,0.06);
-}
-
-.venta-box h3{
-font-size:14px;
-color:#666;
-margin-bottom:6px;
-}
-
-.venta-box h2{
-margin:0;
-color:#2c3e50;
-font-weight:700;
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

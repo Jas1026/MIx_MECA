@@ -1137,6 +1137,11 @@ system:sessionStorage.getItem("system")
 }
 
 
+  obtenerGananciaAnual(anio: number) {
+  return this.http.get<any>(
+    `${this.urlService}/get_informes_resumen.php?anio=${anio}`
+  );
+}
 
 
 

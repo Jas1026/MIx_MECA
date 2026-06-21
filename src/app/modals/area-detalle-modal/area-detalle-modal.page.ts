@@ -9,9 +9,9 @@ import { ServerContentService } from '../../services/server-content.service';
 export class AreaDetalleModalPage implements OnInit {
 
   @Input() area: any;
-detallePedido:any=null;
+  detallePedido: any = null;
 
-mostrarDetalle=false;
+  mostrarDetalle = false;
   mesas: any[] = [];
   mejorMesa: any = null;
   cargando: boolean = false;
@@ -21,7 +21,7 @@ mostrarDetalle=false;
     private server: ServerContentService,
     private loadingCtrl: LoadingController,
     private alertCtrl: AlertController
-  ) {}
+  ) { }
 
   ngOnInit() {
     if (this.area) {
@@ -88,60 +88,31 @@ mostrarDetalle=false;
   close() {
     this.modalCtrl.dismiss();
   }
-  async verDetallePedido(order_id:number){
+  async verDetallePedido(order_id: number) {
+    const loading = await this.loadingCtrl.create({
+      message: 'Cargando pedido...',
+      spinner: 'crescent'
+    });
+    await loading.present();
 
-const loading=
+    this.server.getOrderProducts(order_id).subscribe({
+      next: async (res: any) => {
+        await loading.dismiss();
+        console.log(res);
 
-await this.loadingCtrl.create({
-
-message:'Cargando pedido...'
-
-});
-
-await loading.present();
-
-
-const system=
-this.server
-
-.getOrderProducts(
-
-order_id
-
-)
-
-.subscribe({
-
-
-next:async(res:any)=>{
-
-await loading.dismiss();
-
-
-console.log(res);
-
-
-if(res.error===0){
-
-this.detallePedido=res;
-
-this.mostrarDetalle=true;
-
-}
-
-},
-
-
-error:async(err)=>{
-
-await loading.dismiss();
-
-console.log(err);
-
-}
-
-
-});
-
-}
+        if (res.error === 0) {
+          // Asignamos directamente los datos y la bandera activa el ion-modal del HTML
+          this.detallePedido = res;
+          this.mostrarDetalle = true;
+        } else {
+          this.mostrarError('No se pudo obtener el detalle del pedido.');
+        }
+      },
+      error: async (err) => {
+        await loading.dismiss();
+        console.error(err);
+        this.mostrarError('Error al conectar con el servidor.');
+      }
+    });
+  }
 }

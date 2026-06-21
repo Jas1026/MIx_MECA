@@ -1,391 +1,176 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar color="dark">
-    <ion-title>
+  <ion-toolbar color="dark" style="--border-radius: 0 0 20px 20px; padding: 4px 8px;">
+    <ion-title style="font-weight: 800; font-size: 1.2rem; letter-spacing: -0.3px;">
       📍 Área: {{ area?.area }}
     </ion-title>
 
     <ion-buttons slot="end">
-      <ion-button (click)="close()" fill="clear">
-        <ion-icon name="close-outline"></ion-icon>
+      <ion-button (click)="close()" fill="clear" color="light">
+        <ion-icon name="close-circle" style="font-size: 1.8rem; opacity: 0.8;"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content class="ion-padding" style="--background: #f4f6f9;">
 
-  <!-- 🔥 MEJOR MESA -->
-  <ion-card *ngIf="mejorMesa">
-    <ion-card-header>
-      <ion-card-title>
-        🏆 Mejor Mesa del Área
+  <ion-card *ngIf="mejorMesa" style="border-radius: 18px; box-shadow: 0 8px 24px rgba(255,152,0,0.18); border: 1px solid rgba(255,152,0,0.2); background: linear-gradient(135deg, #ffffff 0%, #fffbe6 100%); margin: 4px 0 20px 0;">
+    <ion-card-header class="ion-no-padding ion-padding-horizontal ion-padding-top">
+      <ion-card-title style="font-size: 0.8rem; color: #ff9800; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 4px;">
+        🏆 Desempeño Destacado
       </ion-card-title>
     </ion-card-header>
 
-    <ion-card-content>
-      <h2>{{ mejorMesa.mesa }}</h2>
-
-      <ion-badge color="success">
+    <ion-card-content class="ion-padding-vertical ion-padding-horizontal" style="display: flex; align-items: center; justify-content: space-between;">
+      <div>
+        <h2 style="font-weight: 900; font-size: 1.8rem; color: #1e1e24; margin: 0; letter-spacing: -0.5px;">{{ mejorMesa.mesa }}</h2>
+        <p style="margin: 6px 0 0 0; color: #62626e; font-size: 0.85rem;">Órdenes completadas: <b style="color: #1e1e24; font-weight: 700;">{{ mejorMesa.total_pedidos }}</b></p>
+      </div>
+      <ion-badge color="success" style="padding: 10px 16px; font-size: 1.05rem; font-weight: 800; border-radius: 14px; box-shadow: 0 4px 12px rgba(45,211,111,0.25);">
         Bs. {{ mejorMesa.total_ventas }}
       </ion-badge>
-
-      <p class="ion-margin-top">
-        Total Pedidos: {{ mejorMesa.total_pedidos }}
-      </p>
     </ion-card-content>
   </ion-card>
 
+  <div style="display: flex; align-items: center; margin-left: 4px; margin-bottom: 12px; gap: 6px;">
+    <span style="font-size: 1.2rem;">🪑</span>
+    <h5 style="font-weight: 800; color: #2e2e3a; margin: 0; font-size: 1.05rem; letter-spacing: -0.2px;">Distribución de Mesas</h5>
+  </div>
 
-  <!-- 📋 LISTA DE MESAS -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>
-        🪑 Mesas del Área
-      </ion-card-title>
-    </ion-card-header>
+  <ion-accordion-group style="border-radius: 18px; overflow: hidden; box-shadow: 0 6px 18px rgba(0,0,0,0.04); background: transparent;">
 
-    <ion-card-content>
+    <ion-accordion *ngFor="let mesa of mesas" style="background: white; margin-bottom: 4px; border-radius: 14px; overflow: hidden;">
+      
+      <ion-item slot="header" lines="none" style="--padding-start: 16px; --padding-end: 16px; min-height: 76px;">
+        <ion-label>
+          <h2 style="font-weight: 800; color: #1e1e24; font-size: 1.15rem; margin-bottom: 4px; letter-spacing: -0.3px;">{{ mesa.mesa }}</h2>
+          <p style="font-size: 0.8rem; color: #8a8a9e; font-weight: 500;">{{ mesa.total_pedidos }} pedidos registrados</p>
+        </ion-label>
 
-      <ion-accordion-group>
+        <ion-badge color="primary" slot="end" style="padding: 8px 14px; font-size: 0.9rem; font-weight: 700; border-radius: 10px; --background: #3880ff;">
+          Bs. {{ mesa.total_ventas }}
+        </ion-badge>
+      </ion-item>
 
-        <ion-accordion *ngFor="let mesa of mesas">
+      <div class="ion-padding" slot="content" style="background: #fafbfe; border-top: 1px solid #f0f2f7;">
 
-          <!-- CABECERA -->
-          <ion-item slot="header">
-            <ion-label>
-              <h2>{{ mesa.mesa }}</h2>
-              <p>{{ mesa.total_pedidos }} pedidos</p>
-            </ion-label>
+        <div *ngIf="mesa.pedidos?.length">
+          <h4 style="font-size: 0.8rem; font-weight: 800; color: #8a8a9e; margin: 0 0 10px 4px; text-transform: uppercase; letter-spacing: 0.8px;">Órdenes Recientes</h4>
 
-            <ion-badge color="primary" slot="end">
-              Bs. {{ mesa.total_ventas }}
-            </ion-badge>
-          </ion-item>
+          <ion-list lines="full" style="border-radius: 14px; overflow: hidden; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.02); padding: 0; border: 1px solid #f0f2f7;">
+            <ion-item *ngFor="let pedido of mesa.pedidos" style="--padding-start: 14px; --inner-padding-end: 14px; --min-height: 65px;">
+              <ion-label>
+                <h3 style="font-weight: 700; color: #1e1e24; font-size: 0.95rem;">Pedido #{{ pedido.order_id }}</h3>
+                <p style="font-size: 0.75rem; color: #a0a0b0; margin-top: 3px; font-weight: 500;">{{ pedido.order_date | date:'short' }}</p>
+              </ion-label>
 
-          <!-- CONTENIDO -->
-          <div class="ion-padding" slot="content">
+              <ion-badge color="success" style="padding: 6px 12px; font-size: 0.8rem; font-weight: 700; border-radius: 8px; margin-right: 6px;" fill="outline">
+                Bs. {{ pedido.total_pedido }}
+              </ion-badge>
 
-            <!-- PEDIDOS -->
-            <div *ngIf="mesa.pedidos?.length">
+              <ion-button fill="clear" color="primary" slot="end" (click)="verDetallePedido(pedido.order_id)" style="margin: 0; --padding-end: 0;">
+                <ion-icon name="eye" style="font-size: 1.5rem;"></ion-icon>
+              </ion-button>
+            </ion-item>
+          </ion-list>
+        </div>
 
-              <h3>📦 Pedidos</h3>
+        <div *ngIf="mesa.productos?.length" class="ion-margin-top" style="margin-top: 18px !important;">
+          <h4 style="font-size: 0.8rem; font-weight: 800; color: #8a8a9e; margin: 0 0 10px 4px; text-transform: uppercase; letter-spacing: 0.8px;">Platos Frecuentes</h4>
 
-              <ion-list lines="full">
+          <ion-list lines="none" style="border-radius: 14px; overflow: hidden; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.02); padding: 6px 0; border: 1px solid #f0f2f7;">
+            <ion-item *ngFor="let prod of mesa.productos" style="--background: transparent; height: 42px;">
+              <ion-label style="font-size: 0.9rem; color: #4a4a5a; font-weight: 600;">
+                {{ prod.producto }}
+              </ion-label>
+              <ion-badge slot="end" style="color: #e65100; background: #fff3e0; font-weight: 800; font-size: 0.85rem; border-radius: 6px; padding: 5px 10px;">
+                x{{ prod.cantidad }}
+              </ion-badge>
+            </ion-item>
+          </ion-list>
+        </div>
 
-                <ion-item *ngFor="let pedido of mesa.pedidos">
-
-                  <ion-label>
-
-                    <h3>
-
-                      Pedido #{{ pedido.order_id }}
-
-                    </h3>
-
-                    <p>
-
-                      {{ pedido.order_date | date:'short' }}
-
-                    </p>
-
-                  </ion-label>
-
-                  <ion-badge color="success">
-
-                    Bs. {{ pedido.total_pedido }}
-
-                  </ion-badge>
+      </div>
+    </ion-accordion>
+  </ion-accordion-group>
+</ion-content>
 
 
-                  <ion-button fill="clear" slot="end" (click)="verDetallePedido(pedido.order_id)">
+<ion-modal [isOpen]="mostrarDetalle" (didDismiss)="mostrarDetalle = false" [initialBreakpoint]="0.85" [breakpoints]="[0, 0.5, 0.85, 1]">
+  <ng-template>
+    <ion-header class="ion-no-border">
+      <ion-toolbar color="white" style="border-bottom: 1px solid #edf0f5; padding: 6px 4px;">
+        <ion-title style="font-weight: 800; font-size: 1.15rem; color: #1e1e24; letter-spacing: -0.3px;">
+          📋 Detalle Pedido #{{ detallePedido?.orden?.order_id }}
+        </ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="mostrarDetalle = false" color="danger" style="font-weight: 800; font-size: 0.95rem;">Cerrar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
 
-                    <ion-icon name="eye-outline">
+    <ion-content class="ion-padding" style="--background: #f7f9fc;" *ngIf="detallePedido">
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+        <div style="background: white; padding: 14px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.015); border: 1px solid #edf0f5;">
+          <span style="font-size: 0.7rem; text-transform: uppercase; color: #a0a0b0; font-weight: 800; letter-spacing: 0.5px;">Ubicación</span>
+          <h4 style="margin: 6px 0 0 0; font-weight: 800; color: #1e1e24; font-size: 1rem;">🪑 {{ detallePedido.orden.mesa }} <span style="color: #8a8a9e; font-weight: 500; font-size: 0.85rem;">({{ detallePedido.orden.piso }})</span></h4>
+        </div>
+        <div style="background: white; padding: 14px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.015); border: 1px solid #edf0f5;">
+          <span style="font-size: 0.7rem; text-transform: uppercase; color: #a0a0b0; font-weight: 800; letter-spacing: 0.5px;">Registro</span>
+          <h4 style="margin: 6px 0 0 0; font-weight: 600; color: #4a4a5a; font-size: 0.8rem; line-height: 1.3;">{{ detallePedido.orden.order_date | date:'medium' }}</h4>
+        </div>
+      </div>
 
-                    </ion-icon>
-
-                  </ion-button>
-
-                </ion-item>
-
-              </ion-list>
-
+      <h3 style="font-size: 1.05rem; font-weight: 800; color: #1e1e24; margin-bottom: 12px; margin-left: 4px; letter-spacing: -0.2px;">🍔 Items Solicitados</h3>
+      
+      <ion-list lines="full" style="border-radius: 18px; overflow: hidden; background: white; box-shadow: 0 6px 16px rgba(0,0,0,0.02); border: 1px solid #edf0f5; padding: 0;">
+        <ion-item *ngFor="let p of detallePedido.productos" style="--padding-start: 16px; --inner-padding-end: 16px;">
+          <ion-label style="margin-top: 12px; margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+              <h2 style="font-weight: 800; color: #1e1e24; font-size: 1rem; margin: 0;">
+                {{ p.producto }} <span style="color: #3880ff; font-weight: 900; margin-left: 4px;">x{{ p.quantity }}</span>
+              </h2>
+              <span style="font-weight: 800; color: #1e1e24; font-size: 1rem; white-space: nowrap;">Bs. {{ p.total_price }}</span>
             </div>
 
-
-            <!-- PRODUCTOS -->
-            <div *ngIf="mesa.productos?.length" class="ion-margin-top">
-
-              <h3>🍽 Productos Más Vendidos</h3>
-
-              <ion-list lines="none">
-
-                <ion-item *ngFor="let prod of mesa.productos">
-
-                  <ion-label>
-                    {{ prod.producto }}
-                  </ion-label>
-
-                  <ion-badge color="warning" slot="end">
-                    {{ prod.cantidad }}
-                  </ion-badge>
-
-                </ion-item>
-
-              </ion-list>
-
+            <div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;">
+              <span style="background: #e3f2fd; color: #1e88e5; font-size: 0.65rem; padding: 4px 10px; border-radius: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px;">
+                {{ p.status }}
+              </span>
+              <span *ngIf="p.nombres_cocinas" style="background: #f4f5f7; color: #495057; font-size: 0.65rem; padding: 4px 10px; border-radius: 8px; font-weight: 600;">
+                🍳 {{ p.nombres_cocinas }}
+              </span>
             </div>
 
+            <div *ngIf="p.extras?.length" style="margin-top: 10px; background: #fff9f0; padding: 10px 12px; border-radius: 12px; border-left: 4px solid #ff9800;">
+              <p style="font-size: 0.75rem; font-weight: 800; color: #b26a00; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 0.3px;">Extras:</p>
+              <div *ngFor="let e of p.extras" style="font-size: 0.85rem; color: #3c3c4a; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+                <span>➕</span> {{ e.nombre }} <span style="color: #8a8a9e; font-size: 0.75rem; font-weight: 500;">({{ e.adjustment_qty }} {{ e.unidad_med }})</span>
+              </div>
+            </div>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+
+      <h3 style="font-size: 1.05rem; font-weight: 800; color: #1e1e24; margin-top: 26px; margin-bottom: 12px; margin-left: 4px; letter-spacing: -0.2px;">📝 Historial de la Orden</h3>
+      
+      <div style="background: white; border-radius: 18px; padding: 16px; box-shadow: 0 6px 16px rgba(0,0,0,0.02); border: 1px solid #edf0f5; margin-bottom: 16px;">
+        <div *ngFor="let h of detallePedido.historial; let last = last" style="display: flex; gap: 14px; position: relative; padding-bottom: 16px;">
+          
+          <div style="display: flex; flex-direction: column; align-items: center; width: 16px;">
+            <div style="width: 12px; height: 12px; background: #3880ff; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 0 2px #3880ff; z-index: 2;"></div>
+            <div *ngIf="!last" style="width: 2px; flex-grow: 1; background: #e2e8f0; margin-top: 4px; position: absolute; top: 12px; bottom: -4px; z-index: 1;"></div>
           </div>
 
-        </ion-accordion>
-
-      </ion-accordion-group>
-<ion-card
-
-*ngIf="mostrarDetalle && detallePedido"
-
-class="ion-margin-top"
-
->
-
-<ion-card-header>
-
-<ion-card-title>
-
-📋 Pedido #{{detallePedido.orden.order_id}}
-
-</ion-card-title>
-
-</ion-card-header>
-
-<ion-card-content>
-
-
-<p>
-
-🪑 Mesa:
-
-<b>
-
-{{detallePedido.orden.mesa}}
-
-</b>
-
-</p>
-
-
-<p>
-
-🏢 Piso:
-
-<b>
-
-{{detallePedido.orden.piso}}
-
-</b>
-
-</p>
-
-
-<p>
-
-👤 Creó:
-
-<b>
-
-{{detallePedido.mesero_creador}}
-
-</b>
-
-</p>
-
-
-<p>
-
-💵 Cobró:
-
-<b>
-
-{{detallePedido.mesero_cobro||'---'}}
-
-</b>
-
-</p>
-
-
-<p>
-
-🔒 Cerró:
-
-<b>
-
-{{detallePedido.mesero_cerro||'---'}}
-
-</b>
-
-</p>
-
-
-<p>
-
-🕐
-
-{{detallePedido.orden.order_date|
-
-date:'medium'}}
-
-</p>
-
-
-
-<h2 class="ion-margin-top">
-
-🍔 Productos
-
-</h2>
-
-
-<ion-list>
-
-<ion-item
-
-*ngFor="let p of detallePedido.productos"
-
->
-
-<ion-label>
-
-<h2>
-
-{{p.producto}}
-
-x
-
-{{p.quantity}}
-
-</h2>
-
-
-<p>
-
-Bs.
-
-{{p.total_price}}
-
-</p>
-
-
-<p>
-
-Estado:
-
-{{p.status}}
-
-</p>
-
-
-<p
-
-*ngIf="p.nombres_cocinas"
-
->
-
-Cocina:
-
-{{p.nombres_cocinas}}
-
-</p>
-
-
-
-<div
-
-*ngIf="p.extras?.length"
-
->
-
-<p>
-
-Extras:
-
-</p>
-
-<div
-
-*ngFor="let e of p.extras"
-
->
-
-➕ {{e.nombre}}
-
-(
-
-{{e.adjustment_qty}}
-
-{{e.unidad_med}}
-
-)
-
-</div>
-
-</div>
-
-
-</ion-label>
-
-</ion-item>
-
-</ion-list>
-
-
-<h2 class="ion-margin-top">
-
-📝 Historial
-
-</h2>
-
-
-<ion-list>
-
-<ion-item
-
-*ngFor="let h of detallePedido.historial"
-
->
-
-<ion-label>
-
-<h3>
-
-{{h.accion}}
-
-</h3>
-
-<p>
-
-{{h.name}}
-
-</p>
-
-<p>
-
-{{h.created_at|
-
-date:'medium'}}
-
-</p>
-
-</ion-label>
-
-</ion-item>
-
-</ion-list>
-
-
-</ion-card-content>
-
-</ion-card>
-    </ion-card-content>
-  </ion-card>
-
-</ion-content>
+          <div style="font-size: 0.85rem; margin-top: -3px; z-index: 2;">
+            <h5 style="margin: 0; font-weight: 800; color: #1e1e24; font-size: 0.9rem;">{{ h.accion }}</h5>
+            <p style="margin: 3px 0 0 0; color: #62626e; font-weight: 500;">Por: <span style="color: #1e1e24; font-weight: 600;">{{ h.name }}</span></p>
+            <p style="margin: 2px 0 0 0; color: #a0a0b0; font-size: 0.75rem; font-weight: 500;">{{ h.created_at | date:'medium' }}</p>
+          </div>
+        </div>
+      </div>
+
+    </ion-content>
+  </ng-template>
+</ion-modal>
