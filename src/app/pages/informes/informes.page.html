@@ -217,7 +217,7 @@
             </ion-list>
           </ion-card-content>
 
-          
+
         </ion-card>
       </ion-col>
     </ion-row>
@@ -573,6 +573,250 @@
 
   </ion-grid>
 
+
+
+
+  <!-- BOTELLAS MÁS CONSUMIDAS -->
+  <ion-card class="botellas-card">
+
+    <ion-card-header>
+
+      <ion-card-title>
+        <ion-icon name="wine-outline"></ion-icon>
+        Botellas Más Consumidas
+      </ion-card-title>
+
+      <ion-card-subtitle>
+        Consumo acumulado de botellas registradas
+      </ion-card-subtitle>
+
+    </ion-card-header>
+
+    <ion-card-content>
+
+      <div class="botella-item" *ngFor="let b of resumen.botellas_mas_consumidas; let i = index">
+        <!-- Ranking -->
+        <div class="botella-rank">
+          #{{ i + 1 }}
+        </div>
+        <!-- Información -->
+        <div class="botella-info">
+          <h3>
+            {{ b.nombre }}
+          </h3>
+          <div class="mini-stats">
+            <span>
+              <ion-icon name="albums-outline"></ion-icon>
+              {{ b.total_botellas }} botellas
+            </span>
+            <span>
+              <ion-icon name="water-outline"></ion-icon>
+              {{ b.consumido_total | number:'1.0-0' }} ml
+            </span>
+          </div>
+          <!-- Barra -->
+          <ion-progress-bar [value]="(b.porcentaje_consumido || 0) / 100">
+          </ion-progress-bar>
+        </div>
+        <!-- Porcentaje -->
+        <div class="botella-percent">
+          <strong>
+            {{ b.porcentaje_consumido | number:'1.0-0' }}%
+          </strong>
+          <small>
+            Consumido
+          </small>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+
+  <!-- PROVEEDORES PRINCIPALES -->
+  <ion-card class="proveedores-card">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="business-outline"></ion-icon>
+        Proveedores Principales
+      </ion-card-title>
+      <ion-card-subtitle>
+        Empresas que suministran más productos
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="proveedor-item" *ngFor="let p of resumen.proveedores_top; let i = index">
+        <!-- Ranking -->
+        <div class="proveedor-rank">
+          #{{ i + 1 }}
+        </div>
+        <!-- Info -->
+        <div class="proveedor-info">
+          <h3>
+            {{ p.nombre_empresa }}
+          </h3>
+          <span>
+            {{ p.rubro || 'Sin rubro' }}
+          </span>
+        </div>
+        <!-- Datos -->
+        <div class="proveedor-stats">
+          <div>
+            <strong>
+              {{ p.total_productos }}
+            </strong>
+            <small>Productos</small>
+          </div>
+          <div>
+            <strong>
+              {{ p.stock_total | number:'1.0-0' }}
+            </strong>
+            <small>Stock</small>
+          </div>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+
+
+
+<ion-card class="tipo-card">
+
+  <ion-card-header>
+
+    <ion-card-title>
+      <ion-icon name="cube-outline"></ion-icon>
+      Productos por Tipo
+    </ion-card-title>
+
+    <ion-card-subtitle>
+      Elaborados vs Finales
+    </ion-card-subtitle>
+
+  </ion-card-header>
+
+  <ion-card-content>
+
+    <div
+      class="tipo-item"
+      *ngFor="let t of (resumen?.tipo_productos || [])"
+    >
+
+      <div class="tipo-icon"
+           [ngClass]="t.tipo_producto">
+
+        <ion-icon
+          [name]="t.tipo_producto === 'final'
+            ? 'checkmark-circle-outline'
+            : 'construct-outline'">
+        </ion-icon>
+
+      </div>
+
+      <div class="tipo-info">
+
+        <h3>
+          {{ (t.tipo_producto || 'sin tipo') | titlecase }}
+        </h3>
+
+        <p>
+          {{ t.cantidad_productos || 0 }} productos registrados
+        </p>
+
+      </div>
+
+      <div class="tipo-value">
+
+        <strong>
+          {{ t.stock_total || 0 }}
+        </strong>
+
+        <span>stock total</span>
+
+      </div>
+
+    </div>
+
+  </ion-card-content>
+
+</ion-card>
+
+
+<ion-card class="tipo-card">
+
+  <ion-card-header>
+
+    <ion-card-title>
+      <ion-icon name="layers-outline"></ion-icon>
+      Ingredientes por Tipo
+    </ion-card-title>
+
+    <ion-card-subtitle>
+      Normal • Botella • Fraccionado
+    </ion-card-subtitle>
+
+  </ion-card-header>
+
+  <ion-card-content>
+
+    <div
+      class="tipo-item"
+      *ngFor="let t of (resumen?.tipo_ingredientes || [])"
+    >
+
+      <div class="tipo-icon"
+           [ngClass]="t.tipo">
+
+        <ion-icon
+          [name]="
+            t.tipo === 'botella'
+              ? 'wine-outline'
+              : t.tipo === 'fraccionado'
+              ? 'cut-outline'
+              : 'cube-outline'
+          ">
+        </ion-icon>
+
+      </div>
+
+      <div class="tipo-info">
+
+        <h3>
+          {{ (t.tipo || 'normal') | titlecase }}
+        </h3>
+
+        <p>
+          {{ t.cantidad || 0 }} ingredientes
+        </p>
+
+      </div>
+
+      <div class="tipo-value">
+
+        <strong>
+          {{ t.stock_total || 0 }}
+        </strong>
+
+        <span>
+          {{
+            t.tipo === 'botella'
+              ? '% consumo'
+              : t.tipo === 'fraccionado'
+              ? 'porciones'
+              : 'stock'
+          }}
+        </span>
+
+      </div>
+
+    </div>
+
+  </ion-card-content>
+
+</ion-card>
+
+
+
   <ion-modal #modalGraficos (ionModalDidPresent)="dibujarGraficos()">
     <ng-template>
       <ion-header class="ion-no-border">
@@ -690,48 +934,45 @@
       </ion-content>
     </ng-template>
   </ion-modal>
-<div class="ia-chatbot-floating-wrapper" [class.chat-is-active]="isChatOpen">
-  <!-- AL ESTAR ARRIBA, LA VENTANA SE RENDERIZA PRIMERO -->
-  <div class="chat-window-box" *ngIf="isChatOpen">
-    <div class="chat-header-premium">
-      <div class="avatar-status-box">
-        <div class="bot-avatar">🤖</div>
-        <div class="bot-info-meta">
-          <h4>Auditor Inteligente</h4>
-          <span>Mixtura Datos Conectados</span>
+  <div class="ia-chatbot-floating-wrapper" [class.chat-is-active]="isChatOpen">
+    <!-- AL ESTAR ARRIBA, LA VENTANA SE RENDERIZA PRIMERO -->
+    <div class="chat-window-box" *ngIf="isChatOpen">
+      <div class="chat-header-premium">
+        <div class="avatar-status-box">
+          <div class="bot-avatar">🤖</div>
+          <div class="bot-info-meta">
+            <h4>Auditor Inteligente</h4>
+            <span>Mixtura Datos Conectados</span>
+          </div>
+        </div>
+        <ion-button fill="clear" color="dark" (click)="toggleChat()">
+          <ion-icon name="close-outline"></ion-icon>
+        </ion-button>
+      </div>
+
+      <div class="chat-conversation-body">
+        <div *ngFor="let msg of chatHistory" class="message-bubble-row" [ngClass]="msg.sender">
+          <div class="bubble-content">
+            <p>{{ msg.text }}</p>
+            <span class="bubble-time">{{ msg.timestamp | date:'HH:mm' }}</span>
+          </div>
         </div>
       </div>
-      <ion-button fill="clear" color="dark" (click)="toggleChat()">
-        <ion-icon name="close-outline"></ion-icon>
-      </ion-button>
-    </div>
 
-    <div class="chat-conversation-body">
-      <div *ngFor="let msg of chatHistory" class="message-bubble-row" [ngClass]="msg.sender">
-        <div class="bubble-content">
-          <p>{{ msg.text }}</p>
-          <span class="bubble-time">{{ msg.timestamp | date:'HH:mm' }}</span>
-        </div>
+      <div class="chat-input-bar">
+        <ion-input placeholder="Escribe tu consulta aquí..." [(ngModel)]="chatMessage"
+          (keyup.enter)="procesarPreguntaIA()" class="custom-chat-input">
+        </ion-input>
+        <ion-button fill="clear" (click)="procesarPreguntaIA()" [disabled]="!chatMessage.trim()">
+          <ion-icon name="send-outline"></ion-icon>
+        </ion-button>
       </div>
     </div>
 
-    <div class="chat-input-bar">
-      <ion-input 
-        placeholder="Escribe tu consulta aquí..." 
-        [(ngModel)]="chatMessage"
-        (keyup.enter)="procesarPreguntaIA()"
-        class="custom-chat-input">
-      </ion-input>
-      <ion-button fill="clear" (click)="procesarPreguntaIA()" [disabled]="!chatMessage.trim()">
-        <ion-icon name="send-outline"></ion-icon>
-      </ion-button>
-    </div>
+    <!-- BOTÓN DISPARADOR QUEDA ABAJO DE LA VENTANA CHAT -->
+    <button class="ia-trigger-fab-btn" (click)="toggleChat()">
+      <ion-icon name="sparkles"></ion-icon>
+      <span>{{ isChatOpen ? 'Cerrar Panel' : 'BOT' }}</span>
+    </button>
   </div>
-
-  <!-- BOTÓN DISPARADOR QUEDA ABAJO DE LA VENTANA CHAT -->
-  <button class="ia-trigger-fab-btn" (click)="toggleChat()">
-    <ion-icon name="sparkles"></ion-icon>
-    <span>{{ isChatOpen ? 'Cerrar Panel' : 'BOT' }}</span>
-  </button>
-</div>
 </ion-content>

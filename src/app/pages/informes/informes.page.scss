@@ -1074,8 +1074,277 @@ ion-badge {
   }
 }
 
+/* ==========================================================================
+   BOTELLAS MÁS CONSUMIDAS - REDISEÑO MODERNO
+   ========================================================================== */
+
+.botellas-card ion-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px !important;
+}
+
+.botella-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 16px;
+  gap: 14px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+  }
+
+  /* Ranking */
+  .botella-rank {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #6366f1;
+    font-weight: 800;
+    font-size: 0.85rem;
+    padding: 8px 10px;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+
+  /* INFO CENTRAL */
+  .botella-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+
+    h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0 0 6px 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mini-stats {
+      display: flex;
+      gap: 12px;
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-bottom: 8px;
+
+      span {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        white-space: nowrap;
+      }
+
+      ion-icon {
+        font-size: 0.9rem;
+      }
+    }
+
+    ion-progress-bar {
+      height: 6px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+  }
+
+  /* PORCENTAJE */
+  .botella-percent {
+    text-align: right;
+    flex-shrink: 0;
+
+    strong {
+      display: block;
+      font-size: 1rem;
+      color: #10b981;
+      font-weight: 800;
+    }
+
+    small {
+      font-size: 0.7rem;
+      color: #64748b;
+    }
+  }
+}
+
+/* ==========================================================================
+   PROVEEDORES PRINCIPALES - REDISEÑO MODERNO
+   ========================================================================== */
+
+.proveedores-card ion-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px !important;
+}
+
+.proveedor-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 16px;
+  gap: 14px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+  }
+
+  /* Ranking */
+  .proveedor-rank {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #6366f1;
+    font-weight: 800;
+    font-size: 0.85rem;
+    padding: 8px 10px;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+
+  /* INFO */
+  .proveedor-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+
+    h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    span {
+      font-size: 0.75rem;
+      color: #64748b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  /* STATS */
+  .proveedor-stats {
+    display: flex;
+    gap: 16px;
+    text-align: right;
+    flex-shrink: 0;
+
+    div {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    strong {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    small {
+      font-size: 0.7rem;
+      color: #64748b;
+    }
+  }
+}
 
 
+.tipo-card {
+  border-radius: 16px;
+}
+
+.tipo-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  background: var(--ion-color-light);
+}
+
+.tipo-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tipo-icon ion-icon {
+  font-size: 22px;
+}
+
+.tipo-info {
+  flex: 1;
+  margin-left: 10px;
+}
+
+.tipo-info h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.tipo-info p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ion-color-medium);
+}
+
+.tipo-value {
+  text-align: right;
+}
+
+.tipo-value strong {
+  display: block;
+  font-size: 16px;
+}
+
+.tipo-value span {
+  font-size: 11px;
+  color: var(--ion-color-medium);
+}
+
+/* COLORES POR TIPO */
+.tipo-item.botella .tipo-icon {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+
+.tipo-item.fraccionado .tipo-icon {
+  background: rgba(56, 128, 255, 0.15);
+  color: #3880ff;
+}
+
+.tipo-item.normal .tipo-icon {
+  background: rgba(16, 220, 96, 0.15);
+  color: #10dc60;
+}
+
+.tipo-item.final .tipo-icon {
+  background: rgba(235, 68, 90, 0.15);
+  color: #eb445a;
+}
 
 
 
