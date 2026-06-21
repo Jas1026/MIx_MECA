@@ -17,7 +17,7 @@ export class FloatingReadyOrdersComponent implements OnInit, OnDestroy {
 
   // --- MAPEO DE AUDIO ---
   // Sonido 1: Alerta continua cuando cocina molesta al mesero (Zumbido/Alarma)
-  private audioSonido1 = new Audio('assets/sounds/sonidodeprueba.mp3');
+  private audioSonido1 = new Audio('assets/sounds/sonido_notificacion3.mp3');
   
   // NUEVO SONIDO: Campana corta exclusiva para cuando un producto pasa a estar "Listo para recoger"
   private audioNuevoReady = new Audio('assets/sounds/notificacion.mp3'); 
