@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ServerContentService } from 'src/app/services/server-content.service';
+import { DateFilterModalComponent } from 'src/app/modals/date-filter-modal/date-filter-modal.component';
 import {
   ModalController,
   ToastController,
@@ -11,7 +12,10 @@ import { ViewProductDetailComponent } from 'src/app/modals/view-product-detail/v
 import { BottleManagerComponent } from 'src/app/modals/bottle-manager/bottle-manager.component';
 import { LoanManagerComponent } from 'src/app/modals/loan-manager/loan-manager.component';
 import { FractionManagerComponent } from 'src/app/modals/fraction-manager/fraction-manager.component';
-
+// NUEVAS LIBRERÍAS DE EXPORTACIÓN
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-inventario',
   templateUrl: './inventario.page.html',
@@ -28,6 +32,17 @@ filterProveedorIng: string = '';
 filterProveedorProd: string = '';
 filterNombre: string = '';
 filterUnidad: string = '';
+showDateFilters=false;
+
+dateMode='single';
+
+dateFilterType='day';
+
+selectedDate='';
+
+startDate='';
+
+endDate='';
 filterNivelStock: string = '';
 unidadesDisponibles: string[] = [];
 subcategories: any[] = [];
@@ -80,13 +95,17 @@ get filteredIngredients() {
         ? true
         : this.getStockLevel(ing) === this.filterNivelStock;
 
-    return (
-      matchNombre &&
-      matchUnidad &&
-      matchLocation &&
-      matchProveedor &&
-      matchNivel
-    );
+return (
+
+matchNombre &&
+matchUnidad &&
+matchLocation &&
+matchProveedor &&
+matchNivel &&
+
+this.matchDate(ing)
+
+);
   });
 
   if (this.sortField) {
@@ -346,12 +365,16 @@ const matchPrecio =
     ? true
     : p.price.toString().includes(this.filterPrecio);
 return (
-  matchNombre &&
-  matchState &&
-  matchProveedor &&
-  matchNivel &&
-  matchCategoria &&
-  matchPrecio
+
+matchNombre &&
+matchState &&
+matchProveedor &&
+matchNivel &&
+matchCategoria &&
+matchPrecio &&
+
+this.matchDate(p)
+
 );
   });
 
@@ -425,11 +448,15 @@ const matchEstado =
         ? true
         : a.categoria === this.filterAssetCategoria;
 
-   return (
-  matchNombre &&
-  matchCat &&
-  matchEstado
-);
+return(
+
+matchNombre &&
+matchCat &&
+matchEstado &&
+
+this.matchDate(a)
+
+)
   });
 
   if (this.sortAssetsField) {
@@ -866,46 +893,28 @@ clearProductFilters() {
 
 }
 get groupedProductsByType() {
+  const grupos: any = {};
 
-  const grupos:any = {};
-
-  this.filteredProducts.forEach((p:any)=>{
-
+  // Cambiado a filteredProducts para asegurar que herede los filtros de fechas y palabras clave
+  this.filteredProducts.forEach((p: any) => {
     let key = 'Todos';
 
-    switch(this.groupByProduct){
-
+    switch (this.groupByProduct) {
       case 'category':
-
-        key =
-          this.getCategoryName(
-            p.id_category
-          );
-
-      break;
-
+        key = this.getCategoryName(p.id_category);
+        break;
       case 'subcategory':
-
-        key =
-          p.nombre_subcategoria
-          || 'Sin subcategoría';
-
-      break;
-
+        key = p.nombre_subcategoria || 'Sin subcategoría';
+        break;
     }
 
-    if(!grupos[key]){
-
+    if (!grupos[key]) {
       grupos[key] = [];
-
     }
-
     grupos[key].push(p);
-
   });
 
   return grupos;
-
 }
 groupProductsByName(products:any[]) {
 
@@ -1512,7 +1521,378 @@ areAllGroupsExpanded(): boolean {
   );
 
 }
+matchDate(item: any) {
+  if (!item.created_at) {
+    return false;
+  }
 
+  // Corregir desfase de zona horaria forzando la lectura local del String (reemplazando espacios por 'T')
+  // o asegurando que se evalúe solo año, mes y día.
+  const dateStr = item.created_at.includes('T') ? item.created_at : item.created_at.replace(' ', 'T');
+  const fechaItem = new Date(dateStr);
+
+  // Si la fecha es inválida, no filtrar
+  if (isNaN(fechaItem.getTime())) return true;
+
+  // ========================================
+  // MODO: FECHA ESPECÍFICA (SINGLE)
+  // ========================================
+  if (this.dateMode === 'single') {
+    if (!this.selectedDate) {
+      return true;
+    }
+
+    const fechaSel = new Date(this.selectedDate.includes('T') ? this.selectedDate : this.selectedDate + 'T00:00:00');
+
+    // Filtrar por DÍA exacto
+    if (this.dateFilterType === 'day') {
+      return (
+        fechaItem.getFullYear() === fechaSel.getFullYear() &&
+        fechaItem.getMonth() === fechaSel.getMonth() &&
+        fechaItem.getDate() === fechaSel.getDate()
+      );
+    }
+
+    // Filtrar por MES entero
+    if (this.dateFilterType === 'month') {
+      return (
+        fechaItem.getFullYear() === fechaSel.getFullYear() &&
+        fechaItem.getMonth() === fechaSel.getMonth()
+      );
+    }
+
+    // Filtrar por AÑO entero
+    if (this.dateFilterType === 'year') {
+      return fechaItem.getFullYear() === fechaSel.getFullYear();
+    }
+  }
+
+  // ========================================
+  // MODO: RANGO DE FECHAS (RANGE)
+  // ========================================
+  if (this.dateMode === 'range') {
+    if (!this.startDate || !this.endDate) {
+      return true;
+    }
+
+    let inicio = new Date(this.startDate.includes('T') ? this.startDate : this.startDate + 'T00:00:00');
+    let fin = new Date(this.endDate.includes('T') ? this.endDate : this.endDate + 'T00:00:00');
+
+    // SI EL FILTRO ES POR AÑO EN MODO RANGO:
+    // Ajustamos el rango automático para abarcar desde el 1 de Enero del año de inicio 
+    // hasta el 31 de Diciembre del año de fin.
+    if (this.dateFilterType === 'year') {
+      inicio = new Date(inicio.getFullYear(), 0, 1, 0, 0, 0, 0);
+      fin = new Date(fin.getFullYear(), 11, 31, 23, 59, 59, 999);
+    } else if (this.dateFilterType === 'month') {
+      // Ajuste opcional para meses enteros en rango: Del día 1 de ese mes al último día de ese mes
+      inicio = new Date(inicio.getFullYear(), inicio.getMonth(), 1, 0, 0, 0, 0);
+      fin = new Date(fin.getFullYear(), fin.getMonth() + 1, 0, 23, 59, 59, 999);
+    } else {
+      // Días estándar
+      inicio.setHours(0, 0, 0, 0);
+      fin.setHours(23, 59, 59, 999);
+    }
+
+    return (
+      fechaItem.getTime() >= inicio.getTime() &&
+      fechaItem.getTime() <= fin.getTime()
+    );
+  }
+
+  return true;
+}
+clearDateFilter(){
+
+  this.dateFilterType='day';
+
+  this.dateMode='single';
+
+  this.selectedDate='';
+
+  this.startDate='';
+
+  this.endDate='';
+  this.refreshCurrentSegment();
+
+}
+// Método para desplegar el modal sobresaliente corregido
+  async openDateFilterModal() {
+    const modal = await this.modalCtrl.create({
+      component: DateFilterModalComponent,
+      cssClass: 'custom-date-modal', 
+      componentProps: {
+        dateMode: this.dateMode,
+        dateFilterType: this.dateFilterType,
+        selectedDate: this.selectedDate,
+        startDate: this.startDate,
+        endDate: this.endDate
+      }
+    });
+
+    modal.onDidDismiss().then((result) => {
+      if (result.data) {
+        // Mapeamos los filtros configurados en el modal a la página principal
+        this.dateMode = result.data.dateMode;
+        this.dateFilterType = result.data.dateFilterType;
+        this.selectedDate = result.data.selectedDate;
+        this.startDate = result.data.startDate;
+        this.endDate = result.data.endDate;
+
+        // Si el usuario presionó el botón Limpiar en el modal
+        if (result.data.cleared) {
+          this.clearDateFilter();
+        } else {
+          // Si aplicó filtros, forzamos recarga o actualización de la vista actual
+          this.refreshCurrentSegment();
+        }
+      }
+    });
+
+    return await modal.present();
+  }
+refreshCurrentSegment() {
+    if (this.segment === 'ingredients') this.loadIngredients();
+    if (this.segment === 'products') this.loadProducts();
+    if (this.segment === 'assets') this.loadAssets();
+  }
+  // =========================================================================
+  // LOGICA DE EXPORTACIÓN DETALLADA (EXCEL & PDF)
+  // =========================================================================
+
+  /**
+   * Obtiene una descripción legible de todos los filtros aplicados en la tabla
+   */
+  getFilterDetailsText(): string {
+    let detalles: string[] = [];
+
+    // 1. Filtros de Fecha
+    if (this.selectedDate || this.startDate || this.endDate) {
+      const mode = this.dateMode === 'single' ? 'Fecha específica' : 'Rango';
+      const type = this.dateFilterType === 'day' ? 'Día' : this.dateFilterType === 'month' ? 'Mes' : 'Año';
+      if (this.dateMode === 'single' && this.selectedDate) {
+        detalles.push(`Calendario: ${mode} (${type}) -> ${this.selectedDate.substring(0, 10)}`);
+      } else if (this.dateMode === 'range') {
+        const start = this.startDate ? this.startDate.substring(0, 10) : 'Inicio';
+        const end = this.endDate ? this.endDate.substring(0, 10) : 'Fin';
+        detalles.push(`Calendario: ${mode} (${type}) -> Desde: ${start} Hasta: ${end}`);
+      }
+    } else {
+      detalles.push('Fechas: Todos los registros históricos');
+    }
+
+    // 2. Filtros de búsqueda por texto o selectores específicos según el segmento
+    if (this.segment === 'ingredients') {
+      if (this.filterLocation) detalles.push(`Ubicación ID: ${this.filterLocation}`);
+      if (this.filterProveedorIng) detalles.push(`Proveedor ID: ${this.filterProveedorIng}`);
+    } else if (this.segment === 'products') {
+      if (this.filterProveedorProd) detalles.push(`Proveedor ID: ${this.filterProveedorProd}`);
+    }
+
+    return detalles.join(' | ');
+  }
+
+  /**
+   * EXPORTAR A EXCEL (Incluye absolutamente todas las propiedades del JSON)
+   */
+  exportToExcel() {
+    let dataToExport: any[] = [];
+    let filename = `Reporte_Completo_${this.segment}`;
+
+    // Agregar rango de fechas al nombre del archivo si aplica
+    if (this.dateMode === 'single' && this.selectedDate) {
+      filename += `_${this.selectedDate.substring(0, 10)}`;
+    } else if (this.dateMode === 'range' && this.startDate && this.endDate) {
+      filename += `_del_${this.startDate.substring(0, 10)}_al_${this.endDate.substring(0, 10)}`;
+    }
+
+    // Mapeo uno a uno de todos los datos recibidos del backend
+    if (this.segment === 'ingredients') {
+      dataToExport = this.filteredIngredients.map(ing => ({
+        'ID Ingrediente': ing.id_ingredients,
+        'Nombre': ing.nombre,
+        'Tipo': ing.tipo,
+        'Stock Actual': parseFloat(ing.stock_act || '0'),
+        'Unidad de Medida': ing.unidad_med,
+        'ID Ubicación': ing.location_id || 'Sin asignar',
+        'ID Proveedor': ing.proveedor_id || 'N/A',
+        'Nombre Proveedor': ing.nombre_proveedor || 'Sin proveedor',
+        'Fecha de Creación': ing.created_at
+      }));
+    } else if (this.segment === 'products') {
+      dataToExport = this.filteredProducts.map(prod => ({
+        'ID Producto': prod.id_product,
+        'Nombre Producto': prod.nombre_producto,
+        'Alias': prod.alias || '',
+        'Precio (Bs.)': parseFloat(prod.price || '0'),
+        'Tiempo Preparación (Min)': parseInt(prod.time_prep || '0'),
+        'Estado': prod.state,
+        'Tipo Producto': prod.tipo_producto,
+        'Stock Disponible': parseFloat(prod.stock_disponible || '0'),
+        'Stock Congelado': parseFloat(prod.stock_congelado || '0'),
+        'Stock Mínimo': parseFloat(prod.stock_minimo || '0'),
+        'ID Categoría': prod.id_category || 'N/A',
+        'ID Subcategoría': prod.id_subcategory || 'N/A',
+        'Nombre Subcategoría': prod.subcategory_name || 'Sin subcategoría',
+        'ID Cocina': prod.kitchen_id || 'N/A',
+        'Nombre Cocina': prod.nombre_cocina || 'Sin asignar',
+        'ID Proveedor': prod.proveedor_id || 'N/A',
+        'Nombre Proveedor': prod.nombre_proveedor || 'Sin proveedor',
+        'Fecha de Creación': prod.created_at || 'N/A'
+      }));
+    } else if (this.segment === 'assets') {
+      dataToExport = this.filteredAssets.map(asset => ({
+        'ID Activo': asset.id_asset,
+        'Nombre del Bien': asset.nombre,
+        'Categoría': asset.categoria,
+        'Stock / Cantidad': parseInt(asset.stock || '0'),
+        'Estado': asset.estado,
+        'Fecha de Creación': asset.created_at
+      }));
+    }
+
+    if (dataToExport.length === 0) {
+      this.presentToast('No existen registros en la tabla actual para exportar.', 'warning');
+      return;
+    }
+
+    // Crear y descargar libro Excel nativo
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, this.segment.toUpperCase());
+
+    // Autofit de ancho de celdas base
+    worksheet['!cols'] = Object.keys(dataToExport[0]).map(() => ({ wch: 20 }));
+
+    XLSX.writeFile(workbook, `${filename}.xlsx`);
+    this.presentToast('Archivo Excel masivo descargado.', 'success');
+  }
+
+  /**
+   * EXPORTAR A PDF (Diseño limpio y limitado para impresión bonita)
+   */
+  exportToPDF() {
+    // Si es la tabla de productos, al tener más columnas usaremos orientación horizontal ('l') para que no se vea apretado
+    const orientacion = this.segment === 'products' ? 'l' : 'p';
+    const doc = new jsPDF(orientacion, 'pt', 'a4');
+    
+    let titleReport = '';
+    let headers: string[][] = [];
+    let bodyData: any[][] = [];
+
+    // Limitamos las columnas estratégicamente para el PDF impreso
+    if (this.segment === 'ingredients') {
+      titleReport = 'REPORTE IMPRESO DE INGREDIENTES';
+      headers = [['ID', 'Nombre', 'Tipo', 'Stock Act.', 'U. Medida', 'Proveedor']];
+      bodyData = this.filteredIngredients.map(ing => [
+        ing.id_ingredients,
+        ing.nombre,
+        ing.tipo,
+        ing.stock_act,
+        ing.unidad_med,
+        ing.nombre_proveedor || '-'
+      ]);
+    } else if (this.segment === 'products') {
+      titleReport = 'REPORTE IMPRESO DE PRODUCTOS EN SISTEMA';
+      // Ajustado para encajar perfectamente en layout Horizontal
+      headers = [['ID', 'Nombre Producto', 'Precio', 'Stock Disp.', 'Stock Cong.', 'Cocina / Área', 'Proveedor']];
+      bodyData = this.filteredProducts.map(prod => [
+        prod.id_product,
+        prod.nombre_producto,
+        `${prod.price} Bs.`,
+        prod.stock_disponible,
+        prod.stock_congelado,
+        prod.nombre_cocina || 'Sin asignar',
+        prod.nombre_proveedor || '-'
+      ]);
+    } else if (this.segment === 'assets') {
+      titleReport = 'REPORTE IMPRESO DE ACTIVOS Y BIENES';
+      headers = [['ID Activo', 'Nombre del Bien / Elemento', 'Categoría Asociada', 'Cant. Stock', 'Estado']];
+      bodyData = this.filteredAssets.map(asset => [
+        asset.id_asset,
+        asset.nombre,
+        asset.categoria,
+        asset.stock,
+        asset.estado.toUpperCase()
+      ]);
+    }
+
+    if (bodyData.length === 0) {
+      this.presentToast('No hay datos filtrados para plasmar en el PDF.', 'warning');
+      return;
+    }
+
+    const anchoPagina = doc.internal.pageSize.width;
+
+    // --- ENCABEZADO ESTÉTICO ---
+    doc.setFont('Helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.setTextColor(33, 37, 41);
+    doc.text(titleReport, 40, 45);
+
+    // Línea decorativa del color del sistema
+    doc.setDrawColor(56, 128, 255);
+    doc.setLineWidth(2.5);
+    doc.line(40, 53, anchoPagina - 40, 53);
+
+    // Tarjeta o bloque gris de "Detalles de Filtrado"
+    doc.setFillColor(248, 249, 250);
+    doc.rect(40, 68, anchoPagina - 80, 42, 'F');
+    
+    doc.setFont('Helvetica', 'bold');
+    doc.setFontSize(8.5);
+    doc.setTextColor(108, 117, 125);
+    doc.text('CRITERIOS DE FILTRADO ACTIVOS EN LA TABLA:', 50, 82);
+
+    doc.setFont('Helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(49, 53, 59);
+    // Controlamos si el texto de los filtros es muy largo para que no se salga de la caja
+    const filterText = this.getFilterDetailsText();
+    const splitFilterText = doc.splitTextToSize(filterText, anchoPagina - 100);
+    doc.text(splitFilterText, 50, 96);
+
+    // --- TABLA ESTILIZADA ---
+    autoTable(doc, {
+      head: headers,
+      body: bodyData,
+      startY: 125,
+      margin: { left: 40, right: 40 },
+      theme: 'striped',
+      headStyles: {
+        fillColor: [43, 48, 53], // Gris oscuro premium profesional
+        textColor: [255, 255, 255],
+        fontSize: 9.5,
+        fontStyle: 'bold'
+      },
+      bodyStyles: {
+        fontSize: 9,
+        textColor: [33, 37, 41]
+      },
+      alternateRowStyles: {
+        fillColor: [251, 252, 253]
+      },
+      styles: {
+        overflow: 'linebreak',
+        cellPadding: 6
+      },
+      didDrawPage: (data) => {
+        // Numeración de páginas abajo a la izquierda
+        doc.setFont('Helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.setTextColor(140, 142, 145);
+        doc.text(`Página ${data.pageNumber}`, 40, doc.internal.pageSize.height - 20);
+        
+        // Fecha y hora exacta de la impresión abajo a la derecha
+        const ahora = new Date().toLocaleString('es-ES', { hour12: false });
+        doc.text(`Fecha de Impresión: ${ahora}`, anchoPagina - 180, doc.internal.pageSize.height - 20);
+      }
+    });
+
+    // Guardar el documento PDF
+    doc.save(`Reporte_${this.segment}_Filtrado.pdf`);
+    this.presentToast('PDF guardado listo para imprimir.', 'success');
+  }
 }
 
 

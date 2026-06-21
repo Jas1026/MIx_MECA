@@ -13,6 +13,7 @@ import { ViewProductDetailModule } from 'src/app/modals/view-product-detail/view
 import { BottleManagerModule } from 'src/app/modals/bottle-manager/bottle-manager.module';
 import { FractionManagerModule } from 'src/app/modals/fraction-manager/fraction-manager.module';
 import { LoanManagerModule } from 'src/app/modals/loan-manager/loan-manager.module';
+import { DateFilterModalModule } from 'src/app/modals/date-filter-modal/date-filter-modal.module';
 @NgModule({
   imports: [
     CommonModule,
@@ -24,7 +25,8 @@ import { LoanManagerModule } from 'src/app/modals/loan-manager/loan-manager.modu
     ViewProductDetailModule,     
     BottleManagerModule,
     LoanManagerModule,
-    FractionManagerModule
+    FractionManagerModule,
+    DateFilterModalModule
   ],
   declarations: [InventarioPage]
 })

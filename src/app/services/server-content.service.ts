@@ -813,9 +813,18 @@ silenceAlert(detailId: number) {
   }
 
   // ✅ DELETE
-  deleteLocation(id: any) {
-    return this.http.post(this.urlService + 'delete_location.php', { id });
-  }
+deleteLocation(id:any){
+
+  const headers = {
+    system: this.getSystem()
+  };
+
+  return this.http.delete(
+    `${this.urlService}deleteLocation.php?id=${id}`,
+    { headers }
+  );
+
+}
   updateOrdera(data: any) {
     const formData = new FormData();
     formData.append('data', JSON.stringify(data));

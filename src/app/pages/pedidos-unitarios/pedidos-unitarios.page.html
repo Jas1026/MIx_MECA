@@ -1,5 +1,3 @@
-
-
 <ion-content class="ion-padding dashboard-bg">
   <ion-toolbar class="toolbar-cafe">
     <ion-title>Mis pedidos</ion-title>
@@ -9,6 +7,7 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
+  
   <div class="filter-card">
     <ion-grid>
       <ion-row class="ion-align-items-center">
@@ -40,6 +39,25 @@
             Limpiar Filtros
           </ion-button>
         </ion-col>
+
+
+  <ion-col size="12" size-md="2">
+          <div class="filter-item export-container" style="position: relative;">
+            <ion-button expand="block" color="success" class="btn-export">
+              <ion-icon name="download-outline" slot="start"></ion-icon>
+              Exportar
+            </ion-button>
+            <ion-select interface="popover" placeholder="Formato" (ionChange)="exportarDatos($event)"
+              style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
+              <ion-select-option value="excel">Excel (.xlsx)</ion-select-option>
+              <ion-select-option value="pdf">PDF (.pdf)</ion-select-option>
+            </ion-select>
+          </div>
+        </ion-col>
+
+
+
+
       </ion-row>
     </ion-grid>
   </div>
@@ -160,56 +178,46 @@
     </table>
     <div class="pagination-container">
 
-<div class="page-size">
+      <div class="page-size">
 
-<span>Mostrar:</span>
+        <span>Mostrar:</span>
 
-<ion-select
-[(ngModel)]="itemsPorPagina"
-(ionChange)="cambiarItemsPorPagina()">
+        <ion-select [(ngModel)]="itemsPorPagina" (ionChange)="cambiarItemsPorPagina()">
 
-<ion-select-option
-*ngFor="let opcion of opcionesPagina"
-[value]="opcion">
+          <ion-select-option *ngFor="let opcion of opcionesPagina" [value]="opcion">
 
-{{ opcion }}
+            {{ opcion }}
 
-</ion-select-option>
+          </ion-select-option>
 
-</ion-select>
+        </ion-select>
 
-</div>
+      </div>
 
-<div class="page-controls">
+      <div class="page-controls">
 
-<ion-button
-fill="clear"
-(click)="paginaAnterior()"
-[disabled]="paginaActual === 1">
+        <ion-button fill="clear" (click)="paginaAnterior()" [disabled]="paginaActual === 1">
 
-←
+          ←
 
-</ion-button>
+        </ion-button>
 
-<span>
+        <span>
 
-Página {{ paginaActual }}
-de {{ totalPaginas }}
+          Página {{ paginaActual }}
+          de {{ totalPaginas }}
 
-</span>
+        </span>
 
-<ion-button
-fill="clear"
-(click)="paginaSiguiente()"
-[disabled]="paginaActual === totalPaginas">
+        <ion-button fill="clear" (click)="paginaSiguiente()" [disabled]="paginaActual === totalPaginas">
 
-→
+          →
 
-</ion-button>
+        </ion-button>
 
-</div>
+      </div>
 
-</div>
+    </div>
   </div>
 
   <ion-list class="lista-mobile" lines="none">

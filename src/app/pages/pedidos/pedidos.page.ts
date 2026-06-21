@@ -1,10 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ServerContentService } from 'src/app/services/server-content.service';
 import { ModalController, AlertController, ToastController } from '@ionic/angular'; // 👈 Inyectamos Alert y Toast
 import { IonDatetime } from '@ionic/angular';
 import { OrderModalComponent } from 'src/app/components/order-modal/order-modal.component';
 import { ViewOrderProductsComponent } from 'src/app/modals/view-order-products/view-order-products.component';
-
+// 🔥 NUEVAS IMPORTACIONES PARA EXPORTAR
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 @Component({
   selector: 'app-pedidos',
   templateUrl: './pedidos.page.html',
@@ -22,6 +25,7 @@ export class PedidosPage implements OnInit {
   soloAtrasados: boolean = false;
   soloMasRetrasadosPrimero: boolean = false;
   private clockInterval: any;
+
   constructor(
     private server: ServerContentService,
     private modalCtrl: ModalController,
@@ -498,5 +502,114 @@ paginaSiguiente() {
   }
 
 }
+async exportarDatos(event: any) {
+    const formato = event.detail.value;
+    if (!formato) return;
+
+    // Obtenemos el universo de datos filtrados en tiempo real
+    const datosParaExportar = this.pedidosFiltrados;
+
+    if (datosParaExportar.length === 0) {
+      this.presentToast("No hay registros que coincidan con los filtros para exportar.", "warning");
+      event.target.value = ''; // Limpiar selección del popover
+      return;
+    }
+
+    // Mapeamos los datos con un formato limpio y en español para las columnas del reporte
+    const datosMapeados = datosParaExportar.map(p => {
+      let estadoTexto = 'Abierto';
+      if (p.cancel == 1) estadoTexto = 'Cancelado';
+      else if (p.status === 'closed') estadoTexto = 'Finalizado';
+
+      return {
+        'ID Pedido': `PED-${p.order_id}`,
+        'Mesero': p.mesero || 'N/A',
+        'Fecha y Hora': p.order_date,
+        'Estado': estadoTexto,
+        'Tiempo Transcurrido / Est.': `${p.timeDisplay || '0:00'} / ${p.estimated_time} min`,
+        'Atraso': p.isDelayed ? `+${p.delayTime}` : '—'
+      };
+    });
+
+    const nombreArchivo = `Reporte_Pedidos_${this.fechaFiltro || 'Todos'}`;
+
+    if (formato === 'excel') {
+      // --- EXPORTACIÓN A EXCEL ---
+      const worksheet = XLSX.utils.json_to_sheet(datosMapeados);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Pedidos');
+      
+      // Ajuste automático del ancho de las columnas
+      const maxAnios = Object.keys(datosMapeados[0]).map(key => ({
+        wch: Math.max(key.length, ...datosMapeados.map(obj => obj[key as keyof typeof obj]?.toString().length || 10)) + 3
+      }));
+      worksheet['!cols'] = maxAnios;
+
+      XLSX.writeFile(workbook, `${nombreArchivo}.xlsx`);
+      this.presentToast("Excel exportado correctamente", "success");
+
+    } else if (formato === 'pdf') {
+      // --- EXPORTACIÓN A PDF (Estilo Ejecutivo / Corporativo) ---
+      const doc = new jsPDF('p', 'pt', 'a4');
+
+      // Título principal
+      doc.setFontSize(18);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(44, 62, 80); // Color oscuro ejecutivo
+      doc.text('REPORTE DE CONTROL DE PEDIDOS', 40, 50);
+
+      // Metadatos / Filtros aplicados en el encabezado
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(127, 140, 141);
+      
+      let filtroInfo = `Fecha Filtro: ${this.fechaMostrada || 'Todas las fechas'}`;
+      if (this.meseroSeleccionado) filtroInfo += ` | Mesero: ${this.meseroSeleccionado}`;
+      if (this.estadoSeleccionado) filtroInfo += ` | Estado: ${this.estadoSeleccionado}`;
+      
+      doc.text(filtroInfo, 40, 70);
+      doc.text(`Total registros: ${datosMapeados.length} pedidos encontrados`, 40, 85);
+      doc.setDrawColor(220, 224, 230);
+      doc.line(40, 95, 555, 95); // Línea divisoria
+
+      // Estructurar las filas de la tabla
+      const columnas = Object.keys(datosMapeados[0]);
+      const filas = datosMapeados.map(obj => Object.values(obj));
+
+      // Generación automática de la tabla
+      autoTable(doc, {
+        head: [columnas],
+        body: filas,
+        startY: 110,
+        theme: 'striped',
+        headStyles: {
+          fillColor: [44, 62, 80], // Color a juego con el Dashboard
+          textColor: [255, 255, 255],
+          fontStyle: 'bold',
+          fontSize: 10,
+          halign: 'center'
+        },
+        bodyStyles: {
+          fontSize: 9,
+          textColor: [50, 50, 50]
+        },
+        columnStyles: {
+          0: { halign: 'center', fontStyle: 'bold' },
+          3: { halign: 'center' },
+          4: { halign: 'center' },
+          5: { halign: 'center' }
+        },
+        margin: { left: 40, right: 40 }
+      });
+
+      doc.save(`${nombreArchivo}.pdf`);
+      this.presentToast("PDF exportado correctamente", "success");
+    }
+
+    // Reseteamos el selector para que el usuario pueda volver a hacer click y elegir el mismo formato si lo desea
+    setTimeout(() => {
+      event.target.value = '';
+    }, 400);
+  }
 
 }

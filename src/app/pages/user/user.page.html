@@ -28,6 +28,17 @@
         Limpiar
 
       </ion-button>
+      <div class="filter-item export-container" style="position: relative; display: inline-block;">
+        <ion-button expand="block" color="success" class="btn-export" style="margin: 0; height: 36px;">
+          <ion-icon name="download-outline" slot="start"></ion-icon>
+          Exportar
+        </ion-button>
+        <ion-select interface="popover" placeholder="Formato" (ionChange)="exportarDatos($event)"
+          style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
+          <ion-select-option value="excel">Excel (.xlsx)</ion-select-option>
+          <ion-select-option value="pdf">PDF (.pdf)</ion-select-option>
+        </ion-select>
+      </div>
       <ion-button (click)="openCreateModal()" fill="solid" color="dark">
         <ion-icon name="person-add-outline" slot="start"></ion-icon>
         Nuevo Usuario

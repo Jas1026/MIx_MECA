@@ -610,3 +610,21 @@ ion-chip {
     }
   }
 }
+// Ajustes estéticos para el popover de exportación
+ion-popover {
+  --background: #ffffff;
+  --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  
+  ion-item {
+    --padding-start: 12px;
+    --padding-end: 12px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin: 2px 0;
+    transition: background-color 0.15s ease-in-out;
+
+    &:hover {
+      --background: #f5f7fa;
+    }
+  }
+}

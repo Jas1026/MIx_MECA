@@ -9,88 +9,66 @@
 
     <div class="header-actions">
       <ion-searchbar placeholder="Buscar piso..." [(ngModel)]="filterNombre" class="custom-searchbar"></ion-searchbar>
+      
       <ion-button (click)="openCreateModal()" fill="solid" color="dark">
         <ion-icon name="add-outline" slot="start"></ion-icon>
         Añadir Nuevo
       </ion-button>
+
       <ion-button fill="outline" color="medium" (click)="limpiarTodosFiltros()">
-
-        <ion-icon name="refresh-outline" slot="start">
-        </ion-icon>
-
+        <ion-icon name="refresh-outline" slot="start"></ion-icon>
         Limpiar
-
       </ion-button>
+
+      <div class="filter-item export-container" style="position: relative; display: inline-block;">
+        <ion-button expand="block" color="success" class="btn-export" style="margin: 0; height: 36px;">
+          <ion-icon name="download-outline" slot="start"></ion-icon>
+          Exportar
+        </ion-button>
+        <ion-select interface="popover" placeholder="Formato" (ionChange)="exportarDatos($event)"
+          style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
+          <ion-select-option value="excel">Excel (.xlsx)</ion-select-option>
+          <ion-select-option value="pdf">PDF (.pdf)</ion-select-option>
+        </ion-select>
+      </div>
     </div>
 
     <ion-grid>
       <ion-row class="table-header">
-
         <ion-col size="4" (click)="ordenar('Name')" class="sortable">
-
           Nombre
-
-          <ion-icon *ngIf="sortColumn==='Name'" [name]="sortDirection==='asc'
-      ? 'arrow-up'
-      : 'arrow-down'">
-          </ion-icon>
-
+          <ion-icon *ngIf="sortColumn==='Name'" [name]="sortDirection==='asc' ? 'arrow-up' : 'arrow-down'"></ion-icon>
         </ion-col>
 
         <ion-col size="3" (click)="ordenar('Description')" class="sortable">
-
           Descripción
-
-          <ion-icon *ngIf="sortColumn==='Description'" [name]="sortDirection==='asc'
-      ? 'arrow-up'
-      : 'arrow-down'">
-          </ion-icon>
-
+          <ion-icon *ngIf="sortColumn==='Description'" [name]="sortDirection==='asc' ? 'arrow-up' : 'arrow-down'"></ion-icon>
         </ion-col>
 
         <ion-col size="3" (click)="ordenar('state')" class="sortable">
-
           Estado
-
-          <ion-icon *ngIf="sortColumn==='state'" [name]="sortDirection==='asc'
-      ? 'arrow-up'
-      : 'arrow-down'">
-          </ion-icon>
-
+          <ion-icon *ngIf="sortColumn==='state'" [name]="sortDirection==='asc' ? 'arrow-up' : 'arrow-down'"></ion-icon>
         </ion-col>
 
         <ion-col size="2">
           Acciones
         </ion-col>
-
       </ion-row>
+
       <ion-row class="filter-row">
-
         <ion-col size="4">
-
           <input type="text" [(ngModel)]="filtros.Name" placeholder="Buscar nombre">
-
         </ion-col>
-
         <ion-col size="3">
-
           <input type="text" [(ngModel)]="filtros.Description" placeholder="Descripción">
-
         </ion-col>
-
         <ion-col size="3">
-
           <input type="text" [(ngModel)]="filtros.state" placeholder="Activo/Inactivo">
-
         </ion-col>
-
         <ion-col size="2"></ion-col>
-
       </ion-row>
-
 
       <ion-row *ngFor="let flat of flatsPaginados" class="align-center" [style.opacity]="flat.state == 0 ? '0.6' : '1'">
-
         <ion-col size="4">
           <strong class="ing-name">{{ flat.Name }}</strong>
         </ion-col>
@@ -100,91 +78,38 @@
         </ion-col>
 
         <ion-col size="3">
-          <ion-button fill="clear" [color]="flat.state == 1 ? 'success' : 'danger'" (click)="toggleFlatState(flat)"
-            class="btn-state">
-            <ion-icon style="width: 50px;" slot="start"
-              [name]="flat.state == 1 ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+          <ion-button fill="clear" [color]="flat.state == 1 ? 'success' : 'danger'" (click)="toggleFlatState(flat)" class="btn-state">
+            <ion-icon style="width: 50px;" slot="start" [name]="flat.state == 1 ? 'checkmark-circle' : 'close-circle'"></ion-icon>
             <small>{{ flat.state == 1 ? 'Activo' : 'Inactivo' }}</small>
           </ion-button>
         </ion-col>
 
-<ion-col size="2" class="actions-cell">
-
-  <ion-button
-    fill="clear"
-    color="primary"
-    (click)="openCreateModal(flat)">
-
-    <ion-icon
-      slot="icon-only"
-      name="create-outline">
-    </ion-icon>
-
-  </ion-button>
-
-
-  <ion-button
-
-    fill="clear"
-
-    color="danger"
-
-    (click)="confirmarEliminar(flat)">
-
-    <ion-icon
-
-      slot="icon-only"
-
-      name="trash-outline">
-
-    </ion-icon>
-
-  </ion-button>
-
-</ion-col>
+        <ion-col size="2" class="actions-cell">
+          <ion-button fill="clear" color="primary" (click)="openCreateModal(flat)">
+            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" color="danger" (click)="confirmarEliminar(flat)">
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-button>
+        </ion-col>
       </ion-row>
     </ion-grid>
+
     <div class="pagination-container">
-
       <div class="page-size">
-
         <span>Mostrar:</span>
-
-        <ion-select [(ngModel)]="itemsPorPagina">
-
+        <ion-select [(ngModel)]="itemsPorPagina" (ionChange)="paginaActual = 1">
           <ion-select-option *ngFor="let opcion of opcionesPagina" [value]="opcion">
-
             {{ opcion }}
-
           </ion-select-option>
-
         </ion-select>
-
       </div>
 
       <div class="page-controls">
-
-        <ion-button fill="clear" (click)="paginaAnterior()" [disabled]="paginaActual===1">
-
-          ←
-
-        </ion-button>
-
-        <span>
-
-          Página {{ paginaActual }}
-          de {{ totalPaginas }}
-
-        </span>
-
-        <ion-button fill="clear" (click)="paginaSiguiente()" [disabled]="paginaActual===totalPaginas">
-
-          →
-
-        </ion-button>
-
+        <ion-button fill="clear" (click)="paginaAnterior()" [disabled]="paginaActual===1">←</ion-button>
+        <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
+        <ion-button fill="clear" (click)="paginaSiguiente()" [disabled]="paginaActual===totalPaginas">→</ion-button>
       </div>
-
     </div>
 
   </div>

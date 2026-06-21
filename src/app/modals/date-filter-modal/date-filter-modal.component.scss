@@ -1,0 +1,217 @@
+// Variables locales de diseño
+$border-radius-lg: 16px;
+$border-radius-md: 12px;
+$bg-light-gray: #f7f9fc;
+$primary-color: #3880ff;
+
+.custom-toolbar {
+  --background: #ffffff;
+  padding: 8px 6px 4px 6px;
+  border-bottom: 1px solid #f0f0f0;
+  
+  .modal-main-title {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: #1a1a1a;
+    letter-spacing: -0.3px;
+  }
+
+  .close-btn {
+    --color: #444444;
+    font-size: 1.2rem;
+  }
+}
+
+.modal-content-background {
+  --background: #fdfdfd;
+}
+
+// Segmento de navegación superior (Estilo iOS Premium)
+.custom-modal-segment {
+  --background: #f1f3f7;
+  border-radius: $border-radius-md;
+  padding: 4px;
+  margin-bottom: 20px;
+
+  ion-segment-button {
+    --color: #5f6368;
+    --color-checked: #1a1a1a;
+    --background-checked: #ffffff;
+    --indicator-color: transparent;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 10px;
+    margin: 2px 0;
+    transition: all 0.2s ease-in-out;
+  }
+}
+
+// Envoltorio del Selector
+.select-wrapper {
+  margin-bottom: 20px;
+
+  .custom-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #555555;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .custom-item {
+    --background: #ffffff;
+    border: 1.5px solid #e5e9f0;
+    border-radius: $border-radius-md;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.01);
+    transition: border-color 0.2s;
+
+    &:focus-within {
+      border-color: $primary-color;
+    }
+
+    ion-icon {
+      font-size: 1.2rem;
+      margin-right: 8px;
+    }
+    
+    ion-select {
+      --placeholder-color: #999;
+      font-weight: 500;
+    }
+  }
+}
+
+// Tarjetas contenedoras de los calendarios
+.calendar-container {
+  background: #ffffff;
+  border: 1px solid #eef2f7;
+  border-radius: $border-radius-lg;
+  padding: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+  margin-bottom: 16px;
+  transition: transform 0.2s ease;
+
+  .calendar-title {
+    margin: 0 0 14px 4px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    ion-icon {
+      font-size: 1.15rem;
+      color: $primary-color;
+    }
+
+    &.start-title ion-icon {
+      color: #10b981; // Verde para inicio
+    }
+    &.end-title ion-icon {
+      color: #ef4444; // Rojo para fin
+    }
+  }
+}
+
+// Estilos del Datetime nativo de Ionic
+.datetime-wrapper {
+  background: #fafbfc;
+  border-radius: $border-radius-md;
+  overflow: hidden;
+  border: 1px solid #f0f2f5;
+}
+
+.custom-datetime {
+  width: 100%;
+  background: transparent;
+  --background: transparent;
+  
+  // Customizaciones sutiles internas del componente nativo
+  ::ng-deep {
+    .datetime-year-toggle {
+      font-weight: bold;
+    }
+  }
+}
+
+// Grilla responsiva adaptada para Rango (Lado a Lado)
+.range-container {
+  .responsive-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -8px;
+
+    .calendar-col {
+      padding: 0 8px;
+      margin-bottom: 16px;
+    }
+  }
+}
+
+// Clases utilitarias
+.h-100 {
+  height: 100%;
+  margin-bottom: 0;
+}
+
+// Footer y Botonera inferior fija
+.modal-footer-toolbar {
+  --background: #ffffff;
+  border-top: 1px solid #f0f0f0;
+  padding: 12px 16px 16px 16px;
+
+  .footer-btn {
+    --border-radius: $border-radius-md;
+    font-weight: 700;
+    font-size: 0.95rem;
+    height: 48px;
+    margin: 0;
+    transition: all 0.2s ease;
+  }
+
+  .btn-clear {
+    --color: #dc2626;
+    --background-hover: #fef2f2;
+  }
+
+  .btn-apply {
+    --background: #1a1a1a;
+    --color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    
+    &:active {
+      opacity: 0.85;
+    }
+  }
+}
+
+// Animación de entrada suave para cambio de segmentos
+.animation-fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Media Query para pantallas pequeñas (Forzar apilamiento limpio si el espacio colapsa)
+@media (max-width: 768px) {
+  .range-container .responsive-row .calendar-col {
+    margin-bottom: 16px;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

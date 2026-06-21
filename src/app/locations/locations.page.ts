@@ -73,46 +73,53 @@ dummyList: any[] = [];
       parent_id: null
     };
   }
+  // Asegúrate de tener declarada esta variable arriba en tu clase:
+allDropLists: string[] = ['rootList'];
+
 buildTree() {
-
-  // 🔥 reset listas de drop
   this.allDropLists = ['rootList'];
-
-  // 🔥 mapa rápido
   const map: any = {};
   const roots: any[] = [];
 
-  // 🔹 crear nodos
+  // 1. Crear el mapa base de nodos
   this.locations.forEach(loc => {
     map[loc.id_location] = {
       ...loc,
       children: [],
-      expanded: true // 👈 importante
+      expanded: loc.expanded !== undefined ? loc.expanded : true
     };
-
-    // 🔥 SOLO listas reales (no padres)
+    // Añadimos cada ID de locación como una zona Drop válida
     this.allDropLists.push('list-' + loc.id_location);
   });
 
-  // 🔹 armar árbol
+  // 2. Armar la estructura del árbol protegiendo de bucles cíclicos
   this.locations.forEach(loc => {
     const node = map[loc.id_location];
-
+    
+    // VALIDACIÓN: Si parent_id es igual al id_location, es un error de BD. Lo tratamos como raíz.
     if (loc.parent_id && loc.parent_id !== loc.id_location) {
-      map[loc.parent_id]?.children.push(node);
+      if (map[loc.parent_id]) {
+        map[loc.parent_id].children.push(node);
+      } else {
+        // Si el padre no existe en la lista, lo mandamos a la raíz temporalmente
+        roots.push(node);
+      }
     } else {
       roots.push(node);
     }
   });
 
-  // 🔹 ordenar hijos
-  Object.values(map).forEach((node: any) => {
-    node.children.sort((a: any, b: any) => a.orden - b.orden);
-  });
+  // 3. Ordenar de forma recursiva
+  const sortNodes = (nodes: any[]) => {
+    nodes.sort((a, b) => (Number(a.orden) || 0) - (Number(b.orden) || 0));
+    nodes.forEach(node => {
+      if (node.children && node.children.length > 0) {
+        sortNodes(node.children);
+      }
+    });
+  };
 
-  // 🔹 ordenar padres
-  roots.sort((a: any, b: any) => a.orden - b.orden);
-
+  sortNodes(roots);
   this.tree = roots;
 }
 drop(event: CdkDragDrop<any[]>, newParentId: number | null) {
@@ -208,7 +215,7 @@ drop(event: CdkDragDrop<any[]>, newParentId: number | null) {
 
     return result;
   }
-  allDropLists: string[] = [];
+
   isDescendant(parent: any, childId: number): boolean {
   if (!parent.children) return false;
 
@@ -229,4 +236,5 @@ async verContenido(loc: any) {
 
   await modal.present();
 }
+
 }

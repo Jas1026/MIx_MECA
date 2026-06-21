@@ -1,0 +1,110 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="white" class="custom-toolbar">
+    <ion-title class="modal-main-title">Filtros de Fecha</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()" class="close-btn">
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding modal-content-background">
+  <ion-segment [(ngModel)]="dateMode" mode="ios" class="custom-modal-segment ion-margin-bottom">
+    <ion-segment-button value="single">
+      <ion-label>Fecha específica</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="range">
+      <ion-label>Rango de Fechas</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <div class="select-wrapper ion-margin-bottom">
+    <ion-label class="custom-label">Agrupar filtro por:</ion-label>
+    <ion-item lines="none" class="custom-item">
+      <ion-icon name="funnel-outline" slot="start" color="primary"></ion-icon>
+      <ion-select [(ngModel)]="dateFilterType" interface="popover" placeholder="Seleccionar Tipo" style="width: 100%;">
+        <ion-select-option value="day">Por Día (Completo)</ion-select-option>
+        <ion-select-option value="month">Por Mes (Mes y Año)</ion-select-option>
+        <ion-select-option value="year">Por Año (Únicamente Año)</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </div>
+
+  <div *ngIf="dateMode === 'single'" class="calendar-container animation-fade-in">
+    <p class="calendar-title">
+      <ion-icon name="calendar-number-outline"></ion-icon> 
+      Selecciona el objetivo
+    </p>
+    <div class="datetime-wrapper">
+      <ion-datetime 
+        [presentation]="getPresentationMode()" 
+        [(ngModel)]="selectedDate" 
+        size="cover"
+        class="custom-datetime"
+        preferWheel="false">
+      </ion-datetime>
+    </div>
+  </div>
+
+  <div *ngIf="dateMode === 'range'" class="range-container animation-fade-in">
+    <ion-grid class="ion-no-padding">
+      <ion-row class="responsive-row">
+        <ion-col size="12" size-md="6" class="calendar-col">
+          <div class="calendar-container h-100">
+            <p class="calendar-title start-title">
+              <ion-icon name="play-circle-outline"></ion-icon> 
+              Fecha de Inicio
+            </p>
+            <div class="datetime-wrapper">
+              <ion-datetime 
+                [presentation]="getPresentationMode()" 
+                [(ngModel)]="startDate" 
+                size="cover"
+                class="custom-datetime"
+                preferWheel="false">
+              </ion-datetime>
+            </div>
+          </div>
+        </ion-col>
+
+        <ion-col size="12" size-md="6" class="calendar-col">
+          <div class="calendar-container h-100">
+            <p class="calendar-title end-title">
+              <ion-icon name="stop-circle-outline"></ion-icon> 
+              Fecha de Fin
+            </p>
+            <div class="datetime-wrapper">
+              <ion-datetime 
+                [presentation]="getPresentationMode()" 
+                [(ngModel)]="endDate" 
+                size="cover"
+                class="custom-datetime"
+                preferWheel="false">
+              </ion-datetime>
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>
+
+<ion-footer class="ion-no-border">
+  <ion-toolbar class="modal-footer-toolbar">
+    <ion-row>
+      <ion-col size="6">
+        <ion-button expand="block" fill="clear" color="danger" class="footer-btn btn-clear" (click)="clearAndClose()">
+          <ion-icon slot="start" name="trash-bin-outline"></ion-icon>
+          Limpiar Todo
+        </ion-button>
+      </ion-col>
+      <ion-col size="6">
+        <ion-button expand="block" color="dark" class="footer-btn btn-apply" (click)="applyFilters()">
+          <ion-icon slot="start" name="checkmark-done-outline"></ion-icon>
+          Aplicar Filtro
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+</ion-footer>

@@ -167,3 +167,60 @@ ion-content {
   padding: 10px 12px 30px;
   box-sizing: border-box; /* Evita que el padding sume al ancho total */
 }
+.tree-container {
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.location-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  padding: 8px 12px;
+  
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .toggle {
+    cursor: pointer;
+    width: 20px;
+    font-size: 12px;
+    color: #666;
+  }
+  
+  .info {
+    flex-grow: 1;
+    .title { font-weight: 600; font-size: 15px; }
+    .subtitle { font-size: 12px; color: #888; text-transform: capitalize;}
+  }
+  
+  .actions {
+    display: flex;
+  }
+}
+
+/* ➡️ EL TRUCO DE LA GRADA: Margen izquierdo para cada sub-lista empujando los hijos */
+.children-zone {
+  margin-left: 24px; 
+  border-left: 2px dashed #d1d1d1;
+  padding-left: 10px;
+}
+
+/* Área activa del Drag&Drop para poder soltar cajas vacías */
+.drop-zone {
+  min-height: 15px;
+}
+
+/* Estilos de Angular CDK durante el arrastre */
+.cdk-drag-preview {
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  opacity: 0.9;
+}
+.cdk-drag-placeholder {
+  opacity: 0.3;
+}
