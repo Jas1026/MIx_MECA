@@ -186,41 +186,67 @@
       </ion-col>
     </ion-row>
 
+   
     <ion-row>
-      <ion-col size="12">
-        <ion-card class="dashboard-card list-card">
-          <ion-card-header>
-            <ion-card-title class="card-title-with-icon">
-              <ion-icon name="business-outline" color="primary"></ion-icon>
-              📊 Áreas que más generan
-            </ion-card-title>
-          </ion-card-header>
+  <ion-col size="12">
 
-          <ion-card-content class="areas-card-content">
-            <ion-list lines="inset" class="modern-list">
-              <ion-item *ngFor="let area of resumen.areas_top" class="modern-item">
-                <ion-icon name="location-outline" slot="start" color="medium"></ion-icon>
-                <ion-label>
-                  <h2 class="item-main-title">{{ area.area }}</h2>
-                  <p class="item-sub-title">Ingreso total acumulado en zona</p>
-                </ion-label>
-                <div slot="end" class="item-actions-wrapper">
-                  <ion-badge color="success" class="list-numeric-badge">
-                    Bs. {{ area.total_area | number:'1.0-0' }}
-                  </ion-badge>
-                  <ion-button fill="clear" size="small" (click)="verDetalleArea(area)">
-                    Ver
-                    <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
-                  </ion-button>
-                </div>
-              </ion-item>
-            </ion-list>
-          </ion-card-content>
+    <ion-card class="dashboard-card list-card">
 
+      <ion-card-header>
+        <ion-card-title class="card-title-with-icon">
+          <ion-icon name="business-outline" color="primary"></ion-icon>
+          Áreas que más generan
+        </ion-card-title>
+      </ion-card-header>
 
-        </ion-card>
-      </ion-col>
-    </ion-row>
+      <ion-card-content class="areas-card-content">
+
+        <div
+          class="area-item"
+          *ngFor="let area of resumen.areas_top; let i = index"
+        >
+
+          <div class="area-rank">
+            #{{ i + 1 }}
+          </div>
+
+          <div class="area-info">
+
+            <h3>
+              {{ area.area }}
+            </h3>
+
+            <p>
+              Ingreso total generado por esta área
+            </p>
+
+          </div>
+
+          <div class="area-stats">
+
+            <ion-badge color="success" class="area-badge">
+              Bs. {{ area.total_area | number:'1.0-0' }}
+            </ion-badge>
+
+            <ion-button
+              fill="outline"
+              size="small"
+              color="primary"
+              (click)="verDetalleArea(area)"
+            >
+              Ver detalle
+            </ion-button>
+
+          </div>
+
+        </div>
+
+      </ion-card-content>
+
+    </ion-card>
+
+  </ion-col>
+</ion-row>
 
     <ion-row>
       <ion-col size="12">

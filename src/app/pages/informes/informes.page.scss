@@ -1474,3 +1474,107 @@ ion-badge {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+
+
+
+
+
+.areas-card-content {
+  padding: 12px;
+}
+
+.area-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  padding: 16px;
+  margin-bottom: 12px;
+
+  border-radius: 14px;
+  background: #f8fafc;
+
+  transition: all .2s ease;
+}
+
+.area-item:hover {
+  transform: translateY(-2px);
+}
+
+.area-rank {
+  min-width: 48px;
+  width: 48px;
+  height: 48px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: 700;
+
+  background: rgba(var(--ion-color-primary-rgb), .15);
+  color: var(--ion-color-primary);
+}
+
+.area-info {
+  flex: 1;
+}
+
+.area-info h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.area-info p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--ion-color-medium);
+}
+
+.area-stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.area-badge {
+  font-size: 13px;
+  padding: 8px 10px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+
+  .area-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .area-rank {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+  }
+
+  .area-stats {
+    width: 100%;
+    margin-top: 10px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .area-badge {
+    font-size: 12px;
+  }
+
+  .area-stats ion-button {
+    margin: 0;
+  }
+}
