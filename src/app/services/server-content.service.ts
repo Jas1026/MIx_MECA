@@ -6,9 +6,18 @@ import { Observable } from 'rxjs'; // <--- AÑADE ESTA LÍNEA
   providedIn: 'root'
 })
 export class ServerContentService {
+  /* MODO PRUEBA LOCALHOST */
+  //private urlService = "http://localhost/api/";
 
-  private urlService = "http://192.168.100.121/api/";
+  /* CASA JAS */
+    private urlService = "http://192.168.0.25/api/";
+  
+  /* MODO PRODUCCIÓN */
+  //private urlService = "http://192.168.88.204:8000/api/";
 
+
+
+  
   constructor(private http: HttpClient) { }
 
   // 🔥 Obtener sistema actual
@@ -278,7 +287,7 @@ export class ServerContentService {
     };
 
     // Enviamos 'payload' en lugar de 'data'
-    return this.http.post('http://192.168.100.121/api/add_ingredient.php', payload, {
+    return this.http.post('http://192.168.0.25/api/add_ingredient.php', payload, {
       headers: { 'Content-Type': 'application/json' }
     });
   }
@@ -290,7 +299,7 @@ export class ServerContentService {
       system: this.getSystem()
     };
 
-    return this.http.post('http://192.168.100.121/api/update_ingredient.php', payload, {
+    return this.http.post('http://192.168.0.25/api/update_ingredient.php', payload, {
       headers: { 'Content-Type': 'application/json' }
     });
   }
@@ -830,7 +839,7 @@ deleteLocation(id:any){
     formData.append('data', JSON.stringify(data));
 
     return this.http.post(
-      'http://192.168.100.121/api/update_locations_order.php',
+      'http://192.168.0.25/api/update_locations_order.php',
       formData
     );
   }

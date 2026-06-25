@@ -36,11 +36,7 @@
 
 
   <!-- CONTENEDOR DEL TICKET -->
-  <div
-    id="factura-print"
-    class="print-container"
-    [ngClass]="formatoImpresion"
-  >
+  <div id="factura-print" class="print-container" [ngClass]="formatoImpresion">
 
     <!-- HEADER -->
     <div class="ticket-header">
@@ -109,10 +105,7 @@
         Historial de pagos
       </p>
 
-      <div
-        *ngFor="let pago of historialPagos"
-        class="pago-item"
-      >
+      <div *ngFor="let pago of historialPagos" class="pago-item">
 
         {{ pago.razon_social }}
         ({{ pago.metodo_pago }})
@@ -136,30 +129,28 @@
 
 
   <!-- BOTONES -->
-  <div class="ion-padding no-print botones">
+<div class="ion-padding no-print botones">
 
-    <ion-button
-      expand="block"
-      color="dark"
-      (click)="imprimir()"
-    >
-      <ion-icon
-        name="print-outline"
-        slot="start"
-      ></ion-icon>
+  <ion-button
+    expand="block"
+    color="secondary"
+    (click)="compartirOAbrirCon()"
+  >
+    <ion-icon
+      name="share-social-outline"
+      slot="start"
+    ></ion-icon>
+    COMPARTIR / EXPORTAR
+  </ion-button>
 
-      IMPRIMIR RESUMEN
-    </ion-button>
+  <ion-button
+    expand="block"
+    fill="clear"
+    (click)="volverMesas()"
+  >
+    Finalizar y Salir
+  </ion-button>
 
-
-    <ion-button
-      expand="block"
-      fill="clear"
-      (click)="volverMesas()"
-    >
-      Finalizar y Salir
-    </ion-button>
-
-  </div>
+</div>
 
 </ion-content>

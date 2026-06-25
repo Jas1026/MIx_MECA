@@ -353,3 +353,8 @@ ion-button:hover {
   }
 
 }
+/* Asegurar visibilidad limpia para la captura de pantalla a PDF */
+#factura-print {
+  background-color: #ffffff !important;
+  display: block;
+}

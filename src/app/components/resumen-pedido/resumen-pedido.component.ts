@@ -15,7 +15,7 @@ export class ResumenPedidoComponent implements OnInit {
   segmento = 'items';
   itemsPendientes: any[] = [];
   pagosTemporales: any[] = [];
-
+estadoPedido = 'open';
   metodoPagoActual = 'efectivo';
   numPartes = 2;
   montoManual = 0;
@@ -37,6 +37,8 @@ export class ResumenPedidoComponent implements OnInit {
   }
   cargarDatosIniciales() {
 this.server.getOrderProducts(this.orderId).subscribe((res:any)=>{
+ this.estadoPedido =
+    res?.orden?.status || 'open';
 
 const data = res.productos || []; // 🔥 AQUÍ
 

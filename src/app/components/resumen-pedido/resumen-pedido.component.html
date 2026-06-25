@@ -15,7 +15,7 @@
   </ion-segment>
 
   <div class="ion-padding">
-    
+
     <div [ngSwitch]="segmento" class="modo-container">
       <div *ngSwitchCase="'items'">
         <ion-list-header><ion-label>Pendientes de Cobro</ion-label></ion-list-header>
@@ -62,7 +62,8 @@
 
         <ion-item lines="none" class="input-estilo flex-2">
           <ion-label position="stacked">Razón Social</ion-label>
-          <ion-input #inputRazon type="text" [(ngModel)]="datosFactura.razonSocial" (ionFocus)="seleccionarTexto(inputRazon)"></ion-input>
+          <ion-input #inputRazon type="text" [(ngModel)]="datosFactura.razonSocial"
+            (ionFocus)="seleccionarTexto(inputRazon)"></ion-input>
         </ion-item>
       </div>
 
@@ -95,34 +96,23 @@
       </div>
     </div>
 
-    <ion-button expand="block" shape="round" color="primary" class="ion-margin-top" (click)="agregarPago()" 
-                [disabled]="totalACobrarAhora <= 0">
+    <ion-button expand="block" shape="round" color="primary" class="ion-margin-top" (click)="agregarPago()"
+      [disabled]="totalACobrarAhora <= 0">
       <ion-icon name="add-circle-outline" slot="start"></ion-icon>
       {{ segmento === 'partes' ? 'Generar ' + numPartes + ' Pagos' : 'Añadir a Canasta' }}
     </ion-button>
-<ion-button 
-  expand="block" 
-  shape="round" 
-  color="warning" 
-  class="ion-margin-top"
-  (click)="guardarParcialBD()" 
-  [disabled]="pagosTemporales.length === 0">
-
-  <ion-icon name="save-outline" slot="start"></ion-icon>
-  GUARDAR PARCIAL
-</ion-button>
     <div *ngIf="pagosTemporales.length > 0" class="canasta-container ion-margin-top">
       <div class="canasta-header">
         <ion-icon name="basket-outline"></ion-icon>
         <span>PAGOS EN CANASTA</span>
       </div>
-      
+
       <ion-list lines="full">
         <ion-item *ngFor="let p of pagosTemporales; let i = index">
           <ion-label>
             <h3>{{ p.razonSocial }}</h3>
             <p>
-              {{ p.metodo_pago | uppercase }} 
+              {{ p.metodo_pago | uppercase }}
               <span *ngIf="p.voucher"> • Vouch: {{ p.voucher }}</span>
               <span *ngIf="p.monto_extra > 0" style="color: green;"> (+ {{p.monto_extra}} {{p.motivo_extra}})</span>
             </p>
@@ -141,7 +131,8 @@
           <span style="color: black;">Acumulado Canasta:</span>
           <b style="color: black;">Bs {{ totalAcumuladoCanasta | number:'1.2-2' }}</b>
         </div>
-        <div style="color: black;" class="resumen-row" [style.color]="totalRestanteEnMesa > 0.05 ? 'var(--ion-color-danger)' : 'var(--ion-color-success)'">
+        <div style="color: black;" class="resumen-row"
+          [style.color]="totalRestanteEnMesa > 0.05 ? 'var(--ion-color-danger)' : 'var(--ion-color-success)'">
           <span style="color: black;">Falta cobrar en Mesa:</span>
           <b style="color: black;">Bs {{ totalRestanteEnMesa | number:'1.2-2' }}</b>
         </div>
@@ -173,55 +164,83 @@
 
   <ion-toolbar class="ion-padding footer-actions">
 
-    <!-- SOLO CERRAR -->
-    <ion-button
-      expand="block"
-      color="medium"
-      shape="round"
-      class="btn-footer"
-      (click)="cerrarSoloMesa()"
-    >
-      <ion-icon
-        name="close-circle-outline"
-        slot="start"
-      ></ion-icon>
+    <!-- OPEN -->
 
-      CERRAR SIN FACTURA
-    </ion-button>
-
-    <!-- RECIBO SIMPLE -->
     <ion-button
+      *ngIf="estadoPedido === 'open'"
       expand="block"
       color="warning"
       shape="round"
       class="btn-footer"
-      (click)="confirmarConRecibo()"
-      [disabled]="totalRestanteEnMesa > 0.05 || pagosTemporales.length === 0"
-    >
-      <ion-icon
-        name="receipt-outline"
-        slot="start"
-      ></ion-icon>
+      (click)="guardarParcialBD()"
+      [disabled]="pagosTemporales.length === 0">
 
-      RECIBO SIMPLE
+      <ion-icon
+        name="save-outline"
+        slot="start">
+      </ion-icon>
+
+      GUARDAR PARCIAL
+
     </ion-button>
 
-    <!-- SIAT -->
-    <ion-button
-      expand="block"
-      color="success"
-      shape="round"
-      class="btn-footer"
-      (click)="confirmarTodo()"
-      [disabled]="totalRestanteEnMesa > 0.05 || pagosTemporales.length === 0"
-    >
-      <ion-icon
-        name="document-text-outline"
-        slot="start"
-      ></ion-icon>
 
-      FACTURA SIAT
-    </ion-button>
+    <!-- READY -->
+
+    <ng-container *ngIf="estadoPedido === 'ready'">
+
+      <ion-button
+        expand="block"
+        color="medium"
+        shape="round"
+        class="btn-footer"
+        (click)="cerrarSoloMesa()"
+        [disabled]="totalRestanteEnMesa > 0.05 || pagosTemporales.length === 0">
+
+        <ion-icon
+          name="close-circle-outline"
+          slot="start">
+        </ion-icon>
+
+        CERRAR SIN FACTURA
+
+      </ion-button>
+
+      <ion-button
+        expand="block"
+        color="warning"
+        shape="round"
+        class="btn-footer"
+        (click)="confirmarConRecibo()"
+        [disabled]="totalRestanteEnMesa > 0.05 || pagosTemporales.length === 0">
+
+        <ion-icon
+          name="receipt-outline"
+          slot="start">
+        </ion-icon>
+
+        RECIBO SIMPLE
+
+      </ion-button>
+
+      <ion-button
+        expand="block"
+        color="success"
+        shape="round"
+        class="btn-footer"
+        (click)="confirmarTodo()"
+        [disabled]="totalRestanteEnMesa > 0.05 || pagosTemporales.length === 0">
+
+        <ion-icon
+          name="document-text-outline"
+          slot="start">
+        </ion-icon>
+
+        FACTURA SIAT
+
+      </ion-button>
+
+    </ng-container>
 
   </ion-toolbar>
 

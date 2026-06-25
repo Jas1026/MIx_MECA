@@ -22,9 +22,9 @@ export class CocinaPage implements OnInit, OnDestroy {
   private audioNuevoPedido = new Audio('assets/sounds/notificacion.mp3');
   // Sonido 2: Alerta que recibe cocina cuando el mesero la molesta
   private audioSonido2 = new Audio('assets/sounds/sonidodeprueba.mp3');
-private audioUnlocked = false;
-private isPlayingNuevo = false;
-private isPlayingAlerta = false;
+  private audioUnlocked = false;
+  private isPlayingNuevo = false;
+  private isPlayingAlerta = false;
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -42,7 +42,7 @@ private isPlayingAlerta = false;
   ngOnInit() {
     this.kitchenId = this.route.snapshot.paramMap.get('id');
 
-    this.loadOrders(); 
+    this.loadOrders();
 
     // Polling de peticiones
     this.dataInterval = setInterval(() => {
@@ -57,98 +57,99 @@ private isPlayingAlerta = false;
     if (this.clockInterval) clearInterval(this.clockInterval);
     this.stopSonido2();
   }
-@HostListener('document:click')
-unlockAudio() {
-  if (this.audioUnlocked) return;
+  @HostListener('document:click')
+  unlockAudio() {
+    if (this.audioUnlocked) return;
 
-  const unlock = async () => {
-    try {
-      // “calentamos” los audios sin bloquearlos
-      await this.audioNuevoPedido.play();
-      this.audioNuevoPedido.pause();
-      this.audioNuevoPedido.currentTime = 0;
+    const unlock = async () => {
+      try {
+        // “calentamos” los audios sin bloquearlos
+        await this.audioNuevoPedido.play();
+        this.audioNuevoPedido.pause();
+        this.audioNuevoPedido.currentTime = 0;
 
-      await this.audioSonido2.play();
-      this.audioSonido2.pause();
-      this.audioSonido2.currentTime = 0;
+        await this.audioSonido2.play();
+        this.audioSonido2.pause();
+        this.audioSonido2.currentTime = 0;
 
-      this.audioUnlocked = true;
+        this.audioUnlocked = true;
 
-      console.log("🔊 Audio desbloqueado correctamente");
-    } catch (e) {
-      console.warn("Audio aún bloqueado:", e);
-    }
-  };
+        console.log("🔊 Audio desbloqueado correctamente");
+      } catch (e) {
+        console.warn("Audio aún bloqueado:", e);
+      }
+    };
 
-  unlock();
-}
+    unlock();
+  }
   @HostListener('click')
   resumeAudioContext() {
     if (this.audioSonido2) {
       this.audioSonido2.play().then(() => {
         this.audioSonido2.pause();
         this.audioSonido2.currentTime = 0;
-      }).catch(() => {});
+      }).catch(() => { });
     }
     if (this.audioNuevoPedido) {
       this.audioNuevoPedido.play().then(() => {
         this.audioNuevoPedido.pause();
         this.audioNuevoPedido.currentTime = 0;
-      }).catch(() => {});
+      }).catch(() => { });
     }
   }
-  loadOrders() {
-
-  this.server
-  .getKitchenOrders(this.kitchenId)
-  .subscribe((res:any)=>{
-
+loadOrders() {
+  this.server.getKitchenOrders(this.kitchenId).subscribe((res: any) => {
     console.log(res);
 
-    if(res.error===0){
-
-      const nuevasOrdenes = res.data.map((item:any)=>({
-
+    if (res.error === 0) {
+      const nuevasOrdenes = res.data.map((item: any) => ({
         ...item,
-
         alert_status: parseInt(item.alert_status),
-
         quantity: parseInt(item.quantity)
-
       }));
 
+      // --- LÓGICA PARA DETECTAR NUEVOS PEDIDOS ---
+      const currentIds = nuevasOrdenes.map((item: any) => item.detail_id);
+
+      if (this.previousOrderIds.length > 0) {
+        // SOLUCIÓN: Agregamos :number al parámetro id
+        const tieneNuevos = currentIds.some((id: number) => !this.previousOrderIds.includes(id));
+        
+        if (tieneNuevos && this.audioUnlocked) {
+          this.sonarNuevoPedido();
+        }
+      }
+
+      this.previousOrderIds = currentIds;
+      // --------------------------------------------
+
       this.orders = nuevasOrdenes;
-
       this.checkAlerts();
-
       this.updateCountdowns();
-
     }
-
   });
-
 }
-  
-checkAlerts() {
-  const hayAlerta = this.orders.some(o => o.alert_status === 3);
 
-  if (!this.audioUnlocked) return;
+  checkAlerts() {
+    const hayAlerta = this.orders.some(o => o.alert_status === 3);
 
-  if (hayAlerta) {
-    if (this.audioSonido2.paused) {
-      this.audioSonido2.play().catch(err =>
-        console.warn("Autoplay bloqueado:", err)
-      );
+    if (!this.audioUnlocked) return;
+
+    if (hayAlerta) {
+      if (this.audioSonido2.paused) {
+        this.audioSonido2.play().catch(err =>
+          console.warn("Autoplay bloqueado:", err)
+        );
+      }
+    } else {
+      this.stopSonido2();
     }
-  } else {
-    this.stopSonido2();
   }
-}
 
-stopSonido2() {
-  this.audioSonido2.pause();
-  this.audioSonido2.currentTime = 0;
-}
+  stopSonido2() {
+    this.audioSonido2.pause();
+    this.audioSonido2.currentTime = 0;
+  }
 
   // Cocina molesta al mesero (Envía alerta con status 1)
   alertarAlMesero(detailId: number) {
@@ -221,9 +222,9 @@ stopSonido2() {
   countProducts(orderId: number) {
     return this.orders.filter(x => x.order_id == orderId).length;
   }
-  trackByDetail(index:number,item:any){
+  trackByDetail(index: number, item: any) {
 
-  return item.detail_id;
+    return item.detail_id;
 
-}
+  }
 }

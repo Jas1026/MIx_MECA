@@ -363,7 +363,7 @@
             </ion-col>
             <ion-col size="12" size-md="5" class="ion-text-right">
               <div class="category-buttons">
-                <ion-button expand="block" [color]="catForm.id ? 'warning' : 'white'" (click)="saveCategory()">
+                <ion-button expand="block" (click)="saveCategory()">
                   <ion-icon name="save-outline" slot="start"></ion-icon>
                   {{ catForm.id ? 'Actualizar' : 'Añadir' }}
                 </ion-button>
@@ -412,7 +412,7 @@
           <!-- BOTONES -->
           <ion-row>
             <ion-col size="12" class="ion-text-right">
-              <ion-button expand="block" [color]="subcatForm.id ? 'warning' : 'white'" (click)="saveSubcategory()">
+              <ion-button expand="block" (click)="saveSubcategory()">
                 <ion-icon name="save-outline" slot="start"></ion-icon>
                 {{ subcatForm.id ? 'Actualizar' : 'Añadir' }}
               </ion-button>
