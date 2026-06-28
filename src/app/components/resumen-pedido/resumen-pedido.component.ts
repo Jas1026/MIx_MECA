@@ -4,6 +4,7 @@ import { ServerContentService } from 'src/app/services/server-content.service';
 import { Router } from '@angular/router';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { FacturacionSiatComponent } from '../facturacion-siat/facturacion-siat.component';
 @Component({
   selector: 'app-resumen-pedido',
   templateUrl: './resumen-pedido.component.html',
@@ -206,179 +207,26 @@ item.unit_price
     this.datosFactura = { nit: '0', razonSocial: 'SIN NOMBRE', voucher: '' };
   }
   async confirmarTodo() {
-
-    const loading = await this.loader.create({
-
-      message: 'Facturando en SIAT...'
-
+    // Levantamos el componente de Facturación SIAT
+    const modal = await this.modalCtrl.create({
+      component: FacturacionSiatComponent,
+      componentProps: {
+        orderId: this.orderId,
+        formatoImpresion: this.formatoImpresion,
+        // 🔥 ENVIAMOS LA CANASTA LOCAL DE PAGOS TEMPORALES AL NUEVO COMPONENTE
+        pagosPreCargados: this.pagosTemporales 
+      }
     });
 
-    await loading.present();
-
-    const payload = {
-
-      order_id: this.orderId,
-
-      formato: this.formatoImpresion,
-
-      pagos: this.pagosTemporales.map(p => ({
-
-        nit: p.nit,
-
-        razonSocial: p.razonSocial,
-
-        montoTotal: p.monto,
-
-        metodoPago:
-
-          p.metodo_pago === 'efectivo'
-
-            ? 1
-
-            : 2,
-
-        detalles:
-
-          p.items_referencia.map(
-
-            (item: any) => ({
-
-              descripcion:
-
-                item.nombre_producto,
-
-              precio:
-
-                item.unit_val,
-
-              cantidad: 1
-
-            }))
-
-      }))
-
-    };
-
-    this.server
-
-      .procesarFacturacionSiat(payload)
-
-      .subscribe({
-
-        next: async (res: any) => {
-
-          await loading.dismiss();
-
-          if (res.success) {
-
-            if (res.facturas) {
-
-              res.facturas.forEach(
-
-                (f: any) => {
-
-                  window.open(
-
-                    f.pdf,
-
-                    '_blank'
-
-                  );
-
-                });
-
-            }
-
-            // 🔥 GUARDAR PAGO FINAL
-
-            this.guardarPagoFinalBD()
-
-              .subscribe({
-
-                next: () => {
-
-                  // 🔥 CERRAR
-
-                  this.server.closeOrder(
-
-                    this.orderId,
-
-                    sessionStorage.getItem(
-
-                      'user_id'
-
-                    )
-
-                  )
-
-                    .subscribe({
-
-                      next: () => {
-
-                        this.toast.create({
-
-                          message:
-
-                            'Mesa cerrada correctamente ✅',
-
-                          duration: 2000,
-
-                          color: 'success'
-
-                        })
-
-                          .then(
-
-                            t => t.present()
-
-                          );
-
-                        this.modalCtrl.dismiss(true);
-
-                        this.router.navigate(
-
-                          ['/panel']
-
-                        );
-
-                      }
-
-                    });
-
-                }
-
-              });
-
-          }
-
-        },
-
-        error: async () => {
-
-          await loading.dismiss();
-
-          this.toast.create({
-
-            message:
-
-              'Error al facturar ❌',
-
-            duration: 2500,
-
-            color: 'danger'
-
-          })
-
-            .then(
-
-              t => t.present()
-
-            );
-
-        }
-
-      });
-
+    await modal.present();
+
+    // Escuchamos cuando el modal de Facturación SIAT se cierre
+    const { data } = await modal.onDidDismiss();
+    
+    if (data) {
+      // Si el proceso terminó con éxito (true), cerramos también este modal original
+      this.modalCtrl.dismiss(true);
+    }
   }
 
   seleccionarTexto(input: any) {

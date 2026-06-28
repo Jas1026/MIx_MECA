@@ -1,0 +1,111 @@
+<ion-header class="ion-no-border header-light">
+  <ion-toolbar color="dark">
+    <ion-buttons slot="start">
+      <ion-button (click)="volver()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      Facturación Electrónica #{{ orderId }}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding ticket-page">
+
+  <ion-item class="no-print" *ngIf="!facturacionExitosa">
+    <ion-label>Formato de Impresión SIAT</ion-label>
+    <ion-select [(ngModel)]="formatoImpresion">
+      <ion-select-option value="80">Ticket térmico 80mm</ion-select-option>
+      <ion-select-option value="58">Ticket térmico 58mm</ion-select-option>
+      <ion-select-option value="carta">Hoja carta</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <div class="panel-facturas ion-margin-bottom" *ngIf="facturacionExitosa">
+    <h3 class="titulo-panel">📄 Facturas Oficiales Generadas</h3>
+    <ion-list lines="none">
+      <ion-item *ngFor="let f of facturasGeneradas" class="item-factura-link">
+        <ion-label>
+          <h2>{{ f.cliente }}</h2>
+          <p *ngIf="f.factura">Factura Nro: <b>{{ f.factura }}</b></p>
+          <p *ngIf="f.error" color="danger">⚠️ Error: {{ f.error }}</p>
+        </ion-label>
+        <ion-button slot="end" color="success" fill="solid" (click)="abrirPdf(f.pdf)" *ngIf="f.pdf">
+          <ion-icon name="download-outline" slot="start"></ion-icon>
+          PDF SIAT
+        </ion-button>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <div id="factura-print" class="print-container" [ngClass]="'ticket' + formatoImpresion">
+
+    <div class="ticket-header">
+      <h2>MIXURA - MECA</h2>
+      <p><b>DOCUMENTO COMPLEMENTARIO</b></p>
+      <p>Resumen de Facturación / Cajas</p>
+      <p>Orden #{{ orderId }}</p>
+      <p>{{ today | date:'dd/MM/yyyy HH:mm' }}</p>
+    </div>
+
+    <hr class="dotted">
+
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th>Cant.</th>
+          <th>Producto</th>
+          <th class="right">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of detallesTotales">
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.nombre_producto }}</td>
+          <td class="right">Bs {{ item.total_price | number:'1.2-2' }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr class="dotted">
+
+    <div class="total-section">
+      TOTAL GENERAL 
+      <span>Bs {{ totalGeneral | number:'1.2-2' }}</span>
+    </div>
+
+    <div class="pagos-realizados">
+      <p class="subtitle">Desglose de Facturación Asignada</p>
+      <div *ngFor="let pago of historialPagos" class="pago-item">
+        <b>{{ pago.razon_social }}</b> [NIT/CI: {{pago.nit_cliente}}]
+        <span>Bs {{ pago.monto_total | number:'1.2-2' }}</span>
+      </div>
+    </div>
+
+    <div class="ticket-footer">
+      Sistema Integrado de Facturación SIAT
+    </div>
+  </div>
+
+  <div class="ion-padding no-print botones">
+    <ion-button 
+      *ngIf="!facturacionExitosa"
+      expand="block" 
+      color="success" 
+      (click)="procesarFacturacionCajas()">
+      <ion-icon name="cloud-upload-outline" slot="start"></ion-icon>
+      ENVIAR Y FACTURAR SIAT
+    </ion-button>
+
+    <ion-button 
+      *ngIf="facturacionExitosa"
+      expand="block" 
+      color="dark" 
+      (click)="finalizarProceso()">
+      <ion-icon name="checkmark-done-circle-outline" slot="start"></ion-icon>
+      Finalizar
+    </ion-button>
+  </div>
+
+</ion-content>

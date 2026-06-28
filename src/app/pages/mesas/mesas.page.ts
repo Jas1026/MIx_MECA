@@ -28,22 +28,33 @@ export class MesasPage implements OnInit, OnDestroy {
     private ngZone: NgZone
   ) { }
 
-  ngOnInit() {
-    this.route.paramMap.subscribe(params => {
-      this.flatId = params.get('id') || '';
-      this.loadTables();
-    });
+ngOnInit() {
 
-    // 👇 INICIAMOS EL RELOJ AQUÍ
-    this.startClock();
-  }
+  this.route.paramMap.subscribe(params => {
 
-  ionViewWillEnter() {
+    this.flatId = params.get('id') || '';
+
     this.loadTables();
 
-    // Recargar datos del servidor cada 15 segundos
-    this.dataInterval = setInterval(() => this.loadTables(), 15000);
-  }
+    // Evita crear varios intervalos si cambia el parámetro de la ruta
+    if (this.dataInterval) {
+      clearInterval(this.dataInterval);
+    }
+
+    this.dataInterval = setInterval(() => {
+      this.loadTables();
+    }, 5000);
+
+  });
+
+  // Reloj que actualiza el cronómetro cada segundo
+  this.startClock();
+
+}
+
+ionViewWillEnter() {
+  this.loadTables();
+}
 
   ionViewWillLeave() {
     this.stopIntervals();
